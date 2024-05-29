@@ -1,0 +1,58 @@
+# frozen_string_literal: true
+
+module Matcher
+  class ExpressionRecorder
+    def self.to_expression(recorder)
+      raise "no recorder given, got #{recorder.inspect}" if recorder.class != ExpressionRecorder
+
+      recorder.instance_exec do
+        Expression.new(@receiver, @method, *@args, **@kwargs, &@block)
+      end
+    end
+
+    def self.transform(object)
+      return object if object.class != ExpressionRecorder
+
+      ExpressionRecorder.to_expression(object)
+    end
+
+    def self.record(recorder, method, *args, **kwargs, &)
+      receiver = ExpressionRecorder.to_expression(recorder)
+      args = args.map { transform(_1) }
+      kwargs = kwargs.transform_values { transform(_1) }
+
+      ExpressionRecorder.new(receiver, method, *args, **kwargs, &)
+    end
+
+    def initialize(receiver = nil, method = nil, *args, **kwargs, &block)
+      @receiver = receiver
+      @method = method
+      @args = args
+      @kwargs = kwargs
+      @block = block
+    end
+
+    (instance_methods - %i[__id__ __send__ object_id class instance_exec])
+      .each { undef_method _1 }
+
+    def !
+      ExpressionRecorder.record(self, :!)
+    end
+
+    %w[== != <=> === =~ !~].each do |operator|
+      class_eval <<~CODE, __FILE__, __LINE__ + 1
+        def #{operator}(operand)                                                # def ==(operand)
+          ExpressionRecorder.record(self, :#{operator}, operand)                #   ExpressionRecorder.record(self, :==, operand)
+        end                                                                     # end
+      CODE
+    end
+
+    def method_missing(...)
+      ExpressionRecorder.record(self, ...)
+    end
+
+    def respond_to_missing?(...)
+      true
+    end
+  end
+end
