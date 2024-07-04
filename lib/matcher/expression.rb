@@ -44,28 +44,34 @@ module Matcher
       case @method
       when :!, :~, :+@, :-@
         # !foo
-        return "#{@method[0]}#{@receiver}" if @args.length == 0
-      when :+, :-, :*, :/, :%, :**, :<, :>, :<=, :>=, :<=>, :==, :===, :!=, :=~, :!~, :&, :|, :^, :<<, :>>
+        return "#{@method[0]}#{@receiver}" if unary?
+      when :+, :-, :*, :/, :%, :<, :>, :<=, :>=, :<=>, :==, :===, :!=, :=~, :!~, :&, :|, :^, :<<, :>>
         # foo + bar
-        return "(#{@receiver} #{@method} #{@args[0].inspect})" if @args.length == 1
+        return "(#{@receiver} #{@method} #{@args[0].inspect})" if binary?
+      when :**
+        # foo**2
+        return "(#{@receiver}**#{@args[0].inspect})" if binary?
       when :[]
         # foo[a, b, ...]
-        return "#{@receiver}[#{args_and_kwargs_string}]"
+        return "#{@receiver}[#{args_and_kwargs_string}]#{' { ... }' if @block}"
       when :[]=
         # (foo[a, b, ...] = 1)
-        return "(#{@receiver}[#{@args[0..-2].map(&:inspect).join(', ')}] = #{@args[-1].inspect})"
+        if @args.length >= 2 && @kwargs.empty? && !@block
+          return "(#{@receiver}[#{@args[0..-2].map(&:inspect).join(', ')}] = #{@args[-1].inspect})"
+        end
       end
 
-      if @method.end_with?('=') && @args.length == 1
+      if @method.end_with?('=') && @method != :[]= && binary?
         # foo.bar = 42
 
-        "(#{@receiver}.#{@method[0..-2]} = #{@args[0]})"
+        "(#{@receiver}.#{@method[0..-2]} = #{@args[0].inspect})"
       else
         # foo.bar OR foo.bar(arg1, arg2, ...)
 
         args_and_kwargs = args_and_kwargs_string
         string = "#{@receiver}.#{@method}"
         string += "(#{args_and_kwargs})" unless args_and_kwargs.empty?
+        string += ' { ... }' if @block
 
         string
       end
