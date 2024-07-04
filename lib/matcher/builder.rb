@@ -30,6 +30,10 @@ module Matcher
       AnyMatcher.new(matchers.map { Matcher.of(_1) })
     end
 
+    def present(matcher)
+      all(value.present?, matcher)
+    end
+
     def iso8601(string_or_time = nil)
       Iso8601Matcher.new(string_or_time)
     end
