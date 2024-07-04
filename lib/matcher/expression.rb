@@ -12,7 +12,13 @@ module Matcher
       @block = block
     end
 
-    COMPARISONS = %i[== < > <= >= != =~ !~].freeze
+    def unary?
+      @args.empty? && @kwargs.empty? && !@block
+    end
+
+    def binary?
+      @args.length == 1 && @kwargs.empty? && !@block
+    end
 
     def comparison?
       @method.in?(COMPARISONS) && @args.length == 1 && @kwargs.empty? && !@block

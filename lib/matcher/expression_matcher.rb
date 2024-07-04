@@ -19,22 +19,40 @@ module Matcher
 
     private
 
-    def falsy_message(actual, chain)
-      return comparison_message(actual, chain) if @expression.comparison?
+    BINARY_PREDICATES = %i[== < > <= >= != =~ !~ is_a? kind_of? instance_of?].freeze
 
-      string = "expected #{@expression.inspect} to be truthy for value = #{actual.inspect}"
-      string += ", where #{@expression.receiver.inspect} was #{chain[-2].inspect}" if chain.length > 2
+    def predicate?
+      method = @expression.method
 
-      string
+      (@expression.unary? && method.end_with?('?')) ||
+        (@expression.binary? && method.in?(BINARY_PREDICATES))
     end
 
-    def comparison_message(actual, chain)
-      receiver = @expression.receiver&.inspect || 'value'
-      operand = @expression.args[0].inspect
+    def falsy_message(actual, chain)
+      if predicate?
+        predicate_message(actual, chain)
+      else
+        regular_message(actual, chain)
+      end
+    end
 
-      string = "expected #{receiver} to #{operator_word} #{operand}"
+    def predicate_message(actual, chain)
+      receiver = @expression.receiver&.inspect || 'value'
+      arity = @expression.args.length
+
+      string = "expected #{receiver} to "
+
+      string +=
+        if arity == 0
+          "be #{@expression.method[0...-1]}"
+        else # arity == 1
+          operand = @expression.args[0].inspect
+
+          "#{operator_word} #{operand}"
+        end
+
       string += " but got #{chain[-2].inspect}" if @expression.method != :!=
-      string += " for value = #{actual.inspect}"
+      string += " for value = #{actual.inspect}" if chain.length > 2
 
       string
     end
@@ -49,9 +67,20 @@ module Matcher
         'match'
       when :!~
         'not match'
+      when :kind_of?, :is_a?
+        'be a kind of'
+      when :instance_of?
+        'be an instance of'
       else
         "be #{@expression.method}"
       end
+    end
+
+    def regular_message(actual, chain)
+      string = "expected #{@expression.inspect} to be truthy for value = #{actual.inspect}"
+      string += ", where #{@expression.receiver.inspect} was #{chain[-2].inspect}" if chain.length > 2
+
+      string
     end
 
     def not_responding_message(exception)

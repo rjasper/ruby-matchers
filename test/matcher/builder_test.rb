@@ -43,7 +43,7 @@ module Matcher
 
       assert_predicate matcher.match(3), :valid?
       assert_predicate matcher.match(9), :valid?
-      assert_errors matcher.match(6), 'expected value.odd? to be truthy for value = 6'
+      assert_errors matcher.match(6), 'expected value to be odd but got 6'
       assert_errors matcher.match(7), 'expected (value % 3) to be 0 but got 1 for value = 7'
     end
 
@@ -56,7 +56,7 @@ module Matcher
       assert_predicate matcher.match(15), :valid?
       assert_predicate matcher.match(37), :valid?
       assert_errors matcher.match(17),
-        'expected value.even? to be truthy for value = 17',
+        'expected value to be even but got 17',
         'expected (value % 5) to be 0 but got 2 for value = 17',
         'expected 37 but got 17'
     end
