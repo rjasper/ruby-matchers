@@ -22,6 +22,10 @@ module Matcher
       end
     end
 
+    def set(array)
+      SetMatcher.new(array.map { Matcher.of(_1) })
+    end
+
     def all(*matchers)
       AllMatcher.new(matchers.map { Matcher.of(_1) })
     end
