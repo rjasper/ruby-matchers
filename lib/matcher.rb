@@ -16,6 +16,7 @@ require 'matcher/expression'
 require 'matcher/expression_matcher'
 require 'matcher/expression_recorder'
 require 'matcher/hash_matcher'
+require 'matcher/iso8601_matcher'
 require 'matcher/value_matcher'
 
 module Matcher
