@@ -17,6 +17,10 @@ module Matcher
       errors << not_responding_message(e)
     end
 
+    def inspect
+      @expression.inspect
+    end
+
     private
 
     BINARY_PREDICATES = %i[== < > <= >= != =~ !~ is_a? kind_of? instance_of?].freeze

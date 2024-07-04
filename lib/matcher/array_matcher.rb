@@ -21,5 +21,9 @@ module Matcher
         errors[i] << @array[i].match(actual[i])
       end
     end
+
+    def inspect
+      @array.inspect
+    end
   end
 end

@@ -19,5 +19,11 @@ module Matcher
         'expected 1 but got 4',
         'expected 2 but got 4'
     end
+
+    test '#inspect' do
+      matcher = AnyMatcher.new([v(1), v(2)])
+
+      assert_equal 'any(1, 2)', matcher.inspect
+    end
   end
 end

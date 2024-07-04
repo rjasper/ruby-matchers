@@ -20,5 +20,11 @@ module Matcher
         'expected a number divisible by 3 but got 5',
         'expected an even number but got 5'
     end
+
+    test '#inspect' do
+      matcher = AllMatcher.new([v(1), v(2)])
+
+      assert_equal 'all(1, 2)', matcher.inspect
+    end
   end
 end

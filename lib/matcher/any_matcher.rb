@@ -18,5 +18,9 @@ module Matcher
 
       errors.clear if found
     end
+
+    def inspect
+      "any(#{@matchers.map(&:inspect).join(', ')})"
+    end
   end
 end

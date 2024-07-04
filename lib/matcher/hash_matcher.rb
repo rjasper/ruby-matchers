@@ -28,6 +28,14 @@ module Matcher
       end
     end
 
+    def inspect
+      if @all_entries
+        @hash.inspect
+      else
+        "partial_entries(#{@hash.inspect})"
+      end
+    end
+
     private
 
     def check_all_entries(actual)

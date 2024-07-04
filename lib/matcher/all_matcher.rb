@@ -13,5 +13,9 @@ module Matcher
         errors << matcher.match(actual)
       end
     end
+
+    def inspect
+      "all(#{@matchers.map(&:inspect).join(', ')})"
+    end
   end
 end

@@ -12,6 +12,10 @@ module Matcher
       errors << not_equal_message(actual) if actual != @value
     end
 
+    def inspect
+      @value.inspect
+    end
+
     private
 
     def not_equal_message(actual)

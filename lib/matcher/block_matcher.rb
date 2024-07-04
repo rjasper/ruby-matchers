@@ -13,14 +13,24 @@ module Matcher
       errors << message_for(actual) unless @block.call(actual)
     end
 
+    def inspect
+      @message || "-> { #{block_location} }"
+    end
+
     private
 
     def message_for(actual)
       if @message
         "expected #{@message} but got #{actual}"
       else
-        "expected to satisfy condition but got #{actual}"
+        "expected to satisfy condition #{block_location} but got #{actual}"
       end
+    end
+
+    def block_location
+      file, line = @block.source_location
+
+      "#{File.basename(file)}:#{line}"
     end
   end
 end

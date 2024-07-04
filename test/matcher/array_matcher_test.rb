@@ -22,5 +22,11 @@ module Matcher
         1 => 'expected 2 but got 5',
         2 => 'expected 3 but got 6'
     end
+
+    test '#inspect' do
+      matcher = ArrayMatcher.new([v(1), v(2), v(3)])
+
+      assert_equal '[1, 2, 3]', matcher.inspect
+    end
   end
 end

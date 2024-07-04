@@ -36,5 +36,11 @@ module Matcher
       assert_errors match(7) { (value + 1).odd? },
         'expected (value + 1) to be odd but got 8 for value = 7'
     end
+
+    test '#inspect' do
+      matcher = Matcher.build { value * 3 > 9 }
+
+      assert_equal '((value * 3) > 9)', matcher.inspect
+    end
   end
 end
