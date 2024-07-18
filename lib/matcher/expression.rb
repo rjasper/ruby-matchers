@@ -2,7 +2,7 @@
 
 module Matcher
   class Expression
-    attr_reader :receiver, :method, :args, :kwargs
+    attr_reader :receiver, :method, :args, :kwargs, :block
 
     def self.build
       recorder = yield ExpressionRecorder.new
@@ -48,6 +48,21 @@ module Matcher
       return self if @receiver&.root?
 
       Expression.new(Expression.new, @method, *@args, **@kwargs, &@block)
+    end
+
+    def eql?(other)
+      return true if equal?(other)
+
+      other.is_a?(Expression) &&
+        other.receiver.eql?(@receiver) &&
+        other.method.eql?(@method) &&
+        other.args.eql?(@args) &&
+        other.kwargs.eql?(@kwargs) &&
+        other.block.eql?(@block)
+    end
+
+    def hash
+      [@receiver, @args, @method, @kwargs, @block].hash
     end
 
     def to_s(root: 'value')
