@@ -14,7 +14,7 @@ module Matcher
 
       errors << falsy_message(actual, chain) unless evaluation
     rescue Expression::NotRespondingError => e
-      errors << not_responding_message(e)
+      errors << e.message_for_errors
     end
 
     def inspect
@@ -85,15 +85,6 @@ module Matcher
       string += ", where #{@expression.receiver.inspect} was #{chain[-2].inspect}" if chain.length > 2
 
       string
-    end
-
-    def not_responding_message(exception)
-      expression = exception.expression.receiver.inspect
-      method = exception.expression.method
-      actual = exception.receiver.inspect
-      value = exception.value.inspect
-
-      "expected #{expression} to respond to #{method} but got #{actual} where value = #{value}"
     end
   end
 end

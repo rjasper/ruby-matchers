@@ -91,6 +91,18 @@ module Matcher
 
         super(message)
       end
+
+      def message_for_errors
+        expression = @expression.receiver.inspect
+        method = @expression.method
+        actual = @receiver.inspect
+        value = @value.inspect
+
+        string = "expected #{expression} to respond to #{method} but got #{actual}"
+        string += " where value = #{value}" if expression != 'value'
+
+        string
+      end
     end
 
     private
