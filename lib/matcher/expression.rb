@@ -50,38 +50,40 @@ module Matcher
       Expression.new(Expression.new, @method, *@args, **@kwargs, &@block)
     end
 
-    def to_s
-      return 'value' if @receiver.nil?
+    def to_s(root: 'value')
+      return root if @receiver.nil?
+
+      receiver = @receiver.to_s(root:)
 
       case @method
       when :!, :~, :+@, :-@
         # !foo
-        return "#{@method[0]}#{@receiver}" if unary?
+        return "#{@method[0]}#{receiver}" if unary?
       when :+, :-, :*, :/, :%, :<, :>, :<=, :>=, :<=>, :==, :===, :!=, :=~, :!~, :&, :|, :^, :<<, :>>
         # foo + bar
-        return "(#{@receiver} #{@method} #{@args[0].inspect})" if binary?
+        return "(#{receiver} #{@method} #{@args[0].inspect})" if binary?
       when :**
         # foo**2
-        return "(#{@receiver}**#{@args[0].inspect})" if binary?
+        return "(#{receiver}**#{@args[0].inspect})" if binary?
       when :[]
         # foo[a, b, ...]
-        return "#{@receiver}[#{args_and_kwargs_string}]#{' { ... }' if @block}"
+        return "#{receiver}[#{args_and_kwargs_string}]#{' { ... }' if @block}"
       when :[]=
         # (foo[a, b, ...] = 1)
         if @args.length >= 2 && @kwargs.empty? && !@block
-          return "(#{@receiver}[#{@args[0..-2].map(&:inspect).join(', ')}] = #{@args[-1].inspect})"
+          return "(#{receiver}[#{@args[0..-2].map(&:inspect).join(', ')}] = #{@args[-1].inspect})"
         end
       end
 
       if @method.end_with?('=') && @method != :[]= && binary?
         # foo.bar = 42
 
-        "(#{@receiver}.#{@method[0..-2]} = #{@args[0].inspect})"
+        "(#{receiver}.#{@method[0..-2]} = #{@args[0].inspect})"
       else
         # foo.bar OR foo.bar(arg1, arg2, ...)
 
         args_and_kwargs = args_and_kwargs_string
-        string = "#{@receiver}.#{@method}"
+        string = "#{receiver}.#{@method}"
         string += "(#{args_and_kwargs})" unless args_and_kwargs.empty?
         string += ' { ... }' if @block
 

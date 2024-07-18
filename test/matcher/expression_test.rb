@@ -72,6 +72,10 @@ module Matcher
     end
     # rubocop:enable Style/CaseEquality, Layout/SpaceBeforeBrackets, Style/SymbolProc
 
+    test '#to_s: root' do
+      assert_equal '(foo.bar + 1)', expr { _1.bar + 1 }.to_s(root: 'foo')
+    end
+
     private
 
     def expr
