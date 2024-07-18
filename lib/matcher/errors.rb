@@ -65,14 +65,11 @@ module Matcher
 
     protected
 
-    ATTRIBUTES_MERGER = lambda do |_k, l, r|
-      l.merge!(r, &ATTRIBUTES_MERGER)
-    end
-    private_constant :ATTRIBUTES_MERGER
-
     def merge!(errors)
+      merger = ->(_k, l, r) { l.merge!(r, &merger) }
+
       @base.concat(errors.base)
-      @attributes.merge!(errors.attributes, &ATTRIBUTES_MERGER)
+      @attributes.merge!(errors.attributes, &merger)
 
       self
     end
