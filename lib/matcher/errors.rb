@@ -13,6 +13,16 @@ module Matcher
       def <<(error)
         @parent.add(@key, error)
       end
+
+      def [](key)
+        Brackets.new(self, key)
+      end
+
+      protected
+
+      def add(key, error)
+        self << Errors.new.add(key, error)
+      end
     end
 
     def initialize

@@ -105,6 +105,14 @@ module Matcher
       assert_equal ["that's incorrect"], errors.attributes[:foo].base
     end
 
+    test '#[][] <<' do
+      errors = Errors.new
+      errors[:foo][:bar] << "that's incorrect"
+
+      assert_equal ["that's incorrect"],
+        errors.attributes[:foo].attributes[:bar].base
+    end
+
     test '#message' do
       errors1 = Errors.new
       errors1.add('base 1')
