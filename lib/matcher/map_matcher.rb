@@ -25,7 +25,16 @@ module Matcher
         mapping_failed = true
       end
 
-      errors << @matcher.match(mapped) unless mapping_failed
+      return if mapping_failed
+
+      mapped_errors = @matcher.match(mapped)
+
+      unless mapped_errors.base.empty?
+        base_projection = Expression.build { _1.map_expression(@projection) }
+        mapped_errors.base.each { errors[base_projection] << _1 }
+      end
+
+      mapped_errors.attributes.each { errors[_1][@projection] << _2 }
     end
 
     def inspect

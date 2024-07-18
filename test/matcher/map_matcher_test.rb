@@ -23,9 +23,11 @@ module Matcher
         0 => 'expected value to respond to [] but got nil',
         1 => 'expected value to respond to [] but got nil'
       assert_errors match([{ foo: 1 }, { foo: 3 }]) { map(value[:foo], [1, 2]) },
-        1 => 'expected 2 but got 3'
+        1 => { foo: 'expected 2 but got 3' }
       assert_errors match([{ foo: 1 }, { foo: 1 }]) { map(value[:foo] + 1, [1, 2]) },
-        0 => 'expected 1 but got 2'
+        0 => { foo: { expr { _1 + 1 } => 'expected 1 but got 2' } }
+      assert_errors match([{ foo: 1 }, { foo: 1 }]) { map(value[:foo], value.is_a?(String)) },
+        expr { _1.map_expression(_1[:foo]) } => 'expected value to be a kind of String but got [1, 1]'
     end
   end
 end

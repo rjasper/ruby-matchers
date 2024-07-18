@@ -18,6 +18,10 @@ module Matcher
       HashMatcher.new(hash)
     end
 
+    def expr(&)
+      Expression.build(&)
+    end
+
     def assert_errors(actual, *base, **attributes)
       if actual.empty?
         flunk 'expected an error but match result was valid'
