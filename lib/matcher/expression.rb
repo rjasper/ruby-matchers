@@ -30,10 +30,6 @@ module Matcher
       @args.length == 1 && @kwargs.empty? && !@block
     end
 
-    def comparison?
-      @method.in?(COMPARISONS) && @args.length == 1 && @kwargs.empty? && !@block
-    end
-
     def evaluate(value, chain = nil)
       return value.tap { chain&.push(_1) } unless @receiver
 
