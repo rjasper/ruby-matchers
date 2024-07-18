@@ -7,7 +7,7 @@ module Matcher
     end
 
     def value
-      ExpressionRecorder.new
+      @value ||= ExpressionRecorder.new
     end
 
     def all_entries(hash)
