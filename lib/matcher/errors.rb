@@ -111,9 +111,12 @@ module Matcher
       errors.attributes.each do |key, attribute_errors|
         new_path = path
 
-        if key.is_a?(Symbol)
+        case key
+        when Symbol
           new_path += '.' unless path.empty?
           new_path += key.to_s
+        when Expression
+          new_path = key.to_s(root: path)
         else
           new_path += "[#{key.inspect}]"
         end

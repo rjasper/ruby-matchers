@@ -34,7 +34,15 @@ module Matcher
       end
 
       attributes.each do |key, errors|
-        new_prefix = "#{prefix}[#{key.inspect}]"
+        new_prefix = case key
+        when Symbol
+          "#{prefix}.#{key}"
+        when Expression
+          key.to_s(root: prefix)
+        else
+          "#{prefix}[#{key.inspect}]"
+        end
+
         new_actual = actual.attributes[key]
 
         if errors.is_a?(Hash)

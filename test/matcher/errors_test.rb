@@ -110,6 +110,7 @@ module Matcher
       errors1.add('base 1')
       errors1.add(:a, 'a1')
       errors1.add(:a, 'a2')
+      errors1.add(Expression.build { _1[:a] + 1 }, 'a3')
 
       errors2 = Errors.new
       errors2.add(:b, 'b1')
@@ -122,6 +123,7 @@ module Matcher
         - base 1
         a: a1
         a: a2
+        (a + 1): a3
         a.b: b1
         a["c"]: c1
         a[1]: one
