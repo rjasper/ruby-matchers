@@ -10,6 +10,10 @@ module Matcher
       ValueMatcher.new(value)
     end
 
+    def a(array)
+      ArrayMatcher.new(array)
+    end
+
     def h(**hash)
       HashMatcher.new(hash)
     end

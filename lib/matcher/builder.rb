@@ -26,6 +26,13 @@ module Matcher
       EachMatcher.new(Matcher.of(matcher))
     end
 
+    def map(recorder, matcher)
+      expression = ExpressionRecorder.to_expression(recorder)
+      matcher = Matcher.of(matcher)
+
+      MapMatcher.new(expression, matcher)
+    end
+
     def set(array)
       SetMatcher.new(array.map { Matcher.of(_1) })
     end
