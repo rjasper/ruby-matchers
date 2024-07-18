@@ -60,6 +60,37 @@ module Matcher
       assert_equal %w[c2 c3], errors1.attributes[:c].base
     end
 
+    test '#add: simple expression key' do
+      errors = Errors.new
+      errors.add(Expression.build { _1[:foo] }, 'foo is wrong')
+
+      assert_equal ['foo is wrong'], errors.attributes[:foo].base
+    end
+
+    test '#add: chained expression key' do
+      errors = Errors.new
+      errors.add(Expression.build { _1[:foo][:bar] }, 'foo bar is wrong')
+
+      assert_equal ['foo bar is wrong'],
+        errors.attributes[:foo].attributes[:bar].base
+    end
+
+    test '#add: advanced expression key' do
+      errors = Errors.new
+      expression = Expression.build { _1 + 1 }
+      errors.add(expression, 'something went wrong')
+
+      assert_equal ['something went wrong'], errors.attributes[expression].base
+    end
+
+    test '#add: root expression key' do
+      errors = Errors.new
+      expression = Expression.build { _1 }
+      errors.add(expression, 'something went wrong')
+
+      assert_equal ['something went wrong'], errors.base
+    end
+
     test '#<<' do
       errors = Errors.new
       errors << "that's not right"

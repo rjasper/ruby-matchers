@@ -4,12 +4,22 @@ module Matcher
   class Expression
     attr_reader :receiver, :method, :args, :kwargs
 
+    def self.build
+      recorder = yield ExpressionRecorder.new
+
+      ExpressionRecorder.to_expression(recorder)
+    end
+
     def initialize(receiver = nil, method = nil, *args, **kwargs, &block)
       @receiver = receiver
       @method = method
       @args = args
       @kwargs = kwargs
       @block = block
+    end
+
+    def root?
+      @receiver.nil?
     end
 
     def unary?
@@ -36,6 +46,12 @@ module Matcher
 
       actual_receiver.send(@method, *args, **kwargs, &@block)
         .tap { chain&.push(_1) }
+    end
+
+    def rooted
+      return self if @receiver&.root?
+
+      Expression.new(Expression.new, @method, *@args, **@kwargs, &@block)
     end
 
     def to_s

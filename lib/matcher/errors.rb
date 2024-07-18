@@ -40,8 +40,9 @@ module Matcher
       if error
         return self if error.is_a?(Errors) && error.empty?
 
-        attribute_errors = (@attributes[key_or_error] ||= Errors.new)
-        attribute_errors.add(error)
+        normalize_key(key_or_error)
+          .reduce(self) { _1.attributes[_2] ||= Errors.new }
+          .add(error)
       elsif key_or_error.is_a?(Errors)
         merge!(key_or_error)
       else
@@ -75,6 +76,26 @@ module Matcher
     end
 
     private
+
+    def normalize_key(key)
+      return [key] unless key.is_a?(Expression)
+
+      keys = []
+      expression = key
+
+      until expression.root?
+        key = if expression.method == :[] && expression.binary?
+          expression.args[0]
+        else
+          expression.rooted
+        end
+
+        keys.unshift(key)
+        expression = expression.receiver
+      end
+
+      keys
+    end
 
     def message_recursive(path, errors, io)
       errors.base.each do |message|
