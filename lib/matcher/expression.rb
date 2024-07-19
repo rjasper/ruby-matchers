@@ -10,6 +10,31 @@ module Matcher
       ExpressionRecorder.to_expression(recorder)
     end
 
+    UNARY_OPERATORS = %i[! ~ +@ -@].freeze
+    BINARY_OPERATORS = %i[+ - * ** / % < > <= >= <=> == === != =~ !~ & | ^ << >>].freeze
+
+    OPERATOR_PRECEDENCE = begin
+      precedence = {}
+
+      # see https://ruby-doc.org/3.2.2/syntax/precedence_rdoc.html
+      [
+        %i[! ~ +@],
+        %i[**],
+        %i[-@],
+        %i[* / %],
+        %i[+ -],
+        %i[<< >>],
+        %i[&],
+        %i[| ^],
+        %i[> >= < <=],
+        %i[<=> == === != =~ !~],
+      ].each_with_index do |operators, index|
+        operators.each { precedence[_1] = index }
+      end
+
+      precedence.freeze
+    end
+
     def initialize(receiver = nil, method = nil, *args, **kwargs, &block)
       @receiver = receiver
       @method = method
@@ -28,6 +53,14 @@ module Matcher
 
     def binary?
       @args.length == 1 && @kwargs.empty? && !@block
+    end
+
+    def precedence
+      has_precedence = (unary? && UNARY_OPERATORS.include?(@method)) ||
+        (binary? && BINARY_OPERATORS.include?(@method))
+
+      # if method is not an operator then precedence is highest (-1)
+      has_precedence ? OPERATOR_PRECEDENCE[@method] : -1
     end
 
     def evaluate(value, chain = nil)
@@ -68,7 +101,7 @@ module Matcher
     def to_s(root: 'value')
       return root if @receiver.nil?
 
-      receiver = @receiver.to_s(root:)
+      receiver = parenthesize(@receiver, root)
 
       case @method
       when :!, :~, :+@, :-@
@@ -76,24 +109,24 @@ module Matcher
         return "#{@method[0]}#{receiver}" if unary?
       when :+, :-, :*, :/, :%, :<, :>, :<=, :>=, :<=>, :==, :===, :!=, :=~, :!~, :&, :|, :^, :<<, :>>
         # foo + bar
-        return "(#{receiver} #{@method} #{@args[0].inspect})" if binary?
+        return "#{receiver} #{@method} #{parenthesize(@args[0], root)}" if binary?
       when :**
         # foo**2
-        return "(#{receiver}**#{@args[0].inspect})" if binary?
+        return "#{receiver}**#{parenthesize(@args[0], root)}" if binary?
       when :[]
         # foo[a, b, ...]
         return "#{receiver}[#{args_and_kwargs_string}]#{' { ... }' if @block}"
       when :[]=
-        # (foo[a, b, ...] = 1)
+        # foo[a, b, ...] = 1
         if @args.length >= 2 && @kwargs.empty? && !@block
-          return "(#{receiver}[#{@args[0..-2].map(&:inspect).join(', ')}] = #{@args[-1].inspect})"
+          return "#{receiver}[#{@args[0..-2].map(&:inspect).join(', ')}] = #{@args[-1].inspect}"
         end
       end
 
       if @method.end_with?('=') && @method != :[]= && binary?
         # foo.bar = 42
 
-        "(#{receiver}.#{@method[0..-2]} = #{@args[0].inspect})"
+        "#{receiver}.#{@method[0..-2]} = #{@args[0].inspect}"
       else
         # foo.bar OR foo.bar(arg1, arg2, ...)
 
@@ -159,6 +192,15 @@ module Matcher
       end
 
       (args + kwargs).join(', ')
+    end
+
+    def parenthesize(operand, root)
+      return operand.inspect unless operand.is_a?(Expression)
+
+      operand_string = operand.to_s(root:)
+
+      # if operand's precedence is lower (higher index) than ours
+      operand.precedence > precedence ? "(#{operand_string})" : operand_string
     end
   end
 end

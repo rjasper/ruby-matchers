@@ -16,36 +16,36 @@ module Matcher
       examine.call('+value') { +_1 }
       examine.call('-value') { -_1 }
 
-      examine.call('(value + 2)') { _1 + 2 }
-      examine.call('(value - 2)') { _1 - 2 }
-      examine.call('(value * 2)') { _1 * 2 }
-      examine.call('(value / 2)') { _1 / 2 }
-      examine.call('(value % 2)') { _1 % 2 }
-      examine.call('(value < 2)') { _1 < 2 }
-      examine.call('(value > 2)') { _1 > 2 }
-      examine.call('(value <= 2)') { _1 <= 2 }
-      examine.call('(value >= 2)') { _1 >= 2 }
-      examine.call('(value <=> 2)') { _1 <=> 2 }
-      examine.call('(value == 2)') { _1 == 2 }
-      examine.call('(value === 2)') { _1 === 2 }
-      examine.call('(value != 2)') { _1 != 2 }
-      examine.call('(value =~ 2)') { _1 =~ 2 }
-      examine.call('(value !~ 2)') { _1 !~ 2 }
-      examine.call('(value & 2)') { _1 & 2 }
-      examine.call('(value | 2)') { _1 | 2 }
-      examine.call('(value ^ 2)') { _1 ^ 2 }
-      examine.call('(value << 2)') { _1 << 2 }
-      examine.call('(value >> 2)') { _1 >> 2 }
+      examine.call('value + 2') { _1 + 2 }
+      examine.call('value - 2') { _1 - 2 }
+      examine.call('value * 2') { _1 * 2 }
+      examine.call('value / 2') { _1 / 2 }
+      examine.call('value % 2') { _1 % 2 }
+      examine.call('value < 2') { _1 < 2 }
+      examine.call('value > 2') { _1 > 2 }
+      examine.call('value <= 2') { _1 <= 2 }
+      examine.call('value >= 2') { _1 >= 2 }
+      examine.call('value <=> 2') { _1 <=> 2 }
+      examine.call('value == 2') { _1 == 2 }
+      examine.call('value === 2') { _1 === 2 }
+      examine.call('value != 2') { _1 != 2 }
+      examine.call('value =~ 2') { _1 =~ 2 }
+      examine.call('value !~ 2') { _1 !~ 2 }
+      examine.call('value & 2') { _1 & 2 }
+      examine.call('value | 2') { _1 | 2 }
+      examine.call('value ^ 2') { _1 ^ 2 }
+      examine.call('value << 2') { _1 << 2 }
+      examine.call('value >> 2') { _1 >> 2 }
 
-      examine.call('(value**2)') { _1**2 }
+      examine.call('value**2') { _1**2 }
 
       examine.call('value[1, 2, a: 3]') { _1[1, 2, a: 3] }
       examine.call('value[1, 2, a: 3] { ... }') { _1[1, 2, a: 3] { 4 } }
 
-      examine.call('(value[1] = 2)') { _1.[]=(1, 2) }
-      examine.call('(value[1, 2] = 3)') { _1.[]=(1, 2, 3) }
+      examine.call('value[1] = 2') { _1.[]=(1, 2) }
+      examine.call('value[1, 2] = 3') { _1.[]=(1, 2, 3) }
 
-      assert_equal '(value.foo = "bar")',
+      assert_equal 'value.foo = "bar"',
         Expression.new(Expression.new, :foo=, 'bar').to_s
 
       examine.call('value.foo') { _1.foo }
@@ -69,11 +69,23 @@ module Matcher
       examine.call('value.[]=(1, 2, a: 3)') { _1.[]=(1, 2, a: 3) }
       examine.call('value.[]=(1, 2) { ... }') { _1.[]=(1, 2) { 3 } }
       examine.call('value.[]= { ... }') { _1.[]= { 1 } }
+
+      # precedence and parentheses
+      examine.call('(value + 1) * 2') { |x| (x + 1) * 2 }
+      examine.call('value + 1') { |x| x + 1 }
+      examine.call('value + value * 2') { |x| x + x * 2 }
+      examine.call('value * (value + 2)') { |x| x * (x + 2) }
+      examine.call('value + value - 1') { |x| x + x - 1 }
+      examine.call('-(value + 1)') { |x| -(x + 1) }
+      examine.call('-value + 1') { |x| -x + 1 }
+      examine.call('(value + [1])[0]') { |x| (x + [1])[0] }
+      examine.call('(value + 1).foo') { |x| (x + 1).foo }
+      examine.call('value[0] + [1]') { |x| x[0] + [1] }
     end
     # rubocop:enable Style/CaseEquality, Layout/SpaceBeforeBrackets, Style/SymbolProc
 
     test '#to_s: root' do
-      assert_equal '(foo.bar + 1)', expr { _1.bar + 1 }.to_s(root: 'foo')
+      assert_equal 'foo.bar + 1', expr { _1.bar + 1 }.to_s(root: 'foo')
     end
 
     private

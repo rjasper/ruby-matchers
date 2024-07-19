@@ -131,7 +131,7 @@ module Matcher
         - base 1
         a: a1
         a: a2
-        (a + 1): a3
+        a + 1: a3
         a.b: b1
         a["c"]: c1
         a[1]: one
