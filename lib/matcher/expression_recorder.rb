@@ -5,9 +5,7 @@ module Matcher
     def self.to_expression(recorder)
       raise "no recorder given, got #{recorder.inspect}" if recorder.class != ExpressionRecorder
 
-      recorder.instance_exec do
-        Expression.new(@receiver, @method, *@args, **@kwargs, &@block)
-      end
+      recorder.instance_exec { @expression }
     end
 
     def self.transform(object)
@@ -20,16 +18,13 @@ module Matcher
       receiver = ExpressionRecorder.to_expression(recorder)
       args = args.map { transform(_1) }
       kwargs = kwargs.transform_values { transform(_1) }
+      expression = Expression.new(receiver, method, *args, **kwargs, &)
 
-      ExpressionRecorder.new(receiver, method, *args, **kwargs, &)
+      ExpressionRecorder.new(expression)
     end
 
-    def initialize(receiver = nil, method = nil, *args, **kwargs, &block)
-      @receiver = receiver
-      @method = method
-      @args = args
-      @kwargs = kwargs
-      @block = block
+    def initialize(expression = Expression.new)
+      @expression = expression
     end
 
     (instance_methods - %i[__id__ __send__ object_id class instance_exec])
