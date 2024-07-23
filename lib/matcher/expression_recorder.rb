@@ -30,14 +30,10 @@ module Matcher
     (instance_methods - %i[__id__ __send__ object_id class instance_exec])
       .each { undef_method _1 }
 
-    def !
-      ExpressionRecorder.record(self, :!)
-    end
-
-    %w[== != <=> === =~ !~].each do |operator|
+    %w[! == != <=> === =~ !~].each do |operator|
       class_eval <<~CODE, __FILE__, __LINE__ + 1
-        def #{operator}(operand)                                                # def ==(operand)
-          ExpressionRecorder.record(self, :#{operator}, operand)                #   ExpressionRecorder.record(self, :==, operand)
+        def #{operator}(...)                                                    # def ==(...)
+          ExpressionRecorder.record(self, :#{operator}, ...)                    #   ExpressionRecorder.record(self, :==, ...)
         end                                                                     # end
       CODE
     end
