@@ -30,12 +30,10 @@ module Matcher
   end
 
   def self.of(object)
-    # rubocop:disable Style/ClassEqualityComparison
-    if object.class == ExpressionRecorder
+    if ExpressionRecorder.recorder?(object)
       expression = ExpressionRecorder.to_expression(object)
       return ExpressionMatcher.new(expression)
     end
-    # rubocop:enable Style/ClassEqualityComparison
 
     case object
     when Base

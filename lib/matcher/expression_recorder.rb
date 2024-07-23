@@ -2,14 +2,20 @@
 
 module Matcher
   class ExpressionRecorder
-    def self.to_expression(recorder)
-      raise "no recorder given, got #{recorder.inspect}" if recorder.class != ExpressionRecorder
+    def self.recorder?(object)
+      object.__class__ == ExpressionRecorder
+    rescue NoMethodError
+      false
+    end
 
-      recorder.instance_exec { @expression }
+    def self.to_expression(recorder)
+      raise "no recorder given, got #{recorder.inspect}" unless recorder?(recorder)
+
+      recorder.__expression__
     end
 
     def self.transform(object)
-      return object if object.class != ExpressionRecorder
+      return object unless recorder?(object)
 
       ExpressionRecorder.to_expression(object)
     end
@@ -27,8 +33,14 @@ module Matcher
       @expression = expression
     end
 
-    (instance_methods - %i[__id__ __send__ object_id class instance_exec])
+    alias __class__ class
+
+    (instance_methods - %i[__id__ __send__ __class__ object_id])
       .each { undef_method _1 }
+
+    def __expression__
+      @expression
+    end
 
     %w[! == != <=> === =~ !~].each do |operator|
       class_eval <<~CODE, __FILE__, __LINE__ + 1

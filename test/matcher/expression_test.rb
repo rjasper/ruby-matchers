@@ -88,6 +88,22 @@ module Matcher
       assert_equal 'foo.bar + 1', expr { _1.bar + 1 }.to_s(root: 'foo')
     end
 
+    test 'records class' do
+      assert_equal :class, expr { _1.class }.method
+    end
+
+    test 'records instance_exec' do
+      klass = Class.new do
+        def initialize
+          @foo = 'foo'
+        end
+      end
+
+      expression = expr { _1.instance_exec { @foo } }
+
+      assert_equal 'foo', expression.evaluate(klass.new)
+    end
+
     private
 
     def expr
