@@ -8,8 +8,7 @@ module Matcher
     include Testing
 
     test 'matches mapped matcher' do
-      value = ExpressionRecorder.new
-      projection = ExpressionRecorder.to_expression(value[:foo])
+      projection = Expression.build { _1[:foo] }
       matcher = MapMatcher.new(projection, a([v(1), v(2)]))
 
       assert_predicate matcher.match([{ foo: 1 }, { foo: 2 }]), :valid?

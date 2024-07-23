@@ -7,7 +7,7 @@ module Matcher
     # rubocop:disable Style/CaseEquality, Layout/SpaceBeforeBrackets, Style/SymbolProc
     test '#to_s' do
       examine = lambda do |expected, &block|
-        assert_equal expected, expr(&block).to_s
+        assert_equal expected, Matcher::Expression.build(&block).to_s
       end
 
       examine.call('value') { _1 }
@@ -85,11 +85,15 @@ module Matcher
     # rubocop:enable Style/CaseEquality, Layout/SpaceBeforeBrackets, Style/SymbolProc
 
     test '#to_s: root' do
-      assert_equal 'foo.bar + 1', expr { _1.bar + 1 }.to_s(root: 'foo')
+      expression = Matcher::Expression.build { _1.bar + 1 }
+
+      assert_equal 'foo.bar + 1', expression.to_s(root: 'foo')
     end
 
     test 'records class' do
-      assert_equal :class, expr { _1.class }.method
+      expression = Matcher::Expression.build { _1.class } # rubocop:disable Style/SymbolProc
+
+      assert_equal :class, expression.method
     end
 
     test 'records instance_exec' do
@@ -99,17 +103,11 @@ module Matcher
         end
       end
 
-      expression = expr { _1.instance_exec { @foo } }
+      expression = Matcher::Expression.build do |obj|
+        obj.instance_exec { @foo }
+      end
 
       assert_equal 'foo', expression.evaluate(klass.new)
-    end
-
-    private
-
-    def expr
-      recorder = yield ExpressionRecorder.new
-
-      ExpressionRecorder.to_expression(recorder)
     end
   end
 end
