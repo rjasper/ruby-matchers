@@ -11,6 +11,7 @@ require 'matcher/array_matcher'
 require 'matcher/assertions'
 require 'matcher/block_matcher'
 require 'matcher/builder'
+require 'matcher/case_equality_matcher'
 require 'matcher/each_matcher'
 require 'matcher/errors'
 require 'matcher/expression'
@@ -28,6 +29,8 @@ module Matcher
 
     of(object)
   end
+
+  CASE_EQUALITY_CLASSES = [Class, Range, Regexp].freeze
 
   def self.of(object)
     if ExpressionRecorder.recorder?(object)
@@ -49,6 +52,8 @@ module Matcher
       )
     when Array
       ArrayMatcher.new(object.map { of(_1) })
+    when *CASE_EQUALITY_CLASSES
+      CaseEqualityMatcher.new(object)
     else
       ValueMatcher.new(object)
     end
