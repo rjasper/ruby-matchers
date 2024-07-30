@@ -13,6 +13,7 @@ require 'matcher/block_matcher'
 require 'matcher/builder'
 require 'matcher/case_equality_matcher'
 require 'matcher/each_matcher'
+require 'matcher/equal_matcher'
 require 'matcher/errors'
 require 'matcher/expression'
 require 'matcher/expression_matcher'
@@ -21,7 +22,6 @@ require 'matcher/hash_matcher'
 require 'matcher/iso8601_matcher'
 require 'matcher/map_matcher'
 require 'matcher/set_matcher'
-require 'matcher/value_matcher'
 
 module Matcher
   def self.build(&)
@@ -55,7 +55,7 @@ module Matcher
     when *CASE_EQUALITY_CLASSES
       CaseEqualityMatcher.new(object)
     else
-      ValueMatcher.new(object)
+      EqualMatcher.new(object)
     end
   end
 

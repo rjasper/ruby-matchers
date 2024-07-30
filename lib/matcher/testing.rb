@@ -7,7 +7,7 @@ module Matcher
     end
 
     def v(value)
-      ValueMatcher.new(value)
+      EqualMatcher.new(value)
     end
 
     def a(array)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Matcher
-  class ValueMatcher < Base
+  class EqualMatcher < Base
     def initialize(value)
       super()
 
@@ -9,11 +9,16 @@ module Matcher
     end
 
     def check(actual)
-      errors << not_equal_message(actual) if actual != @value
+      errors << not_equal_message(actual) unless actual == @value
     end
 
     def inspect
-      @value.inspect
+      case @value
+      when *CASE_EQUALITY_CLASSES
+        "equal(#{@value.inspect})"
+      else
+        @value.inspect
+      end
     end
 
     private

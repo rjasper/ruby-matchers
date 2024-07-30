@@ -6,6 +6,10 @@ module Matcher
       BlockMatcher.new(block, message)
     end
 
+    def equal(value)
+      EqualMatcher.new(value)
+    end
+
     def value
       @value ||= ExpressionRecorder.new
     end
