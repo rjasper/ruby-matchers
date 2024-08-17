@@ -12,7 +12,7 @@ class MatcherTest < ActiveSupport::TestCase
 
     assert_raises(Minitest::Assertion) do
       assert_structure({ bar: 1 }) do
-        { bar: value.even? }
+        { bar: _.even? }
       end
     end
   end

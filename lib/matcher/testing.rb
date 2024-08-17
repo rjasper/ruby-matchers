@@ -19,7 +19,7 @@ module Matcher
     end
 
     def expr(&)
-      Expression.build(&)
+      Call.build(&)
     end
 
     def assert_errors(actual, *base, **attributes)
@@ -41,8 +41,8 @@ module Matcher
         new_prefix = case key
         when Symbol
           "#{prefix}.#{key}"
-        when Expression
-          key.to_s(root: prefix)
+        when Call
+          key.to_s(substitutions: { actual: prefix })
         else
           "#{prefix}[#{key.inspect}]"
         end

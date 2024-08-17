@@ -38,26 +38,26 @@ module Matcher
 
     test '#all' do
       matcher = Matcher.build do
-        all(value.odd?, value % 3 == 0)
+        all(_.odd?, _ % 3 == 0)
       end
 
       assert_predicate matcher.match(3), :valid?
       assert_predicate matcher.match(9), :valid?
-      assert_errors matcher.match(6), 'expected value to be odd but got 6'
-      assert_errors matcher.match(7), 'expected value % 3 to be 0 but got 1 for value = 7'
+      assert_errors matcher.match(6), 'expected actual to be odd but got 6'
+      assert_errors matcher.match(7), 'expected actual % 3 to be 0 but got 1 for actual = 7'
     end
 
     test '#any' do
       matcher = Matcher.build do
-        any(value.even?, value % 5 == 0, 37)
+        any(_.even?, _ % 5 == 0, 37)
       end
 
       assert_predicate matcher.match(4), :valid?
       assert_predicate matcher.match(15), :valid?
       assert_predicate matcher.match(37), :valid?
       assert_errors matcher.match(17),
-        'expected value to be even but got 17',
-        'expected value % 5 to be 0 but got 2 for value = 17',
+        'expected actual to be even but got 17',
+        'expected actual % 5 to be 0 but got 2 for actual = 17',
         'expected 37 but got 17'
     end
 

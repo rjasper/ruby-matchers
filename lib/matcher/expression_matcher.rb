@@ -10,10 +10,10 @@ module Matcher
 
     def check(actual)
       chain = []
-      evaluation = @expression.evaluate(actual, chain)
+      evaluation = @expression.evaluate({ actual: }, chain)
 
       errors << falsy_message(actual, chain) unless evaluation
-    rescue Expression::NotRespondingError => e
+    rescue Call::NotRespondingError => e
       errors << e.message_for_errors
     end
 
@@ -56,7 +56,7 @@ module Matcher
         end
 
       string += " but got #{chain[-2].inspect}" if @expression.method != :!=
-      string += " for value = #{actual.inspect}" if chain.length > 2
+      string += " for #{@expression.given_values({ actual: })}" if chain.length > 2
 
       string
     end
@@ -80,8 +80,8 @@ module Matcher
       end
     end
 
-    def regular_message(actual, chain)
-      string = "expected #{@expression.inspect} to be truthy for value = #{actual.inspect}"
+    def regular_message(values, chain)
+      string = "expected #{@expression.inspect} to be truthy for #{@expression.given_values(values)}"
       string += ", where #{@expression.receiver.inspect} was #{chain[-2].inspect}" if chain.length > 2
 
       string

@@ -93,11 +93,17 @@ module Matcher
       keys = []
       expression = key
 
-      until expression.root?
+      while expression.instance_of?(Call)
+        unless expression.variables.include?(:actual)
+          keys.unshift(expression)
+          break
+        end
+
         key = if expression.method == :[] && expression.binary?
           expression.args[0]
         else
-          expression.rooted
+          variable = Variable.new(:actual)
+          expression.new_root(variable)
         end
 
         keys.unshift(key)
@@ -125,8 +131,8 @@ module Matcher
         when Symbol
           new_path += '.' unless path.empty?
           new_path += key.to_s
-        when Expression
-          new_path = key.to_s(root: path)
+        when Call
+          new_path = key.to_s(substitutions: { actual: path })
         else
           new_path += "[#{key.inspect}]"
         end

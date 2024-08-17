@@ -19,8 +19,8 @@ module Matcher
       mapping_failed = false
 
       actual.map.with_index do |item, i|
-        mapped << @projection.evaluate(item)
-      rescue Expression::NotRespondingError => e
+        mapped << @projection.evaluate({ actual: item })
+      rescue Call::NotRespondingError => e
         errors[i] << e.message_for_errors
         mapping_failed = true
       end
@@ -30,7 +30,7 @@ module Matcher
       mapped_errors = @matcher.match(mapped)
 
       unless mapped_errors.base.empty?
-        base_projection = Expression.build { _1.map_expression(@projection) }
+        base_projection = Call.build { _1.map_expression(@projection) }
         mapped_errors.base.each { errors[base_projection] << _1 }
       end
 

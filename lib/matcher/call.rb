@@ -1,11 +1,18 @@
 # frozen_string_literal: true
 
 module Matcher
-  class Expression
+  class Call < Expression
     attr_reader :receiver, :method, :args, :kwargs, :block
 
-    def self.build
-      recorder = yield ExpressionRecorder.new
+    def self.build(*symbols)
+      symbols.unshift(:actual) if symbols.empty?
+
+      recorders = symbols.map do |symbol|
+        variable = Variable.new(symbol)
+        ExpressionRecorder.new(variable)
+      end
+
+      recorder = yield *recorders
 
       ExpressionRecorder.to_expression(recorder)
     end
@@ -35,16 +42,12 @@ module Matcher
       precedence.freeze
     end
 
-    def initialize(receiver = nil, method = nil, *args, **kwargs, &block)
+    def initialize(receiver, method, *args, **kwargs, &block)
       @receiver = receiver
       @method = method
       @args = args
       @kwargs = kwargs
       @block = block
-    end
-
-    def root?
-      @receiver.nil?
     end
 
     def unary?
@@ -63,30 +66,38 @@ module Matcher
       has_precedence ? OPERATOR_PRECEDENCE[@method] : -1
     end
 
-    def evaluate(value, chain = nil)
-      return value.tap { chain&.push(_1) } unless @receiver
+    def evaluate(values, chain = nil)
+      args = evaluate_args(values)
+      kwargs = evaluate_kwargs(values)
+      actual_receiver = @receiver.evaluate(values, chain)
 
-      args = evaluate_args(value)
-      kwargs = evaluate_kwargs(value)
-      actual_receiver = @receiver.evaluate(value, chain)
-
-      raise NotRespondingError.new(self, actual_receiver, value) unless
+      raise NotRespondingError.new(self, actual_receiver, values) unless
         actual_receiver.respond_to?(@method)
 
       actual_receiver.send(@method, *args, **kwargs, &@block)
         .tap { chain&.push(_1) }
     end
 
-    def rooted
-      return self if @receiver&.root?
+    def variables
+      @variables ||= begin
+        variables_from_arg = ->(arg) { arg.is_a?(Expression) && arg.variables }
 
-      Expression.new(Expression.new, @method, *@args, **@kwargs, &@block)
+        variables = @receiver.variables +
+          @args.filter_map(&variables_from_arg) +
+          @kwargs.each_value.filter_map(&variables_from_arg)
+
+        variables.uniq
+      end
+    end
+
+    def new_root(receiver)
+      Call.new(receiver, @method, *@args, **@kwargs, &@block)
     end
 
     def eql?(other)
       return true if equal?(other)
 
-      other.is_a?(Expression) &&
+      other.is_a?(Call) &&
         other.receiver.eql?(@receiver) &&
         other.method.eql?(@method) &&
         other.args.eql?(@args) &&
@@ -98,10 +109,8 @@ module Matcher
       [@receiver, @args, @method, @kwargs, @block].hash
     end
 
-    def to_s(root: 'value')
-      return root if @receiver.nil?
-
-      receiver = parenthesize(@receiver, root)
+    def to_s(substitutions: nil)
+      receiver = parenthesize(@receiver, substitutions)
 
       case @method
       when :!, :~, :+@, :-@
@@ -109,10 +118,10 @@ module Matcher
         return "#{@method[0]}#{receiver}" if unary?
       when :+, :-, :*, :/, :%, :<, :>, :<=, :>=, :<=>, :==, :===, :!=, :=~, :!~, :&, :|, :^, :<<, :>>
         # foo + bar
-        return "#{receiver} #{@method} #{parenthesize(@args[0], root)}" if binary?
+        return "#{receiver} #{@method} #{parenthesize(@args[0], substitutions)}" if binary?
       when :**
         # foo**2
-        return "#{receiver}**#{parenthesize(@args[0], root)}" if binary?
+        return "#{receiver}**#{parenthesize(@args[0], substitutions)}" if binary?
       when :[]
         # foo[a, b, ...]
         return "#{receiver}[#{args_and_kwargs_string}]#{' { ... }' if @block}"
@@ -141,43 +150,50 @@ module Matcher
     alias inspect to_s
 
     class NotRespondingError < StandardError
-      attr_reader :expression, :receiver, :value
+      attr_reader :call, :receiver, :values
 
-      def initialize(expression, receiver, value)
-        @expression = expression
+      def initialize(call, receiver, values)
+        @call = call
         @receiver = receiver
-        @value = value
+        @values = values
 
-        message = "#{@expression.receiver.inspect} does not respond to " \
-          "#{@expression.method} where value = #{@value.inspect}"
+        message = "#{@call.receiver.inspect} does not respond to " \
+          "#{@call.method} where #{@call.given_values(values)}"
 
         super(message)
       end
 
       def message_for_errors
-        expression = @expression.receiver.inspect
-        method = @expression.method
+        expression = @call.receiver.inspect
+        method = @call.method
         actual = @receiver.inspect
-        value = @value.inspect
 
         string = "expected #{expression} to respond to #{method} but got #{actual}"
-        string += " where value = #{value}" if expression != 'value'
+        string += " where #{@call.given_values(@values)}" if @call.receiver.instance_of?(Call)
 
         string
       end
     end
 
+    def given_values(values)
+      parts = variables.map do |symbol|
+        "#{symbol} = #{values[symbol].inspect}"
+      end
+
+      parts.join(', ')
+    end
+
     private
 
-    def evaluate_args(value)
+    def evaluate_args(values)
       @args.map do |arg|
-        arg.is_a?(Expression) ? arg.evaluate(value) : arg
+        arg.is_a?(Call) ? arg.evaluate(values) : arg
       end
     end
 
-    def evaluate_kwargs(value)
+    def evaluate_kwargs(values)
       @kwargs.transform_values do |kwarg|
-        kwarg.is_a?(Expression) ? kwarg.evaluate(value) : kwarg
+        kwarg.is_a?(Call) ? kwarg.evaluate(values) : kwarg
       end
     end
 
@@ -194,10 +210,12 @@ module Matcher
       (args + kwargs).join(', ')
     end
 
-    def parenthesize(operand, root)
+    def parenthesize(operand, substitutions)
       return operand.inspect unless operand.is_a?(Expression)
 
-      operand_string = operand.to_s(root:)
+      operand_string = operand.to_s(substitutions:)
+
+      return operand_string unless operand.instance_of?(Call)
 
       # if operand's precedence is lower (higher index) than ours
       operand.precedence > precedence ? "(#{operand_string})" : operand_string

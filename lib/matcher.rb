@@ -4,6 +4,10 @@ require 'active_support/all'
 
 require_relative "matcher/version"
 require 'matcher/base'
+require 'matcher/expression'
+require 'matcher/call'
+require 'matcher/constant'
+require 'matcher/variable'
 
 require 'matcher/all_matcher'
 require 'matcher/any_matcher'
@@ -15,7 +19,6 @@ require 'matcher/case_equality_matcher'
 require 'matcher/each_matcher'
 require 'matcher/equal_matcher'
 require 'matcher/errors'
-require 'matcher/expression'
 require 'matcher/expression_matcher'
 require 'matcher/expression_recorder'
 require 'matcher/hash_matcher'

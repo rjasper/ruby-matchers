@@ -24,12 +24,12 @@ module Matcher
       receiver = ExpressionRecorder.to_expression(recorder)
       args = args.map { transform(_1) }
       kwargs = kwargs.transform_values { transform(_1) }
-      expression = Expression.new(receiver, method, *args, **kwargs, &)
+      expression = Call.new(receiver, method, *args, **kwargs, &)
 
       ExpressionRecorder.new(expression)
     end
 
-    def initialize(expression = Expression.new)
+    def initialize(expression)
       @expression = expression
     end
 

@@ -62,14 +62,14 @@ module Matcher
 
     test '#add: simple expression key' do
       errors = Errors.new
-      errors.add(Expression.build { _1[:foo] }, 'foo is wrong')
+      errors.add(Call.build { _1[:foo] }, 'foo is wrong')
 
       assert_equal ['foo is wrong'], errors.attributes[:foo].base
     end
 
     test '#add: chained expression key' do
       errors = Errors.new
-      errors.add(Expression.build { _1[:foo][:bar] }, 'foo bar is wrong')
+      errors.add(Call.build { _1[:foo][:bar] }, 'foo bar is wrong')
 
       assert_equal ['foo bar is wrong'],
         errors.attributes[:foo].attributes[:bar].base
@@ -77,7 +77,18 @@ module Matcher
 
     test '#add: advanced expression key' do
       errors = Errors.new
-      expression = Expression.build { _1 + 1 }
+      expression = Call.build { _1 + 1 }
+      errors.add(expression, 'something went wrong')
+
+      assert_equal ['something went wrong'], errors.attributes[expression].base
+    end
+
+    test '#add: constant expression root' do
+      errors = Errors.new
+      math = Constant.new(Math)
+      actual = Variable.new(:actual)
+      expression = Call.new(math, :sqrt, actual)
+
       errors.add(expression, 'something went wrong')
 
       assert_equal ['something went wrong'], errors.attributes[expression].base
@@ -85,7 +96,7 @@ module Matcher
 
     test '#add: root expression key' do
       errors = Errors.new
-      expression = Expression.build { _1 }
+      expression = Call.build { _1 }
       errors.add(expression, 'something went wrong')
 
       assert_equal ['something went wrong'], errors.base
@@ -118,7 +129,7 @@ module Matcher
       errors1.add('base 1')
       errors1.add(:a, 'a1')
       errors1.add(:a, 'a2')
-      errors1.add(Expression.build { _1[:a] + 1 }, 'a3')
+      errors1.add(Call.build { _1[:a] + 1 }, 'a3')
 
       errors2 = Errors.new
       errors2.add(:b, 'b1')

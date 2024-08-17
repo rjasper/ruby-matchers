@@ -10,8 +10,29 @@ module Matcher
       EqualMatcher.new(value)
     end
 
-    def value
-      @value ||= ExpressionRecorder.new
+    def actual
+      var(:actual)
+    end
+    alias _ actual
+
+    def key
+      var(:key)
+    end
+    alias k key
+
+    def index
+      var(:index)
+    end
+    alias i index
+
+    def parent
+      var(:parent)
+    end
+
+    def var(symbol)
+      variable = Variable.new(symbol)
+
+      ExpressionRecorder.new(variable)
     end
 
     def all_entries(hash)
