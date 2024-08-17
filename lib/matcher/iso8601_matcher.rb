@@ -15,7 +15,7 @@ module Matcher
         end
     end
 
-    def check(actual)
+    def check(actual, **)
       unless actual.is_a?(String)
         errors << "expected a String but got #{actual.inspect}"
         return

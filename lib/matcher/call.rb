@@ -80,11 +80,13 @@ module Matcher
 
     def variables
       @variables ||= begin
-        variables_from_arg = ->(arg) { arg.is_a?(Expression) && arg.variables }
+        variables_from_arg = lambda do |arg|
+          arg.is_a?(Expression) ? arg.variables : []
+        end
 
         variables = @receiver.variables +
-          @args.filter_map(&variables_from_arg) +
-          @kwargs.each_value.filter_map(&variables_from_arg)
+          @args.flat_map(&variables_from_arg) +
+          @kwargs.each_value.flat_map(&variables_from_arg)
 
         variables.uniq
       end
@@ -176,8 +178,11 @@ module Matcher
     end
 
     def given_values(values)
-      parts = variables.map do |symbol|
-        "#{symbol} = #{values[symbol].inspect}"
+      parts = variables.filter_map do |symbol|
+        value = values[symbol]
+        next if value.nil? && !values.key?(symbol)
+
+        "#{symbol} = #{value.inspect}"
       end
 
       parts.join(', ')
@@ -187,13 +192,13 @@ module Matcher
 
     def evaluate_args(values)
       @args.map do |arg|
-        arg.is_a?(Call) ? arg.evaluate(values) : arg
+        arg.is_a?(Expression) ? arg.evaluate(values) : arg
       end
     end
 
     def evaluate_kwargs(values)
       @kwargs.transform_values do |kwarg|
-        kwarg.is_a?(Call) ? kwarg.evaluate(values) : kwarg
+        kwarg.is_a?(Expression) ? kwarg.evaluate(values) : kwarg
       end
     end
 

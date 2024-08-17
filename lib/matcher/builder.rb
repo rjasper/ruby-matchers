@@ -20,6 +20,11 @@ module Matcher
     end
     alias k key
 
+    def value
+      var(:value)
+    end
+    alias v value
+
     def index
       var(:index)
     end
@@ -27,6 +32,10 @@ module Matcher
 
     def parent
       var(:parent)
+    end
+
+    def original
+      var(:original)
     end
 
     def var(symbol)

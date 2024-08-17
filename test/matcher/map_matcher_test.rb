@@ -28,5 +28,27 @@ module Matcher
       assert_errors match([{ foo: 1 }, { foo: 1 }]) { map(_[:foo], _.is_a?(String)) },
         expr { _1.map_expression(_1[:foo]) } => 'expected actual to be a kind of String but got [1, 1]'
     end
+
+    test 'pass index' do
+      actual = [{ a: 10 }, { a: 20 }, { a: 40 }]
+
+      projection = Call.build(:actual, :index) { |_, i| _ + i }
+
+      assert_errors match(actual) { map(_[:a] + i, [10, 21, 32]) },
+        2 => { a: { projection => 'expected 32 but got 42' } }
+    end
+
+    test 'pass original' do
+      matcher = Matcher.build do
+        map(_[:a], [_ == original])
+      end
+
+      array = []
+      array << { a: array }
+
+      assert_predicate matcher.match(array), :valid?
+      assert_errors matcher.match([{ a: 1 }]),
+        0 => { a: 'expected actual to be original but got 1' }
+    end
   end
 end

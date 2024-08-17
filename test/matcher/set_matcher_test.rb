@@ -22,6 +22,21 @@ module Matcher
         2 => 'unexpected item 4'
     end
 
+    test 'pass parent' do
+      matcher = Matcher.build do
+        set([_ == parent])
+      end
+
+      self_array = []
+      self_array << self_array
+
+      assert_predicate matcher.match(self_array), :valid?
+
+      assert_errors matcher.match([1]),
+        'expected array to include actual == parent',
+        0 => 'unexpected item 1'
+    end
+
     test '#inspect' do
       assert_equal 'set([1, 2, 3])', SetMatcher.new([v(1), v(2), v(3)]).inspect
     end

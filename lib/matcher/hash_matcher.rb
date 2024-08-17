@@ -2,14 +2,16 @@
 
 module Matcher
   class HashMatcher < Base
-    def initialize(hash, all_entries: true)
+    def initialize(hash, key: :key, parent: :parent, all_entries: true)
       super()
 
       @hash = hash
+      @key = key
+      @parent = parent
       @all_entries = all_entries
     end
 
-    def check(actual)
+    def check(actual, **values)
       unless actual.is_a?(Hash)
         errors << "expected a Hash but got #{actual.inspect}"
         return
@@ -23,7 +25,7 @@ module Matcher
         errors[key] << if actual_value.nil? && !actual.key?(key)
           "expected entry for #{key.inspect} but found nothing"
         else
-          value.match(actual_value)
+          value.match(actual_value, **values, @key => key, @parent => actual)
         end
       end
     end

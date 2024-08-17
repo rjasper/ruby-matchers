@@ -9,8 +9,8 @@ module Matcher
       @message = message
     end
 
-    def check(actual)
-      errors << message_for(actual) unless @block.call(actual)
+    def check(actual, **)
+      errors << message_for(actual) unless @block.call(actual, **)
     end
 
     def inspect

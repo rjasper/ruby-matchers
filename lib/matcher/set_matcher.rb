@@ -2,13 +2,14 @@
 
 module Matcher
   class SetMatcher < Base
-    def initialize(array)
+    def initialize(array, parent: :parent)
       super()
 
       @array = array
+      @parent = parent
     end
 
-    def check(actual)
+    def check(actual, **values)
       unless actual.is_a?(Array)
         errors << "expected an Array but got #{actual.inspect}"
         return
@@ -23,7 +24,9 @@ module Matcher
       actual.each_with_index do |element, i|
         break if missing.empty?
 
-        index = missing.find_index { _1.match(element).valid? }
+        index = missing.find_index do |m|
+          m.match(element, **values, @parent => actual).valid?
+        end
 
         if index
           missing.delete_at(index)

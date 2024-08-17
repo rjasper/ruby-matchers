@@ -2,14 +2,16 @@
 
 module Matcher
   class MapMatcher < Base
-    def initialize(projection, matcher)
+    def initialize(projection, matcher, index: :index, original: :original)
       super()
 
       @projection = projection
       @matcher = matcher
+      @index = index
+      @original = original
     end
 
-    def check(actual)
+    def check(actual, **values)
       unless actual.respond_to?(:map)
         errors << "expected to respond to \"map\" but got #{actual.inspect}"
         return
@@ -19,7 +21,12 @@ module Matcher
       mapping_failed = false
 
       actual.map.with_index do |item, i|
-        mapped << @projection.evaluate({ actual: item })
+        mapped << @projection.evaluate({
+          **values,
+          actual: item,
+          @index => i,
+          @original => actual,
+        })
       rescue Call::NotRespondingError => e
         errors[i] << e.message_for_errors
         mapping_failed = true
@@ -27,7 +34,7 @@ module Matcher
 
       return if mapping_failed
 
-      mapped_errors = @matcher.match(mapped)
+      mapped_errors = @matcher.match(mapped, **values, @original => actual)
 
       unless mapped_errors.base.empty?
         base_projection = Call.build { _1.map_expression(@projection) }

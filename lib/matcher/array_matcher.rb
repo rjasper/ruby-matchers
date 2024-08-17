@@ -2,13 +2,15 @@
 
 module Matcher
   class ArrayMatcher < Base
-    def initialize(array)
+    def initialize(array, index: :index, parent: :parent)
       super()
 
       @array = array
+      @index = index
+      @parent = parent
     end
 
-    def check(actual)
+    def check(actual, **values)
       unless actual.is_a?(Array)
         errors << "expected an Array but got #{actual.inspect}"
         return
@@ -18,7 +20,7 @@ module Matcher
         @array.length != actual.length
 
       [@array.length, actual.length].min.times do |i|
-        errors[i] << @array[i].match(actual[i])
+        errors[i] << @array[i].match(actual[i], **values, @index => i, @parent => actual)
       end
     end
 

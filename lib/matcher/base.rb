@@ -14,17 +14,17 @@ module Matcher
       AllMatcher.new([self, matcher])
     end
 
-    def match(actual)
+    def match(actual, **values)
       errors = Errors.new
 
       @errors = errors
-      check(actual)
+      check(actual, **values)
       @errors = nil
 
       errors
     end
 
-    def check(actual)
+    def check(actual, **)
       raise NotImplementedError
     end
 

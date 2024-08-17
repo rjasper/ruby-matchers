@@ -14,9 +14,9 @@ module Matcher
       AnyMatcher.new(@matchers + [matcher])
     end
 
-    def check(actual)
+    def check(actual, **values)
       found = @matchers.any? do |matcher|
-        sub_errors = matcher.match(actual)
+        sub_errors = matcher.match(actual, **values)
         errors << sub_errors
 
         sub_errors.empty?

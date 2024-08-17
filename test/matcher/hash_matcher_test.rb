@@ -48,6 +48,28 @@ module Matcher
       assert_predicate parent.match({ foo: { bar: 'foobar' } }), :valid?
     end
 
+    test 'pass key' do
+      matcher = Matcher.build do
+        { a: _ == key.to_s.upcase }
+      end
+
+      assert_errors matcher.match({ a: 'B' }),
+        a: 'expected actual to be key.to_s.upcase ("A") but got "B" for key = :a'
+    end
+
+    test 'pass parent' do
+      matcher = Matcher.build do
+        { self: _ == parent }
+      end
+
+      self_hash = {}
+      self_hash[:self] = self_hash
+
+      assert_predicate matcher.match(self_hash), :valid?
+      assert_errors matcher.match({ self: {} }),
+        self: 'expected actual to be parent but got {}'
+    end
+
     test '#inspect: all entries' do
       matcher = HashMatcher.new({ a: h(b: v('c')) })
 
