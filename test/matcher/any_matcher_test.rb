@@ -20,6 +20,12 @@ module Matcher
         'expected 2 but got 4'
     end
 
+    test '#|' do
+      matcher = AnyMatcher.new([v(1), v(2)]) | v(3)
+
+      assert_equal 'any(1, 2, 3)', matcher.inspect
+    end
+
     test '#inspect' do
       matcher = AnyMatcher.new([v(1), v(2)])
 

@@ -21,6 +21,12 @@ module Matcher
         'expected an even number but got 5'
     end
 
+    test '#&' do
+      matcher = AllMatcher.new([v(1), v(2)]) & v(3)
+
+      assert_equal 'all(1, 2, 3)', matcher.inspect
+    end
+
     test '#inspect' do
       matcher = AllMatcher.new([v(1), v(2)])
 

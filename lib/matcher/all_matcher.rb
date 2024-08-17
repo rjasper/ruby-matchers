@@ -8,6 +8,12 @@ module Matcher
       @matchers = matchers
     end
 
+    def &(matcher)
+      matcher = Matcher.of(matcher)
+
+      AllMatcher.new(@matchers + [matcher])
+    end
+
     def check(actual)
       @matchers.each do |matcher|
         errors << matcher.match(actual)

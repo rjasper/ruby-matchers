@@ -2,6 +2,18 @@
 
 module Matcher
   class Base
+    def |(matcher)
+      matcher = Matcher.of(matcher)
+
+      AnyMatcher.new([self, matcher])
+    end
+
+    def &(matcher)
+      matcher = Matcher.of(matcher)
+
+      AllMatcher.new([self, matcher])
+    end
+
     def match(actual)
       errors = Errors.new
 
