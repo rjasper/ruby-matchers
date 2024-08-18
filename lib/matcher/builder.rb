@@ -44,6 +44,12 @@ module Matcher
       ExpressionRecorder.new(variable)
     end
 
+    def setvar(assigns, matcher)
+      matcher = Matcher.of(matcher)
+
+      SetVariablesMatcher.new(assigns, matcher)
+    end
+
     def all_entries(hash)
       Matcher.with_settings(all_entries: true) do
         Matcher.of(hash)

@@ -27,6 +27,7 @@ require 'matcher/imply_one_matcher'
 require 'matcher/iso8601_matcher'
 require 'matcher/map_matcher'
 require 'matcher/set_matcher'
+require 'matcher/set_variables_matcher'
 
 module Matcher
   def self.build(&)
