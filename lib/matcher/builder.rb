@@ -2,6 +2,8 @@
 
 module Matcher
   class Builder
+    delegate :of, to: :Matcher
+
     def satisfy(message = nil, &block)
       BlockMatcher.new(block, message)
     end
