@@ -79,6 +79,13 @@ module Matcher
       AnyMatcher.new(matchers.map { Matcher.of(_1) })
     end
 
+    def imply(condition, matcher)
+      condition = Matcher.of(condition)
+      matcher = Matcher.of(matcher)
+
+      ImplyMatcher.new(condition, matcher)
+    end
+
     def present(matcher)
       all(value.present?, matcher)
     end
