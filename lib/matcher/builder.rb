@@ -13,31 +13,31 @@ module Matcher
     end
 
     def actual
-      var(:actual)
+      vars[:actual]
     end
     alias _ actual
 
     def key
-      var(:key)
+      vars[:key]
     end
     alias k key
 
     def value
-      var(:value)
+      vars[:value]
     end
     alias v value
 
     def index
-      var(:index)
+      vars[:index]
     end
     alias i index
 
     def parent
-      var(:parent)
+      vars[:parent]
     end
 
     def original
-      var(:original)
+      vars[:original]
     end
 
     def logical_operators(&)
@@ -45,10 +45,18 @@ module Matcher
     end
     alias lo logical_operators
 
-    def var(symbol)
-      variable = Variable.new(symbol)
+    def vars
+      VariableFactory.instance
+    end
 
-      ExpressionRecorder.new(variable)
+    class VariableFactory
+      include Singleton
+
+      def [](symbol)
+        variable = Variable.new(symbol)
+
+        ExpressionRecorder.new(variable)
+      end
     end
 
     def setvar(assigns, matcher)

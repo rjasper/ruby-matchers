@@ -9,7 +9,7 @@ module Matcher
 
     test 'set variable to value' do
       matcher = Matcher.build do
-        setvar({ myvar: 'foo' }, _ == var(:myvar))
+        setvar({ myvar: 'foo' }, _ == vars[:myvar])
       end
 
       assert_predicate matcher.match('foo'), :valid?
@@ -25,13 +25,13 @@ module Matcher
             parent_value: ->(_) { _[:value] }
           },
           {
-            depth: _ == var(:depth),
+            depth: _ == vars[:depth],
             value: 42,
             child: setvar(
               { depth: ->(depth:) { depth + 1 } },
               {
-                depth: _ == var(:depth),
-                value: _ == var(:parent_value) / 2 + 2,
+                depth: _ == vars[:depth],
+                value: _ == vars[:parent_value] / 2 + 2,
               },
             ),
           }
