@@ -24,6 +24,7 @@ module Matcher
         check_array(actual, values)
       end
     end
+    protected :check
 
     def inspect
       "each(#{@matcher.inspect})"

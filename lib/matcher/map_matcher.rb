@@ -43,6 +43,7 @@ module Matcher
 
       mapped_errors.attributes.each { errors[_1][@projection] << _2 }
     end
+    protected :check
 
     def inspect
       "map(#{@projection.inspect}, #{@matcher.inspect})"

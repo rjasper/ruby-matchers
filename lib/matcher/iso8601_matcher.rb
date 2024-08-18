@@ -27,6 +27,7 @@ module Matcher
     rescue ArgumentError
       errors << "expected an ISO 8601 string but got #{actual.inspect}"
     end
+    protected :check
 
     def inspect
       "iso8601#{"(#{@time.iso8601.inspect})" if @time}"

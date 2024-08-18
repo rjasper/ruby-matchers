@@ -38,6 +38,7 @@ module Matcher
       missing.each { errors << "expected array to include #{_1.inspect}" }
       extra.each { errors[_1] << "unexpected item #{actual[_1].inspect}" }
     end
+    protected :check
 
     def inspect
       "set(#{@array.inspect})"

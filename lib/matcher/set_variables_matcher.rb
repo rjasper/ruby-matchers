@@ -20,6 +20,7 @@ module Matcher
 
       errors << @matcher.match(actual, **values, **assigns)
     end
+    protected :check
 
     private
 

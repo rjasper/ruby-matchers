@@ -16,6 +16,7 @@ module Matcher
     rescue Call::NotRespondingError => e
       errors << e.message_for_errors
     end
+    protected :check
 
     def inspect
       @expression.inspect

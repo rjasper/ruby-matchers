@@ -18,6 +18,7 @@ module Matcher
     rescue NotRespondingError => e
       errors << e.message_for_errors
     end
+    protected :check
 
     def inspect
       "imply(#{@condition.inspect}, #{@matcher.inspect})"

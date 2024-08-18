@@ -11,6 +11,7 @@ module Matcher
     def check(actual, **)
       errors << not_equal_message(actual) unless actual == @value
     end
+    protected :check
 
     def inspect
       case @value

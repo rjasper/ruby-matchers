@@ -24,11 +24,11 @@ module Matcher
       errors
     end
 
+    protected
+
     def check(actual, **)
       raise NotImplementedError
     end
-
-    protected
 
     attr_reader :errors
   end

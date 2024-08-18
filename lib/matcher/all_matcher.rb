@@ -19,6 +19,7 @@ module Matcher
         errors << matcher.match(actual, **values)
       end
     end
+    protected :check
 
     def inspect
       "all(#{@matchers.map(&:inspect).join(', ')})"

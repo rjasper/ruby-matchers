@@ -11,6 +11,7 @@ module Matcher
     def check(actual, **)
       errors << not_equal_message(actual) unless @object === actual # rubocop:disable Style/CaseEquality
     end
+    protected :check
 
     def inspect
       @object.inspect

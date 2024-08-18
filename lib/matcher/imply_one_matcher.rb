@@ -21,6 +21,7 @@ module Matcher
 
       matchers.each { errors << _1.matcher.match(actual, **values) }
     end
+    protected :check
 
     def inspect
       "imply_one(#{@matchers.map(&:inspect).join(', ')})"

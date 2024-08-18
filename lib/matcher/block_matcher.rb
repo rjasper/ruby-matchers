@@ -12,6 +12,7 @@ module Matcher
     def check(actual, **)
       errors << message_for(actual) unless @block.call(actual, **)
     end
+    protected :check
 
     def inspect
       @message || "-> { #{block_location} }"

@@ -29,6 +29,7 @@ module Matcher
         end
       end
     end
+    protected :check
 
     def inspect
       if @all_entries

@@ -24,6 +24,7 @@ module Matcher
 
       errors.clear if found
     end
+    protected :check
 
     def inspect
       "any(#{@matchers.map(&:inspect).join(', ')})"

@@ -23,6 +23,7 @@ module Matcher
         errors[i] << @array[i].match(actual[i], **values, @index => i, @parent => actual)
       end
     end
+    protected :check
 
     def inspect
       @array.inspect
