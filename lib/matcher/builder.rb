@@ -86,6 +86,10 @@ module Matcher
       ImplyMatcher.new(condition, matcher)
     end
 
+    def imply_one(*matchers)
+      ImplyOneMatcher.new(matchers)
+    end
+
     def present(matcher)
       all(value.present?, matcher)
     end
