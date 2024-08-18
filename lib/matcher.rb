@@ -26,11 +26,14 @@ require 'matcher/imply_matcher'
 require 'matcher/imply_one_matcher'
 require 'matcher/iso8601_matcher'
 require 'matcher/map_matcher'
+require 'matcher/pipe'
 require 'matcher/reference_matcher'
 require 'matcher/set_matcher'
 require 'matcher/set_variables_matcher'
 
 module Matcher
+  NULL = Object.new.freeze
+
   def self.build(&)
     builder = Builder.new
     object = builder.instance_exec(&)
@@ -50,6 +53,8 @@ module Matcher
     end
 
     case object
+    when Pipe
+      raise "Cannot build Matcher from Pipe"
     when Base
       object
     when Expression

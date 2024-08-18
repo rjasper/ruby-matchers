@@ -59,7 +59,13 @@ module Matcher
       end
     end
 
-    def setvar(assigns, matcher)
+    def setvar(assigns = nil, matcher = NULL, **kwargs)
+      raise "Cannot set both assigns and kwargs" if assigns && !kwargs.empty?
+
+      assigns = kwargs unless assigns
+
+      return Pipe.new { setvar(assigns, _1) } if null?(matcher)
+
       matcher = Matcher.of(matcher)
 
       SetVariablesMatcher.new(assigns, matcher)
@@ -108,11 +114,15 @@ module Matcher
       end
     end
 
-    def each(matcher)
+    def each(matcher = NULL)
+      return Pipe.new { each(_1) } if null?(matcher)
+
       EachMatcher.new(Matcher.of(matcher))
     end
 
-    def map(recorder, matcher)
+    def map(recorder, matcher = NULL)
+      return Pipe.new { map(recorder, _1) } if null?(matcher)
+
       expression = ExpressionRecorder.to_expression(recorder)
       matcher = Matcher.of(matcher)
 
@@ -131,7 +141,9 @@ module Matcher
       AnyMatcher.new(matchers.map { Matcher.of(_1) })
     end
 
-    def imply(condition, matcher)
+    def imply(condition, matcher = NULL)
+      return Pipe.new { imply(condition, _1) } if null?(matcher)
+
       condition = Matcher.of(condition)
       matcher = Matcher.of(matcher)
 
@@ -142,12 +154,20 @@ module Matcher
       ImplyOneMatcher.new(matchers)
     end
 
-    def present(matcher)
+    def present(matcher = NULL)
+      return Pipe.new { present(_1) } if null?(matcher)
+
       all(value.present?, matcher)
     end
 
     def iso8601(string_or_time = nil)
       Iso8601Matcher.new(string_or_time)
+    end
+
+    private
+
+    def null?(object)
+      !ExpressionRecorder.recorder?(object) && object.equal?(NULL)
     end
   end
 end
