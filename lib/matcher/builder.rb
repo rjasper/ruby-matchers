@@ -40,6 +40,11 @@ module Matcher
       var(:original)
     end
 
+    def logical_operators(&)
+      Matcher.with_settings(logical_operators: true, &)
+    end
+    alias lo logical_operators
+
     def var(symbol)
       variable = Variable.new(symbol)
 

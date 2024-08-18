@@ -18,7 +18,7 @@ module Matcher
     end
 
     UNARY_OPERATORS = %i[! ~ +@ -@].freeze
-    BINARY_OPERATORS = %i[+ - * ** / % < > <= >= <=> == === != =~ !~ & | ^ << >>].freeze
+    BINARY_OPERATORS = %i[+ - * ** / % < > <= >= <=> == === != =~ !~ & | ^ << >> && ||].freeze
 
     OPERATOR_PRECEDENCE = begin
       precedence = {}
@@ -35,6 +35,8 @@ module Matcher
         %i[| ^],
         %i[> >= < <=],
         %i[<=> == === != =~ !~],
+        %i[&&],
+        %i[||],
       ].each_with_index do |operators, index|
         operators.each { precedence[_1] = index }
       end
@@ -48,6 +50,15 @@ module Matcher
       @args = args
       @kwargs = kwargs
       @block = block
+
+      if binary? && Matcher.settings[:logical_operators]
+        case method
+        when :&
+          @method = :'&&'
+        when :|
+          @method = :'||'
+        end
+      end
     end
 
     def unary?
@@ -67,9 +78,15 @@ module Matcher
     end
 
     def evaluate(values, chain = nil)
+      actual_receiver = @receiver.evaluate(values, chain)
+
+      return actual_receiver if @method == :'&&' && !actual_receiver
+      return actual_receiver if @method == :'||' && actual_receiver
+
       args = evaluate_args(values)
       kwargs = evaluate_kwargs(values)
-      actual_receiver = @receiver.evaluate(values, chain)
+
+      return args[0] if @method.in?(%i[&& ||])
 
       raise NotRespondingError.new(self, actual_receiver, values) unless
         actual_receiver.respond_to?(@method)
@@ -118,7 +135,7 @@ module Matcher
       when :!, :~, :+@, :-@
         # !foo
         return "#{@method[0]}#{receiver}" if unary?
-      when :+, :-, :*, :/, :%, :<, :>, :<=, :>=, :<=>, :==, :===, :!=, :=~, :!~, :&, :|, :^, :<<, :>>
+      when :+, :-, :*, :/, :%, :<, :>, :<=, :>=, :<=>, :==, :===, :!=, :=~, :!~, :&, :|, :^, :<<, :>>, :'&&', :'||'
         # foo + bar
         return "#{receiver} #{@method} #{parenthesize(@args[0], substitutions)}" if binary?
       when :**

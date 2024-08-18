@@ -37,6 +37,11 @@ module Matcher
       examine.call('actual << 2') { _1 << 2 }
       examine.call('actual >> 2') { _1 >> 2 }
 
+      Matcher.with_settings(logical_operators: true) do
+        examine.call('actual && 2') { _1 & 2 }
+        examine.call('actual || 2') { _1 | 2 }
+      end
+
       examine.call('actual**2') { _1**2 }
 
       examine.call('actual[1, 2, a: 3]') { _1[1, 2, a: 3] }
@@ -83,6 +88,20 @@ module Matcher
       examine.call('actual[0] + [1]') { |x| x[0] + [1] }
     end
     # rubocop:enable Style/CaseEquality, Layout/SpaceBeforeBrackets, Style/SymbolProc
+
+    test 'logical operators' do
+      call = Matcher.with_settings(logical_operators: true) do
+        Call.build(:a, :b, :c) do |a, b, c|
+          a | b & c
+        end
+      end
+
+      a = Variable.new(:a)
+      b = Variable.new(:b)
+      c = Variable.new(:c)
+
+      assert_equal Call.new(a, :'||', Call.new(b, :'&&', c)), call
+    end
 
     test '#to_s: root' do
       expression = Matcher::Call.build { _1.bar + 1 }
