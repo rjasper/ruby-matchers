@@ -16,10 +16,13 @@ module Matcher
 
     def match(actual, **values)
       errors = Errors.new
+      errors_stack.push(errors)
 
-      @errors = errors
-      check(actual, **values)
-      @errors = nil
+      begin
+        check(actual, **values)
+      ensure
+        errors_stack.pop
+      end
 
       errors
     end
@@ -30,6 +33,12 @@ module Matcher
       raise NotImplementedError
     end
 
-    attr_reader :errors
+    def errors_stack
+      @errors_stack ||= []
+    end
+
+    def errors
+      errors_stack.last
+    end
   end
 end

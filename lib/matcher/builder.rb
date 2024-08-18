@@ -50,6 +50,37 @@ module Matcher
       SetVariablesMatcher.new(assigns, matcher)
     end
 
+    def refs?
+      !@refs.nil?
+    end
+
+    def refs
+      @refs ||= ReferenceCollection.new
+    end
+
+    class ReferenceCollection
+      attr_reader :last_object_id, :last_matcher
+
+      def initialize
+        @targets = {}
+        @last_object_id = nil
+        @last_matcher = nil
+      end
+
+      def [](key, cyclic: false)
+        ReferenceMatcher.new(@targets, key, cyclic:)
+      end
+
+      def []=(key, matcher)
+        raise "Cannot reassign reference: #{key.inspect}" if @targets.key?(key)
+
+        @last_object_id = matcher.object_id
+        matcher = Matcher.of(matcher)
+        @last_matcher = matcher
+        @targets[key] = matcher
+      end
+    end
+
     def all_entries(hash)
       Matcher.with_settings(all_entries: true) do
         Matcher.of(hash)

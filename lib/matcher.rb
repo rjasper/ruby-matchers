@@ -26,12 +26,17 @@ require 'matcher/imply_matcher'
 require 'matcher/imply_one_matcher'
 require 'matcher/iso8601_matcher'
 require 'matcher/map_matcher'
+require 'matcher/reference_matcher'
 require 'matcher/set_matcher'
 require 'matcher/set_variables_matcher'
 
 module Matcher
   def self.build(&)
-    object = Builder.new.instance_exec(&)
+    builder = Builder.new
+    object = builder.instance_exec(&)
+
+    return builder.refs.last_matcher if
+      builder.refs? && builder.refs.last_object_id == object.object_id
 
     of(object)
   end
