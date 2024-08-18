@@ -52,7 +52,8 @@ module Matcher
         operand = @expression.args[0]
 
         string += "#{operator_word} #{operand.inspect}"
-        string += " (#{operand.evaluate({ **values, actual: }).inspect})" if operand.is_a?(Call)
+        string += " (#{operand.evaluate({ **values, actual: }).inspect})" if
+          operand.is_a?(Call) || operand.is_a?(Variable)
       end
 
       string += " but got #{chain[-2].inspect}" if @expression.method != :!=
