@@ -136,7 +136,7 @@ module Matcher
     end
 
     def hash
-      [@receiver, @args, @method, @kwargs, @block].hash
+      @hash ||= [@receiver, @args, @method, @kwargs, @block].hash
     end
 
     def to_s(substitutions: nil)
