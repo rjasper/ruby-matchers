@@ -90,4 +90,20 @@ module Matcher
       Thread.current[:matcher_settings_stack] = nil if stack.empty?
     end
   end
+
+  def self.session
+    Thread.current[:matcher_session]
+  end
+
+  def self.with_session
+    return yield if Thread.current[:matcher_session]
+
+    begin
+      Thread.current[:matcher_session] = {}
+
+      yield
+    ensure
+      Thread.current[:matcher_session] = nil
+    end
+  end
 end

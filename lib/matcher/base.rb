@@ -18,7 +18,7 @@ module Matcher
       errors = Errors.new
       errors_stack.push(errors)
 
-      begin
+      Matcher.with_session do
         check(actual, **values)
       ensure
         errors_stack.pop
@@ -39,6 +39,18 @@ module Matcher
 
     def errors
       errors_stack.last
+    end
+
+    def session
+      Matcher.session[object_id] ||= {}
+    end
+
+    def self.session
+      Matcher.session[self] ||= {}
+    end
+
+    def class_session
+      self.class.session
     end
   end
 end
