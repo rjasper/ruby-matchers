@@ -12,6 +12,19 @@ module Matcher
       EqualMatcher.new(value)
     end
 
+    def declare(*symbols)
+      conflicts = symbols & methods
+
+      raise "Cannot declare these variables: #{conflicts.join(', ')}" if conflicts.length > 1
+      raise "Cannot declare variable \"#{conflicts[0]}\"" if conflicts.length == 1
+
+      symbols.each do |symbol|
+        define_singleton_method(symbol) do
+          vars[symbol]
+        end
+      end
+    end
+
     def actual
       vars[:actual]
     end
