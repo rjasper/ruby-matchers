@@ -113,6 +113,17 @@ module Matcher
       Call.new(receiver, @method, *@args, **@kwargs, &@block)
     end
 
+    def ==(other)
+      return true if equal?(other)
+
+      other.is_a?(Call) &&
+        other.receiver == @receiver &&
+        other.method == @method &&
+        other.args == @args &&
+        other.kwargs == @kwargs &&
+        other.block == @block
+    end
+
     def eql?(other)
       return true if equal?(other)
 
