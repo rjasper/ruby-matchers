@@ -40,6 +40,10 @@ module Matcher
       errors
     end
 
+    def to_s
+      inspect
+    end
+
     protected
 
     def check(actual, **)
