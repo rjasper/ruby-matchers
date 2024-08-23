@@ -25,6 +25,22 @@ module Matcher
       end
     end
 
+    def expr(constant = NULL, to_s: false, &)
+      raise "constant and block given" if !null?(constant) && block_given?
+
+      expression = if block_given?
+        BlockExpression.new(to_s:, &)
+      else
+        Constant.new(constant)
+      end
+
+      ExpressionRecorder.new(expression)
+    end
+
+    def expr_s(constant = NULL, &)
+      expr(constant, to_s: true, &)
+    end
+
     def actual
       vars[:actual]
     end
