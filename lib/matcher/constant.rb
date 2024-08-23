@@ -37,6 +37,5 @@ module Matcher
     def to_s(substitutions: nil)
       @constant.inspect
     end
-    alias inspect to_s
   end
 end

@@ -177,7 +177,6 @@ module Matcher
         string
       end
     end
-    alias inspect to_s
 
     class NotRespondingError < StandardError
       attr_reader :call, :receiver, :values

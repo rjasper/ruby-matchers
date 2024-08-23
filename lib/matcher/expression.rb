@@ -6,6 +6,10 @@ module Matcher
       raise 'abstract class' if instance_of?(Expression)
     end
 
+    def inspect
+      to_s
+    end
+
     def self.with_substitutions(**substitutions)
       Thread.current[:matcher_expression_substitutions] = substitutions
 
