@@ -30,6 +30,14 @@ module Matcher
       end
     end
 
+    def assert_no_errors(actual)
+      assert(false, <<~TEXT.chomp) unless actual.valid?
+        The following conditions were not satisfied:
+
+        #{actual.message}
+      TEXT
+    end
+
     def check_errors(prefix, base, attributes, actual)
       flunk "expected an error at #{prefix} but got nothing" unless actual
 
