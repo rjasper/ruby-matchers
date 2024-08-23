@@ -65,5 +65,15 @@ module Matcher
           value: 'expected actual to be parent_value / 2 + 2 (10) but got 11 for parent_value = 16'
         }
     end
+
+    test '#inspect' do
+      matcher = Matcher.build do
+        declare :a, :b
+
+        setvar(a: 0, b: ->(_) { 2 * _ }) ^ (_ == a + b)
+      end
+
+      assert_equal 'setvar(a: 0, b: ->(_) { ... }) ^ (_ == a + b)', matcher.inspect
+    end
   end
 end

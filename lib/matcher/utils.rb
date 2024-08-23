@@ -22,5 +22,24 @@ module Matcher
 
       block.call(*args, **kwargs)
     end
+
+    def self.inspect_block_params(block)
+      arg_names = []
+      kwarg_names = []
+
+      block.parameters.each do |type, name|
+        case type
+        when :req, :opt, :rest
+          arg_names << name
+        when :keyreq, :key, :keyrest
+          kwarg_names << name
+        end
+      end
+
+      arg_parts = arg_names.all? { _1.match?(/^_[1-9]$/) } ? [] : arg_names
+      kwarg_parts = kwarg_names.map { "#{_1}:"}
+
+      (arg_parts + kwarg_parts).join(', ')
+    end
   end
 end
