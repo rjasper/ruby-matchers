@@ -14,7 +14,7 @@ module Matcher
 
       assert_predicate matcher.match('foo'), :valid?
       assert_errors matcher.match('bar'),
-        'expected actual to be myvar ("foo") but got "bar"'
+        'expected _ to be myvar ("foo") but got "bar"'
     end
 
     test 'set variables via block' do

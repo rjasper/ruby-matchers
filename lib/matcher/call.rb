@@ -139,7 +139,7 @@ module Matcher
       @hash ||= [@receiver, @args, @method, @kwargs, @block].hash
     end
 
-    def to_s(substitutions: nil)
+    def to_s(substitutions: { actual: '_', key: 'k', value: 'v', index: 'i' })
       receiver = parenthesize(@receiver, substitutions)
 
       case @method
