@@ -31,6 +31,7 @@ require 'matcher/project_matcher'
 require 'matcher/reference_matcher'
 require 'matcher/set_matcher'
 require 'matcher/set_variables_matcher'
+require 'matcher/utils'
 
 module Matcher
   NULL = Object.new.freeze
