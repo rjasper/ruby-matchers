@@ -127,6 +127,15 @@ module Matcher
       end
     end
 
+    def project(recorder, matcher = NULL)
+      return Pipe.new { project(recorder, _1) } if null?(matcher)
+
+      expression = ExpressionRecorder.to_expression(recorder)
+      matcher = Matcher.of(matcher)
+
+      ProjectMatcher.new(expression, matcher)
+    end
+
     def all_entries(hash)
       Matcher.with_settings(all_entries: true) do
         Matcher.of(hash)
