@@ -48,6 +48,8 @@ module Matcher
 
   CASE_EQUALITY_CLASSES = [Class, Range, Regexp].freeze
 
+  cattr_accessor :max_depth, default: 5000
+
   def self.of(object)
     if ExpressionRecorder.recorder?(object)
       expression = ExpressionRecorder.to_expression(object)

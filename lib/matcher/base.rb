@@ -18,10 +18,23 @@ module Matcher
       errors = Errors.new
 
       Matcher.with_session do
+        depth = Matcher.session[:depth]
         errors_stack.push(errors)
+
+        if depth == nil
+          Matcher.session[:depth] = 0
+        elsif depth > Matcher.max_depth
+          errors << "match level too deep: #{depth}"
+          return errors
+        else
+          Matcher.session[:depth] += 1
+        end
+
         check(actual, **values)
       ensure
         errors_stack.pop
+
+        Matcher.session[:depth] -= 1
       end
 
       errors
