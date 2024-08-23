@@ -16,9 +16,9 @@ module Matcher
 
     def match(actual, **values)
       errors = Errors.new
-      errors_stack.push(errors)
 
       Matcher.with_session do
+        errors_stack.push(errors)
         check(actual, **values)
       ensure
         errors_stack.pop
@@ -34,7 +34,7 @@ module Matcher
     end
 
     def errors_stack
-      @errors_stack ||= []
+      session[:errors_stack] ||= []
     end
 
     def errors
