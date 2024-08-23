@@ -16,4 +16,16 @@ class MatcherTest < ActiveSupport::TestCase
       end
     end
   end
+
+  test 'checks unused refs' do
+    assert_raises StandardError, match: 'unused ref: foo' do
+      Matcher.build { refs[:foo] = 'foo'; 1 }
+    end
+  end
+
+  test 'checks undefined refs' do
+    assert_raises StandardError, match: 'undefined ref: foo' do
+      Matcher.build { refs[:foo] }
+    end
+  end
 end

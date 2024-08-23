@@ -99,9 +99,21 @@ module Matcher
         @targets = {}
         @last_object_id = nil
         @last_matcher = nil
+        @used = Set.new
+      end
+
+      def check
+        target_set = @targets.keys.to_set
+        missing_targets = @used - target_set
+        unused_refs = target_set - @used
+
+        raise "undefined ref: #{missing_targets.join(', ')}" unless missing_targets.empty?
+        raise "unused ref: #{unused_refs.join(', ')}" unless unused_refs.empty?
       end
 
       def [](key, cyclic: false)
+        @used << key
+
         ReferenceMatcher.new(@targets, key, cyclic:)
       end
 

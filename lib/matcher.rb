@@ -38,6 +38,8 @@ module Matcher
     builder = Builder.new
     object = builder.instance_exec(&)
 
+    builder.refs.check
+
     return builder.refs.last_matcher if
       builder.refs? && builder.refs.last_object_id == object.object_id
 
