@@ -33,7 +33,15 @@ module Matcher
     def check_errors(prefix, base, attributes, actual)
       flunk "expected an error at #{prefix} but got nothing" unless actual
 
-      Array.wrap(base).each do |message|
+      base = Array.wrap(base)
+
+      missing_messages = actual.base - base
+      missing_keys = actual.attributes.keys - attributes.keys
+
+      flunk "missing messages at #{prefix}: \n- #{missing_messages.join("\n- ")}" unless missing_messages.empty?
+      flunk "missing error at #{prefix} for: #{missing_keys.join(', ')}" unless missing_keys.empty?
+
+      base.each do |message|
         assert_includes actual.base, message, "for #{prefix}"
       end
 
