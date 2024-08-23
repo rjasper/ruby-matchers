@@ -25,7 +25,7 @@ module Matcher
       @symbol.hash
     end
 
-    def to_s(substitutions: nil)
+    def to_s(substitutions: Expression.default_substitutions)
       substitutions&.[](@symbol) || @symbol.to_s
     end
     alias inspect to_s
