@@ -38,15 +38,17 @@ module Matcher
   NULL = Object.new.freeze
 
   def self.build(&)
-    builder = Builder.new
-    object = builder.instance_exec(&)
+    with_build_session do
+      builder = Builder.new
+      object = builder.instance_exec(&)
 
-    builder.refs.check
+      builder.refs.check
 
-    return builder.refs.last_matcher if
-      builder.refs? && builder.refs.last_object_id == object.object_id
+      return builder.refs.last_matcher if
+        builder.refs? && builder.refs.last_object_id == object.object_id
 
-    of(object)
+      of(object)
+    end
   end
 
   CASE_EQUALITY_CLASSES = [Class, Range, Regexp].freeze
@@ -111,6 +113,22 @@ module Matcher
       yield
     ensure
       Thread.current[:matcher_session] = nil
+    end
+  end
+
+  def self.build_session
+    Thread.current[:matcher_build_session]
+  end
+
+  def self.with_build_session
+    return yield if Thread.current[:matcher_build_session]
+
+    begin
+      Thread.current[:matcher_build_session] = {}
+
+      yield
+    ensure
+      Thread.current[:matcher_build_session] = nil
     end
   end
 end

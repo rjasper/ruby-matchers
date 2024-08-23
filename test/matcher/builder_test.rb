@@ -97,5 +97,15 @@ module Matcher
       assert_not_predicate matcher.match({ a: 2 }), :valid?
       assert_not_predicate matcher.match({ a: 1, b: 2 }), :valid?
     end
+
+    test 'assign' do
+      matcher = Matcher.build do
+        assign { _.foo = 1 }
+      end
+
+      expression = matcher.instance_variable_get(:@expression)
+
+      assert_equal :foo=, expression.method
+    end
   end
 end

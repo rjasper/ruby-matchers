@@ -74,6 +74,18 @@ module Matcher
     end
     alias lo logical_operators
 
+    def assign
+      value_object_id = yield.object_id
+
+      call = Call.last_assign
+      Call.reset_last_assign
+
+      raise "Could not return last assignment" if
+        !call&.binary? || call.args[0].object_id != value_object_id
+
+      call
+    end
+
     def vars
       VariableFactory.instance
     end

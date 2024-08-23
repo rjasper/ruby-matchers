@@ -44,6 +44,14 @@ module Matcher
       precedence.freeze
     end
 
+    def self.last_assign
+      Matcher.build_session&.dig(Call, :last_assign)
+    end
+
+    def self.reset_last_assign
+      Matcher.build_session&.[](Call)&.delete(:last_assign)
+    end
+
     def initialize(receiver, method, *args, **kwargs, &block)
       @receiver = receiver
       @method = method
@@ -59,6 +67,8 @@ module Matcher
           @method = :'||'
         end
       end
+
+      set_last_assign if method.end_with?('=')
     end
 
     def unary?
@@ -216,6 +226,15 @@ module Matcher
     end
 
     private
+
+    def set_last_assign
+      build_session = Matcher.build_session
+
+      return unless build_session
+
+      call_session = (build_session[Call] ||= {})
+      call_session[:last_assign] = self
+    end
 
     def evaluate_args(values)
       @args.map do |arg|
