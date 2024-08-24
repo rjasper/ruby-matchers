@@ -61,8 +61,8 @@ module Matcher
       assert_errors matcher.match(actual),
         value: 'expected 42 but got 16',
         child: {
-          depth: 'expected actual to be depth (1) but got 2',
-          value: 'expected actual to be parent_value / 2 + 2 (10) but got 11 for parent_value = 16'
+          depth: 'expected _ to be depth (1) but got 2',
+          value: 'expected _ to be parent_value / 2 + 2 (10) but got 11 for parent_value = 16'
         }
     end
 

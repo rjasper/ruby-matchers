@@ -54,7 +54,7 @@ module Matcher
       end
 
       assert_errors matcher.match({ a: 'B' }),
-        a: 'expected actual to be key.to_s.upcase ("A") but got "B" for key = :a'
+        a: 'expected _ to be k.to_s.upcase ("A") but got "B" for k = :a'
     end
 
     test 'pass parent' do
@@ -67,7 +67,7 @@ module Matcher
 
       assert_predicate matcher.match(self_hash), :valid?
       assert_errors matcher.match({ self: {} }),
-        self: 'expected actual to be parent but got {}'
+        self: 'expected _ to be parent ({:self=>{}}) but got {}'
     end
 
     test '#inspect: all entries' do

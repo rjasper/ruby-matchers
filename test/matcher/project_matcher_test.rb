@@ -20,7 +20,7 @@ module Matcher
       assert_errors matcher.match(MyStruct.new('bar')),
         expr { _1.value } => 'expected "foo" but got "bar"'
       assert_errors matcher.match(1),
-        'expected actual to respond to value but got 1'
+        'expected _ to respond to value but got 1'
     end
 
     test '#inspect' do

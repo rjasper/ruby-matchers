@@ -34,8 +34,9 @@ module Matcher
         }
       }
 
-      expected = 'expected (!low || actual > low) && (!high || actual < high) to be truthy for low = 5, actual = 5, high = 7'
+      expected = 'expected (!low || _ > low) && (!high || _ < high) to be truthy for low = 5, _ = 5, high = 7'
 
+      assert_no_errors matcher.match(tree)
       assert_errors matcher.match(tree),
         right: { left: { key: expected } }
     end
@@ -101,7 +102,7 @@ module Matcher
 
       assert_no_errors matcher.match(9)
       assert_errors matcher.match(4),
-        'expected Math.sqrt(_) to be > 2 but got 2.0 for actual = 4'
+        'expected Math.sqrt(_) to be > 2 but got 2.0 for _ = 4'
     end
 
     test 'expressions: block receiver' do
@@ -112,7 +113,7 @@ module Matcher
       assert_equal 'expr_s { |_| [_, 10] }.sum >= 15', matcher.inspect
       assert_no_errors matcher.match(10)
       assert_errors matcher.match(2),
-        'expected expr_s { |_| [_, 10] }.sum to be >= 15 but got 12 for actual = 2'
+        'expected expr_s { |_| [_, 10] }.sum to be >= 15 but got 12 for _ = 2'
     end
   end
 end

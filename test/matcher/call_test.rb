@@ -10,82 +10,82 @@ module Matcher
         assert_equal expected, Matcher::Call.build(&block).to_s
       end
 
-      examine.call('actual') { _1 }
-      examine.call('!actual') { !_1 }
-      examine.call('~actual') { ~_1 }
-      examine.call('+actual') { +_1 }
-      examine.call('-actual') { -_1 }
+      examine.call('_') { _1 }
+      examine.call('!_') { !_1 }
+      examine.call('~_') { ~_1 }
+      examine.call('+_') { +_1 }
+      examine.call('-_') { -_1 }
 
-      examine.call('actual + 2') { _1 + 2 }
-      examine.call('actual - 2') { _1 - 2 }
-      examine.call('actual * 2') { _1 * 2 }
-      examine.call('actual / 2') { _1 / 2 }
-      examine.call('actual % 2') { _1 % 2 }
-      examine.call('actual < 2') { _1 < 2 }
-      examine.call('actual > 2') { _1 > 2 }
-      examine.call('actual <= 2') { _1 <= 2 }
-      examine.call('actual >= 2') { _1 >= 2 }
-      examine.call('actual <=> 2') { _1 <=> 2 }
-      examine.call('actual == 2') { _1 == 2 }
-      examine.call('actual === 2') { _1 === 2 }
-      examine.call('actual != 2') { _1 != 2 }
-      examine.call('actual =~ 2') { _1 =~ 2 }
-      examine.call('actual !~ 2') { _1 !~ 2 }
-      examine.call('actual & 2') { _1 & 2 }
-      examine.call('actual | 2') { _1 | 2 }
-      examine.call('actual ^ 2') { _1 ^ 2 }
-      examine.call('actual << 2') { _1 << 2 }
-      examine.call('actual >> 2') { _1 >> 2 }
+      examine.call('_ + 2') { _1 + 2 }
+      examine.call('_ - 2') { _1 - 2 }
+      examine.call('_ * 2') { _1 * 2 }
+      examine.call('_ / 2') { _1 / 2 }
+      examine.call('_ % 2') { _1 % 2 }
+      examine.call('_ < 2') { _1 < 2 }
+      examine.call('_ > 2') { _1 > 2 }
+      examine.call('_ <= 2') { _1 <= 2 }
+      examine.call('_ >= 2') { _1 >= 2 }
+      examine.call('_ <=> 2') { _1 <=> 2 }
+      examine.call('_ == 2') { _1 == 2 }
+      examine.call('_ === 2') { _1 === 2 }
+      examine.call('_ != 2') { _1 != 2 }
+      examine.call('_ =~ 2') { _1 =~ 2 }
+      examine.call('_ !~ 2') { _1 !~ 2 }
+      examine.call('_ & 2') { _1 & 2 }
+      examine.call('_ | 2') { _1 | 2 }
+      examine.call('_ ^ 2') { _1 ^ 2 }
+      examine.call('_ << 2') { _1 << 2 }
+      examine.call('_ >> 2') { _1 >> 2 }
 
       Matcher.with_settings(logical_operators: true) do
-        examine.call('actual && 2') { _1 & 2 }
-        examine.call('actual || 2') { _1 | 2 }
+        examine.call('_ && 2') { _1 & 2 }
+        examine.call('_ || 2') { _1 | 2 }
       end
 
-      examine.call('actual**2') { _1**2 }
+      examine.call('_**2') { _1**2 }
 
-      examine.call('actual[1, 2, a: 3]') { _1[1, 2, a: 3] }
-      examine.call('actual[1, 2, a: 3] { ... }') { _1[1, 2, a: 3] { 4 } }
+      examine.call('_[1, 2, a: 3]') { _1[1, 2, a: 3] }
+      examine.call('_[1, 2, a: 3] { ... }') { _1[1, 2, a: 3] { 4 } }
 
-      examine.call('actual[1] = 2') { _1.[]=(1, 2) }
-      examine.call('actual[1, 2] = 3') { _1.[]=(1, 2, 3) }
+      examine.call('_[1] = 2') { _1.[]=(1, 2) }
+      examine.call('_[1, 2] = 3') { _1.[]=(1, 2, 3) }
 
-      assert_equal 'actual.foo = "bar"',
-        Call.new(Variable.new(:actual), :foo=, 'bar').to_s
+      assert_equal '_.foo = "bar"',
+        Call.new(Variable.new(:_), :foo=, 'bar').to_s
 
-      examine.call('actual.foo') { _1.foo }
-      examine.call('actual.foo(1, a: 2)') { _1.foo(1, a: 2) }
-      examine.call('actual.foo { ... }') { _1.foo { 2 } }
-      examine.call('actual.foo(1, a: 2) { ... }') { _1.foo(1, a: 2) { 3 } }
+      examine.call('_.foo') { _1.foo }
+      examine.call('_.foo(1, a: 2)') { _1.foo(1, a: 2) }
+      examine.call('_.foo { ... }') { _1.foo { 2 } }
+      examine.call('_.foo(1, a: 2) { ... }') { _1.foo(1, a: 2) { 3 } }
 
-      examine.call('actual.+@(1)') { _1.+@(1) }
-      examine.call('actual.+@ { ... }') { _1.+@ { '' } }
+      examine.call('_.+@(1)') { _1.+@(1) }
+      examine.call('_.+@ { ... }') { _1.+@ { '' } }
 
-      examine.call('actual.+') { _1.+ }
-      examine.call('actual.+(1, 2)') { _1.+(1, 2) }
-      examine.call('actual.+ { ... }') { _1.+ { 1 } }
+      examine.call('_.+') { _1.+ }
+      examine.call('_.+(1, 2)') { _1.+(1, 2) }
+      examine.call('_.+ { ... }') { _1.+ { 1 } }
 
-      examine.call('actual.**') { _1.** }
-      examine.call('actual.**(1, 2)') { _1.**(1, 2) }
-      examine.call('actual.** { ... }') { _1.** { 1 } }
+      examine.call('_.**') { _1.** }
+      examine.call('_.**(1, 2)') { _1.**(1, 2) }
+      examine.call('_.** { ... }') { _1.** { 1 } }
 
-      examine.call('actual.[]=') { _1.[]= }
-      examine.call('actual.[]=(1)') { _1.[]=(1) }
-      examine.call('actual.[]=(1, 2, a: 3)') { _1.[]=(1, 2, a: 3) }
-      examine.call('actual.[]=(1, 2) { ... }') { _1.[]=(1, 2) { 3 } }
-      examine.call('actual.[]= { ... }') { _1.[]= { 1 } }
+      examine.call('_.[]=') { _1.[]= }
+      examine.call('_.[]=(1)') { _1.[]=(1) }
+      examine.call('_.[]=(1, 2, a: 3)') { _1.[]=(1, 2, a: 3) }
+      examine.call('_.[]=(1, 2) { ... }') { _1.[]=(1, 2) { 3 } }
+      examine.call('_.[]= { ... }') { _1.[]= { 1 } }
 
       # precedence and parentheses
-      examine.call('(actual + 1) * 2') { |x| (x + 1) * 2 }
-      examine.call('actual + 1') { |x| x + 1 }
-      examine.call('actual + actual * 2') { |x| x + x * 2 }
-      examine.call('actual * (actual + 2)') { |x| x * (x + 2) }
-      examine.call('actual + actual - 1') { |x| x + x - 1 }
-      examine.call('-(actual + 1)') { |x| -(x + 1) }
-      examine.call('-actual + 1') { |x| -x + 1 }
-      examine.call('(actual + [1])[0]') { |x| (x + [1])[0] }
-      examine.call('(actual + 1).foo') { |x| (x + 1).foo }
-      examine.call('actual[0] + [1]') { |x| x[0] + [1] }
+      examine.call('(_ + 1) * 2') { |x| (x + 1) * 2 }
+      examine.call('_ + 1') { |x| x + 1 }
+      examine.call('_ + _ * 2') { |x| x + x * 2 }
+      examine.call('_ * (_ + 2)') { |x| x * (x + 2) }
+      examine.call('_ + _ - 1') { |x| x + x - 1 }
+      examine.call('-(_ + 1)') { |x| -(x + 1) }
+      examine.call('-_ + 1') { |x| -x + 1 }
+      examine.call('(_ + [1])[0]') { |x| (x + [1])[0] }
+      examine.call('(_ + 1).foo') { |x| (x + 1).foo }
+      examine.call('_[0] + [1]') { |x| x[0] + [1] }
     end
     # rubocop:enable Style/CaseEquality, Layout/SpaceBeforeBrackets, Style/SymbolProc
 

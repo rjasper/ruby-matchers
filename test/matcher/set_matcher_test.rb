@@ -14,7 +14,10 @@ module Matcher
       assert_errors matcher.match(nil),
         'expected an Array but got nil'
       assert_errors matcher.match([]),
-        'expected length of 3 but got 0'
+        'expected length of 3 but got 0',
+        'expected array to include 1',
+        'expected array to include 2',
+        'expected array to include 3'
       assert_errors matcher.match([1, 2, 3, 4]),
         'expected length of 3 but got 4'
       assert_errors matcher.match([1, 2, 4]),
@@ -33,7 +36,7 @@ module Matcher
       assert_predicate matcher.match(self_array), :valid?
 
       assert_errors matcher.match([1]),
-        'expected array to include actual == parent',
+        'expected array to include _ == parent',
         0 => 'unexpected item 1'
     end
 

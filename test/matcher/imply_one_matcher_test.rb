@@ -45,7 +45,7 @@ module Matcher
       assert_predicate matcher.match({ foo: true, data: 'foo' }), :valid?
       assert_predicate matcher.match({ bar: true, data: 'bar' }), :valid?
       assert_errors matcher.match({ foo: true, bar: true, data: 'bar' }),
-        'expected {:foo=>true, :bar=>true, :data=>"bar"} to satisfy only one condition, but met these: actual[:foo] == true, actual[:bar] == true',
+        'expected {:foo=>true, :bar=>true, :data=>"bar"} to satisfy only one condition, but met these: _[:foo] == true, _[:bar] == true',
         data: 'expected "foo" but got "bar"'
     end
 
@@ -57,7 +57,7 @@ module Matcher
         )
       end
 
-      string = 'imply_one(imply(actual[:type] == "string", {:data=>"foo"}), imply(actual[:type] == "integer", {:data=>42}))'
+      string = 'imply_one(imply(_[:type] == "string", {:data=>"foo"}), imply(_[:type] == "integer", {:data=>42}))'
       assert_equal string, matcher.inspect
     end
   end

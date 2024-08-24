@@ -34,7 +34,7 @@ module Matcher
 
       assert_predicate matcher.match([0, 10, 20]), :valid?
       assert_errors matcher.match([0, 11, 20]),
-        1 => 'expected actual to be index * 10 but got 11 for actual = 11, index = 1'
+        1 => 'expected _ to be i * 10 (10) but got 11 for i = 1'
     end
 
     test 'pass parent' do
@@ -46,7 +46,7 @@ module Matcher
 
       assert_predicate matcher.match([1, 3, 5]), :valid?
       assert_errors matcher.match([1, 5, 3]),
-        2 => 'expected parent[index - 1] to be < parent[index] (3) but got 5 for parent = [1, 5, 3], index = 2'
+        2 => 'expected parent[i - 1] to be < parent[i] (3) but got 5 for parent = [1, 5, 3], i = 2'
     end
 
     test '#inspect' do
