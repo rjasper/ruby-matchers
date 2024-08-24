@@ -43,6 +43,16 @@ module Matcher
 
       base = Array.wrap(base)
 
+      if attributes.key?(:base)
+        attr_base = attributes.delete(:base)
+
+        if attr_base.is_a?(Array)
+          base.concat(attr_base)
+        else
+          base << attr_base
+        end
+      end
+
       missing_messages = actual.base - base
       missing_keys = actual.attributes.keys - attributes.keys
 

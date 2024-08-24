@@ -34,11 +34,14 @@ module Matcher
         }
       }
 
-      expected = 'expected (!low || _ > low) && (!high || _ < high) to be truthy for low = 5, _ = 5, high = 7'
-
-      assert_no_errors matcher.match(tree)
       assert_errors matcher.match(tree),
-        right: { left: { key: expected } }
+        right: {
+          base: 'expected nil but got {:key=>7, :left=>{:key=>5, :left=>nil, :right=>nil}, :right=>{:key=>10, :left=>nil, :right=>nil}}',
+          left: {
+            base: 'expected nil but got {:key=>5, :left=>nil, :right=>nil}',
+            key: 'expected (!low || _ > low) && (!high || _ < high) to be truthy for low = 5, _ = 5, high = 7',
+          },
+        }
     end
 
     test 'cyclic graph' do
