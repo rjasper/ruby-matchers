@@ -9,7 +9,7 @@ module Matcher
       @parent = parent
     end
 
-    def check(actual, **values)
+    def check(actual:, **)
       unless actual.is_a?(Array)
         errors << "expected an Array but got #{actual.inspect}"
         return
@@ -25,7 +25,7 @@ module Matcher
         break if missing.empty?
 
         index = missing.find_index do |m|
-          m.match(element, **values, @parent => actual).valid?
+          m.match(**, actual: element, @parent => actual).valid?
         end
 
         if index

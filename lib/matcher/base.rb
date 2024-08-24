@@ -14,7 +14,11 @@ module Matcher
       AllMatcher.new([self, matcher])
     end
 
-    def match(actual, **values)
+    def get_actual(actual:, **)
+      actual
+    end
+
+    def match(actual = NULL, **)
       errors = Errors.new
 
       Matcher.with_session do
@@ -30,7 +34,11 @@ module Matcher
           Matcher.session[:depth] += 1
         end
 
-        check(actual, **values)
+        if actual.equal?(NULL)
+          check(**)
+        else
+          check(**, actual:)
+        end
       ensure
         errors_stack.pop
 
@@ -46,7 +54,7 @@ module Matcher
 
     protected
 
-    def check(actual, **)
+    def check(**)
       raise NotImplementedError
     end
 

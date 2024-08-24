@@ -9,16 +9,12 @@ module Matcher
       @matcher = matcher
     end
 
-    def check(actual, **values)
-      assigns = @assigns.transform_values do |value|
-        if value.is_a?(Proc)
-          Utils.call_block(value, actual, **values)
-        else
-          value
-        end
+    def check(**values)
+      assigns = @assigns.transform_values do |v|
+        v.is_a?(Proc) ? Utils.call_block(v, values) : v
       end
 
-      errors << @matcher.match(actual, **values, **assigns)
+      errors << @matcher.match(**values, **assigns)
     end
     protected :check
 

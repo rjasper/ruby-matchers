@@ -8,7 +8,7 @@ module Matcher
       @value = value
     end
 
-    def check(actual, **)
+    def check(actual:, **)
       errors << not_equal_message(actual) unless actual == @value
     end
     protected :check

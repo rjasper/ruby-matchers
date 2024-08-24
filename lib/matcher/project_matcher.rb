@@ -9,10 +9,10 @@ module Matcher
       @matcher = matcher
     end
 
-    def check(actual, **values)
-      result = @expression.evaluate({ **values, actual: })
+    def check(**)
+      result = @expression.evaluate(**)
 
-      errors[@expression] << @matcher.match(result, **values)
+      errors[@expression] << @matcher.match(**, actual: result)
     rescue Call::NotRespondingError => e
       errors << e.message_for_errors
     end

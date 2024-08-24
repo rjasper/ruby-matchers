@@ -11,10 +11,10 @@ module Matcher
       @matcher = matcher
     end
 
-    def check(actual, **)
-      return unless @condition.match(actual, **).valid?
+    def check(**)
+      return unless @condition.match(**).valid?
 
-      errors << @matcher.match(actual, **)
+      errors << @matcher.match(**)
     rescue NotRespondingError => e
       errors << e.message_for_errors
     end

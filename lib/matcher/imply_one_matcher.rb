@@ -10,16 +10,16 @@ module Matcher
       @matchers = matchers
     end
 
-    def check(actual, **values)
-      matchers = @matchers.filter { _1.condition.match(actual, **values).valid? }
+    def check(**)
+      matchers = @matchers.filter { _1.condition.match(**).valid? }
 
       if matchers.empty?
-        errors << "expected #{actual.inspect} to satisfy one of these conditions: #{list_conditions_of(@matchers)}"
+        errors << "expected #{get_actual(**).inspect} to satisfy one of these conditions: #{list_conditions_of(@matchers)}"
       elsif matchers.length > 1
-        errors << "expected #{actual.inspect} to satisfy only one condition, but met these: #{list_conditions_of(matchers)}"
+        errors << "expected #{get_actual(**).inspect} to satisfy only one condition, but met these: #{list_conditions_of(matchers)}"
       end
 
-      matchers.each { errors << _1.matcher.match(actual, **values) }
+      matchers.each { errors << _1.matcher.match(**) }
     end
     protected :check
 

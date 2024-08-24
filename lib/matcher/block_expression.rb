@@ -21,7 +21,7 @@ module Matcher
     end
 
     def evaluate(values, chain = nil)
-      Utils.call_block(@block, **values)
+      Utils.call_block(@block, values)
         .tap { chain&.push(_1) }
     end
 

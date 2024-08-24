@@ -14,9 +14,9 @@ module Matcher
       AllMatcher.new(@matchers + [matcher])
     end
 
-    def check(actual, **values)
+    def check(**)
       @matchers.each do |matcher|
-        errors << matcher.match(actual, **values)
+        errors << matcher.match(**)
       end
     end
     protected :check

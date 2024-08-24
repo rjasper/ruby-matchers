@@ -8,7 +8,8 @@ module Matcher
       @cyclic = cyclic
     end
 
-    def check(actual, **)
+    def check(**)
+      actual = get_actual(**)
       match_key = [@key, actual.object_id]
       match_result = matched[match_key]
 
@@ -22,7 +23,7 @@ module Matcher
         return
       end
 
-      target_errors = target.match(actual, **)
+      target_errors = target.match(**)
       errors << target_errors
       matched[match_key] = target_errors.valid? if @once
     end

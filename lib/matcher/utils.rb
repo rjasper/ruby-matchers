@@ -2,14 +2,14 @@
 
 module Matcher
   module Utils
-    def self.call_block(block, actual = nil, **values)
+    def self.call_block(block, values)
       args = []
       kwargs = {}
 
       block.parameters.each do |type, name|
         case type
         when :req, :opt, :rest
-          args << (actual || values[:actual]) if args.length == 0
+          args << values[:actual] if args.length == 0
         when :keyreq
           kwargs[name] = values[name]
         when :key

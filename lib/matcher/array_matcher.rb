@@ -10,7 +10,7 @@ module Matcher
       @parent = parent
     end
 
-    def check(actual, **values)
+    def check(actual:, **)
       unless actual.is_a?(Array)
         errors << "expected an Array but got #{actual.inspect}"
         return
@@ -20,7 +20,7 @@ module Matcher
         @array.length != actual.length
 
       [@array.length, actual.length].min.times do |i|
-        errors[i] << @array[i].match(actual[i], **values, @index => i, @parent => actual)
+        errors[i] << @array[i].match(**, actual: actual[i], @index => i, @parent => actual)
       end
     end
     protected :check

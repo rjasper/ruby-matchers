@@ -9,7 +9,7 @@ module Matcher
       @message = message
     end
 
-    def check(actual, **)
+    def check(actual:, **)
       errors << message_for(actual) unless @block.call(actual, **)
     end
     protected :check

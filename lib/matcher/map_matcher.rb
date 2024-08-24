@@ -11,7 +11,7 @@ module Matcher
       @original = original
     end
 
-    def check(actual, **values)
+    def check(actual:, **values)
       unless actual.respond_to?(:map)
         errors << "expected to respond to \"map\" but got #{actual.inspect}"
         return
@@ -34,7 +34,7 @@ module Matcher
 
       return if mapping_failed
 
-      mapped_errors = @matcher.match(mapped, **values, @original => actual)
+      mapped_errors = @matcher.match(**values, actual: mapped, @original => actual)
 
       unless mapped_errors.base.empty?
         base_projection = Call.build { _1.map_expression(@projection) }

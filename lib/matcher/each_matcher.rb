@@ -12,7 +12,7 @@ module Matcher
       @parent = parent
     end
 
-    def check(actual, **values)
+    def check(actual:, **values)
       unless actual.respond_to?(:each)
         errors << "expected to respond to \"each\" but got #{actual.inspect}"
         return
@@ -34,15 +34,15 @@ module Matcher
 
     def check_array(array, values)
       array.each.with_index do |item, i|
-        errors[i] << @matcher.match(item, **values, @index => i, @parent => array)
+        errors[i] << @matcher.match(**values, actual: item, @index => i, @parent => array)
       end
     end
 
     def check_hash(hash, values)
       hash.each do |key, value|
         errors[key] << @matcher.match(
-          [key, value],
           **values,
+          actual: [key, value],
           @key => key,
           @value => value,
           @parent => hash,
