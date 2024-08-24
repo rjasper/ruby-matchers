@@ -214,12 +214,14 @@ module Matcher
       end
     end
 
-    def given_values(values)
+    def given_values(values, substitutions: Expression.default_substitutions)
       parts = variables.filter_map do |symbol|
         value = values[symbol]
         next if value.nil? && !values.key?(symbol)
 
-        "#{symbol} = #{value.inspect}"
+        substitution = substitutions&.[](symbol)
+
+        "#{substitution || symbol} = #{value.inspect}"
       end
 
       parts.join(', ')
