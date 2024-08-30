@@ -51,6 +51,8 @@ module Matcher
       end
 
       def &(other)
+        return self if other.is_a?(Empty)
+
         if other.is_a?(Nested) && @key == other.key
           Nested.new(@key, @node & other.node)
         elsif other.is_a?(And)
@@ -71,6 +73,8 @@ module Matcher
       end
 
       def |(other)
+        return self if other.is_a?(Empty)
+
         if other.is_a?(Nested) && other.key == @key
           Nested.new(@key, @node | other.node)
         elsif other.is_a?(Or)

@@ -32,6 +32,8 @@ module Matcher
       end
 
       def &(other)
+        return self if other.is_a?(Empty)
+
         if other.is_a?(And)
           And.new([self] + other.nodes)
         else
@@ -40,6 +42,8 @@ module Matcher
       end
 
       def |(other)
+        return self if other.is_a?(Empty)
+
         dup << other
       end
 

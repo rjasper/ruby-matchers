@@ -5,6 +5,14 @@ module Matcher
     class Empty < Node
       include Singleton
 
+      def &(other)
+        other
+      end
+
+      def |(other)
+        other
+      end
+
       def valid?
         true
       end

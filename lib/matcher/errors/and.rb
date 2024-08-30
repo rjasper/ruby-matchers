@@ -32,10 +32,14 @@ module Matcher
       end
 
       def &(other)
+        return self if other.is_a?(Empty)
+
         dup << other
       end
 
       def |(other)
+        return self if other.is_a?(Empty)
+
         if other.is_a?(Or)
           Or.new([self] + other.nodes)
         else

@@ -16,10 +16,14 @@ module Matcher
       end
 
       def &(other)
+        return self if other.is_a?(Empty)
+
         And.new([self, other])
       end
 
       def |(other)
+        return self if other.is_a?(Empty)
+
         Or.new([self, other])
       end
     end
