@@ -3,6 +3,7 @@
 require 'active_support/all'
 
 require_relative "matcher/version"
+
 require 'matcher/base'
 require 'matcher/expression'
 require 'matcher/call'
@@ -12,10 +13,22 @@ require 'matcher/variable'
 require 'matcher/assertions'
 require 'matcher/block_expression'
 require 'matcher/builder'
-require 'matcher/errors'
 require 'matcher/expression_recorder'
 require 'matcher/pipe'
+require 'matcher/reporter'
 require 'matcher/utils'
+
+require 'matcher/errors/node'
+require 'matcher/errors/and'
+require 'matcher/errors/collector'
+require 'matcher/errors/element'
+require 'matcher/errors/empty'
+require 'matcher/errors/nested'
+require 'matcher/errors/or'
+
+require 'matcher/testing/error_builder'
+require 'matcher/testing/error_node_labeler'
+require 'matcher/testing/errors_checker'
 
 require 'matcher/matchers/all_matcher'
 require 'matcher/matchers/any_matcher'

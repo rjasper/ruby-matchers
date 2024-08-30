@@ -19,7 +19,7 @@ module Matcher
         sub_errors = matcher.match(**)
         errors << sub_errors
 
-        sub_errors.empty?
+        sub_errors.valid?
       end
 
       errors.clear if found

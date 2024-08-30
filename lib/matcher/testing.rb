@@ -22,64 +22,65 @@ module Matcher
       Call.build(&)
     end
 
-    def assert_errors(actual, *base, **attributes)
-      if actual.empty?
-        flunk 'expected an error but match result was valid'
+    def empty
+      Errors::Empty.instance
+    end
+
+    def element(message)
+      Errors::Element.new(message)
+    end
+
+    def nested(key, node)
+      Errors::Nested.new(key, node)
+    end
+
+    def _and(*nodes)
+      Errors::And.new(nodes)
+    end
+
+    def _or(*nodes)
+      Errors::Or.new(nodes)
+    end
+
+    def assert_errors(actual, *base, **nested, &block)
+      raise 'cannot pass expected errors directly if block given' if
+        (!base.empty? || !nested.empty?) && block
+
+      expected_nodes = if block
+        Testing::ErrorBuilder.build_nodes(&block)
       else
-        check_errors('root', base, attributes, actual)
+        base.map { Errors::Element.new(_1) } +
+          nested_from_hash(nested)
       end
+
+      expected = Errors::And.from(expected_nodes)
+
+      message = Testing::ErrorsChecker.check(expected, actual)
+
+      return unless message
+
+      assert false, message
     end
 
     def assert_no_errors(actual)
       assert(false, <<~TEXT.chomp) unless actual.valid?
         The following conditions were not satisfied:
 
-        #{actual.message}
+        #{Reporter.report(actual)}
       TEXT
     end
 
-    def check_errors(prefix, base, attributes, actual)
-      flunk "expected an error at #{prefix} but got nothing" unless actual
+    private
 
-      base = Array.wrap(base)
-
-      if attributes.key?(:base)
-        attr_base = attributes.delete(:base)
-
-        if attr_base.is_a?(Array)
-          base.concat(attr_base)
+    def nested_from_hash(hash)
+      hash.map do |key, value|
+        node = if value.is_a?(Hash)
+          Errors::And.from(nested_from_hash(value))
         else
-          base << attr_base
-        end
-      end
-
-      missing_messages = actual.base - base
-      missing_keys = actual.attributes.keys - attributes.keys
-
-      flunk "missing messages at #{prefix}: \n- #{missing_messages.join("\n- ")}" unless missing_messages.empty?
-      flunk "missing error at #{prefix} for: #{missing_keys.join(', ')}" unless missing_keys.empty?
-
-      base.each do |message|
-        assert_includes actual.base, message, "for #{prefix}"
-      end
-
-      attributes.each do |key, errors|
-        new_prefix = case key
-        when Symbol
-          "#{prefix}.#{key}"
-        when Call
-          key.to_s(substitutions: { actual: prefix })
-        else
-          "#{prefix}[#{key.inspect}]"
+          Errors::Element.new(value)
         end
 
-        new_actual = actual.attributes[key]
-
-        if errors.is_a?(Hash)
-          check_errors(new_prefix, [], errors, new_actual)
-        else
-          check_errors(new_prefix, errors, {}, new_actual)
-        end
+        Errors::Nested.from(key, node)
       end
     end
   end

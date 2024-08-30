@@ -17,14 +17,15 @@ module Matcher
 
       list = { head: 1, tail: { head: 2, tail: { head: 3 } } }
 
-      assert_errors matcher.match(list),
-        tail: {
-          base: 'expected nil but got {:head=>2, :tail=>{:head=>3}}',
-          tail: {
-            base: 'expected nil but got {:head=>3}',
-            tail: 'expected entry for :tail but found nothing',
-          },
-        }
+      assert_errors matcher.match(list) do
+        _and(:tail) do
+          error 'expected nil but got {:head=>2, :tail=>{:head=>3}}'
+          _and(:tail) do
+            error 'expected nil but got {:head=>3}'
+            error :tail, 'expected entry for :tail but found nothing'
+          end
+        end
+      end
     end
   end
 end

@@ -6,14 +6,14 @@ module Matcher
       errors = Matcher.build(&).match(actual)
 
       # rubocop:disable Minitest/AssertWithExpectedArgument
-      assert(false, <<~TEXT.chomp) unless errors.empty?
+      assert(false, <<~TEXT.chomp) unless errors.valid?
         For object:
 
         #{actual.inspect}
 
         The following conditions were not satisfied:
 
-        #{errors.message}
+        #{Reporter.report(errors)}
       TEXT
       # rubocop:enable Minitest/AssertWithExpectedArgument
     end

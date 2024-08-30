@@ -19,7 +19,7 @@ module Matcher
     end
 
     def match(actual = NULL, **)
-      errors = Errors.new
+      errors = Errors::Collector.new
 
       Matcher.with_session do
         depth = Matcher.session[:depth]
@@ -29,7 +29,7 @@ module Matcher
           Matcher.session[:depth] = 0
         elsif depth > Matcher.max_depth
           errors << "match level too deep: #{depth}"
-          return errors
+          return errors.node
         else
           Matcher.session[:depth] += 1
         end
@@ -45,7 +45,7 @@ module Matcher
         Matcher.session[:depth] -= 1
       end
 
-      errors
+      errors.node
     end
 
     def to_s
