@@ -15,14 +15,15 @@ module Matcher
     end
 
     def check(**)
-      found = @matchers.any? do |matcher|
-        sub_errors = matcher.match(**)
-        errors << sub_errors
+      sub_errors = @matchers.map do |matcher|
+        sub_error = matcher.match(**)
 
-        sub_errors.valid?
+        return if sub_error.valid?
+
+        sub_error
       end
 
-      errors.clear if found
+      errors << Errors::Or.from(sub_errors)
     end
     protected :check
 

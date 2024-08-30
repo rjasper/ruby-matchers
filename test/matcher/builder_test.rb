@@ -55,10 +55,13 @@ module Matcher
       assert_predicate matcher.match(4), :valid?
       assert_predicate matcher.match(15), :valid?
       assert_predicate matcher.match(37), :valid?
-      assert_errors matcher.match(17),
-        'expected _ to be even but got 17',
-        'expected _ % 5 to be 0 but got 2 for _ = 17',
-        'expected 37 but got 17'
+      assert_errors matcher.match(17) do
+        _or do
+          error 'expected _ to be even but got 17'
+          error 'expected _ % 5 to be 0 but got 2 for _ = 17'
+          error 'expected 37 but got 17'
+        end
+      end
     end
 
     test 'value' do
