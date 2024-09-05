@@ -106,9 +106,22 @@ module Matcher
         assign { _.foo = 1 }
       end
 
-      expression = matcher.instance_variable_get(:@expression)
+      expected = Call.new(Variable.new(:actual), :foo=, 1)
 
-      assert_equal :foo=, expression.method
+      assert_kind_of ExpressionMatcher, matcher
+      assert_equal expected, matcher.expression
+    end
+
+    test 'assign: +=' do
+      matcher = Matcher.build do
+        assign { _.foo += 1 }
+      end
+
+      expected = Call.new(Variable.new(:actual), :foo=, Call.build { |_| _.foo + 1 })
+
+      assert_kind_of ExpressionMatcher, matcher
+      assert_equal expected,
+        matcher.expression
     end
   end
 end

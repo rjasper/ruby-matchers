@@ -75,13 +75,13 @@ module Matcher
     alias lo logical_operators
 
     def assign
-      value_object_id = yield.object_id
+      value = ExpressionRecorder.transform(yield)
 
       call = Call.last_assign
       Call.reset_last_assign
 
       raise "Could not return last assignment" if
-        !call&.binary? || call.args[0].object_id != value_object_id
+        !call&.binary? || !call.args[0].equal?(value)
 
       call
     end
