@@ -79,6 +79,41 @@ module Matcher
       @args.length == 1 && @kwargs.empty? && !@block
     end
 
+    def negated
+      @negated ||= begin
+        if unary? && @method == :!
+          @receiver
+        elsif binary? && @method.in?(%i[< > <= >= == != =~ !~ && ||])
+          case @method
+          when :<
+            Call.new(@receiver, :>=, *@args)
+          when :>
+            Call.new(@receiver, :<=, *@args)
+          when :<=
+            Call.new(@receiver, :>, *@args)
+          when :>=
+            Call.new(@receiver, :<, *@args)
+          when :==
+            Call.new(@receiver, :!=, *@args)
+          when :!=
+            Call.new(@receiver, :==, *@args)
+          when :=~
+            Call.new(@receiver, :!~, *@args)
+          when :!~
+            Call.new(@receiver, :=~, *@args)
+          when :'&&'
+            Call.new(@receiver.negated, :'||', Expression.negate(@args[0]))
+          when :'||'
+            Call.new(@receiver.negated, :'&&', Expression.negate(@args[0]))
+          else
+            raise "Unexpected method: #{method.inspect}"
+          end
+        else
+          super
+        end
+      end
+    end
+
     def precedence
       has_precedence = (unary? && UNARY_OPERATORS.include?(@method)) ||
         (binary? && BINARY_OPERATORS.include?(@method))
