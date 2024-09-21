@@ -16,8 +16,9 @@ module Matcher
 
       attr_reader :node
 
-      def initialize
+      def initialize(use_or = false)
         @node = Empty.instance
+        @use_or = use_or
       end
 
       class Brackets
@@ -48,7 +49,11 @@ module Matcher
         when And
           @node << node
         else
-          @node &= node
+          if @use_or
+            @node |= node
+          else
+            @node &= node
+          end
         end
       end
 
