@@ -27,5 +27,16 @@ module Matcher
         end
       end
     end
+
+    test 'negated ref' do
+      matcher = Matcher.build do
+        refs[:foo] = 42
+
+        ~refs[:foo]
+      end
+
+      assert_predicate matcher.match(25), :valid?
+      assert_errors matcher.match(42), 'expected 42 to not be 42'
+    end
   end
 end

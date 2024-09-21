@@ -89,6 +89,28 @@ module Matcher
     end
     # rubocop:enable Style/CaseEquality, Layout/SpaceBeforeBrackets, Style/SymbolProc
 
+    test 'negated' do
+      examine = lambda do |expected, &block|
+        assert_equal expected, Matcher::Call.build(&block).negated.to_s
+      end
+
+      examine.call('!_') { _1 }
+      examine.call('_') { !_1 }
+      examine.call('_ != 2') { _1 == 2 }
+      examine.call('_ == 2') { _1 != 2 }
+      examine.call('_ !~ 2') { _1 =~ 2 }
+      examine.call('_ =~ 2') { _1 !~ 2 }
+      examine.call('_ >= 2') { _1 < 2 }
+      examine.call('_ <= 2') { _1 > 2 }
+      examine.call('_ > 2') { _1 <= 2 }
+      examine.call('_ < 2') { _1 >= 2 }
+
+      Matcher.with_settings(logical_operators: true) do
+        examine.call('!_ || false') { _1 & 2 }
+        examine.call('!_ && false') { _1 | 2 }
+      end
+    end
+
     test 'logical operators' do
       call = Matcher.with_settings(logical_operators: true) do
         Call.build(:a, :b, :c) do |a, b, c|

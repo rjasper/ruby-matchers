@@ -9,6 +9,10 @@ module Matcher
       @matcher = matcher
     end
 
+    def negated
+      SetVariablesMatcher.new(@assigns, ~@matcher)
+    end
+
     def check(**values)
       assigns = @assigns.transform_values do |v|
         v.is_a?(Proc) ? Utils.call_block(v, values) : v

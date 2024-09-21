@@ -2,12 +2,22 @@
 
 module Matcher
   class ImplyOneMatcher < Base
+    def self.check_matchers(matchers)
+      invalid_matcher = matchers.find { !_1.is_a?(ImplyMatcher) }
+
+      raise "Not an ImplyMatcher: #{invalid_matcher.inspect}" if invalid_matcher
+    end
+
     def initialize(matchers)
-      check_matchers(matchers)
+      ImplyOneMatcher.check_matchers(matchers)
 
       super()
 
       @matchers = matchers
+    end
+
+    def negated
+      NegatedImplyOneMatcher.new(@matchers)
     end
 
     def check(**)
@@ -28,12 +38,6 @@ module Matcher
     end
 
     private
-
-    def check_matchers(matchers)
-      invalid_matcher = matchers.find { !_1.is_a?(ImplyMatcher) }
-
-      raise "Not an ImplyMatcher: #{invalid_matcher.inspect}" if invalid_matcher
-    end
 
     def list_conditions_of(matchers)
       matchers.map { _1.condition.inspect }.join(', ')

@@ -15,6 +15,11 @@ module Matcher
       assert_predicate matcher.match('foo'), :valid?
       assert_errors matcher.match('bar'),
         'expected _ to be myvar ("foo") but got "bar"'
+
+      negated = ~matcher
+
+      assert_errors negated.match('foo'), 'expected _ to not be myvar ("foo")'
+      assert_predicate negated.match('bar'), :valid?
     end
 
     test 'set variables via block' do

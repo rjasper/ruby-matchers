@@ -11,6 +11,15 @@ module Matcher
       @all_entries = all_entries
     end
 
+    def negated
+      NegatedHashMatcher.new(
+        @hash,
+        key: @key,
+        parent: @parent,
+        all_entries: @all_entries,
+      )
+    end
+
     def check(actual:, **)
       unless actual.is_a?(Hash)
         errors << "expected a Hash but got #{actual.inspect}"

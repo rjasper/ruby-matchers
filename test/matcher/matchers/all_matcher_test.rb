@@ -31,6 +31,7 @@ module Matcher
       matcher = AllMatcher.new([v(1), v(2)])
 
       assert_equal 'all(1, 2)', matcher.inspect
+      assert_equal 'any(neg(1), neg(2))', (~matcher).inspect
     end
   end
 end

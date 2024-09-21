@@ -32,7 +32,10 @@ module Matcher
     end
 
     test '#inspect' do
-      assert_equal 'Integer', CaseEqualityMatcher.new(Integer).inspect
+      matcher = CaseEqualityMatcher.new(Integer)
+
+      assert_equal 'Integer', matcher.inspect
+      assert_equal 'neg(Integer)', (~matcher).inspect
     end
   end
 end

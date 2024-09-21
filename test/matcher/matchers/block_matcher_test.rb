@@ -17,14 +17,24 @@ module Matcher
     test 'generates message' do
       matcher = BlockMatcher.new(-> { _1 == 42 }, 'an answer to everything')
 
-      assert_errors matcher.match(3),
-        'expected an answer to everything but got 3'
-    end
+    assert_errors matcher.match(3),
+      'expected an answer to everything but got 3'
+    assert_errors (~matcher).match(42),
+      'did not expect an answer to everything but got 42'
+
+    matcher = Matcher::BlockMatcher.new(-> { _1 == 'foo' })
+
+    assert_errors matcher.match('bar'),
+      'expected to satisfy condition block_matcher_test.rb:22 but got "bar"'
+    assert_errors (~matcher).match('foo'),
+      'did not expect to satisfy condition block_matcher_test.rb:22 but got "foo"'
+  end
 
     test '#inspect: with message' do
       matcher = BlockMatcher.new(-> { _1 % 3 == 0 }, 'a number divisible by three')
 
       assert_equal 'a number divisible by three', matcher.inspect
+      assert_equal 'neg(a number divisible by three)', (~matcher).inspect
     end
 
     test '#inspect: no message' do
@@ -33,6 +43,8 @@ module Matcher
 
       assert_equal "-> { block_matcher_test.rb:#{lineno} }",
         matcher.inspect
+      assert_equal "neg(-> { test/unit/matcher/matchers/block_matcher_test.rb:#{lineno} })",
+        (~matcher).inspect
     end
   end
 end

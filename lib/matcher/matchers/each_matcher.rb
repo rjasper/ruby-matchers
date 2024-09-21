@@ -12,6 +12,16 @@ module Matcher
       @parent = parent
     end
 
+    def negated
+      NegatedEachMatcher.new(
+        @matcher,
+        index: @index,
+        key: @key,
+        value: @value,
+        parent: @parent,
+      )
+    end
+
     def check(actual:, **values)
       unless actual.respond_to?(:each)
         errors << "expected to respond to \"each\" but got #{actual.inspect}"

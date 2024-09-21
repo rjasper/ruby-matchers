@@ -2,21 +2,29 @@
 
 module Matcher
   class SetMatcher < Base
-    def initialize(array, parent: :parent)
+    def initialize(array, parent: :parent, negated: false)
       super()
 
       @array = array
       @parent = parent
+      @negated = negated
+    end
+
+    def negated
+      SetMatcher.new(@array, parent: @parent, negated: !@negated)
     end
 
     def check(actual:, **)
       unless actual.is_a?(Array)
-        errors << "expected an Array but got #{actual.inspect}"
+        errors << "expected an Array but got #{actual.inspect}" unless @negated
         return
       end
 
-      errors << "expected length of #{@array.length} but got #{actual.length}" if
-        @array.length != actual.length
+      if @array.length != actual.length
+        return if @negated
+
+        errors << "expected length of #{@array.length} but got #{actual.length}"
+      end
 
       missing = @array.clone
       extra = []
@@ -35,13 +43,18 @@ module Matcher
         end
       end
 
-      missing.each { errors << "expected array to include #{_1.inspect}" }
-      extra.each { errors[_1] << "unexpected item #{actual[_1].inspect}" }
+      if @negated
+        # when negated then missing.empty? <=> extra.empty?
+        errors << "expected array to not be an equal set to #{@array.inspect} but got #{actual.inspect}" if missing.empty?
+      else
+        missing.each { errors << "expected array to include #{_1.inspect}" }
+        extra.each { errors[_1] << "unexpected item #{actual[_1].inspect}" }
+      end
     end
     protected :check
 
     def inspect
-      "set(#{@array.inspect})"
+      "#{'~' if @negated}set(#{@array.inspect})"
     end
   end
 end

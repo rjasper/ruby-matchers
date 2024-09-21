@@ -6,6 +6,11 @@ module Matcher
       Matcher.build(&).match(actual)
     end
 
+    def not_match(actual, &)
+      matcher = ~Matcher.build(&)
+      matcher.match(actual)
+    end
+
     def v(value)
       EqualMatcher.new(value)
     end

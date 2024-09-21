@@ -2,6 +2,28 @@
 
 module Matcher
   class MapMatcher < Base
+    def self.map_errors(node, projection)
+      case node
+      when Errors::Empty
+        node
+      when Errors::And, Errors::Or
+        children = node.nodes.map { map_errors(_1, projection) }
+        node.class.new(children)
+      when Errors::Nested
+        if node.key.is_a?(Integer)
+          nested_projection = Errors::Nested.from(projection, node.node)
+          Errors::Nested.from(node.key, nested_projection)
+        else
+          node
+        end
+      when Errors::Element
+        base_projection = Call.build { _1.map_expression(projection) }
+        Errors::Nested.from(base_projection, node)
+      else
+        raise "Unexpected node: #{node.inspect}"
+      end
+    end
+
     def initialize(projection, matcher, index: :index, original: :original)
       super()
 
@@ -9,6 +31,10 @@ module Matcher
       @matcher = matcher
       @index = index
       @original = original
+    end
+
+    def negated
+      NegatedMapMatcher.new(@projection, @matcher, index: @index, original: @original)
     end
 
     def check(actual:, **values)
@@ -36,35 +62,12 @@ module Matcher
 
       mapped_errors = @matcher.match(**values, actual: mapped, @original => actual)
 
-      errors << map_errors(mapped_errors)
+      errors << MapMatcher.map_errors(mapped_errors, @projection)
     end
     protected :check
 
     def inspect
       "map(#{@projection.inspect}, #{@matcher.inspect})"
-    end
-
-    private
-
-    def map_errors(node)
-      case node
-      when Errors::Empty
-        node
-      when Errors::And, Errors::Or
-        node.class.new(node.nodes)
-      when Errors::Nested
-        if node.key.is_a?(Integer)
-          nested_projection = Errors::Nested.from(@projection, node.node)
-          Errors::Nested.from(node.key, nested_projection)
-        else
-          node
-        end
-      when Errors::Element
-        base_projection = Call.build { _1.map_expression(@projection) }
-        Errors::Nested.from(base_projection, node)
-      else
-        raise "Unexpected node: #{node.inspect}"
-      end
     end
   end
 end

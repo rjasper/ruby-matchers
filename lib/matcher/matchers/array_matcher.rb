@@ -10,6 +10,10 @@ module Matcher
       @parent = parent
     end
 
+    def negated
+      NegatedArrayMatcher.new(@array, index: @index, parent: @parent)
+    end
+
     def check(actual:, **)
       unless actual.is_a?(Array)
         errors << "expected an Array but got #{actual.inspect}"

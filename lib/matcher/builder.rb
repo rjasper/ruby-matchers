@@ -131,7 +131,7 @@ module Matcher
       end
 
       def check
-        target_set = @targets.keys.to_set
+        target_set = @targets.keys.reject { _1.start_with?('~') }.to_set
         missing_targets = @used - target_set
         unused_refs = target_set - @used
 
@@ -152,6 +152,7 @@ module Matcher
         matcher = Matcher.of(matcher)
         @last_matcher = matcher
         @targets[key] = matcher
+        @targets["~#{key}"] = nil # reserve entry for later use (thread-safety)
       end
     end
 
@@ -193,6 +194,12 @@ module Matcher
 
     def set(array)
       SetMatcher.new(array.map { Matcher.of(_1) })
+    end
+
+    def neg(matcher = NULL)
+      return Pipe.new { neg(_1) } if null?(matcher)
+
+      ~Matcher.of(matcher)
     end
 
     def all(*matchers)

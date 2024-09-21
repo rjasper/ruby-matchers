@@ -2,6 +2,14 @@
 
 module Matcher
   class Base
+    def ~
+      if respond_to?(:negated)
+        negated
+      else
+        NegatedMatcher.new(self)
+      end
+    end
+
     def |(matcher)
       matcher = Matcher.of(matcher)
 

@@ -2,30 +2,39 @@
 
 module Matcher
   class EqualMatcher < Base
-    def initialize(value)
+    def initialize(value, negated: false)
       super()
 
       @value = value
+      @negated = negated
+    end
+
+    def negated
+      EqualMatcher.new(@value, negated: !@negated)
     end
 
     def check(actual:, **)
-      errors << not_equal_message(actual) unless actual == @value
+      errors << message_for(actual) if @negated ^ (actual != @value)
     end
     protected :check
 
     def inspect
       case @value
       when *CASE_EQUALITY_CLASSES
-        "equal(#{@value.inspect})"
+        "#{'~' if @negated}equal(#{@value.inspect})"
       else
-        @value.inspect
+        @negated ? "neg(#{@value.inspect})" : @value.inspect
       end
     end
 
     private
 
-    def not_equal_message(actual)
-      "expected #{@value.inspect} but got #{actual.inspect}"
+    def message_for(actual)
+      if @negated
+        "expected #{actual.inspect} to not be #{@value.inspect}"
+      else
+        "expected #{@value.inspect} but got #{actual.inspect}"
+      end
     end
   end
 end

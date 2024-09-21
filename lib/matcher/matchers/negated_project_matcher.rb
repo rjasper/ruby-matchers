@@ -1,31 +1,31 @@
 # frozen_string_literal: true
 
 module Matcher
-  class ProjectMatcher < Base
+  class NegatedProjectMatcher < Base
     def initialize(expression, matcher)
       super()
 
       @expression = expression
       @matcher = matcher
+      @neg_matcher = ~matcher
     end
 
     def negated
-      NegatedProjectMatcher.new(@expression, @matcher)
+      ProjectMatcher.new(@expression, @matcher)
     end
 
     def check(**)
       begin
         result = @expression.evaluate(**)
       rescue Call::NotRespondingError => e
-        errors << e.message_for_errors
         return
       end
 
-      errors[@expression] << @matcher.match(**, actual: result)
+      errors[@expression] << @neg_matcher.match(**, actual: result)
     end
 
     def inspect
-      "project(#{@expression.inspect}, #{@matcher.inspect})"
+      "~project(#{@expression}, #{@matcher})"
     end
   end
 end

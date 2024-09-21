@@ -74,12 +74,14 @@ module Matcher
       matcher = HashMatcher.new({ a: h(b: v('c')) })
 
       assert_equal '{:a=>{:b=>"c"}}', matcher.inspect
+      assert_equal 'neg({:a=>{:b=>"c"}})', (~matcher).inspect
     end
 
     test '#inspect: partial entries' do
       matcher = HashMatcher.new({ a: h(b: v('c')) }, all_entries: false)
 
       assert_equal 'partial_entries({:a=>{:b=>"c"}})', matcher.inspect
+      assert_equal '~partial_entries({:a=>{:b=>"c"}})', (~matcher).inspect
     end
   end
 end

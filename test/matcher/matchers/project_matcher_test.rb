@@ -21,6 +21,15 @@ module Matcher
         expr { _1.value } => 'expected "foo" but got "bar"'
       assert_errors matcher.match(1),
         'expected _ to respond to value but got 1'
+
+      negated = ~matcher
+
+      assert_errors negated.match(MyStruct.new('foo')),
+        expr { _1.value } => 'expected "foo" to not be "foo"'
+      assert_predicate negated.match(MyStruct.new('bar')), :valid?
+
+      assert_predicate negated.match(MyStruct.new('bar')), :valid?
+      assert_predicate negated.match(1), :valid?
     end
 
     test '#inspect' do

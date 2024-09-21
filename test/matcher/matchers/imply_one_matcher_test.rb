@@ -17,6 +17,8 @@ module Matcher
 
       assert_errors matcher.match(:a),
         'expected :a to satisfy one of these conditions: String, Integer'
+
+      assert_predicate (~matcher).match(:a), :valid?
     end
 
     test 'match one' do
@@ -34,6 +36,22 @@ module Matcher
       assert_errors matcher.match(2), 'expected 1 but got 2'
     end
 
+    test 'match one: negated' do
+      matcher = ~Matcher.build do
+        imply_one(
+          imply(String, 'string'),
+          imply(Integer, 1),
+        )
+      end
+
+      assert_predicate matcher.match(2), :valid?
+
+      assert_errors matcher.match('string'),
+        'expected "string" to not be "string"'
+      assert_errors matcher.match(1),
+        'expected 1 to not be 1'
+    end
+
     test 'match multiple' do
       matcher = Matcher.build do
         imply_one(
@@ -49,6 +67,22 @@ module Matcher
         data: 'expected "foo" but got "bar"'
     end
 
+    test 'match mutiple: negated' do
+      matcher = ~Matcher.build do
+        imply_one(
+          imply(_[:foo] == true, partial_entries({ data: 'foo' })),
+          imply(_[:bar] == true, partial_entries({ data: 'bar' })),
+        )
+      end
+
+      assert_predicate matcher.match({ foo: true, bar: true, data: 'bar' }), :valid?
+
+      assert_errors matcher.match({ foo: true, data: 'foo' }),
+        data: 'expected "foo" to not be "foo"'
+      assert_errors matcher.match({ bar: true, data: 'bar' }),
+        data: 'expected "bar" to not be "bar"'
+    end
+
     test '#inspect' do
       matcher = Matcher.build do
         imply_one(
@@ -59,6 +93,9 @@ module Matcher
 
       string = 'imply_one(imply(_[:type] == "string", {:data=>"foo"}), imply(_[:type] == "integer", {:data=>42}))'
       assert_equal string, matcher.inspect
+
+      string = '~imply_one(imply(_[:type] == "string", {:data=>"foo"}), imply(_[:type] == "integer", {:data=>42}))'
+      assert_equal string, (~matcher).inspect
     end
   end
 end

@@ -14,6 +14,10 @@ module Matcher
       AllMatcher.new(@matchers + [matcher])
     end
 
+    def negated
+      AnyMatcher.new(@matchers.map(&:~))
+    end
+
     def check(**)
       @matchers.each do |matcher|
         errors << matcher.match(**)

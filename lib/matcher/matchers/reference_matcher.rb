@@ -2,10 +2,15 @@
 
 module Matcher
   class ReferenceMatcher < Base
-    def initialize(targets, key, cyclic: false)
+    def initialize(targets, key, cyclic: nil, negated: false)
       @targets = targets
       @key = key
       @cyclic = cyclic
+      @negated = negated
+    end
+
+    def negated
+      ReferenceMatcher.new(@targets, @key, cyclic: @cyclic, negated: !@negated)
     end
 
     def check(**)
@@ -19,7 +24,7 @@ module Matcher
       # end
 
       unless visited.add?(actual.object_id)
-        errors << 'actual has already been visited' unless @cyclic
+        errors << 'actual has already been visited' if !@cyclic && !@negated
         return
       end
 
@@ -27,7 +32,7 @@ module Matcher
     end
 
     def inspect
-      "refs[#{@key.inspect}]"
+      "#{'~' if @negated}refs[#{@key.inspect}]"
     end
 
     private
@@ -45,7 +50,11 @@ module Matcher
 
       raise "No target for #{@key.inspect}" if target.nil? && !@targets.key?(@key)
 
-      target
+      if @negated
+        @targets["~#{@key}"] ||= ~target
+      else
+        target
+      end
     end
   end
 end

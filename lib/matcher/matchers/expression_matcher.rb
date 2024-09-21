@@ -4,29 +4,49 @@ module Matcher
   class ExpressionMatcher < Base
     attr_reader :expression
 
-    def initialize(expression)
+    def initialize(expression, negated: false)
       super()
 
       @expression = expression
+      @negated = negated
+    end
+
+    def negated
+      ExpressionMatcher.new(@expression, negated: !@negated)
     end
 
     def check(**values)
       chain = []
       evaluation = @expression.evaluate(values, chain)
 
-      errors << falsy_message(values, chain) unless evaluation
+      errors << message_for(values, chain) if @negated != !evaluation
     rescue Call::NotRespondingError => e
-      errors << e.message_for_errors
+      errors << e.message_for_errors unless @negated
     end
     protected :check
 
     def inspect
-      @expression.inspect
+      if @negated
+        "neg(#{@expression})"
+      else
+        @expression.to_s
+      end
     end
 
     private
 
     BINARY_PREDICATES = %i[== < > <= >= != =~ !~ is_a? kind_of? instance_of?].freeze
+
+    NEGATED_COMPARISONS = {
+      :== => :!=,
+      :!= => :==,
+      :< => :>=,
+      :> => :<=,
+      :>= => :<,
+      :<= => :>,
+      :=~ => :!~,
+      :!~ => :=~,
+    }.freeze
 
     def predicate?
       method = @expression.method
@@ -35,7 +55,7 @@ module Matcher
         (@expression.binary? && method.in?(BINARY_PREDICATES))
     end
 
-    def falsy_message(values, chain)
+    def message_for(values, chain)
       if predicate?
         predicate_message(values, chain)
       else
@@ -49,7 +69,7 @@ module Matcher
       string = "expected #{receiver.inspect} to "
 
       if arity == 0
-        string += "be #{@expression.method[0...-1]}"
+        string += "#{'not ' if @negated}be #{@expression.method[0...-1]}"
       else # arity == 1
         operand = @expression.args[0]
 
@@ -58,7 +78,8 @@ module Matcher
           operand.is_a?(Call) || operand.is_a?(Variable)
       end
 
-      string += " but got #{chain[-2].inspect}" if @expression.method != :!=
+      string += " but got #{chain[-2].inspect}" if
+        @expression.method != (@negated ? :== : :!=)
 
       given = values.dup
       given.delete(receiver.symbol) if receiver.instance_of?(Variable)
@@ -71,7 +92,14 @@ module Matcher
     end
 
     def operator_word
-      case @expression.method
+      method = @expression.method
+      operator = @negated ? NEGATED_COMPARISONS[method] || method : method
+
+      case operator
+      when :kind_of?, :is_a?
+        "#{'not ' if @negated}be a kind of"
+      when :instance_of?
+        "#{'not ' if @negated}be an instance of"
       when :==
         'be'
       when :!=
@@ -80,17 +108,13 @@ module Matcher
         'match'
       when :!~
         'not match'
-      when :kind_of?, :is_a?
-        'be a kind of'
-      when :instance_of?
-        'be an instance of'
       else
-        "be #{@expression.method}"
+        "be #{operator}"
       end
     end
 
     def regular_message(values, chain)
-      string = "expected #{@expression.inspect} to be truthy for #{@expression.given_values(values)}"
+      string = "expected #{@expression.inspect} to be #{@negated ? 'falsy' : 'truthy'} for #{@expression.given_values(values)}"
       string += ", where #{@expression.receiver.inspect} was #{chain[-2].inspect}" if chain.length > 2
 
       string
