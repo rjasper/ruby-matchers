@@ -10,11 +10,14 @@ module Matcher
     end
 
     def check(**)
-      result = @expression.evaluate(**)
+      begin
+        result = @expression.evaluate(**)
+      rescue Call::NotRespondingError => e
+        errors << e.message_for_errors
+        return
+      end
 
       errors[@expression] << @matcher.match(**, actual: result)
-    rescue Call::NotRespondingError => e
-      errors << e.message_for_errors
     end
 
     def inspect
