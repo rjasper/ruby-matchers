@@ -12,11 +12,16 @@ module Matcher
     end
 
     def check(**)
-      return unless @condition.match(**).valid?
+      begin
+        condition_errors = @condition.match(**)
+      rescue NotRespondingError => e
+        errors << e.message_for_errors
+        return
+      end
+
+      return unless condition_errors.valid?
 
       errors << @matcher.match(**)
-    rescue NotRespondingError => e
-      errors << e.message_for_errors
     end
     protected :check
 
