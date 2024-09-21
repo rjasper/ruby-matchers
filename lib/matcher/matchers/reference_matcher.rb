@@ -10,22 +10,20 @@ module Matcher
 
     def check(**)
       actual = get_actual(**)
-      match_key = [@key, actual.object_id]
-      match_result = matched[match_key]
-
-      unless match_result.nil?
-        errors << 'actual has already failed before' unless match_result
-        return
-      end
+      # match_key = [@key, actual.object_id]
+      # match_result = matched[match_key]
+      #
+      # unless match_result.nil?
+      #   errors << 'actual has already failed before' unless match_result
+      #   return
+      # end
 
       unless visited.add?(actual.object_id)
         errors << 'actual has already been visited' unless @cyclic
         return
       end
 
-      target_errors = target.match(**)
-      errors << target_errors
-      matched[match_key] = target_errors.valid? if @once
+      errors << target.match(**)
     end
 
     def inspect
@@ -38,9 +36,9 @@ module Matcher
       session[:visited] ||= Set.new
     end
 
-    def matched
-      class_session[:matched] ||= Hash.new
-    end
+    # def matched
+    #   class_session[:matched] ||= Hash.new
+    # end
 
     def target
       target = @targets[@key]
