@@ -21,6 +21,8 @@ module Matcher
         'expected _[:foo][:bar] to respond to baz? but got nil where _ = {:foo=>{}}'
       assert_errors match(1.0) { (_ + 1).is_a?(Integer) },
         'expected _ + 1 to be a kind of Integer but got 2.0 for _ = 1.0'
+      assert_errors match(1) { _.instance_of?(Float) },
+        'expected _ to be an instance of Float but got 1'
       assert_errors match(7) { _ % 3 == 0 },
         'expected _ % 3 to be 0 but got 1 for _ = 7'
       assert_errors match(6) { _ % 3 != 0 },
