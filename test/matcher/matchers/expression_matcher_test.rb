@@ -73,11 +73,11 @@ module Matcher
         'expected _ + 1 to not be odd but got 7 for _ = 6'
     end
 
-    test '#inspect' do
+    test '#to_s' do
       matcher = Matcher.build { _ * 3 > 9 }
 
-      assert_equal '_ * 3 > 9', matcher.inspect
-      assert_equal 'neg(_ * 3 > 9)', (~matcher).inspect
+      assert_equal '_ * 3 > 9', matcher.to_s
+      assert_equal 'neg(_ * 3 > 9)', (~matcher).to_s
     end
   end
 end

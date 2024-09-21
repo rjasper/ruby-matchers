@@ -24,14 +24,14 @@ module Matcher
     test '#&' do
       matcher = AllMatcher.new([v(1), v(2)]) & v(3)
 
-      assert_equal 'all(1, 2, 3)', matcher.inspect
+      assert_equal 'all(1, 2, 3)', matcher.to_s
     end
 
-    test '#inspect' do
+    test '#to_s' do
       matcher = AllMatcher.new([v(1), v(2)])
 
-      assert_equal 'all(1, 2)', matcher.inspect
-      assert_equal 'any(neg(1), neg(2))', (~matcher).inspect
+      assert_equal 'all(1, 2)', matcher.to_s
+      assert_equal 'any(neg(1), neg(2))', (~matcher).to_s
     end
   end
 end

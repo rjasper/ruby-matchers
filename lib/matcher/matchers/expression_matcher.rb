@@ -25,7 +25,7 @@ module Matcher
     end
     protected :check
 
-    def inspect
+    def to_s
       if @negated
         "neg(#{@expression})"
       else

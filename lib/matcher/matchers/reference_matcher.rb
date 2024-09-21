@@ -31,7 +31,7 @@ module Matcher
       errors << target.match(**)
     end
 
-    def inspect
+    def to_s
       "#{'~' if @negated}refs[#{@key.inspect}]"
     end
 

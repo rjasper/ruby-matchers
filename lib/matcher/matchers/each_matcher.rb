@@ -36,8 +36,8 @@ module Matcher
     end
     protected :check
 
-    def inspect
-      "each(#{@matcher.inspect})"
+    def to_s
+      "each(#{@matcher})"
     end
 
     private

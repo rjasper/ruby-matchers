@@ -19,7 +19,7 @@ module Matcher
     end
     protected :check
 
-    def inspect
+    def to_s
       message = @message || "-> { #{block_location} }"
 
       if @negated

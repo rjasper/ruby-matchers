@@ -50,8 +50,8 @@ module Matcher
         0 => 'unexpected item 1'
     end
 
-    test '#inspect' do
-      assert_equal 'set([1, 2, 3])', SetMatcher.new([v(1), v(2), v(3)]).inspect
+    test '#to_s' do
+      assert_equal 'set([1, 2, 3])', SetMatcher.new([v(1), v(2), v(3)]).to_s
     end
   end
 end

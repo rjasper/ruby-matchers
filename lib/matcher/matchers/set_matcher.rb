@@ -45,7 +45,7 @@ module Matcher
 
       if @negated
         # when negated then missing.empty? <=> extra.empty?
-        errors << "expected array to not be an equal set to #{@array.inspect} but got #{actual.inspect}" if missing.empty?
+        errors << "expected array to not be an equal set to #{@array} but got #{actual}" if missing.empty?
       else
         missing.each { errors << "expected array to include #{_1.inspect}" }
         extra.each { errors[_1] << "unexpected item #{actual[_1].inspect}" }
@@ -53,8 +53,8 @@ module Matcher
     end
     protected :check
 
-    def inspect
-      "#{'~' if @negated}set(#{@array.inspect})"
+    def to_s
+      "#{'~' if @negated}set(#{@array})"
     end
   end
 end

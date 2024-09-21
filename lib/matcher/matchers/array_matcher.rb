@@ -29,8 +29,8 @@ module Matcher
     end
     protected :check
 
-    def inspect
-      @array.inspect
+    def to_s
+      @array.to_s
     end
   end
 end

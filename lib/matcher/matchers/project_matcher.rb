@@ -24,8 +24,8 @@ module Matcher
       errors[@expression] << @matcher.match(**, actual: result)
     end
 
-    def inspect
-      "project(#{@expression.inspect}, #{@matcher.inspect})"
+    def to_s
+      "project(#{@expression}, #{@matcher})"
     end
   end
 end

@@ -25,8 +25,8 @@ module Matcher
     end
     protected :check
 
-    def inspect
-      "all(#{@matchers.map(&:inspect).join(', ')})"
+    def to_s
+      "all(#{@matchers.map(&:to_s).join(', ')})"
     end
   end
 end

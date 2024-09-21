@@ -33,14 +33,14 @@ module Matcher
     end
     protected :check
 
-    def inspect
-      "imply_one(#{@matchers.map(&:inspect).join(', ')})"
+    def to_s
+      "imply_one(#{@matchers.map(&:to_s).join(', ')})"
     end
 
     private
 
     def list_conditions_of(matchers)
-      matchers.map { _1.condition.inspect }.join(', ')
+      matchers.map { _1.condition.to_s }.join(', ')
     end
   end
 end

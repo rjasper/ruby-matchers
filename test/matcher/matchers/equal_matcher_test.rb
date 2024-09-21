@@ -32,15 +32,15 @@ module Matcher
         'expected 23 to not be 23'
     end
 
-    test '#inspect' do
+    test '#to_s' do
       matcher = EqualMatcher.new(1)
 
-      assert_equal '1', matcher.inspect
-      assert_equal 'neg(1)', (~matcher).inspect
+      assert_equal '1', matcher.to_s
+      assert_equal 'neg(1)', (~matcher).to_s
 
       matcher = EqualMatcher.new(1..10)
-      assert_equal 'equal(1..10)', matcher.inspect
-      assert_equal '~equal(1..10)', (~matcher).inspect
+      assert_equal 'equal(1..10)', matcher.to_s
+      assert_equal '~equal(1..10)', (~matcher).to_s
     end
   end
 end

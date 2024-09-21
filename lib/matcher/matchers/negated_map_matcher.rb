@@ -38,7 +38,7 @@ module Matcher
     end
     protected :check
 
-    def inspect
+    def to_s
       "~map(#{@projection}, #{@matcher})"
     end
   end

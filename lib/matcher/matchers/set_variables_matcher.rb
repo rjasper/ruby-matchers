@@ -22,7 +22,7 @@ module Matcher
     end
     protected :check
 
-    def inspect
+    def to_s
       assign_parts = @assigns.map do |key, value|
         if value.is_a?(Proc)
           "#{key}: ->(#{Utils.inspect_block_params(value)}) { ... }"
@@ -31,7 +31,7 @@ module Matcher
         end
       end
 
-      "setvar(#{assign_parts.join(', ')}) ^ (#{@matcher.inspect})"
+      "setvar(#{assign_parts.join(', ')}) ^ (#{@matcher})"
     end
   end
 end

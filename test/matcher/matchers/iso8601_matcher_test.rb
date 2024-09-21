@@ -45,12 +45,12 @@ module Matcher
         'expected 2024-07-04 14:09:39 +0200 but got 2020-01-05 12:20:32 +0200'
     end
 
-    test '#inspect' do
-      assert_equal 'iso8601', Iso8601Matcher.new.inspect
+    test '#to_s' do
+      assert_equal 'iso8601', Iso8601Matcher.new.to_s
       assert_equal 'iso8601("2024-07-04T14:09:39+04:00")',
-        Iso8601Matcher.new(Time.new(2024, 7, 4, 14, 9, 39, '+04:00')).inspect
+        Iso8601Matcher.new(Time.new(2024, 7, 4, 14, 9, 39, '+04:00')).to_s
       assert_equal 'iso8601("2024-07-04T14:09:39+04:00")',
-        Iso8601Matcher.new('2024-07-04T14:09:39+04:00').inspect
+        Iso8601Matcher.new('2024-07-04T14:09:39+04:00').to_s
     end
   end
 end

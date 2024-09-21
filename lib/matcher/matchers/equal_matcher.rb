@@ -18,7 +18,7 @@ module Matcher
     end
     protected :check
 
-    def inspect
+    def to_s
       case @value
       when *CASE_EQUALITY_CLASSES
         "#{'~' if @negated}equal(#{@value.inspect})"

@@ -24,7 +24,7 @@ module Matcher
     end
     protected :check
 
-    def inspect
+    def to_s
       "~imply_one(#{@matchers.map(&:to_s).join(', ')})"
     end
   end

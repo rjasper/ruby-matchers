@@ -30,21 +30,21 @@ module Matcher
       'did not expect to satisfy condition block_matcher_test.rb:22 but got "foo"'
   end
 
-    test '#inspect: with message' do
+    test '#to_s: with message' do
       matcher = BlockMatcher.new(-> { _1 % 3 == 0 }, 'a number divisible by three')
 
-      assert_equal 'a number divisible by three', matcher.inspect
-      assert_equal 'neg(a number divisible by three)', (~matcher).inspect
+      assert_equal 'a number divisible by three', matcher.to_s
+      assert_equal 'neg(a number divisible by three)', (~matcher).to_s
     end
 
-    test '#inspect: no message' do
+    test '#to_s: no message' do
       matcher = BlockMatcher.new(-> { true })
       lineno = __LINE__ - 1
 
       assert_equal "-> { block_matcher_test.rb:#{lineno} }",
-        matcher.inspect
-      assert_equal "neg(-> { test/unit/matcher/matchers/block_matcher_test.rb:#{lineno} })",
-        (~matcher).inspect
+        matcher.to_s
+      assert_equal "neg(-> { block_matcher_test.rb:#{lineno} })",
+        (~matcher).to_s
     end
   end
 end

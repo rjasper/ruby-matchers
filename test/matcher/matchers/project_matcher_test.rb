@@ -32,12 +32,12 @@ module Matcher
       assert_predicate negated.match(1), :valid?
     end
 
-    test '#inspect' do
+    test '#to_s' do
       matcher = Matcher.build do
         project(_.my_method, 42)
       end
 
-      assert_equal 'project(_.my_method, 42)', matcher.inspect
+      assert_equal 'project(_.my_method, 42)', matcher.to_s
     end
   end
 end

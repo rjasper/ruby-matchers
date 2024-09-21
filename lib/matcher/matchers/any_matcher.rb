@@ -31,8 +31,8 @@ module Matcher
     end
     protected :check
 
-    def inspect
-      "any(#{@matchers.map(&:inspect).join(', ')})"
+    def to_s
+      "any(#{@matchers.map(&:to_s).join(', ')})"
     end
   end
 end

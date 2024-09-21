@@ -40,11 +40,11 @@ module Matcher
     end
     protected :check
 
-    def inspect
+    def to_s
       if @all_entries
-        @hash.inspect
+        @hash.to_s
       else
-        "partial_entries(#{@hash.inspect})"
+        "partial_entries(#{@hash})"
       end
     end
 

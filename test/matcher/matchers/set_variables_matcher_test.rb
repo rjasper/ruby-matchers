@@ -71,14 +71,14 @@ module Matcher
         }
     end
 
-    test '#inspect' do
+    test '#to_s' do
       matcher = Matcher.build do
         declare :a, :b
 
         setvar(a: 0, b: ->(_) { 2 * _ }) ^ (_ == a + b)
       end
 
-      assert_equal 'setvar(a: 0, b: ->(_) { ... }) ^ (_ == a + b)', matcher.inspect
+      assert_equal 'setvar(a: 0, b: ->(_) { ... }) ^ (_ == a + b)', matcher.to_s
     end
   end
 end

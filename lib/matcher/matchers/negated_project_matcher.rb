@@ -24,7 +24,7 @@ module Matcher
       errors[@expression] << @neg_matcher.match(**, actual: result)
     end
 
-    def inspect
+    def to_s
       "~project(#{@expression}, #{@matcher})"
     end
   end

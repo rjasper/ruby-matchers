@@ -56,8 +56,8 @@ module Matcher
       errors.node
     end
 
-    def to_s
-      inspect
+    def inspect
+      to_s
     end
 
     protected

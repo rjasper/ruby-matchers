@@ -29,8 +29,8 @@ module Matcher
     end
     protected :check
 
-    def inspect
-      "imply(#{@condition.inspect}, #{@matcher.inspect})"
+    def to_s
+      "imply(#{@condition}, #{@matcher})"
     end
   end
 end

@@ -67,11 +67,11 @@ module Matcher
         2 => 'expected parent[i - 1] to be < parent[i] (3) but got 5 for parent = [1, 5, 3], i = 2'
     end
 
-    test '#inspect' do
+    test '#to_s' do
       matcher = ArrayMatcher.new([v(1), v(2), v(3)])
 
-      assert_equal '[1, 2, 3]', matcher.inspect
-      assert_equal 'neg([1, 2, 3])', (~matcher).inspect
+      assert_equal '[1, 2, 3]', matcher.to_s
+      assert_equal 'neg([1, 2, 3])', (~matcher).to_s
     end
   end
 end

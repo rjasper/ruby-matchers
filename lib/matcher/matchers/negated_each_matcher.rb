@@ -56,7 +56,7 @@ module Matcher
     end
     protected :check
 
-    def inspect
+    def to_s
       "~each(#{@matcher})"
     end
   end

@@ -31,11 +31,11 @@ module Matcher
         'expected 1 to be within 2..3'
     end
 
-    test '#inspect' do
+    test '#to_s' do
       matcher = CaseEqualityMatcher.new(Integer)
 
-      assert_equal 'Integer', matcher.inspect
-      assert_equal 'neg(Integer)', (~matcher).inspect
+      assert_equal 'Integer', matcher.to_s
+      assert_equal 'neg(Integer)', (~matcher).to_s
     end
   end
 end

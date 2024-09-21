@@ -43,7 +43,7 @@ module Matcher
     end
     protected :check
 
-    def inspect
+    def to_s
       "#{'~' if @negated}iso8601#{"(#{@time.iso8601.inspect})" if @time}"
     end
   end

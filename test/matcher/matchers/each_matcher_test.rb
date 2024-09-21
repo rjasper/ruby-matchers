@@ -61,11 +61,11 @@ module Matcher
         3 => 'expected _ to be parent.length * 10 + i + 1 (44) but got 45 for parent = [41, 42, 43, 45], i = 3'
     end
 
-    test '#inspect' do
+    test '#to_s' do
       matcher = EachMatcher.new(v(1))
 
-      assert_equal 'each(1)', matcher.inspect
-      assert_equal '~each(1)', (~matcher).inspect
+      assert_equal 'each(1)', matcher.to_s
+      assert_equal '~each(1)', (~matcher).to_s
     end
   end
 end

@@ -29,12 +29,12 @@ module Matcher
       assert_predicate matcher.match('Hello'), :valid?
     end
 
-    test '#inspect' do
+    test '#to_s' do
       matcher = Matcher.build do
         imply(String, 'string')
       end
 
-      assert_equal 'imply(String, "string")', matcher.inspect
+      assert_equal 'imply(String, "string")', matcher.to_s
     end
   end
 end

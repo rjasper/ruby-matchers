@@ -17,8 +17,8 @@ module Matcher
     end
     protected :check
 
-    def inspect
-      "neg(#{@matcher.inspect})"
+    def to_s
+      "neg(#{@matcher})"
     end
   end
 end

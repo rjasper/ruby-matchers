@@ -83,7 +83,7 @@ module Matcher
         data: 'expected "bar" to not be "bar"'
     end
 
-    test '#inspect' do
+    test '#to_s' do
       matcher = Matcher.build do
         imply_one(
           imply(_[:type] == 'string', { data: 'foo' }),
@@ -92,10 +92,10 @@ module Matcher
       end
 
       string = 'imply_one(imply(_[:type] == "string", {:data=>"foo"}), imply(_[:type] == "integer", {:data=>42}))'
-      assert_equal string, matcher.inspect
+      assert_equal string, matcher.to_s
 
       string = '~imply_one(imply(_[:type] == "string", {:data=>"foo"}), imply(_[:type] == "integer", {:data=>42}))'
-      assert_equal string, (~matcher).inspect
+      assert_equal string, (~matcher).to_s
     end
   end
 end
