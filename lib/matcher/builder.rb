@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
+require 'singleton'
+
 module Matcher
   class Builder
-    delegate :of, to: :Matcher
+    def of(matcher)
+      Matcher.of(matcher)
+    end
 
     def satisfy(message = nil, &block)
       BlockMatcher.new(block, message)

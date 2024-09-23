@@ -83,7 +83,7 @@ module Matcher
       @negated ||= begin
         if unary? && @method == :!
           @receiver
-        elsif binary? && @method.in?(%i[< > <= >= == != =~ !~ && ||])
+        elsif binary? && %i[< > <= >= == != =~ !~ && ||].include?(@method)
           case @method
           when :<
             Call.new(@receiver, :>=, *@args)
@@ -131,7 +131,7 @@ module Matcher
       args = evaluate_args(values)
       kwargs = evaluate_kwargs(values)
 
-      return args[0] if @method.in?(%i[&& ||])
+      return args[0] if %i[&& ||].include?(@method)
 
       raise NotRespondingError.new(self, actual_receiver, values) unless
         actual_receiver.respond_to?(@method)

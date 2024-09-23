@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'time'
+
 module Matcher
   class Iso8601Matcher < Base
     def initialize(time = nil, negated: false)

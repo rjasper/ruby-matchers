@@ -52,7 +52,7 @@ module Matcher
       method = @expression.method
 
       (@expression.unary? && method.end_with?('?')) ||
-        (@expression.binary? && method.in?(BINARY_PREDICATES))
+        (@expression.binary? && BINARY_PREDICATES.include?(method))
     end
 
     def message_for(values, chain)

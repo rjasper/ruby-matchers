@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'active_support/all'
-
 require_relative "matcher/version"
 
 require 'matcher/base'
@@ -75,7 +73,13 @@ module Matcher
 
   CASE_EQUALITY_CLASSES = [Class, Range, Regexp].freeze
 
-  cattr_accessor :max_depth, default: 5000
+  def self.max_depth
+    @max_depth ||= 5000
+  end
+
+  def self.max_depth=(val)
+    @max_depth = val
+  end
 
   def self.of(object)
     if ExpressionRecorder.recorder?(object)

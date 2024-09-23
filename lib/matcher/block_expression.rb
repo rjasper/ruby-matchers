@@ -44,7 +44,7 @@ module Matcher
         kwargs = variables.to_h { [_1, Variable.new(_1)] }
         substitutions = variables.to_h { [_1, _1.to_s] }
 
-        if arg0_type.in?(%i[req opt rest])
+        if %i[req opt rest].include?(arg0_type)
           args << kwargs.delete(:actual)
           substitutions[:actual] = arg0_name.to_s
         end

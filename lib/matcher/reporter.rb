@@ -2,8 +2,8 @@
 
 module Matcher
   class Reporter
-    class << self
-      delegate :report, to: :new
+    def self.report(node)
+      new.report(node)
     end
 
     def initialize

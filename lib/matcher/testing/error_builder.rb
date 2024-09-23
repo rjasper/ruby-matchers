@@ -37,7 +37,7 @@ module Matcher
         if message.nil?
           @nodes << Errors::Element.new(path_or_message)
         else
-          path = Array.wrap(path_or_message)
+          path = Array(path_or_message)
           element = Errors::Element.new(message)
 
           @nodes << nest(path, element)
