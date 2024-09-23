@@ -5,8 +5,9 @@ require "matcher"
 
 require "minitest/autorun"
 
-module ActiveSupport
-  class TestCase
+module Minitest
+  class Spec
     include Matcher::Assertions
+    include Matcher::Testing
   end
 end

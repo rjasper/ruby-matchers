@@ -2,12 +2,10 @@
 
 require 'test_helper'
 
-class MatcherTest < ActiveSupport::TestCase
-  test 'assert_structure' do
-    assert_nothing_raised do
-      assert_structure({ foo: 42 }) do
-        { foo: 42 }
-      end
+describe Matcher do
+  it 'assert_structure' do
+    assert_structure({ foo: 42 }) do
+      { foo: 42 }
     end
 
     assert_raises(Minitest::Assertion) do
@@ -17,13 +15,13 @@ class MatcherTest < ActiveSupport::TestCase
     end
   end
 
-  test 'checks unused refs' do
+  it 'checks unused refs' do
     assert_raises StandardError, match: 'unused ref: foo' do
       Matcher.build { refs[:foo] = 'foo'; 1 }
     end
   end
 
-  test 'checks undefined refs' do
+  it 'checks undefined refs' do
     assert_raises StandardError, match: 'undefined ref: foo' do
       Matcher.build { refs[:foo] }
     end

@@ -3,121 +3,117 @@
 require 'test_helper'
 require 'matcher/testing'
 
-module Matcher
-  class ExamplesTest < ActiveSupport::TestCase
-    include Testing
+describe 'examples' do
+  it 'tree' do
+    matcher = Matcher.build do
+      declare :low, :high
 
-    test 'tree' do
-      matcher = Matcher.build do
-        declare :low, :high
-
-        refs[:node] = {
-          key: all(Integer, lo { (!low | (_ > low)) & (!high | (_ < high)) }),
-          left: setvar(high: ->(high:, parent:) { [parent[:key], high].compact.max }) ^
-            (of(nil) | refs[:node]),
-          right: setvar(low: ->(low:, parent:) { [parent[:key], low].compact.min }) ^
-            (of(nil) | refs[:node]),
-        }
-      end
-
-      tree = {
-        key: 5,
-        left: {
-          key: 3,
-          left: { key: 1, left: nil, right: nil },
-          right: { key: 4, left: nil, right: nil },
-        },
-        right: {
-          key: 7,
-          left: { key: 5, left: nil, right: nil }, # error: key equal to root key
-          right: { key: 10, left: nil, right: nil },
-        }
+      refs[:node] = {
+        key: all(Integer, lo { (!low | (_ > low)) & (!high | (_ < high)) }),
+        left: setvar(high: ->(high:, parent:) { [parent[:key], high].compact.max }) ^
+          (of(nil) | refs[:node]),
+        right: setvar(low: ->(low:, parent:) { [parent[:key], low].compact.min }) ^
+          (of(nil) | refs[:node]),
       }
+    end
 
-      assert_errors matcher.match(tree) do
-        _or(:right) do
-          error 'expected nil but got {:key=>7, :left=>{:key=>5, :left=>nil, :right=>nil}, :right=>{:key=>10, :left=>nil, :right=>nil}}'
-          _or(:left) do
-            error 'expected nil but got {:key=>5, :left=>nil, :right=>nil}'
-            error :key, 'expected (!low || _ > low) && (!high || _ < high) to be truthy for low = 5, _ = 5, high = 7'
-          end
+    tree = {
+      key: 5,
+      left: {
+        key: 3,
+        left: { key: 1, left: nil, right: nil },
+        right: { key: 4, left: nil, right: nil },
+      },
+      right: {
+        key: 7,
+        left: { key: 5, left: nil, right: nil }, # error: key equal to root key
+        right: { key: 10, left: nil, right: nil },
+      }
+    }
+
+    assert_errors matcher.match(tree) do
+      _or(:right) do
+        error 'expected nil but got {:key=>7, :left=>{:key=>5, :left=>nil, :right=>nil}, :right=>{:key=>10, :left=>nil, :right=>nil}}'
+        _or(:left) do
+          error 'expected nil but got {:key=>5, :left=>nil, :right=>nil}'
+          error :key, 'expected (!low || _ > low) && (!high || _ < high) to be truthy for low = 5, _ = 5, high = 7'
         end
       end
     end
+  end
 
-    test 'cyclic graph' do
-      matcher = Matcher.build do
-        refs[:vertex] = setvar(vertex: -> { _1 }) ^ {
-          name: String,
-          edges: each(refs[:edge, cyclic: true]),
-        }
+  it 'cyclic graph' do
+    matcher = Matcher.build do
+      refs[:vertex] = setvar(vertex: -> { _1 }) ^ {
+        name: String,
+        edges: each(refs[:edge, cyclic: true]),
+      }
 
-        refs[:edge] = {
-          weight: Integer,
-          destination: refs[:vertex, cyclic: true]
-        }
+      refs[:edge] = {
+        weight: Integer,
+        destination: refs[:vertex, cyclic: true]
+      }
 
-        # graph
-        { vertices: each(refs[:vertex]) }
-      end
-
-      a = { name: 'a', edges: [] }
-      b = { name: 'b', edges: [] }
-      c = { name: 'c', edges: [] }
-      graph = { vertices: [a, b, c]}
-
-      a[:edges] << { weight: 1, destination: b }
-      b[:edges] << { weight: 2, destination: c }
-
-      assert_no_errors matcher.match(graph)
-
-      c[:edges] << { weight: 3, destination: a }
-
-      assert_no_errors matcher.match(graph)
+      # graph
+      { vertices: each(refs[:vertex]) }
     end
 
-    test 'pipe' do
-      matcher = Matcher.build do
-        setvar(c: 1) ^ setvar(c: ->(c:) { c + 1 }) ^ {
-          value: _ == vars[:c],
-        }
-      end
+    a = { name: 'a', edges: [] }
+    b = { name: 'b', edges: [] }
+    c = { name: 'c', edges: [] }
+    graph = { vertices: [a, b, c]}
 
-      assert_predicate matcher.match({ value: 2 }), :valid?
+    a[:edges] << { weight: 1, destination: b }
+    b[:edges] << { weight: 2, destination: c }
+
+    assert_no_errors matcher.match(graph)
+
+    c[:edges] << { weight: 3, destination: a }
+
+    assert_no_errors matcher.match(graph)
+  end
+
+  it 'pipe' do
+    matcher = Matcher.build do
+      setvar(c: 1) ^ setvar(c: ->(c:) { c + 1 }) ^ {
+        value: _ == vars[:c],
+      }
     end
 
-    test 'map ^ each' do
-      matcher = Matcher.build do
-        map(_.length) ^ each(3)
-      end
+    assert_predicate matcher.match({ value: 2 }), :valid?
+  end
 
-      assert_predicate matcher.match(%w[123 456]), :valid?
-
-      assert_errors matcher.match(%w[123 456 7890]),
-        2 => { Call.build { _1.length } => 'expected 3 but got 4' }
+  it 'map ^ each' do
+    matcher = Matcher.build do
+      map(_.length) ^ each(3)
     end
 
-    test 'expressions: constant receiver' do
-      matcher = Matcher.build do
-        expr(Math).sqrt(_) > 2
-      end
+    assert_predicate matcher.match(%w[123 456]), :valid?
 
-      assert_equal 'Math.sqrt(_) > 2', matcher.inspect
+    assert_errors matcher.match(%w[123 456 7890]),
+      2 => { Matcher::Call.build { _1.length } => 'expected 3 but got 4' }
+  end
 
-      assert_no_errors matcher.match(9)
-      assert_errors matcher.match(4),
-        'expected Math.sqrt(_) to be > 2 but got 2.0 for _ = 4'
+  it 'expressions: constant receiver' do
+    matcher = Matcher.build do
+      expr(Math).sqrt(_) > 2
     end
 
-    test 'expressions: block receiver' do
-      matcher = Matcher.build do
-        expr_s { |_| [_, 10] }.sum >= 15
-      end
+    assert_equal 'Math.sqrt(_) > 2', matcher.inspect
 
-      assert_equal 'expr_s { |_| [_, 10] }.sum >= 15', matcher.inspect
-      assert_no_errors matcher.match(10)
-      assert_errors matcher.match(2),
-        'expected expr_s { |_| [_, 10] }.sum to be >= 15 but got 12 for _ = 2'
+    assert_no_errors matcher.match(9)
+    assert_errors matcher.match(4),
+      'expected Math.sqrt(_) to be > 2 but got 2.0 for _ = 4'
+  end
+
+  it 'expressions: block receiver' do
+    matcher = Matcher.build do
+      expr_s { |_| [_, 10] }.sum >= 15
     end
+
+    assert_equal 'expr_s { |_| [_, 10] }.sum >= 15', matcher.inspect
+    assert_no_errors matcher.match(10)
+    assert_errors matcher.match(2),
+      'expected expr_s { |_| [_, 10] }.sum to be >= 15 but got 12 for _ = 2'
   end
 end
