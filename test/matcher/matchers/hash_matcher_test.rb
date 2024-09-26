@@ -35,14 +35,8 @@ describe Matcher::HashMatcher do
     assert_predicate matcher.match({ foo: { bar: 'baz' } }), :valid?
     assert_errors matcher.match({ foo: { bar: 'buzz' } }),
       foo: { bar: 'expected "baz" but got "buzz"' }
-    refute_predicate matcher.match({ foo: 'foo' }), :valid?
-  end
-
-  it 'match nested matcher' do
-    child = Matcher::HashMatcher.new({ bar: v('foobar') })
-    parent = Matcher::HashMatcher.new({ foo: child })
-
-    assert_predicate parent.match({ foo: { bar: 'foobar' } }), :valid?
+    assert_errors matcher.match({ foo: 'foo' }),
+      foo: 'expected a Hash but got "foo"'
   end
 
   it 'pass key' do
