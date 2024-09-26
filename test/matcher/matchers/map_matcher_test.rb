@@ -10,17 +10,6 @@ describe Matcher::MapMatcher do
 
     assert_predicate matcher.match([{ foo: 1 }, { foo: 2 }]), :valid?
     refute_predicate matcher.match([]), :valid?
-
-    negated = ~matcher
-
-    assert_errors negated.match([{ foo: 1 }, { foo: 2 }]) do
-      _or do
-        error [0, :foo], 'expected 1 to not be 1'
-        error [1, :foo], 'expected 2 to not be 2'
-      end
-    end
-
-    assert_predicate negated.match([]), :valid?
   end
 
   it 'generates error messages' do

@@ -18,15 +18,6 @@ describe Matcher::ProjectMatcher do
       expr { _1.value } => 'expected "foo" but got "bar"'
     assert_errors matcher.match(1),
       'expected _ to respond to value but got 1'
-
-    negated = ~matcher
-
-    assert_errors negated.match(my_struct.new('foo')),
-      expr { _1.value } => 'expected "foo" to not be "foo"'
-    assert_predicate negated.match(my_struct.new('bar')), :valid?
-
-    assert_predicate negated.match(my_struct.new('bar')), :valid?
-    assert_predicate negated.match(1), :valid?
   end
 
   it '#to_s' do

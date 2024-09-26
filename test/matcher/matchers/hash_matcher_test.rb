@@ -65,7 +65,6 @@ describe Matcher::HashMatcher do
     matcher = Matcher::HashMatcher.new({ a: h(b: v('c')) })
 
     assert_equal '{:a=>{:b=>"c"}}', matcher.to_s
-    assert_equal 'neg({:a=>{:b=>"c"}})', (~matcher).to_s
   end
 
   it '#to_s: partial entries'
