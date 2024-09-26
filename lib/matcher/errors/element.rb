@@ -26,6 +26,10 @@ module Matcher
 
         Or.new([self, other])
       end
+
+      def to_s
+        @message.inspect
+      end
     end
   end
 end

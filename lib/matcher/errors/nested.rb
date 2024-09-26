@@ -93,6 +93,10 @@ module Matcher
           Or.new([self, other])
         end
       end
+
+      def to_s
+        "#{@key} -> #{@node}"
+      end
     end
   end
 end

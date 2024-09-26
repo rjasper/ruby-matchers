@@ -16,6 +16,10 @@ module Matcher
       def valid?
         true
       end
+
+      def to_s
+        '<>'
+      end
     end
   end
 end

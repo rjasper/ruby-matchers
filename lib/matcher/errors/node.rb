@@ -6,6 +6,10 @@ module Matcher
       def valid?
         false
       end
+
+      def inspect
+        to_s
+      end
     end
   end
 end

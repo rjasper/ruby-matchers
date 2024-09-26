@@ -76,6 +76,10 @@ module Matcher
         self
       end
       alias << add
+
+      def to_s
+        @nodes.map(&:to_s).join(' | ')
+      end
     end
   end
 end
