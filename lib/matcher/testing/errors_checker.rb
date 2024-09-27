@@ -48,14 +48,10 @@ module Matcher
       end
 
       def message_for(leaf)
-        path = +'root'
+        path = 'root'
 
         leaf.path&.reverse_each do |key|
-          if key.is_a?(Expression)
-            path = key.to_s(substitutions: { actual: path })
-          else
-            path << "[#{key.inspect}]"
-          end
+          path = Errors::Nested.key_to_s(key, path)
         end
 
         "#{path}: #{leaf.element.message}"

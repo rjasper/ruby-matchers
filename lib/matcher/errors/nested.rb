@@ -37,6 +37,38 @@ module Matcher
         keys
       end
 
+      def self.key_to_s(key, path)
+        case key
+        when Expression
+          key.to_s(substitutions: { actual: path })
+        when Errors::Nested::Key
+          path + key.to_s
+        else
+          "#{path}[#{key.inspect}]"
+        end
+      end
+
+      class Key
+        def initialize(str)
+          @str = str
+        end
+
+        def hash
+          @str.hash
+        end
+
+        def eql?(other)
+          other.is_a?(Key) && other.str.eql?(@str)
+        end
+
+        protected attr_reader :str
+
+        def to_s
+          @str
+        end
+        alias inspect to_s
+      end
+
       attr_reader :key, :node
 
       def initialize(key, node)

@@ -52,15 +52,9 @@ module Matcher
     end
 
     def report_nested(nested)
-      key = nested.key
+      path = Errors::Nested.key_to_s(nested.key, @path_stack.last)
 
-      segment = if key.is_a?(Expression)
-        key.to_s(substitutions: { actual: @path_stack.last })
-      else
-        "[#{key.inspect}]"
-      end
-
-      @path_stack.push(@path_stack.last + segment)
+      @path_stack.push(path)
       report_node(nested.node)
       @path_stack.pop
     end

@@ -17,8 +17,9 @@ module Matcher
           node
         end
       when Errors::Element
-        base_projection = Call.build { _1.map_expression(projection) }
-        Errors::Nested.from(base_projection, node)
+        body = projection.to_s(substitutions: { actual: 'it' })
+        key = Errors::Nested::Key.new(".map { |it| #{body} }")
+        Errors::Nested.from(key, node)
       else
         raise "Unexpected node: #{node.inspect}"
       end

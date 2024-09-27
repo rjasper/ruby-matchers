@@ -8,6 +8,7 @@ describe Matcher::Reporter do
     errors = _and(
       element('base wrong'),
       nested(:nested, element('nested wrong')),
+      nested(:foo, nested(Matcher::Call.build(&:bar), element('foobar'))),
       _or(
         element('either correct this'),
         _and(
@@ -24,6 +25,7 @@ describe Matcher::Reporter do
     assert_equal <<~TEXT, Matcher::Reporter.new.report(errors)
       root: base wrong
       root[:nested]: nested wrong
+      root[:foo].bar: foobar
       expected at least one error to be absent:
       - root: either correct this
       - root: or all of this

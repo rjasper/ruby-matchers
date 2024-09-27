@@ -22,8 +22,10 @@ describe Matcher::MapMatcher do
       1 => { foo: 'expected 2 but got 3' }
     assert_errors match([{ foo: 1 }, { foo: 1 }]) { map(_[:foo] + 1, [1, 2]) },
       0 => { foo: { expr { _1 + 1 } => 'expected 1 but got 2' } }
+
+    key = Matcher::Errors::Nested::Key.new('.map { |it| it[:foo] }')
     assert_errors match([{ foo: 1 }, { foo: 1 }]) { map(_[:foo], _.is_a?(String)) },
-      expr { _1.map_expression(_1[:foo]) } => 'expected _ to be a kind of String but got [1, 1]'
+      key => 'expected _ to be a kind of String but got [1, 1]'
   end
 
   it 'pass index' do
