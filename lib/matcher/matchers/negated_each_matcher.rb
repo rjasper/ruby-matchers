@@ -2,25 +2,17 @@
 
 module Matcher
   class NegatedEachMatcher < Base
-    def initialize(matcher, index: :index, key: :key, value: :value, parent: :parent)
+    def initialize(matcher, index: :index, parent: :parent)
       super()
 
       @matcher = matcher
       @neg_matcher = ~matcher
       @index = index
-      @key = key
-      @value = value
       @parent = parent
     end
 
     def negated
-      EachMatcher.new(
-        @matcher,
-        index: @index,
-        key: @key,
-        value: @value,
-        parent: @parent,
-      )
+      EachMatcher.new(@matcher, index: @index, parent: @parent)
     end
 
     def check(actual:, **values)
@@ -28,28 +20,12 @@ module Matcher
 
       collector = Errors::Collector.new.or!
 
-      if actual.is_a?(Hash)
-        actual.each do |key, value|
-          result = @neg_matcher.match(
-            **values,
-            actual: [key, value],
-            @key => key,
-            @value => value,
-            @parent => actual,
-          )
+      actual.each.with_index do |item, i|
+        result = @neg_matcher.match(**values, actual: item, @index => i, @parent => actual)
 
-          return if result.valid?
+        return if result.valid?
 
-          collector[key] << result
-        end
-      else
-        actual.each.with_index do |item, i|
-          result = @neg_matcher.match(**values, actual: item, @index => i, @parent => actual)
-
-          return if result.valid?
-
-          collector[i] << result
-        end
+        collector[i] << result
       end
 
       errors << collector.node

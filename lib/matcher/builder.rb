@@ -187,6 +187,12 @@ module Matcher
       EachMatcher.new(Matcher.of(matcher))
     end
 
+    def each_pair(matcher = NULL)
+      return Pipe.new { each_pair(_1) } if null?(matcher)
+
+      EachPairMatcher.new(Matcher.of(matcher))
+    end
+
     def map(recorder, matcher = NULL)
       return Pipe.new { map(recorder, _1) } if null?(matcher)
 

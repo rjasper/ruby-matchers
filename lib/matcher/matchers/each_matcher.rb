@@ -2,62 +2,34 @@
 
 module Matcher
   class EachMatcher < Base
-    def initialize(matcher, index: :index, key: :key, value: :value, parent: :parent)
+    def initialize(matcher, index: :index, parent: :parent)
       super()
 
       @matcher = matcher
       @index = index
-      @key = key
-      @value = value
       @parent = parent
     end
 
     def negated
-      NegatedEachMatcher.new(
-        @matcher,
-        index: @index,
-        key: @key,
-        value: @value,
-        parent: @parent,
-      )
+      NegatedEachMatcher.new(@matcher, index: @index, parent: @parent)
     end
 
-    def check(actual:, **values)
+    def check(actual:, **)
       unless actual.respond_to?(:each)
         errors << "expected to respond to \"each\" but got #{actual.inspect}"
         return
       end
 
-      if actual.is_a?(Hash)
-        check_hash(actual, values)
-      else
-        check_array(actual, values)
+      i = 0
+      actual.each do |item|
+        errors[i] << @matcher.match(actual: item, **, @index => i, @parent => actual)
+        i += 1
       end
     end
     protected :check
 
     def to_s
       "each(#{@matcher})"
-    end
-
-    private
-
-    def check_array(array, values)
-      array.each.with_index do |item, i|
-        errors[i] << @matcher.match(**values, actual: item, @index => i, @parent => array)
-      end
-    end
-
-    def check_hash(hash, values)
-      hash.each do |key, value|
-        errors[key] << @matcher.match(
-          **values,
-          actual: [key, value],
-          @key => key,
-          @value => value,
-          @parent => hash,
-        )
-      end
     end
   end
 end

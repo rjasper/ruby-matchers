@@ -19,21 +19,6 @@ describe Matcher::NegatedEachMatcher do
     assert_predicate matcher.match([1, 2, 3]), :valid?
   end
 
-  it 'match not each entry' do
-    matcher = Matcher.build do
-      ~each(key == value.to_s)
-    end
-
-    assert_errors matcher.match({ '1' => 1, 'a' => :a }) do
-      _or do
-        error '1', 'expected k to not be v.to_s ("1") for v = 1'
-        error 'a', 'expected k to not be v.to_s ("a") for v = :a'
-      end
-    end
-
-    assert_predicate matcher.match({ '1' => 1, 'a' => :a, 0 => '0' }), :valid?
-  end
-
   it '#to_s' do
     matcher = Matcher.build { ~each(1) }
 

@@ -15,16 +15,6 @@ describe Matcher::EachMatcher do
       2 => 'expected 1 but got 3'
   end
 
-  it 'match each entry' do
-    matcher = Matcher.build do
-      each(key == value.to_s)
-    end
-
-    assert_predicate matcher.match({ '1' => 1, 'a' => :a }), :valid?
-    assert_errors matcher.match({ '1' => 1, 'a' => :a, 0 => '0' }),
-      0 => 'expected k to be v.to_s ("0") but got 0 for v = "0"'
-  end
-
   it 'pass index' do
     matcher = Matcher.build do
       each(_ == i.to_s)
