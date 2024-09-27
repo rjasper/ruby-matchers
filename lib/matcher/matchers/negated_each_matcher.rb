@@ -26,7 +26,7 @@ module Matcher
     def check(actual:, **values)
       return unless actual.respond_to?(:each)
 
-      collector = Errors::Collector.new(true)
+      collector = Errors::Collector.new.or!
 
       if actual.is_a?(Hash)
         actual.each do |key, value|

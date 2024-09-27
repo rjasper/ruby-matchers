@@ -25,7 +25,7 @@ module Matcher
       return unless actual.is_a?(Hash)
       return if @all_entries && actual.keys.any? { !@hash.key?(_1) }
 
-      collector = Errors::Collector.new(true)
+      collector = Errors::Collector.new.or!
 
       @neg_hash.each do |key, value|
         actual_value = actual[key]

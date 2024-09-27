@@ -16,9 +16,27 @@ module Matcher
 
       attr_reader :node
 
-      def initialize(use_or = false)
+      def initialize
         @node = Empty.instance
-        @use_or = use_or
+        @mode = :and
+      end
+
+      def or!
+        @mode = :or
+        self
+      end
+
+      def and!
+        @mode = :and
+        self
+      end
+
+      def or?
+        @mode == :or
+      end
+
+      def and?
+        @mode == :and
       end
 
       class Brackets
@@ -46,13 +64,13 @@ module Matcher
         case @node
         when Empty
           @node = node
-        when And
+        when and? ? And : Or
           @node << node
         else
-          if @use_or
-            @node |= node
-          else
+          if and?
             @node &= node
+          else
+            @node |= node
           end
         end
       end
