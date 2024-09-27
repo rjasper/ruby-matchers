@@ -16,7 +16,7 @@ module Matcher
     def check(**)
       begin
         result = @expression.evaluate(**)
-      rescue Call::NotRespondingError => e
+      rescue Call::Error => e
         errors << e.message_for_errors
         return
       end

@@ -20,7 +20,7 @@ module Matcher
       evaluation = @expression.evaluate(values, chain)
 
       errors << message_for(values, chain) if @negated != !evaluation
-    rescue Call::NotRespondingError => e
+    rescue Call::Error => e
       errors << e.message_for_errors unless @negated
     end
     protected :check

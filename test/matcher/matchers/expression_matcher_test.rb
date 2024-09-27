@@ -19,6 +19,8 @@ describe Matcher::EqualMatcher do
       'expected _ to be a kind of Numeric but got "string"'
     assert_errors match({ foo: {} }) { _[:foo][:bar].baz? },
       'expected _[:foo][:bar] to respond to baz? but got nil where _ = {:foo=>{}}'
+    assert_errors match(0) { expr(1) / _ },
+      '1 / _ raised ZeroDivisionError where 1 = 1, _ = 0: divided by 0'
     assert_errors match(1.0) { (_ + 1).is_a?(Integer) },
       'expected _ + 1 to be a kind of Integer but got 2.0 for _ = 1.0'
     assert_errors match(1) { _.instance_of?(Float) },

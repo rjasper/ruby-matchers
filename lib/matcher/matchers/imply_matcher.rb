@@ -18,7 +18,7 @@ module Matcher
     def check(**)
       begin
         condition_errors = @condition.match(**)
-      rescue NotRespondingError => e
+      rescue Call::Error => e
         errors << e.message_for_errors
         return
       end

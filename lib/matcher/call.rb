@@ -136,8 +136,12 @@ module Matcher
       raise NotRespondingError.new(self, actual_receiver, values) unless
         actual_receiver.respond_to?(@method)
 
-      actual_receiver.send(@method, *args, **kwargs, &@block)
-        .tap { chain&.push(_1) }
+      begin
+        actual_receiver.send(@method, *args, **kwargs, &@block)
+          .tap { chain&.push(_1) }
+      rescue StandardError => e
+        raise EvaluationError.new(e, self, actual_receiver, values)
+      end
     end
 
     def variables
@@ -223,7 +227,10 @@ module Matcher
       end
     end
 
-    class NotRespondingError < StandardError
+    class Error < StandardError
+    end
+
+    class NotRespondingError < Error
       attr_reader :call, :receiver, :values
 
       def initialize(call, receiver, values)
@@ -247,6 +254,25 @@ module Matcher
 
         string
       end
+    end
+
+    class EvaluationError < Error
+      def initialize(error, call, receiver, values)
+        @error = error
+        @call = call
+        @receiver = receiver
+        @values = values
+
+        given_receiver = "#{@call.receiver} = #{receiver.inspect}"
+        given_values = @call.given_values(values)
+        given = given_values.empty? ? given_receiver : "#{given_receiver}, #{given_values}"
+
+        message = "#{call} raised #{error.class} where #{given}: #{error.message}"
+
+        super(message)
+      end
+
+      alias message_for_errors message
     end
 
     def given_values(values, substitutions: Expression.default_substitutions)

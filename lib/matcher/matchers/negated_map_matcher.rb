@@ -28,7 +28,7 @@ module Matcher
           @index => i,
           @original => actual,
         })
-      rescue Call::NotRespondingError => e
+      rescue Call::Error
         return if @negated
       end
 
