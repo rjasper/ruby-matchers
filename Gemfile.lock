@@ -11,7 +11,6 @@ GEM
       racc
     racc (1.8.1)
     rainbow (3.1.1)
-    rake (13.2.1)
     regexp_parser (2.9.2)
     rubocop (1.66.1)
       json (~> 2.3)
@@ -25,7 +24,7 @@ GEM
       unicode-display_width (>= 2.4.0, < 3.0)
     rubocop-ast (1.32.3)
       parser (>= 3.3.1.0)
-    rubocop-minitest (0.35.1)
+    rubocop-minitest (0.36.0)
       rubocop (>= 1.61, < 2.0)
       rubocop-ast (>= 1.31.1, < 2.0)
     ruby-progressbar (1.13.0)
@@ -36,9 +35,8 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  minitest (~> 5.0)
-  rake (~> 13.0)
-  rubocop (~> 1.21)
+  minitest
+  rubocop
   rubocop-minitest
 
 BUNDLED WITH
