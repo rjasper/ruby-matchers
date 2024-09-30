@@ -6,35 +6,9 @@ module Matcher
       def self.from(key, node)
         return node if node.is_a?(Empty)
 
-        normalize_key(key)
+        NestedExpressionNormalizer.normalize(key)
           .reverse_each
           .reduce(node) { Nested.new(_2, _1) }
-      end
-
-      def self.normalize_key(key)
-        return [key] unless key.is_a?(Expression)
-
-        keys = []
-        expression = key
-
-        while expression.instance_of?(Call)
-          unless expression.variables.include?(:actual)
-            keys.unshift(expression)
-            break
-          end
-
-          key = if expression.method == :[] && expression.binary?
-            expression.args[0]
-          else
-            variable = Variable.new(:actual)
-            expression.new_root(variable)
-          end
-
-          keys.unshift(key)
-          expression = expression.receiver
-        end
-
-        keys
       end
 
       def self.key_to_s(key, path)
