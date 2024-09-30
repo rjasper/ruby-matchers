@@ -213,22 +213,25 @@ module Matcher
         return "#{receiver}**#{parenthesize(@args[0], substitutions)}" if binary?
       when :[]
         # foo[a, b, ...]
-        return "#{receiver}[#{args_and_kwargs_string}]#{' { ... }' if @block}"
+        return "#{receiver}[#{args_and_kwargs_string(substitutions)}]#{' { ... }' if @block}"
       when :[]=
         # foo[a, b, ...] = 1
         if @args.length >= 2 && @kwargs.empty? && !@block
-          return "#{receiver}[#{@args[0..-2].map(&:inspect).join(', ')}] = #{@args[-1].inspect}"
+          first_args = @args[0..-2].map { Expression.to_string(_1, substitutions:) }.join(', ')
+          last_arg = Expression.to_string(@args[-1], substitutions:)
+
+          return "#{receiver}[#{first_args}] = #{last_arg}"
         end
       end
 
       if @method.end_with?('=') && @method != :[]= && binary?
         # foo.bar = 42
 
-        "#{receiver}.#{@method[0..-2]} = #{@args[0].inspect}"
+        "#{receiver}.#{@method[0..-2]} = #{Expression.to_string(@args[0], substitutions:)}"
       else
         # foo.bar OR foo.bar(arg1, arg2, ...)
 
-        args_and_kwargs = args_and_kwargs_string
+        args_and_kwargs = args_and_kwargs_string(substitutions)
         string = "#{receiver}.#{@method}"
         string += "(#{args_and_kwargs})" unless args_and_kwargs.empty?
         string += ' { ... }' if @block
@@ -321,13 +324,13 @@ module Matcher
       end
     end
 
-    def args_and_kwargs_string
-      args = @args.map(&:inspect)
+    def args_and_kwargs_string(substitutions)
+      args = @args.map { Expression.to_string(_1, substitutions:)}
       kwargs = @kwargs.map do |k, v|
         if k.is_a?(Symbol)
           "#{k}: #{v.inspect}"
         else
-          "#{k.inspect} => #{v.inspect}"
+          "#{k.inspect} => #{Expression.to_string(v, substitutions:)}"
         end
       end
 

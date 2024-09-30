@@ -10,6 +10,12 @@ module Matcher
       end
     end
 
+    def self.to_string(object, substitutions: Expression.default_substitutions)
+      return object.inspect unless object.is_a?(Expression)
+
+      object.to_s(substitutions:)
+    end
+
     def initialize
       raise 'abstract class' if instance_of?(Expression)
     end
