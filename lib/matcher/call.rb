@@ -188,6 +188,16 @@ module Matcher
       @hash ||= [@receiver, @args, @method, @kwargs, @block].hash
     end
 
+    def visit(&)
+      return to_enum(:visit) unless block_given?
+
+      @receiver.visit(&)
+      @args.each { _1.visit(&) if _1.is_a?(Expression) }
+      @kwargs.each_value { _1.visit(&) if _1.is_a?(Expression) }
+
+      yield self
+    end
+
     def to_s(substitutions: Expression.default_substitutions)
       receiver = parenthesize(@receiver, substitutions)
 

@@ -18,6 +18,12 @@ module Matcher
       Call.new(self, :!)
     end
 
+    def visit
+      return to_enum(:visit) unless block_given?
+
+      yield self
+    end
+
     def inspect
       to_s
     end
