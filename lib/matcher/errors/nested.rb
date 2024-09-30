@@ -14,7 +14,19 @@ module Matcher
       def self.key_to_s(key, path)
         case key
         when Expression
-          key.to_s(substitutions: { actual: path })
+          remaining = 20 + path.length
+          key.visit do |expr|
+            next if !expr.is_a?(Variable) || expr.symbol != :actual
+
+            remaining -= path.length
+            break if remaining < 0
+          end
+
+          if remaining >= 0
+            key.to_s(substitutions: { actual: path })
+          else
+            "#{path} -> #{key}"
+          end
         when Errors::Nested::Key
           path + key.to_s
         else

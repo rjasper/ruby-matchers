@@ -5,10 +5,16 @@ require 'matcher/testing'
 
 describe Matcher::Reporter do
   it 'looks nice' do
+    math = Matcher::Constant.new(Math)
+
     errors = _and(
       element('base wrong'),
       nested(:nested, element('nested wrong')),
       nested(:foo, nested(Matcher::Call.build(&:bar), element('foobar'))),
+      nested(Matcher::Call.build { |_| _ + _ }, element('2 roots')),
+      nested(:too_long,
+        nested(Matcher::Call.build { |_| _ + _ + _ }, element('3 long roots'))),
+      nested(Matcher::Call.build { |_| Matcher::ExpressionRecorder.new(math).sqrt(_) }, element('square root of root')),
       _or(
         element('either correct this'),
         _and(
@@ -26,6 +32,9 @@ describe Matcher::Reporter do
       root: base wrong
       root[:nested]: nested wrong
       root[:foo].bar: foobar
+      root + root: 2 roots
+      root[:too_long] -> _ + _ + _: 3 long roots
+      Math.sqrt(root): square root of root
       expected at least one error to be absent:
       - root: either correct this
       - root: or all of this
