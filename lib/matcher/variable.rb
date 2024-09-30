@@ -2,6 +2,16 @@
 
 module Matcher
   class Variable < Expression
+    WELL_KNOWN = %i[actual key value index parent original].freeze
+
+    WELL_KNOWN.each do |method|
+      class_eval <<-RUBY, __FILE__, __LINE__ + 1
+        def self.#{method}                                                      # def self.actual
+          @#{method} ||= Variable.new(:#{method})                               #   @actual ||= Variable.actual
+        end                                                                     # end
+      RUBY
+    end
+
     attr_reader :symbol
 
     def initialize(symbol)

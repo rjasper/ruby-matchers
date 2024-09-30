@@ -124,7 +124,7 @@ module Matcher
       if tree.id == @common_ids[@counter]
         @counter += 1
 
-        return Variable.new(:actual)
+        return Variable.actual
       end
 
       receiver_tree = subtrees[:receiver]
@@ -165,7 +165,7 @@ module Matcher
           t = trace
           e = nil
           while t
-            e = t.head.new_root(e || Variable.new(:actual))
+            e = t.head.new_root(e || Variable.actual)
             t = t.tail
           end
 

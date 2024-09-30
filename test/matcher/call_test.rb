@@ -53,7 +53,7 @@ describe Matcher::Call do
     examine.call('_[1, 2] = 3') { _1.[]=(1, 2, 3) }
 
     assert_equal '_.foo = "bar"',
-      Call.new(Variable.new(:_), :foo=, 'bar').to_s
+      Call.new(Variable.actual, :foo=, 'bar').to_s
 
     examine.call('_.foo') { _1.foo }
     examine.call('_.foo(1, a: 2)') { _1.foo(1, a: 2) }

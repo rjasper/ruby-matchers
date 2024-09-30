@@ -91,14 +91,20 @@ module Matcher
     end
 
     def vars
-      VariableFactory.instance
+      @vars ||= VariableFactory.new
     end
 
     class VariableFactory
-      include Singleton
+      def initialize
+        @cache = {}
+      end
 
       def [](symbol)
-        variable = Variable.new(symbol)
+        variable = if Variable::WELL_KNOWN.include?(symbol)
+          Variable.send(symbol)
+        else
+          @cache[symbol] ||= Variable.new(symbol)
+        end
 
         ExpressionRecorder.new(variable)
       end
