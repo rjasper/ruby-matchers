@@ -11,31 +11,29 @@ module Matcher
     end
 
     def run
-      @paths = []
-      @counter = 0
+      return [] if @expression == Variable.actual
 
-      tree = catch(:abort) do
-        analyze(@expression, nil)
-      end
+      tree, paths = analyze
 
-      paths = @paths
-      @paths = nil
+      return [@expression] unless tree
 
-      if tree
-        n = paths.length
+      n = paths.length
 
-        return split_call(@expression, nil) if n == 1
+      if n == 1 && paths[0]
+        actual_chain = paths[0].last
 
-        if n > 1
-          @common_ids, common_expression = find_common_expression(paths)
-          @counter = 0
+        return split(@expression, nil) if actual_chain.expression == @expression
 
-          if common_expression
-            substituted_tree = substitute(@expression, tree)
-            @common_ids = nil
+        last = substitute([actual_chain.id], tree)
 
-            return split_call(common_expression, List.new(substituted_tree))
-          end
+        return split(actual_chain.expression, List.new(last))
+      elsif n > 1
+        common_expression, ids = find_common_expression(paths)
+
+        if common_expression
+          last = substitute(ids, tree)
+
+          return split(common_expression, List.new(last))
         end
       end
 
@@ -44,29 +42,59 @@ module Matcher
 
     Tree = Struct.new(:subtrees, :id)
     IdExpression = Struct.new(:id, :expression)
+
     List = Struct.new(:head, :tail) do
+      include Enumerable
+
+      def last
+        tail&.last || head
+      end
+
+      def each
+        c = self
+
+        while c
+          yield c.head
+          c = c.tail
+        end
+      end
+
       def to_a
-        tail ? tail.to_a.unshift(head) : [head]
+        to_enum.to_a
       end
     end
 
     private
 
-    def analyze(expression, trace)
+    def analyze
+      @paths = []
+      @counter = 0
+
+      tree = catch(:abort) do
+        analyze_helper(@expression, nil)
+      end
+
+      paths = @paths
+      @paths = nil
+
+      [tree, paths]
+    end
+
+    def analyze_helper(expression, trace)
       case expression
       when Call
         id = (@counter += 1)
         id_expression = IdExpression.new(id, expression)
         next_trace = List.new(id_expression, trace)
-        receiver_tree = analyze(expression.receiver, next_trace)
+        receiver_tree = analyze_helper(expression.receiver, next_trace)
 
         arg_subtrees = expression.args.lazy.with_index.filter_map do |arg, i|
-          arg_tree = analyze(arg, next_trace)
+          arg_tree = analyze_helper(arg, nil)
           [i, arg_tree] if arg_tree
         end.to_h
 
         kwarg_subtrees = expression.kwargs.lazy.filter_map do |key, value|
-          kwarg_tree = analyze(value, next_trace)
+          kwarg_tree = analyze_helper(value, nil)
           [key, kwarg_tree] if kwarg_tree
         end.to_h
 
@@ -105,23 +133,33 @@ module Matcher
 
       loop do
         break unless (1...n).all? do |i|
-          left = paths[0].tail
-          right = paths[i].tail
+          left = paths[0].tail&.head
+          right = paths[i].tail&.head
 
-          left && right && expressions_equal?(left.head.expression, right.head.expression)
+          left && right && left.id != right.id &&
+            expressions_equal?(left.expression, right.expression)
         end
 
         paths.map!(&:tail)
       end
 
-      [paths.map { _1.head.id }, paths[0].head.expression]
+      [paths[0].head.expression, paths.map { _1.head.id }]
     end
 
-    def substitute(expression, tree)
+    def substitute(ids, tree)
+      @substitute_ids = ids
+      @counter = 0
+      result = substitute_helper(@expression, tree)
+      @substitute_ids = nil
+
+      result
+    end
+
+    def substitute_helper(expression, tree)
       subtrees = tree.subtrees
       return expression unless subtrees
 
-      if tree.id == @common_ids[@counter]
+      if tree.id == @substitute_ids[@counter]
         @counter += 1
 
         return Variable.actual
@@ -129,7 +167,7 @@ module Matcher
 
       receiver_tree = subtrees[:receiver]
       receiver = if receiver_tree
-        substitute(expression.receiver, receiver_tree)
+        substitute_helper(expression.receiver, receiver_tree)
       else
         expression.receiver
       end
@@ -137,7 +175,7 @@ module Matcher
       args_tree = subtrees[:args]
       args = if args_tree
         args_tree.subtrees.map do |i, arg_tree|
-          substitute(expression.args[i], arg_tree)
+          substitute_helper(expression.args[i], arg_tree)
         end
       else
         expression.args
@@ -146,7 +184,7 @@ module Matcher
       kwargs_tree = subtrees[:kwargs]
       kwargs = if kwargs_tree
         kwargs_tree.subtrees.to_h do |k, kwarg_tree|
-          [k, substitute(expression.kwargs[k], kwarg_tree)]
+          [k, substitute_helper(expression.kwargs[k], kwarg_tree)]
         end
       else
         expression.kwargs
@@ -155,19 +193,14 @@ module Matcher
       Call.new(receiver, expression.method, *args, **kwargs, &expression.block)
     end
 
-    def split_call(expression, tail)
+    def split(expression, tail)
       trace = nil
       segment = expression
       cur = expression
 
       while cur.is_a?(Call)
         if cur.method == :[] && cur.binary?
-          t = trace
-          e = nil
-          while t
-            e = t.head.new_root(e || Variable.actual)
-            t = t.tail
-          end
+          e = trace && trace.reduce(Variable.actual) { _2.new_root(_1) }
 
           tail = List.new(e, tail) if e
           tail = List.new(cur.args[0], tail)
