@@ -20,6 +20,21 @@ describe Matcher::NegatedImplyOneMatcher do
       'expected 1 to not be 1'
   end
 
+  it 'match not else' do
+    matcher = Matcher.build do
+      ~imply_one(
+        imply(String, 'string'),
+        else: nil,
+      )
+    end
+
+    assert_errors matcher.match('string'), 'expected "string" to not be "string"'
+    assert_errors matcher.match(nil), 'expected nil to not be nil'
+
+    assert_predicate matcher.match('foo'), :valid?
+    assert_predicate matcher.match(1), :valid?
+  end
+
   it 'match not mutiple' do
     matcher = Matcher.build do
       ~imply_one(

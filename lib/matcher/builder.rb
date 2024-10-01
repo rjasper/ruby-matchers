@@ -235,8 +235,11 @@ module Matcher
       ImplyMatcher.new(condition, matcher)
     end
 
-    def imply_one(*matchers)
-      ImplyOneMatcher.new(matchers)
+    def imply_one(*matchers, else: NULL)
+      els = { else: }[:else]
+      els = null?(els) ? nil : Matcher.of(els)
+
+      ImplyOneMatcher.new(matchers, else: els)
     end
 
     def present(matcher = NULL)

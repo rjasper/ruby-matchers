@@ -15,7 +15,23 @@ describe Matcher::ImplyOneMatcher do
     assert_errors matcher.match(:a),
       'expected :a to satisfy one of these conditions: String, Integer'
 
-    assert_predicate (~matcher).match(:a), :valid?
+    assert_predicate matcher.match('string'), :valid?
+    assert_predicate matcher.match(1), :valid?
+  end
+
+  it 'match else' do
+    matcher = Matcher.build do
+      imply_one(
+        imply(String, 'string'),
+        else: nil,
+      )
+    end
+
+    assert_predicate matcher.match('string'), :valid?
+    assert_predicate matcher.match(nil), :valid?
+
+    assert_errors matcher.match('foo'), 'expected "string" but got "foo"'
+    assert_errors matcher.match(1), 'expected nil but got 1'
   end
 
   it 'match one' do
