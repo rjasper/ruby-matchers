@@ -8,20 +8,17 @@ describe Matcher::ReferenceMatcher do
     matcher = Matcher.build do
       refs[:list] = {
         head: Integer,
-        tail: any(nil, refs[:list]),
+        tail: imply_one(
+          imply(Hash, refs[:list]),
+          else: nil,
+        ),
       }
     end
 
     list = { head: 1, tail: { head: 2, tail: { head: 3 } } }
 
     assert_errors matcher.match(list) do
-      _or(:tail) do
-        error 'expected nil but got {:head=>2, :tail=>{:head=>3}}'
-        _or(:tail) do
-          error 'expected nil but got {:head=>3}'
-          error :tail, 'expected entry for :tail but found nothing'
-        end
-      end
+      error %i[tail tail tail], 'expected entry for :tail but found nothing'
     end
   end
 
@@ -34,5 +31,95 @@ describe Matcher::ReferenceMatcher do
 
     assert_predicate matcher.match(25), :valid?
     assert_errors matcher.match(42), 'expected 42 to not be 42'
+  end
+
+  it 'detects cycles' do
+    matcher = Matcher.build do
+      list = refs[:list]
+
+      refs[:list] = {
+        head: Integer,
+        tail: imply_one(
+          imply(Hash, list),
+          else: nil,
+        ),
+      }
+
+      list
+    end
+
+    actual = { head: 1, tail: { head: 2, tail: nil } }
+
+    assert_predicate matcher.match(actual), :valid?
+
+    actual[:tail][:tail] = actual
+
+    assert_errors matcher.match(actual) do
+      error %i[tail tail], 'cyclic structure: actual has already been visited'
+    end
+  end
+
+  it 'detects cycles: negated' do
+    matcher = Matcher.build do
+      list = refs[:list]
+
+      refs[:list] = {
+        head: Integer,
+        tail: imply_one(
+          imply(Hash, list),
+          else: nil,
+        ),
+      }
+
+      ~list
+    end
+
+    actual = { head: 1, tail: { head: 2, tail: nil } }
+
+    assert_errors matcher.match(actual) do
+      _or do
+        error :head, 'expected 1 to be not kind of Integer'
+        error %i[tail head], 'expected 2 to be not kind of Integer'
+        error %i[tail tail], 'expected nil to not be nil'
+      end
+    end
+
+    actual[:tail][:tail] = actual
+
+    assert_predicate matcher.match(actual), :valid?
+  end
+
+  it 'caches results' do
+    matcher = Matcher.build do
+      refs[:foo] = 'foo'
+
+      [refs[:foo], refs[:foo]]
+    end
+
+    bar = 'bar'
+
+    assert_errors matcher.match([bar, bar]),
+      0 => 'expected "foo" but got "bar"',
+      1 => 'actual has already failed before'
+  end
+
+  it 'caches results: negated' do
+    matcher = Matcher.build do
+      refs[:foo] = 'foo'
+
+      neg([refs[:foo], refs[:foo]])
+    end
+
+    foo = 'foo'
+    bar = 'bar'
+
+    assert_predicate matcher.match([bar, bar]), :valid?
+
+    assert_errors matcher.match([foo, foo]) do
+      _or do
+        error 0, 'expected "foo" to not be "foo"'
+        error 1, 'actual has already failed before'
+      end
+    end
   end
 end

@@ -162,7 +162,6 @@ module Matcher
         matcher = Matcher.of(matcher)
         @last_matcher = matcher
         @targets[key] = matcher
-        @targets["~#{key}"] = nil # reserve entry for later use (thread-safety)
       end
     end
 
