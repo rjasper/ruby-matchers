@@ -74,8 +74,8 @@ module Matcher
       errors_stack.last
     end
 
-    def session
-      Matcher.session[object_id] ||= {}
+    def session(key = nil)
+      Matcher.session[key || object_id] ||= {}
     end
 
     def self.session

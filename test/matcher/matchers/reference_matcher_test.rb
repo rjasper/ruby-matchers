@@ -89,6 +89,53 @@ describe Matcher::ReferenceMatcher do
     assert_predicate matcher.match(actual), :valid?
   end
 
+  def ring_of(*list)
+    last = { value: list.pop }
+    last[:next] = list.reverse_each.reduce(last) { { value: _2, next: _1 } }
+  end
+
+  it 'allows cycles' do
+    matcher = Matcher.build do
+      ring = refs[:ring, cyclic: true]
+
+      refs[:ring] = {
+        value: Integer,
+        next: ring,
+      }
+
+      ring
+    end
+
+    assert_predicate matcher.match(ring_of(1, 2, 3)), :valid?
+
+    assert_errors matcher.match(ring_of(1, nil, 3)),
+      next: { value: 'expected nil to be kind of Integer' }
+  end
+
+  it 'allows cycles: negated' do
+    matcher = Matcher.build do
+      ring = refs[:ring, cyclic: true]
+
+      refs[:ring] = {
+        value: Integer,
+        next: ring,
+      }
+
+      ~ring
+    end
+
+    assert_errors matcher.match(ring_of(1, 2, 3)) do
+      _or do
+        error :value, 'expected 1 to be not kind of Integer'
+        error %i[next value], 'expected 2 to be not kind of Integer'
+        error %i[next next value], 'expected 3 to be not kind of Integer'
+        error %i[next next next], 'expected not a valid cyclic structure'
+      end
+    end
+
+    assert_predicate matcher.match(ring_of(1, nil, 3)), :valid?
+  end
+
   it 'caches results' do
     matcher = Matcher.build do
       refs[:foo] = 'foo'

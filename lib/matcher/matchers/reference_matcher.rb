@@ -2,26 +2,32 @@
 
 module Matcher
   class ReferenceMatcher < Base
-    def initialize(targets, key, cyclic: nil, negated: false)
+    def initialize(targets, key, cyclic: nil, negated: false, session_key: nil)
       super()
 
       @targets = targets
       @key = key
       @cyclic = cyclic
       @negated = negated
+      @session_key = session_key
 
       @targets["~#{key}"] ||= nil if negated # reserve entry for later use (thread-safety)
     end
 
     def negated
-      ReferenceMatcher.new(@targets, @key, cyclic: @cyclic, negated: !@negated)
+      ReferenceMatcher.new(@targets, @key, cyclic: @cyclic, negated: !@negated, session_key: object_id)
     end
 
     def check(**)
       actual = get_actual(**)
 
       unless visited.add?(actual.object_id)
-        errors << 'cyclic structure: actual has already been visited' if !@cyclic && !@negated
+        if !@negated && !@cyclic
+          errors << 'cyclic structure: actual has already been visited'
+        elsif @negated && @cyclic
+          errors << 'expected not a valid cyclic structure'
+        end
+
         return
       end
 
@@ -46,7 +52,7 @@ module Matcher
     private
 
     def visited
-      session[:visited] ||= Set.new
+      session(@session_key)[:visited] ||= Set.new
     end
 
     def matched
