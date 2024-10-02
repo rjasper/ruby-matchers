@@ -22,6 +22,17 @@ describe Matcher::ReferenceMatcher do
     end
   end
 
+  it 'without cache' do
+    matcher = Matcher.build do
+      refs[:index, cache: false] = _ == index
+
+      [refs[:index], refs[:index]]
+    end
+
+    assert_errors matcher.match([0, 0]),
+      1 => 'expected _ to be i (1) but got 0'
+  end
+
   it 'negated ref' do
     matcher = Matcher.build do
       refs[:foo] = 42

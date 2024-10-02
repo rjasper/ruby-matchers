@@ -30,7 +30,7 @@ module Matcher
     end
 
     def expr(constant = NULL, to_s: false, &)
-      raise "constant and block given" if !null?(constant) && block_given?
+      raise "constant and block given" if !Matcher.null?(constant) && block_given?
 
       expression = if block_given?
         BlockExpression.new(to_s:, &)
@@ -115,7 +115,7 @@ module Matcher
 
       assigns = kwargs unless assigns
 
-      return Pipe.new { setvar(assigns, _1) } if null?(matcher)
+      return Pipe.new { setvar(assigns, _1) } if Matcher.null?(matcher)
 
       matcher = Matcher.of(matcher)
 
@@ -135,6 +135,7 @@ module Matcher
 
       def initialize
         @targets = {}
+        @options = {}
         @last_object_id = nil
         @last_matcher = nil
         @used = Set.new
@@ -152,21 +153,31 @@ module Matcher
       def [](key, cyclic: false)
         @used << key
 
-        ReferenceMatcher.new(@targets, key, cyclic:)
+        ReferenceMatcher.new(key, @targets, @options, cyclic:)
       end
 
-      def []=(key, matcher)
+      DEFAULT_OPTIONS = { cache: true }.freeze
+
+      def []=(key, matcher_or_options, matcher = NULL)
         raise "Cannot reassign reference: #{key.inspect}" if @targets.key?(key)
+
+        if Matcher.null?(matcher)
+          options = DEFAULT_OPTIONS
+          matcher = matcher_or_options
+        else
+          options = matcher_or_options.merge(cache: true) { |_k, l, r| l }
+        end
 
         @last_object_id = matcher.object_id
         matcher = Matcher.of(matcher)
         @last_matcher = matcher
         @targets[key] = matcher
+        @options[key] = options
       end
     end
 
     def project(recorder, matcher = NULL)
-      return Pipe.new { project(recorder, _1) } if null?(matcher)
+      return Pipe.new { project(recorder, _1) } if Matcher.null?(matcher)
 
       expression = ExpressionRecorder.to_expression(recorder)
       matcher = Matcher.of(matcher)
@@ -187,19 +198,19 @@ module Matcher
     end
 
     def each(matcher = NULL)
-      return Pipe.new { each(_1) } if null?(matcher)
+      return Pipe.new { each(_1) } if Matcher.null?(matcher)
 
       EachMatcher.new(Matcher.of(matcher))
     end
 
     def each_pair(matcher = NULL)
-      return Pipe.new { each_pair(_1) } if null?(matcher)
+      return Pipe.new { each_pair(_1) } if Matcher.null?(matcher)
 
       EachPairMatcher.new(Matcher.of(matcher))
     end
 
     def map(recorder, matcher = NULL)
-      return Pipe.new { map(recorder, _1) } if null?(matcher)
+      return Pipe.new { map(recorder, _1) } if Matcher.null?(matcher)
 
       expression = ExpressionRecorder.to_expression(recorder)
       matcher = Matcher.of(matcher)
@@ -212,7 +223,7 @@ module Matcher
     end
 
     def neg(matcher = NULL)
-      return Pipe.new { neg(_1) } if null?(matcher)
+      return Pipe.new { neg(_1) } if Matcher.null?(matcher)
 
       ~Matcher.of(matcher)
     end
@@ -226,7 +237,7 @@ module Matcher
     end
 
     def imply(condition, matcher = NULL)
-      return Pipe.new { imply(condition, _1) } if null?(matcher)
+      return Pipe.new { imply(condition, _1) } if Matcher.null?(matcher)
 
       condition = Matcher.of(condition)
       matcher = Matcher.of(matcher)
@@ -236,25 +247,19 @@ module Matcher
 
     def imply_one(*matchers, else: NULL)
       els = { else: }[:else]
-      els = null?(els) ? nil : Matcher.of(els)
+      els = Matcher.null?(els) ? nil : Matcher.of(els)
 
       ImplyOneMatcher.new(matchers, else: els)
     end
 
     def present(matcher = NULL)
-      return Pipe.new { present(_1) } if null?(matcher)
+      return Pipe.new { present(_1) } if Matcher.null?(matcher)
 
       all(value.present?, matcher)
     end
 
     def iso8601(string_or_time = nil)
       Iso8601Matcher.new(string_or_time)
-    end
-
-    private
-
-    def null?(object)
-      !ExpressionRecorder.recorder?(object) && object.equal?(NULL)
     end
   end
 end

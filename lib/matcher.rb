@@ -60,6 +60,10 @@ require 'matcher/matchers/set_variables_matcher'
 module Matcher
   NULL = Object.new.freeze
 
+  def self.null?(object)
+    !ExpressionRecorder.recorder?(object) && object.equal?(NULL)
+  end
+
   def self.build(&)
     with_build_session do
       builder = Builder.new

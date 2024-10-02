@@ -2,12 +2,13 @@
 
 module Matcher
   class ReferenceMatcher < Base
-    def initialize(targets, key, cyclic: nil, negated: false, session_key: nil)
+    def initialize(key, targets, options, cyclic: nil, negated: false, session_key: nil)
       super()
 
       @targets = targets
       @key = key
       @cyclic = cyclic
+      @options = options
       @negated = negated
       @session_key = session_key
 
@@ -15,7 +16,7 @@ module Matcher
     end
 
     def negated
-      ReferenceMatcher.new(@targets, @key, cyclic: @cyclic, negated: !@negated, session_key: object_id)
+      ReferenceMatcher.new(@key, @targets, @options, cyclic: @cyclic, negated: !@negated, session_key: object_id)
     end
 
     def check(**)
@@ -31,16 +32,21 @@ module Matcher
         return
       end
 
-      match_key = [@negated ? "~#{@key}" : @key, actual.object_id]
-      match_result = matched[match_key]
+      unless @options[@key][:cache]
+        errors << target.match(**)
+        return
+      end
 
-      if match_result.nil?
+      cache_key = [@negated ? "~#{@key}" : @key, actual.object_id]
+      cached_result = cache[cache_key]
+
+      if cached_result.nil?
         target_errors = @cyclic ? target.match(actual:) : target.match(**)
 
-        matched[match_key] = target_errors.valid?
+        cache[cache_key] = target_errors.valid?
 
         errors << target_errors
-      elsif !match_result
+      elsif !cached_result
         errors << 'actual has already failed before'
       end
     end
@@ -55,8 +61,8 @@ module Matcher
       session(@session_key)[:visited] ||= Set.new
     end
 
-    def matched
-      class_session[:matched] ||= Hash.new
+    def cache
+      class_session[:cache] ||= Hash.new
     end
 
     def target
