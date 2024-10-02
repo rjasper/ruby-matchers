@@ -10,7 +10,7 @@ module Matcher
       @negated = negated
     end
 
-    def negated
+    def ~
       SetMatcher.new(@array, parent: @parent, negated: !@negated)
     end
 

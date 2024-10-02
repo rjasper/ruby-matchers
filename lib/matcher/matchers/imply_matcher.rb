@@ -11,7 +11,7 @@ module Matcher
       @matcher = matcher
     end
 
-    def negated
+    def ~
       NegatedImplyMatcher.new(@condition, @matcher)
     end
 

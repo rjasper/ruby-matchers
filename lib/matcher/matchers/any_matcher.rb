@@ -14,7 +14,7 @@ module Matcher
       AnyMatcher.new(@matchers + [matcher])
     end
 
-    def negated
+    def ~
       AllMatcher.new(@matchers.map(&:~))
     end
 

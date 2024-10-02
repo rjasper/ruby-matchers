@@ -15,7 +15,7 @@ module Matcher
       @targets["~#{key}"] ||= nil if negated # reserve entry for later use (thread-safety)
     end
 
-    def negated
+    def ~
       ReferenceMatcher.new(@key, @targets, @options, cyclic: @cyclic, negated: !@negated, session_key: object_id)
     end
 

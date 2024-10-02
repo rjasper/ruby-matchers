@@ -11,7 +11,7 @@ module Matcher
       @parent = parent
     end
 
-    def negated
+    def ~
       ArrayMatcher.new(@array, index: @index, parent: @parent)
     end
 

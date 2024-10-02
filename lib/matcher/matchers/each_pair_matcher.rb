@@ -11,7 +11,7 @@ module Matcher
       @parent = parent
     end
 
-    def negated
+    def ~
       NegatedEachPairMatcher.new(@matcher, key: @key, value: @value, parent: @parent)
     end
 

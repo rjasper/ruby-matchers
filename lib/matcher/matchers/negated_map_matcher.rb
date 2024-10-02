@@ -12,7 +12,7 @@ module Matcher
       @original = original
     end
 
-    def negated
+    def ~
       MapMatcher.new(@projection, @matcher, index: @index, original: @original)
     end
 

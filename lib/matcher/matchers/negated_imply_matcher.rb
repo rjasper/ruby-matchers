@@ -12,7 +12,7 @@ module Matcher
       @neg_matcher = ~matcher
     end
 
-    def negated
+    def ~
       ImplyMatcher.new(@condition, @matcher)
     end
 

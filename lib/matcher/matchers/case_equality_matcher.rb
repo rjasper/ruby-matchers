@@ -9,7 +9,7 @@ module Matcher
       @negated = negated
     end
 
-    def negated
+    def ~
       CaseEqualityMatcher.new(@object, negated: !@negated)
     end
 

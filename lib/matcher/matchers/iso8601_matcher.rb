@@ -19,7 +19,7 @@ module Matcher
       @negated = negated
     end
 
-    def negated
+    def ~
       Iso8601Matcher.new(@time, negated: !@negated)
     end
 

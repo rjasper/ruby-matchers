@@ -34,7 +34,7 @@ module Matcher
       @original = original
     end
 
-    def negated
+    def ~
       NegatedMapMatcher.new(@projection, @matcher, index: @index, original: @original)
     end
 

@@ -12,7 +12,7 @@ module Matcher
       @partial = partial
     end
 
-    def negated
+    def ~
       HashMatcher.new(
         @hash,
         key: @key,

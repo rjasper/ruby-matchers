@@ -10,7 +10,7 @@ module Matcher
       @parent = parent
     end
 
-    def negated
+    def ~
       NegatedEachMatcher.new(@matcher, index: @index, parent: @parent)
     end
 

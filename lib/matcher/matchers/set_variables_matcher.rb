@@ -9,7 +9,7 @@ module Matcher
       @matcher = matcher
     end
 
-    def negated
+    def ~
       SetVariablesMatcher.new(@assigns, ~@matcher)
     end
 

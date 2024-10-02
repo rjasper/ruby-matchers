@@ -9,7 +9,7 @@ module Matcher
       @matcher = matcher
     end
 
-    def negated
+    def ~
       NegatedProjectMatcher.new(@expression, @matcher)
     end
 

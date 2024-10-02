@@ -17,7 +17,7 @@ module Matcher
       @else = { else: }[:else]
     end
 
-    def negated
+    def ~
       NegatedImplyOneMatcher.new(@matchers, else: @else)
     end
 

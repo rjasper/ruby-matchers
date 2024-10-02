@@ -11,7 +11,7 @@ module Matcher
       @negated = negated
     end
 
-    def negated
+    def ~
       ExpressionMatcher.new(@expression, negated: !@negated)
     end
 

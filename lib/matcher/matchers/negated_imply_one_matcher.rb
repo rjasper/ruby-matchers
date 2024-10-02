@@ -13,7 +13,7 @@ module Matcher
       @neg_else = @else&.~
     end
 
-    def negated
+    def ~
       ImplyOneMatcher.new(@matchers, else: @else)
     end
 
