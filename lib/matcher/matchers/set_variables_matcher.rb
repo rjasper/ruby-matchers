@@ -31,7 +31,19 @@ module Matcher
         end
       end
 
-      "setvar(#{assign_parts.join(', ')}) ^ (#{@matcher})"
+      matcher = @matcher.to_s
+
+      matcher = "(#{matcher})" if
+        case @matcher
+        when ExpressionMatcher
+          !@matcher.negated && @matcher.expression.precedence > Call::OPERATOR_PRECEDENCE[:^]
+        when EqualMatcher, CaseEqualityMatcher, ArrayMatcher, HashMatcher
+          false
+        else
+          matcher !~ /\A(~?\w+(\(.*\)|\[.*\])?|-> \{.*})\z/
+        end
+
+      "setvar(#{assign_parts.join(', ')}) ^ #{matcher}"
     end
   end
 end

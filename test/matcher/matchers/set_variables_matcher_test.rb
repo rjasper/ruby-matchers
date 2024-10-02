@@ -68,12 +68,23 @@ describe Matcher::SetVariablesMatcher do
   end
 
   it '#to_s' do
-    matcher = Matcher.build do
+    t = self
+
+    Matcher.build do
       declare :a, :b
 
-      setvar(a: 0, b: ->(_) { 2 * _ }) ^ (_ == a + b)
-    end
+      t.assert_equal 'setvar(a: 0, b: ->(_) { ... }) ^ (_ == a + b)',
+        (setvar(a: 0, b: ->(_) { 2 * _ }) ^ (_ == a + b)).to_s
+      t.assert_equal 'setvar(a: 0, b: ->(_) { ... }) ^ (a + b).even?',
+        (setvar(a: 0, b: ->(_) { 2 * _ }) ^ (a + b).even?).to_s
+      t.assert_equal 'setvar(a: 0, b: ->(_) { ... }) ^ [a, b]',
+        (setvar(a: 0, b: ->(_) { 2 * _ }) ^ [a, b]).to_s
+      t.assert_equal "setvar(a: 0, b: ->(_) { ... }) ^ -> { set_variables_matcher_test.rb:#{__LINE__ + 1} }",
+        (setvar(a: 0, b: ->(_) { 2 * _ }) ^ -> { false }).to_s
+      t.assert_equal "setvar(a: 0, b: ->(_) { ... }) ^ partial({:foo=>42})",
+        (setvar(a: 0, b: ->(_) { 2 * _ }) ^ partial({ foo: 42 })).to_s
 
-    assert_equal 'setvar(a: 0, b: ->(_) { ... }) ^ (_ == a + b)', matcher.to_s
+      nil
+    end
   end
 end

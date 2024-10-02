@@ -2,7 +2,7 @@
 
 module Matcher
   class ExpressionMatcher < Base
-    attr_reader :expression
+    attr_reader :expression, :negated
 
     def initialize(expression, negated: false)
       super()
