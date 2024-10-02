@@ -24,7 +24,7 @@ describe Matcher::NegatedHashMatcher do
 
   it 'match not partial entries' do
     matcher = Matcher.build do
-      ~partial_entries({ foo: 'foo' })
+      ~partial({ foo: 'foo' })
     end
 
     assert_errors matcher.match({ foo: 'foo' }),
@@ -53,5 +53,9 @@ describe Matcher::NegatedHashMatcher do
     assert_equal 'neg({:a=>{:b=>"c"}})', matcher.to_s
   end
 
-  it '#to_s: partial entries'
+  it '#to_s: partial entries' do
+    matcher = Matcher.build { ~partial({ a: { b: 'c' } }) }
+
+    assert_equal '~partial({:a=>{:b=>"c"}})', matcher.to_s
+  end
 end

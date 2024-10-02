@@ -2,13 +2,13 @@
 
 module Matcher
   class HashMatcher < Base
-    def initialize(hash, key: :key, parent: :parent, all_entries: true)
+    def initialize(hash, key: :key, parent: :parent, partial: false)
       super()
 
       @hash = hash
       @key = key
       @parent = parent
-      @all_entries = all_entries
+      @partial = partial
     end
 
     def negated
@@ -16,7 +16,7 @@ module Matcher
         @hash,
         key: @key,
         parent: @parent,
-        all_entries: @all_entries,
+        partial: @partial,
       )
     end
 
@@ -26,7 +26,7 @@ module Matcher
         return
       end
 
-      check_all_entries(actual) if @all_entries
+      check_all_entries(actual) unless @partial
 
       @hash.each do |key, value|
         actual_value = actual[key]
@@ -41,10 +41,10 @@ module Matcher
     protected :check
 
     def to_s
-      if @all_entries
-        @hash.to_s
+      if @partial
+        "partial(#{@hash})"
       else
-        "partial_entries(#{@hash})"
+        @hash.to_s
       end
     end
 

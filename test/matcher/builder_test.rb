@@ -15,19 +15,17 @@ describe Matcher::Builder do
     refute_predicate matcher.match(10), :valid?
   end
 
-  it '#all_entries' do
+  it '#partial' do
     matcher = Matcher.build do
-      all_entries({ a: { a1: 'a1' } })
+      partial({ a: 'a' })
     end
 
-    assert_errors matcher.match({ a: { a1: 'a1', a2: 'a2' }, b: 'b' }),
-      a: { a2: 'expected entry for :a2 to not be present' },
-      b: 'expected entry for :b to not be present'
+    assert_predicate matcher.match({ a: 'a', b: 'b' }), :valid?
   end
 
-  it '#partial_entries' do
+  it '#partial_r' do
     matcher = Matcher.build do
-      partial_entries({ a: { a1: 'a1' } })
+      partial_r({ a: { a1: 'a1' } })
     end
 
     assert_predicate matcher.match({ a: { a1: 'a1', a2: 'a2' }, b: 'b' }), :valid?

@@ -31,6 +31,8 @@ describe Matcher::ReferenceMatcher do
 
     assert_errors matcher.match([0, 0]),
       1 => 'expected _ to be i (1) but got 0'
+
+    assert_predicate matcher.match([0, 1]), :valid?
   end
 
   it 'negated ref' do

@@ -11,7 +11,7 @@ describe Matcher::HashMatcher do
   end
 
   it 'match all entries' do
-    matcher = Matcher::HashMatcher.new({ foo: v('foo') }, all_entries: true)
+    matcher = Matcher::HashMatcher.new({ foo: v('foo') })
 
     assert_predicate matcher.match({ foo: 'foo' }), :valid?
     assert_errors matcher.match({ foo: 'foo', bar: 'bar' }),
@@ -21,7 +21,7 @@ describe Matcher::HashMatcher do
   end
 
   it 'match partial entries' do
-    matcher = Matcher::HashMatcher.new({ foo: v('foo') }, all_entries: false)
+    matcher = Matcher::HashMatcher.new({ foo: v('foo') }, partial: true)
 
     assert_predicate matcher.match({ foo: 'foo' }), :valid?
     assert_predicate matcher.match({ foo: 'foo', bar: 'bar' }), :valid?
@@ -67,5 +67,9 @@ describe Matcher::HashMatcher do
     assert_equal '{:a=>{:b=>"c"}}', matcher.to_s
   end
 
-  it '#to_s: partial entries'
+  it '#to_s: partial entries' do
+    matcher = Matcher::HashMatcher.new({ a: h(b: v('c')) }, partial: true)
+
+    assert_equal 'partial({:a=>{:b=>"c"}})', matcher.to_s
+  end
 end

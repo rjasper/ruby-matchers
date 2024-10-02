@@ -104,10 +104,7 @@ module Matcher
     when Proc
       BlockMatcher.new(object)
     when Hash
-      HashMatcher.new(
-        object.transform_values { of(_1) },
-        **settings.slice(:all_entries),
-      )
+      HashMatcher.new(object.transform_values { of(_1) })
     when Array
       ArrayMatcher.new(object.map { of(_1) })
     when *CASE_EQUALITY_CLASSES

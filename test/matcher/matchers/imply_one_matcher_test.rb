@@ -52,8 +52,8 @@ describe Matcher::ImplyOneMatcher do
   it 'match multiple' do
     matcher = Matcher.build do
       imply_one(
-        imply(_[:foo] == true, partial_entries({ data: 'foo' })),
-        imply(_[:bar] == true, partial_entries({ data: 'bar' })),
+        imply(_[:foo] == true, partial({ data: 'foo' })),
+        imply(_[:bar] == true, partial({ data: 'bar' })),
       )
     end
 

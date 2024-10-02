@@ -2,14 +2,14 @@
 
 module Matcher
   class NegatedHashMatcher < Base
-    def initialize(hash, key: :key, parent: :parent, all_entries: true)
+    def initialize(hash, key: :key, parent: :parent, partial: false)
       super()
 
       @hash = hash
       @neg_hash = @hash.transform_values(&:~)
       @key = key
       @parent = parent
-      @all_entries = all_entries
+      @partial = partial
     end
 
     def negated
@@ -17,13 +17,13 @@ module Matcher
         @hash,
         key: @key,
         parent: @parent,
-        all_entries: @all_entries,
+        partial: @partial,
       )
     end
 
     def check(actual:, **)
       return unless actual.is_a?(Hash)
-      return if @all_entries && actual.keys.any? { !@hash.key?(_1) }
+      return if !@partial && actual.keys.any? { !@hash.key?(_1) }
 
       collector = Errors::Collector.new.or!
 
@@ -44,10 +44,10 @@ module Matcher
     protected :check
 
     def to_s
-      if @all_entries
-        "neg(#{self.~})"
+      if @partial
+        "~partial(#{@hash})"
       else
-        "partial_entries(#{self.~})"
+        "neg(#{@hash})"
       end
     end
   end
