@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'test_helper'
-require 'matcher/testing'
 
 describe Matcher::EachMatcher do
   it 'match each' do

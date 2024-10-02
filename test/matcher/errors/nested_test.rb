@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'test_helper'
-require 'matcher/testing'
 
 Nested = Matcher::Errors::Nested
 Call = Matcher::Call

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'test_helper'
-require 'matcher/testing'
 
 describe Matcher::Errors do
   it 'el1 & el2 => and(el1, el2)' do

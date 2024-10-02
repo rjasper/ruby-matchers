@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'test_helper'
-require 'matcher/testing'
 
 describe Matcher::BlockMatcher do
   it 'validates blocks' do
@@ -20,11 +19,12 @@ describe Matcher::BlockMatcher do
       'did not expect an answer to everything but got 42'
 
     matcher = Matcher::BlockMatcher.new(-> { _1 == 'foo' })
+    lineno = __LINE__ - 1
 
     assert_errors matcher.match('bar'),
-      'expected to satisfy condition block_matcher_test.rb:22 but got "bar"'
+      "expected to satisfy condition block_matcher_test.rb:#{lineno} but got \"bar\""
     assert_errors (~matcher).match('foo'),
-      'did not expect to satisfy condition block_matcher_test.rb:22 but got "foo"'
+      "did not expect to satisfy condition block_matcher_test.rb:#{lineno} but got \"foo\""
   end
 
   it '#to_s: with message' do

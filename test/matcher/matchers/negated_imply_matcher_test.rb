@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'test_helper'
-require 'matcher/testing'
 
 describe Matcher::NegatedImplyMatcher do
   it 'match negated imply' do

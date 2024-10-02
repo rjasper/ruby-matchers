@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'test_helper'
-require 'matcher/testing'
 
 describe Matcher::Iso8601Matcher do
   it 'match any ISO 8601 string' do
