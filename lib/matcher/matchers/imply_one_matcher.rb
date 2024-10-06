@@ -21,22 +21,22 @@ module Matcher
       NegatedImplyOneMatcher.new(@matchers, else: @else)
     end
 
-    def check(**)
-      matchers = @matchers.filter { _1.condition.match(**).valid? }
+    def check(actual)
+      matchers = @matchers.filter { yield(_1.condition).valid? }
 
       if matchers.empty?
         errors << if @else
-          @else.match(**)
+          yield @else
         else
-          "expected #{get_actual(**).inspect} to satisfy one of these conditions: #{list_conditions_of(@matchers)}"
+          "expected #{actual.inspect} to satisfy one of these conditions: #{list_conditions_of(@matchers)}"
         end
 
         return
       elsif matchers.length > 1
-        errors << "expected #{get_actual(**).inspect} to satisfy only one condition, but met these: #{list_conditions_of(matchers)}"
+        errors << "expected #{actual.inspect} to satisfy only one condition, but met these: #{list_conditions_of(matchers)}"
       end
 
-      matchers.each { errors << _1.matcher.match(**) }
+      matchers.each { errors << yield(_1.matcher) }
     end
     protected :check
 

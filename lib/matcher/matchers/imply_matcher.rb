@@ -15,17 +15,15 @@ module Matcher
       NegatedImplyMatcher.new(@condition, @matcher)
     end
 
-    def check(**)
+    def check(_actual)
       begin
-        condition_errors = @condition.match(**)
+        return unless yield(@condition).valid?
       rescue Call::Error => e
         errors << e.message_for_errors
         return
       end
 
-      return unless condition_errors.valid?
-
-      errors << @matcher.match(**)
+      errors << yield(@matcher)
     end
     protected :check
 

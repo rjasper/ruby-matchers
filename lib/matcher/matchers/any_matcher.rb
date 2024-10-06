@@ -18,9 +18,9 @@ module Matcher
       AllMatcher.new(@matchers.map(&:~))
     end
 
-    def check(**)
+    def check(actual)
       sub_errors = @matchers.map do |matcher|
-        sub_error = matcher.match(**)
+        sub_error = yield matcher
 
         return if sub_error.valid?
 

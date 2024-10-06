@@ -13,12 +13,13 @@ module Matcher
       SetVariablesMatcher.new(@assigns, ~@matcher)
     end
 
-    def check(**values)
+    def check(actual)
+      block_values = values.merge(actual:)
       assigns = @assigns.transform_values do |v|
-        v.is_a?(Proc) ? Utils.call_block(v, values) : v
+        v.is_a?(Proc) ? Utils.call_block(v, block_values) : v
       end
 
-      errors << @matcher.match(**values, **assigns)
+      errors << yield(@matcher, **assigns)
     end
     protected :check
 

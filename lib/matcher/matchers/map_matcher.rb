@@ -38,7 +38,7 @@ module Matcher
       NegatedMapMatcher.new(@projection, @matcher, index: @index, original: @original)
     end
 
-    def check(actual:, **values)
+    def check(actual)
       unless actual.respond_to?(:map)
         errors << "expected to respond to \"map\" but got #{actual.inspect}"
         return
@@ -48,12 +48,9 @@ module Matcher
       mapping_failed = false
 
       actual.map.with_index do |item, i|
-        mapped << @projection.evaluate({
-          **values,
-          actual: item,
-          @index => i,
-          @original => actual,
-        })
+        mapped << @projection.evaluate(
+          values.merge(actual: item, @index => i, @original => actual),
+        )
       rescue Call::Error => e
         errors[i] << e.message_for_errors
         mapping_failed = true
@@ -61,7 +58,7 @@ module Matcher
 
       return if mapping_failed
 
-      mapped_errors = @matcher.match(**values, actual: mapped, @original => actual)
+      mapped_errors = yield @matcher, mapped, @original => actual
 
       errors << MapMatcher.map_errors(mapped_errors, @projection)
     end

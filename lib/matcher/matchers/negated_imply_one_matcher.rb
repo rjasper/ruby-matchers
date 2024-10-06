@@ -17,13 +17,13 @@ module Matcher
       ImplyOneMatcher.new(@matchers, else: @else)
     end
 
-    def check(**)
-      matchers = @neg_matchers.filter { _1.condition.match(**).valid? }
+    def check(_actual)
+      matchers = @neg_matchers.filter { yield(_1.condition).valid? }
 
       if matchers.empty?
-        errors << @neg_else.match(**) if @else
+        errors << yield(@neg_else) if @else
       elsif matchers.length == 1
-        errors << matchers[0].match(**)
+        errors << yield(matchers[0])
       end
     end
     protected :check

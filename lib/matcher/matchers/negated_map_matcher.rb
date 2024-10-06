@@ -16,23 +16,20 @@ module Matcher
       MapMatcher.new(@projection, @matcher, index: @index, original: @original)
     end
 
-    def check(actual:, **values)
+    def check(actual)
       return unless actual.respond_to?(:map)
 
       mapped = []
 
       actual.map.with_index do |item, i|
-        mapped << @projection.evaluate({
-          **values,
-          actual: item,
-          @index => i,
-          @original => actual,
-        })
+        mapped << @projection.evaluate(
+          values.merge(actual: item, @index => i, @original => actual),
+        )
       rescue Call::Error
         return if @negated
       end
 
-      mapped_errors = @neg_matcher.match(**values, actual: mapped, @original => actual)
+      mapped_errors = yield @neg_matcher, mapped, @original => actual
 
       errors << MapMatcher.map_errors(mapped_errors, @projection)
     end

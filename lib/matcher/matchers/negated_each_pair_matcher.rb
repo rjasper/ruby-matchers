@@ -16,19 +16,13 @@ module Matcher
       EachPairMatcher.new(@matcher, key: @key, value: @value, parent: @parent)
     end
 
-    def check(actual:, **)
+    def check(actual)
       return unless actual.respond_to?(:each_pair)
 
       collector = Errors::Collector.new.or!
 
       actual.each do |key, value|
-        result = @neg_matcher.match(
-          **,
-          actual: [key, value],
-          @key => key,
-          @value => value,
-          @parent => actual,
-        )
+        result = yield @neg_matcher, [key, value], @key => key, @value => value, @parent => actual
 
         return if result.valid?
 

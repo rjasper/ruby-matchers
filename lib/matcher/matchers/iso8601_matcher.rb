@@ -23,7 +23,7 @@ module Matcher
       Iso8601Matcher.new(@time, negated: !@negated)
     end
 
-    def check(actual:, **)
+    def check(actual)
       unless actual.is_a?(String)
         errors << "expected a String but got #{actual.inspect}" unless @negated
         return

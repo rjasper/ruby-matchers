@@ -14,7 +14,7 @@ module Matcher
       NegatedArrayMatcher.new(@array, index: @index, parent: @parent)
     end
 
-    def check(actual:, **)
+    def check(actual)
       unless actual.is_a?(Array)
         errors << "expected an Array but got #{actual.inspect}"
         return
@@ -24,7 +24,7 @@ module Matcher
         @array.length != actual.length
 
       [@array.length, actual.length].min.times do |i|
-        errors[i] << @array[i].match(**, actual: actual[i], @index => i, @parent => actual)
+        errors[i] << yield(@array[i], actual[i], @index => i, @parent => actual)
       end
     end
     protected :check

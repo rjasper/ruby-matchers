@@ -21,7 +21,7 @@ module Matcher
       )
     end
 
-    def check(actual:, **)
+    def check(actual)
       return unless actual.is_a?(Hash)
       return if !@partial && actual.keys.any? { !@hash.key?(_1) }
 
@@ -32,7 +32,7 @@ module Matcher
 
         return if actual_value.nil? && !actual.key?(key)
 
-        result = value.match(**, actual: actual_value, @key => key, @parent => actual)
+        result = yield value, actual_value, @key => key, @parent => actual
 
         return if result.valid?
 

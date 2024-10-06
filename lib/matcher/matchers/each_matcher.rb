@@ -14,7 +14,7 @@ module Matcher
       NegatedEachMatcher.new(@matcher, index: @index, parent: @parent)
     end
 
-    def check(actual:, **)
+    def check(actual)
       unless actual.respond_to?(:each)
         errors << "expected to respond to \"each\" but got #{actual.inspect}"
         return
@@ -22,7 +22,7 @@ module Matcher
 
       i = 0
       actual.each do |item|
-        errors[i] << @matcher.match(actual: item, **, @index => i, @parent => actual)
+        errors[i] << yield(@matcher, item, @index => i, @parent => actual)
         i += 1
       end
     end

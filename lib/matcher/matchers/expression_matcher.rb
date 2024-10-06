@@ -15,11 +15,12 @@ module Matcher
       ExpressionMatcher.new(@expression, negated: !@negated)
     end
 
-    def check(**values)
+    def check(actual)
       chain = []
-      evaluation = @expression.evaluate(values, chain)
+      expression_values = values.merge(actual:)
+      evaluation = @expression.evaluate(expression_values, chain)
 
-      errors << message_for(values, chain) if @negated != !evaluation
+      errors << message_for(expression_values, chain) if @negated != !evaluation
     rescue Call::Error => e
       errors << e.message_for_errors unless @negated
     end

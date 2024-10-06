@@ -15,13 +15,13 @@ module Matcher
       EachMatcher.new(@matcher, index: @index, parent: @parent)
     end
 
-    def check(actual:, **values)
+    def check(actual)
       return unless actual.respond_to?(:each)
 
       collector = Errors::Collector.new.or!
 
       actual.each.with_index do |item, i|
-        result = @neg_matcher.match(**values, actual: item, @index => i, @parent => actual)
+        result = yield @neg_matcher, item, @index => i, @parent => actual
 
         return if result.valid?
 

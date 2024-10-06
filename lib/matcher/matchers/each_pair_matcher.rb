@@ -15,19 +15,19 @@ module Matcher
       NegatedEachPairMatcher.new(@matcher, key: @key, value: @value, parent: @parent)
     end
 
-    def check(actual:, **)
+    def check(actual)
       unless actual.respond_to?(:each_pair)
         errors << "expected to respond to \"each_pair\" but got #{actual.inspect}"
         return
       end
 
       actual.each_pair do |key, value|
-        errors[key] << @matcher.match(
-          **,
-          actual: [key, value],
+        errors[key] << yield(
+          @matcher,
+          [key, value],
           @key => key,
           @value => value,
-          @parent => actual,
+          @parent => actual
         )
       end
     end

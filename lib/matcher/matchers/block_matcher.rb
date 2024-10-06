@@ -14,8 +14,8 @@ module Matcher
       BlockMatcher.new(@block, @message, negated: !@negated)
     end
 
-    def check(actual:, **)
-      errors << message_for(actual) if @negated ^ !@block.call(actual, **)
+    def check(actual)
+      errors << message_for(actual) if @negated ^ !@block.call(actual, **values)
     end
     protected :check
 

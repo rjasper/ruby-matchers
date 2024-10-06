@@ -15,13 +15,13 @@ module Matcher
       ArrayMatcher.new(@array, index: @index, parent: @parent)
     end
 
-    def check(actual:, **)
+    def check(actual)
       return if !actual.is_a?(Array) || @array.length != actual.length
 
       collector = Errors::Collector.new.or!
 
       @array.length.times do |i|
-        result = @neg_array[i].match(**, actual: actual[i], @index => i, @parent => actual)
+        result = yield @neg_array[i], actual[i], @index => i, @parent => actual
 
         return if result.valid?
 

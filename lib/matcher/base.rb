@@ -23,18 +23,16 @@ module Matcher
       AllMatcher.new([self, matcher])
     end
 
-    def get_actual(actual:, **)
-      actual
-    end
+    StackData = Struct.new(:errors, :vals)
 
-    def match(actual = NULL, **)
-      return isolate.match(actual, **) if @thread_safe
+    def match(actual, values = nil)
+      return isolate.match(actual, values) if @thread_safe
 
       errors = Errors::Collector.new
+      (@stack ||= []) << StackData.new(errors, merge_values(values))
 
       Matcher.with_session do
         depth = Matcher.session[:depth]
-        (@errors_stack ||= []).push(errors)
 
         if depth == nil
           Matcher.session[:depth] = 0
@@ -45,14 +43,15 @@ module Matcher
           Matcher.session[:depth] += 1
         end
 
-        if actual.equal?(NULL)
-          check(**)
-        else
-          check(**, actual:)
+        check(actual) do |matcher, act = actual, **kwargs|
+          matcher.match(act, merge_values(kwargs))
         end
       ensure
-        @errors_stack.pop
-        @errors_stack = nil if @errors_stack.empty?
+        if @stack.length > 1
+          @stack.pop
+        else
+          @stack = nil
+        end
 
         Matcher.session[:depth] -= 1
       end
@@ -68,12 +67,16 @@ module Matcher
 
     attr_writer :session_key, :thread_safe
 
-    def check(**)
+    def check(actual)
       raise NotImplementedError
     end
 
     def errors
-      @errors_stack.last
+      @stack.last.errors
+    end
+
+    def values
+      @stack&.last&.vals
     end
 
     def session(key = nil)
@@ -96,6 +99,20 @@ module Matcher
       klone.thread_safe = false
 
       klone
+    end
+
+    def merge_values(values)
+      previous = @stack&.last&.vals
+
+      if !previous
+        values || {}
+      elsif previous.empty?
+        values || previous
+      elsif !values || values.empty?
+        previous
+      else
+        previous.merge(values)
+      end
     end
   end
 end

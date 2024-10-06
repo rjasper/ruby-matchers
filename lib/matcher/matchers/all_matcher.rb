@@ -18,9 +18,9 @@ module Matcher
       AnyMatcher.new(@matchers.map(&:~))
     end
 
-    def check(**)
+    def check(actual)
       @matchers.each do |matcher|
-        errors << matcher.match(**)
+        errors << yield(matcher)
       end
     end
     protected :check

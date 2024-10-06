@@ -14,7 +14,7 @@ module Matcher
       SetMatcher.new(@array, parent: @parent, negated: !@negated)
     end
 
-    def check(actual:, **)
+    def check(actual)
       unless actual.is_a?(Array)
         errors << "expected an Array but got #{actual.inspect}" unless @negated
         return
@@ -33,7 +33,7 @@ module Matcher
         break if missing.empty?
 
         index = missing.find_index do |m|
-          m.match(**, actual: element, @parent => actual).valid?
+          yield(m, element, @parent => actual).valid?
         end
 
         if index

@@ -21,9 +21,7 @@ module Matcher
       matcher
     end
 
-    def check(**)
-      actual = get_actual(**)
-
+    def check(actual)
       unless visited.add?(actual.object_id)
         if !@negated && !@cyclic
           errors << 'cyclic structure: actual has already been visited'
@@ -35,7 +33,7 @@ module Matcher
       end
 
       unless @options[@key][:cache]
-        errors << target.match(**)
+        errors << yield(target)
         return
       end
 
@@ -43,7 +41,7 @@ module Matcher
       cached_result = cache[cache_key]
 
       if cached_result.nil?
-        target_errors = @cyclic ? target.match(actual:) : target.match(**)
+        target_errors = @cyclic ? target.match(actual) : yield(target)
 
         cache[cache_key] = target_errors.valid?
 

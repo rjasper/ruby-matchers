@@ -13,7 +13,7 @@ module Matcher
       CaseEqualityMatcher.new(@object, negated: !@negated)
     end
 
-    def check(actual:, **)
+    def check(actual)
       errors << not_equal_message(actual) if !@negated ^ (@object === actual) # rubocop:disable Style/CaseEquality
     end
     protected :check

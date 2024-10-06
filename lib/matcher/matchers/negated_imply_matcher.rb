@@ -16,9 +16,9 @@ module Matcher
       ImplyMatcher.new(@condition, @matcher)
     end
 
-    def check(**)
+    def check(_actual)
       begin
-        condition_errors = @condition.match(**)
+        condition_errors = yield @condition
       rescue Call::Error
         return
       end
@@ -28,7 +28,7 @@ module Matcher
         return
       end
 
-      errors << @neg_matcher.match(**)
+      errors << yield(@neg_matcher)
     end
     protected :check
 

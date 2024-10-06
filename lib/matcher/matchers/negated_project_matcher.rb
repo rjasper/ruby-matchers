@@ -14,14 +14,14 @@ module Matcher
       ProjectMatcher.new(@expression, @matcher)
     end
 
-    def check(**)
+    def check(actual)
       begin
-        result = @expression.evaluate(**)
+        result = @expression.evaluate(values.merge(actual:))
       rescue Call::Error
         return
       end
 
-      errors[@expression] << @neg_matcher.match(**, actual: result)
+      errors[@expression] << yield(@neg_matcher, result)
     end
 
     def to_s

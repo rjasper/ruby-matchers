@@ -12,8 +12,8 @@ module Matcher
       @matcher
     end
 
-    def check(**)
-      errors << "expected #{@matcher} to be invalid but got #{get_actual(**).inspect}" if @matcher.match(**).valid?
+    def check(actual)
+      errors << "expected #{@matcher} to be invalid but got #{actual.inspect}" if yield(@matcher).valid?
     end
     protected :check
 

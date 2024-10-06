@@ -20,7 +20,7 @@ module Matcher
       )
     end
 
-    def check(actual:, **)
+    def check(actual)
       unless actual.is_a?(Hash)
         errors << "expected a Hash but got #{actual.inspect}"
         return
@@ -34,7 +34,7 @@ module Matcher
         errors[key] << if actual_value.nil? && !actual.key?(key)
           "expected entry for #{key.inspect} but found nothing"
         else
-          value.match(**, actual: actual_value, @key => key, @parent => actual)
+          yield(value, actual_value, @key => key, @parent => actual)
         end
       end
     end

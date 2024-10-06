@@ -13,7 +13,7 @@ module Matcher
       EqualMatcher.new(@value, negated: !@negated)
     end
 
-    def check(actual:, **)
+    def check(actual)
       errors << message_for(actual) if @negated ^ (actual != @value)
     end
     protected :check
