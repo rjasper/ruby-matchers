@@ -64,8 +64,8 @@ module Matcher
     !ExpressionRecorder.recorder?(object) && object.equal?(NULL)
   end
 
-  def self.build(&)
-    with_build_session do
+  def self.build(thread_safe: false, &)
+    with_build_session(thread_safe:) do
       builder = Builder.new
       object = builder.instance_exec(&)
 
@@ -150,11 +150,11 @@ module Matcher
     Thread.current[:matcher_build_session]
   end
 
-  def self.with_build_session
+  def self.with_build_session(initial = {})
     return yield if Thread.current[:matcher_build_session]
 
     begin
-      Thread.current[:matcher_build_session] = {}
+      Thread.current[:matcher_build_session] = initial
 
       yield
     ensure

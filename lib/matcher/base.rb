@@ -2,6 +2,11 @@
 
 module Matcher
   class Base
+    def initialize
+      @session_key = object_id
+      @thread_safe = Matcher.build_session&.[](:thread_safe) == true
+    end
+
     def ~
       NegatedMatcher.new(self)
     end
@@ -23,11 +28,13 @@ module Matcher
     end
 
     def match(actual = NULL, **)
+      return isolate.match(actual, **) if @thread_safe
+
       errors = Errors::Collector.new
 
       Matcher.with_session do
         depth = Matcher.session[:depth]
-        errors_stack.push(errors)
+        (@errors_stack ||= []).push(errors)
 
         if depth == nil
           Matcher.session[:depth] = 0
@@ -44,7 +51,8 @@ module Matcher
           check(**, actual:)
         end
       ensure
-        errors_stack.pop
+        @errors_stack.pop
+        @errors_stack = nil if @errors_stack.empty?
 
         Matcher.session[:depth] -= 1
       end
@@ -58,20 +66,18 @@ module Matcher
 
     protected
 
+    attr_writer :session_key, :thread_safe
+
     def check(**)
       raise NotImplementedError
     end
 
-    def errors_stack
-      session[:errors_stack] ||= []
-    end
-
     def errors
-      errors_stack.last
+      @errors_stack.last
     end
 
     def session(key = nil)
-      Matcher.session[key || object_id] ||= {}
+      Matcher.session[key || @session_key] ||= {}
     end
 
     def self.session
@@ -80,6 +86,16 @@ module Matcher
 
     def class_session
       self.class.session
+    end
+
+    private
+
+    def isolate
+      klone = clone
+      klone.session_key = @session_key
+      klone.thread_safe = false
+
+      klone
     end
   end
 end

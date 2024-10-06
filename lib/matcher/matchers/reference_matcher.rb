@@ -2,7 +2,7 @@
 
 module Matcher
   class ReferenceMatcher < Base
-    def initialize(key, targets, options, cyclic: nil, negated: false, session_key: nil)
+    def initialize(key, targets, options, cyclic: nil, negated: false)
       super()
 
       @targets = targets
@@ -10,13 +10,15 @@ module Matcher
       @cyclic = cyclic
       @options = options
       @negated = negated
-      @session_key = session_key
 
       @targets["~#{key}"] ||= nil if negated # reserve entry for later use (thread-safety)
     end
 
     def ~
-      ReferenceMatcher.new(@key, @targets, @options, cyclic: @cyclic, negated: !@negated, session_key: object_id)
+      matcher = ReferenceMatcher.new(@key, @targets, @options, cyclic: @cyclic, negated: !@negated)
+      matcher.session_key = @session_key
+
+      matcher
     end
 
     def check(**)
