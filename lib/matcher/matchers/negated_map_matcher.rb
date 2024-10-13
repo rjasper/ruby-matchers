@@ -31,12 +31,18 @@ module Matcher
 
       mapped_errors = yield @neg_matcher, mapped, @original => actual
 
-      errors << MapMatcher.map_errors(mapped_errors, @projection)
+      errors << MapMatcher.map_errors(mapped_errors, @projection, path)
     end
     protected :check
 
     def to_s
       "~map(#{@projection}, #{@matcher})"
+    end
+
+    private
+
+    def path
+      @path ||= NestedExpressionNormalizer.normalize(@projection)
     end
   end
 end

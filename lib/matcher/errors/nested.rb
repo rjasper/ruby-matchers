@@ -6,9 +6,15 @@ module Matcher
       def self.from(key, node)
         return node if node.is_a?(Empty)
 
-        NestedExpressionNormalizer.normalize(key)
-          .reverse_each
-          .reduce(node) { Nested.new(_2, _1) }
+        keys = if key.is_a?(Array)
+          key
+        elsif key.is_a?(Expression)
+          NestedExpressionNormalizer.normalize(key)
+        else
+          return Nested.new(key, node)
+        end
+
+        keys.reverse_each.reduce(node) { Nested.new(_2, _1) }
       end
 
       def self.key_to_s(key, path)

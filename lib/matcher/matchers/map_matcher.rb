@@ -2,16 +2,16 @@
 
 module Matcher
   class MapMatcher < Base
-    def self.map_errors(node, projection)
+    def self.map_errors(node, projection, path)
       case node
       when Errors::Empty
         node
       when Errors::And, Errors::Or
-        children = node.nodes.map { map_errors(_1, projection) }
+        children = node.nodes.map { map_errors(_1, projection, path) }
         node.class.new(children)
       when Errors::Nested
         if node.key.is_a?(Integer)
-          nested_projection = Errors::Nested.from(projection, node.node)
+          nested_projection = Errors::Nested.from(path, node.node)
           Errors::Nested.from(node.key, nested_projection)
         else
           node
@@ -60,12 +60,18 @@ module Matcher
 
       mapped_errors = yield @matcher, mapped, @original => actual
 
-      errors << MapMatcher.map_errors(mapped_errors, @projection)
+      errors << MapMatcher.map_errors(mapped_errors, @projection, path)
     end
     protected :check
 
     def to_s
       "map(#{@projection}, #{@matcher})"
+    end
+
+    private
+
+    def path
+      @path ||= NestedExpressionNormalizer.normalize(@projection)
     end
   end
 end
