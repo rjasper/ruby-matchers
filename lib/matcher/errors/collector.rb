@@ -5,7 +5,7 @@ module Matcher
     class Collector
       def self.error_from(obj)
         case obj
-        when String
+        when String, Message
           Errors::Element.new(obj)
         when Errors::Node
           obj

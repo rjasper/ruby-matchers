@@ -14,8 +14,8 @@ describe Matcher::NegatedHashMatcher do
       { foo: 'foo' }
     end
 
-    assert_errors matcher.match({ foo: 'foo' }),
-      foo: 'expected "foo" to not be "foo"'
+    assert_expected_errors matcher.match({ foo: 'foo' }),
+      foo: 'did not expect "foo"'
 
     assert_predicate matcher.match({ foo: 'foo', bar: 'bar' }), :valid?
     assert_predicate matcher.match({}), :valid?
@@ -26,10 +26,10 @@ describe Matcher::NegatedHashMatcher do
       ~partial({ foo: 'foo' })
     end
 
-    assert_errors matcher.match({ foo: 'foo' }),
-      foo: 'expected "foo" to not be "foo"'
-    assert_errors matcher.match({ foo: 'foo', bar: 'bar' }),
-      foo: 'expected "foo" to not be "foo"'
+    assert_expected_errors matcher.match({ foo: 'foo' }),
+      foo: 'did not expect "foo"'
+    assert_expected_errors matcher.match({ foo: 'foo', bar: 'bar' }),
+      foo: 'did not expect "foo"'
 
     assert_predicate matcher.match({}), :valid?
   end
@@ -39,8 +39,8 @@ describe Matcher::NegatedHashMatcher do
       neg({ foo: { bar: 'baz' } })
     end
 
-    assert_errors matcher.match({ foo: { bar: 'baz' } }),
-      foo: { bar: 'expected "baz" to not be "baz"' }
+    assert_expected_errors matcher.match({ foo: { bar: 'baz' } }),
+      foo: { bar: 'did not expect "baz"' }
 
     assert_predicate matcher.match({ foo: { bar: 'buzz' } }), :valid?
     assert_predicate matcher.match({ foo: 'foo' }), :valid?

@@ -25,23 +25,19 @@ module Matcher
 
     def check(actual)
       unless actual.is_a?(String)
-        errors << "expected a String but got #{actual.inspect}" unless @negated
+        errors << expected.kind_of(String) unless @negated
         return
       end
 
       time = Time.iso8601(actual)
 
-      if @negated
-        if @time
-          errors << "did not expect an ISO 8601 string for #{time} but got #{actual.inspect}" if @time == time
-        else
-          errors << "did not expect an ISO 8601 string but got #{actual.inspect}"
-        end
-      else
-        errors << "expected #{@time} but got #{time}" if @time&.!= time
+      if @time
+        errors << expected.not_if(@negated).equal(@time) if @negated ^ (time != @time)
+      elsif @negated
+        errors << expected(namespace: :iso8601).not.valid
       end
     rescue ArgumentError
-      errors << "expected an ISO 8601 string but got #{actual.inspect}" unless @negated
+      errors << expected(namespace: :iso8601).valid unless @negated
     end
     protected :check
 

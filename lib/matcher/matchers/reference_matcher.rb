@@ -23,11 +23,8 @@ module Matcher
 
     def check(actual)
       unless visited.add?(actual.object_id)
-        if !@negated && !@cyclic
-          errors << 'cyclic structure: actual has already been visited'
-        elsif @negated && @cyclic
-          errors << 'expected not a valid cyclic structure'
-        end
+        errors << expected(namespace: :reference).not_if(@negated).cyclic if
+          @negated == @cyclic
 
         return
       end
@@ -47,7 +44,7 @@ module Matcher
 
         errors << target_errors
       elsif !cached_result
-        errors << 'actual has already failed before'
+        errors << report(namespace: :reference).failed_from_cache
       end
     end
 

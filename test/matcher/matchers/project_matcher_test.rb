@@ -13,9 +13,9 @@ describe Matcher::ProjectMatcher do
     assert_predicate matcher.match(my_struct.new('foo')), :valid?
     refute_predicate matcher.match(my_struct.new('bar')), :valid?
 
-    assert_errors matcher.match(my_struct.new('bar')),
+    assert_expected_errors matcher.match(my_struct.new('bar')),
       expr { _1.value } => 'expected "foo" but got "bar"'
-    assert_errors matcher.match(1),
+    assert_expected_errors matcher.match(1),
       'expected _ to respond to value but got 1'
   end
 

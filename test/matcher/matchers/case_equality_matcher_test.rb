@@ -17,14 +17,27 @@ describe Matcher::CaseEqualityMatcher do
   end
 
   it 'generates error messages' do
-    assert_errors match('hi') { Integer },
-      'expected "hi" to be kind of Integer'
-    assert_errors match('foo') { /bar/ },
+    assert_expected_errors match('hi') { Integer },
+      'expected a kind of Integer but got "hi"'
+    assert_expected_errors match('foo') { /bar/ },
       'expected "foo" to match /bar/'
-    assert_errors Matcher::CaseEqualityMatcher.new(Set[2, 3]).match(1),
-      'expected 1 to be member of {2, 3}'
-    assert_errors match(1) { 2..3 },
-      'expected 1 to be within 2..3'
+    assert_expected_errors Matcher::CaseEqualityMatcher.new(Set[2, 3]).match(1),
+      'expected 1 to be included in #<Set: {2, 3}>'
+    assert_expected_errors match(1) { 2..3 },
+      'expected 1 to be between 2..3'
+    assert_expected_errors Matcher::CaseEqualityMatcher.new('foo').match('bar'),
+      'expected "foo" but got "bar"'
+
+    assert_expected_errors not_match(1) { Integer },
+      'did not expect a kind of Integer but got 1'
+    assert_expected_errors not_match('foobar') { /bar/ },
+      'did not expect "foobar" to match /bar/'
+    assert_expected_errors Matcher::CaseEqualityMatcher.new(Set[2, 3]).~.match(2),
+      'did not expect 2 to be included in #<Set: {2, 3}>'
+    assert_expected_errors not_match(2) { 1..3 },
+      'did not expect 2 to be between 1..3'
+    assert_expected_errors Matcher::CaseEqualityMatcher.new('foo').~.match('foo'),
+      'did not expect "foo"'
   end
 
   it '#to_s' do

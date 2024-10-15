@@ -14,7 +14,8 @@ module Matcher
     end
 
     def check(actual)
-      errors << message_for(actual) if @negated ^ (actual != @value)
+      errors << expected.not_if(@negated).equal(@value) if
+        @negated ^ (actual != @value)
     end
     protected :check
 
@@ -24,16 +25,6 @@ module Matcher
         "#{'~' if @negated}equal(#{@value.inspect})"
       else
         @negated ? "neg(#{@value.inspect})" : @value.inspect
-      end
-    end
-
-    private
-
-    def message_for(actual)
-      if @negated
-        "expected #{actual.inspect} to not be #{@value.inspect}"
-      else
-        "expected #{@value.inspect} but got #{actual.inspect}"
       end
     end
   end

@@ -10,8 +10,8 @@ describe Matcher::NegatedProjectMatcher do
       ~project(_.value, 'foo')
     end
 
-    assert_errors matcher.match(my_struct.new('foo')),
-      expr { _1.value } => 'expected "foo" to not be "foo"'
+    assert_expected_errors matcher.match(my_struct.new('foo')),
+      expr { _1.value } => 'did not expect "foo"'
     assert_predicate matcher.match(my_struct.new('bar')), :valid?
 
     assert_predicate matcher.match(my_struct.new('bar')), :valid?

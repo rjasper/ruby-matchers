@@ -7,6 +7,14 @@ module Matcher
       @thread_safe = Matcher.build_session&.[](:thread_safe) == true
     end
 
+    def actual
+      @stack&.last&.actual
+    end
+
+    def values
+      @stack&.last&.vals
+    end
+
     def ~
       NegatedMatcher.new(self)
     end
@@ -23,13 +31,13 @@ module Matcher
       AllMatcher.new([self, matcher])
     end
 
-    StackData = Struct.new(:errors, :vals)
+    StackData = Struct.new(:actual, :vals, :errors)
 
     def match(actual, values = nil)
       return isolate.match(actual, values) if @thread_safe
 
       errors = Errors::Collector.new
-      (@stack ||= []) << StackData.new(errors, merge_values(values))
+      (@stack ||= []) << StackData.new(actual, merge_values(values), errors)
 
       Matcher.with_session do
         depth = Matcher.session[:depth]
@@ -75,8 +83,12 @@ module Matcher
       @stack.last.errors
     end
 
-    def values
-      @stack&.last&.vals
+    def report(actual = self.actual, namespace: nil)
+      MessageBuilder.new(namespace, false, actual)
+    end
+
+    def expected(actual = self.actual, namespace: nil)
+      MessageBuilder.new(namespace, true, actual)
     end
 
     def session(key = nil)

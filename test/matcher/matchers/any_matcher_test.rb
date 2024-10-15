@@ -11,7 +11,7 @@ describe Matcher::AnyMatcher do
     assert_predicate matcher.match(2), :valid?
     refute_predicate matcher.match(3), :valid?
 
-    assert_errors matcher.match(4) do
+    assert_expected_errors matcher.match(4) do
       _or do
         error 'expected 1 but got 4'
         error 'expected 2 but got 4'

@@ -8,7 +8,7 @@ describe Matcher::NegatedEachPairMatcher do
       ~each_pair(key == value.to_s)
     end
 
-    assert_errors matcher.match({ '1' => 1, 'a' => :a }) do
+    assert_expected_errors matcher.match({ '1' => 1, 'a' => :a }) do
       _or do
         error '1', 'expected k to not be v.to_s ("1") for v = 1'
         error 'a', 'expected k to not be v.to_s ("a") for v = :a'

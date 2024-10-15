@@ -13,8 +13,8 @@ module Matcher
       CaseEqualityMatcher.new(@object, negated: !@negated)
     end
 
-    def check(actual)
-      errors << not_equal_message(actual) if !@negated ^ (@object === actual) # rubocop:disable Style/CaseEquality
+    def check(_actual)
+      errors << not_equal_message if !@negated ^ (@object === actual) # rubocop:disable Style/CaseEquality
     end
     protected :check
 
@@ -28,22 +28,18 @@ module Matcher
 
     private
 
-    def not_equal_message(actual)
+    def not_equal_message
       case @object
       when Class
-        "expected #{actual.inspect} to be #{ 'not ' if @negated }kind of #{@object}"
+        expected.not_if(@negated).kind_of(@object)
       when Range
-        "expected #{actual.inspect} to be #{ 'not ' if @negated }within #{@object}"
+        expected.not_if(@negated).between(@object)
       when Regexp
-        "expected #{actual.inspect} to #{ 'not ' if @negated }match #{@object.inspect}"
+        expected.not_if(@negated).matching(@object)
       when Set
-        "expected #{actual.inspect} to be #{ 'not ' if @negated }member of {#{@object.join(', ')}}"
+        expected.not_if(@negated).included_in(@object)
       else
-        if @negated
-          "expected #{actual.inspect} to not be #{@object.inspect}"
-        else
-          "expected #{@object.inspect} but got #{actual.inspect}"
-        end
+        expected.not_if(@negated).equal(@object)
       end
     end
   end

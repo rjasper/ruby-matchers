@@ -12,7 +12,7 @@ describe Matcher::AllMatcher do
     refute_predicate matcher.match(9), :valid?
     refute_predicate matcher.match(4), :valid?
 
-    assert_errors matcher.match(5),
+    assert_expected_errors matcher.match(5),
       'expected a number divisible by 3 but got 5',
       'expected an even number but got 5'
   end

@@ -30,7 +30,7 @@ describe 'examples' do
       }
     }
 
-    assert_errors matcher.match(tree) do
+    assert_expected_errors matcher.match(tree) do
       _or(:right) do
         error 'expected nil but got {:key=>7, :left=>{:key=>5, :left=>nil, :right=>nil}, :right=>{:key=>10, :left=>nil, :right=>nil}}'
         _or(:left) do
@@ -89,7 +89,7 @@ describe 'examples' do
 
     assert_predicate matcher.match(%w[123 456]), :valid?
 
-    assert_errors matcher.match(%w[123 456 7890]),
+    assert_expected_errors matcher.match(%w[123 456 7890]),
       2 => { Matcher::Call.build { _1.length } => 'expected 3 but got 4' }
   end
 

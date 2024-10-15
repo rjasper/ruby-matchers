@@ -10,6 +10,7 @@ module Matcher
       @level = 0
       @continue_line = false
       @path_stack = ['root']
+      @phrasing = ExpectedPhrasing.phrasing
     end
 
     def report(node)
@@ -48,7 +49,10 @@ module Matcher
     end
 
     def report_element(element)
-      line("#{@path_stack.last}: #{element.message}")
+      message = element.message
+      message = @phrasing.call(@path_stack.last, message) if message.is_a?(Message)
+
+      line("#{@path_stack.last}: #{message}")
     end
 
     def report_nested(nested)

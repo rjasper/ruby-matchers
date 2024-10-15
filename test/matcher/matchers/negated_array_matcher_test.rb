@@ -6,11 +6,11 @@ describe Matcher::NegatedArrayMatcher do
   it 'match not array' do
     matcher = Matcher.build { neg([1, 2, 3]) }
 
-    assert_errors matcher.match([1, 2, 3]) do
+    assert_expected_errors matcher.match([1, 2, 3]) do
       _or do
-        error(0, 'expected 1 to not be 1')
-        error(1, 'expected 2 to not be 2')
-        error(2, 'expected 3 to not be 3')
+        error(0, 'did not expect 1')
+        error(1, 'did not expect 2')
+        error(2, 'did not expect 3')
       end
     end
 

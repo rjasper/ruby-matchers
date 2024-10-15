@@ -7,8 +7,8 @@ describe Matcher::NegatedMatcher do
     is_one = Matcher.build { 1 }
     matcher = Matcher::NegatedMatcher.new(is_one)
 
-    assert_errors matcher.match(1),
-      'expected 1 to be invalid but got 1'
+    assert_expected_errors matcher.match(1),
+      'did not expect 1 to be valid but got 1'
     assert_predicate matcher.match(2), :valid?
   end
 

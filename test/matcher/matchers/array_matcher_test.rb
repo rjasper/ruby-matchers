@@ -3,17 +3,35 @@
 require 'test_helper'
 
 describe Matcher::ArrayMatcher do
+  it 'expects an Array' do
+    errors = match(nil) { [1, 2]}
+
+    assert_errors errors, msg_not(:kind_of, nil, Array)
+    assert_expected_errors errors, 'expected a kind of Array but got nil'
+  end
+
+  it 'detects different length' do
+    matcher = Matcher.build { [1, 2] }
+
+    errors = matcher.match([1])
+
+    assert_errors errors, msg_not(:length_of, [1], 2)
+    assert_expected_errors errors, 'expected length of 2 but got 1'
+
+    assert_errors matcher.match([1, 2, 3]), msg_not(:length_of, [1, 2, 3], 2)
+  end
+
   it 'match array' do
     matcher = Matcher::ArrayMatcher.new([v(1), v(2), v(3)])
 
     assert_predicate matcher.match([1, 2, 3]), :valid?
-    assert_errors matcher.match(nil),
-      'expected an Array but got nil'
-    assert_errors matcher.match([]),
+    assert_expected_errors matcher.match(nil),
+      'expected a kind of Array but got nil'
+    assert_expected_errors matcher.match([]),
       'expected length of 3 but got 0'
-    assert_errors matcher.match([1, 2, 3, 4]),
+    assert_expected_errors matcher.match([1, 2, 3, 4]),
       'expected length of 3 but got 4'
-    assert_errors matcher.match([4, 5, 6]),
+    assert_expected_errors matcher.match([4, 5, 6]),
       0 => 'expected 1 but got 4',
       1 => 'expected 2 but got 5',
       2 => 'expected 3 but got 6'
@@ -29,7 +47,7 @@ describe Matcher::ArrayMatcher do
     matcher = Matcher::ArrayMatcher.new([item_matcher, item_matcher, item_matcher])
 
     assert_predicate matcher.match([0, 10, 20]), :valid?
-    assert_errors matcher.match([0, 11, 20]),
+    assert_expected_errors matcher.match([0, 11, 20]),
       1 => 'expected _ to be i * 10 (10) but got 11 for i = 1'
   end
 
@@ -41,7 +59,7 @@ describe Matcher::ArrayMatcher do
     matcher = Matcher::ArrayMatcher.new([Matcher.of(Integer), item_matcher, item_matcher])
 
     assert_predicate matcher.match([1, 3, 5]), :valid?
-    assert_errors matcher.match([1, 5, 3]),
+    assert_expected_errors matcher.match([1, 5, 3]),
       2 => 'expected parent[i - 1] to be < parent[i] (3) but got 5 for parent = [1, 5, 3], i = 2'
   end
 

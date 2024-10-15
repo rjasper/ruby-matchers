@@ -40,7 +40,7 @@ module Matcher
 
     def check(actual)
       unless actual.respond_to?(:map)
-        errors << "expected to respond to \"map\" but got #{actual.inspect}"
+        errors << expected.responding_to(:map)
         return
       end
 

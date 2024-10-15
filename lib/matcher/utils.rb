@@ -2,6 +2,27 @@
 
 module Matcher
   module Utils
+    def self.to_string(obj)
+      case obj
+      when Hash
+        return '{}' if obj.empty?
+
+        body = obj.map do |k, v|
+          if k.is_a?(Symbol)
+            "#{k}: #{to_string(v)}"
+          else
+            "#{k.inspect} => #{to_string(v)}"
+          end
+        end
+
+        "{ #{body.join(', ')} }"
+      when Array
+        "[#{obj.map { |v| to_string(v) }.join(', ')}]"
+      else
+        obj.inspect
+      end
+    end
+
     def self.call_block(block, values)
       args = []
       kwargs = {}

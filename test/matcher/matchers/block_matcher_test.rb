@@ -14,16 +14,21 @@ describe Matcher::BlockMatcher do
     matcher = Matcher::BlockMatcher.new(-> { _1 == 42 }, 'an answer to everything')
 
     assert_errors matcher.match(3),
-      'expected an answer to everything but got 3'
+      msg_not(:described_by, 3, 'an answer to everything')
     assert_errors (~matcher).match(42),
+      msg(:described_by, 42, 'an answer to everything')
+
+    assert_expected_errors matcher.match(3),
+      'expected an answer to everything but got 3'
+    assert_expected_errors (~matcher).match(42),
       'did not expect an answer to everything but got 42'
 
     matcher = Matcher::BlockMatcher.new(-> { _1 == 'foo' })
     lineno = __LINE__ - 1
 
-    assert_errors matcher.match('bar'),
+    assert_expected_errors matcher.match('bar'),
       "expected to satisfy condition block_matcher_test.rb:#{lineno} but got \"bar\""
-    assert_errors (~matcher).match('foo'),
+    assert_expected_errors (~matcher).match('foo'),
       "did not expect to satisfy condition block_matcher_test.rb:#{lineno} but got \"foo\""
   end
 

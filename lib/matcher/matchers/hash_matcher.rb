@@ -22,7 +22,7 @@ module Matcher
 
     def check(actual)
       unless actual.is_a?(Hash)
-        errors << "expected a Hash but got #{actual.inspect}"
+        errors << expected.kind_of(Hash)
         return
       end
 
@@ -32,7 +32,7 @@ module Matcher
         actual_value = actual[key]
 
         errors[key] << if actual_value.nil? && !actual.key?(key)
-          "expected entry for #{key.inspect} but found nothing"
+          expected.having_key(key)
         else
           yield(value, actual_value, @key => key, @parent => actual)
         end
@@ -53,7 +53,7 @@ module Matcher
     def check_all_entries(actual)
       extra_keys = actual.keys - @hash.keys
       extra_keys.each do |key|
-        errors[key] << "expected entry for #{key.inspect} to not be present"
+        errors[key] << expected.not.having_key(key)
       end
     end
   end

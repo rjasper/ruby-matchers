@@ -17,7 +17,7 @@ module Matcher
 
     def check(actual)
       unless actual.respond_to?(:each_pair)
-        errors << "expected to respond to \"each_pair\" but got #{actual.inspect}"
+        errors << expected.responding_to(:each_pair)
         return
       end
 

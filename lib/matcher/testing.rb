@@ -47,7 +47,15 @@ module Matcher
       Errors::Or.new(nodes)
     end
 
-    def assert_errors(actual, *base, **nested, &block)
+    def msg(key, actual, *, **)
+      Message.new(key, false, actual, *, **)
+    end
+
+    def msg_not(key, actual, *, **)
+      Message.new(key, true, actual, *, **)
+    end
+
+    def assert_errors_helper(actual, base, nested, block, phrasing: nil)
       raise 'cannot pass expected errors directly if block given' if
         (!base.empty? || !nested.empty?) && block
 
@@ -59,12 +67,19 @@ module Matcher
       end
 
       expected = Errors::And.from(expected_nodes)
-
-      message = Testing::ErrorsChecker.check(expected, actual)
+      message = Testing::ErrorsChecker.check(expected, actual, phrasing:)
 
       return unless message
 
       assert false, message
+    end
+
+    def assert_errors(actual, *base, **nested, &block)
+      assert_errors_helper(actual, base, nested, block)
+    end
+
+    def assert_expected_errors(actual, *base, **nested, &block)
+      assert_errors_helper(actual, base, nested, block, phrasing: ExpectedPhrasing.phrasing)
     end
 
     def assert_no_errors(actual)

@@ -13,10 +13,10 @@ describe Matcher::NegatedImplyOneMatcher do
 
     assert_predicate matcher.match(2), :valid?
 
-    assert_errors matcher.match('string'),
-      'expected "string" to not be "string"'
-    assert_errors matcher.match(1),
-      'expected 1 to not be 1'
+    assert_expected_errors matcher.match('string'),
+      'did not expect "string"'
+    assert_expected_errors matcher.match(1),
+      'did not expect 1'
   end
 
   it 'match not else' do
@@ -27,8 +27,8 @@ describe Matcher::NegatedImplyOneMatcher do
       )
     end
 
-    assert_errors matcher.match('string'), 'expected "string" to not be "string"'
-    assert_errors matcher.match(nil), 'expected nil to not be nil'
+    assert_expected_errors matcher.match('string'), 'did not expect "string"'
+    assert_expected_errors matcher.match(nil), 'did not expect nil'
 
     assert_predicate matcher.match('foo'), :valid?
     assert_predicate matcher.match(1), :valid?
@@ -44,10 +44,10 @@ describe Matcher::NegatedImplyOneMatcher do
 
     assert_predicate matcher.match({ foo: true, bar: true, data: 'bar' }), :valid?
 
-    assert_errors matcher.match({ foo: true, data: 'foo' }),
-      data: 'expected "foo" to not be "foo"'
-    assert_errors matcher.match({ bar: true, data: 'bar' }),
-      data: 'expected "bar" to not be "bar"'
+    assert_expected_errors matcher.match({ foo: true, data: 'foo' }),
+      data: 'did not expect "foo"'
+    assert_expected_errors matcher.match({ bar: true, data: 'bar' }),
+      data: 'did not expect "bar"'
   end
 
   it '#to_s' do

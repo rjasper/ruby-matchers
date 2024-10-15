@@ -16,7 +16,7 @@ module Matcher
 
     def check(actual)
       unless actual.respond_to?(:each)
-        errors << "expected to respond to \"each\" but got #{actual.inspect}"
+        errors << expected.responding_to(:each)
         return
       end
 

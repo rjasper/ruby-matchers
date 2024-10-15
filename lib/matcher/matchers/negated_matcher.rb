@@ -13,7 +13,7 @@ module Matcher
     end
 
     def check(actual)
-      errors << "expected #{@matcher} to be invalid but got #{actual.inspect}" if yield(@matcher).valid?
+      errors << expected(namespace: :negated).not.valid(@matcher) if yield(@matcher).valid?
     end
     protected :check
 

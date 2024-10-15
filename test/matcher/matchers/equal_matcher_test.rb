@@ -12,7 +12,7 @@ describe Matcher::EqualMatcher do
     assert_predicate matcher.match(42), :valid?
     refute_predicate matcher.match(1), :valid?
 
-    assert_errors matcher.match(23),
+    assert_expected_errors matcher.match(23),
       'expected 42 but got 23'
   end
 
@@ -24,8 +24,8 @@ describe Matcher::EqualMatcher do
     assert_predicate matcher.match(5), :valid?
     refute_predicate matcher.match(23), :valid?
 
-    assert_errors matcher.match(23),
-      'expected 23 to not be 23'
+    assert_expected_errors matcher.match(23),
+      'did not expect 23'
   end
 
   it '#to_s' do

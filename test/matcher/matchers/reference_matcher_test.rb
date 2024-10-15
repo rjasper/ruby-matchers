@@ -16,8 +16,8 @@ describe Matcher::ReferenceMatcher do
 
     list = { head: 1, tail: { head: 2, tail: { head: 3 } } }
 
-    assert_errors matcher.match(list) do
-      error %i[tail tail tail], 'expected entry for :tail but found nothing'
+    assert_expected_errors matcher.match(list) do
+      error %i[tail tail tail], 'expected to include key :tail but got {:head=>3}'
     end
   end
 
@@ -28,7 +28,7 @@ describe Matcher::ReferenceMatcher do
       [refs[:index], refs[:index]]
     end
 
-    assert_errors matcher.match([0, 0]),
+    assert_expected_errors matcher.match([0, 0]),
       1 => 'expected _ to be i (1) but got 0'
 
     assert_predicate matcher.match([0, 1]), :valid?
@@ -42,7 +42,7 @@ describe Matcher::ReferenceMatcher do
     end
 
     assert_predicate matcher.match(25), :valid?
-    assert_errors matcher.match(42), 'expected 42 to not be 42'
+    assert_expected_errors matcher.match(42), 'did not expect 42'
   end
 
   it 'detects cycles' do
@@ -66,8 +66,8 @@ describe Matcher::ReferenceMatcher do
 
     actual[:tail][:tail] = actual
 
-    assert_errors matcher.match(actual) do
-      error %i[tail tail], 'cyclic structure: actual has already been visited'
+    assert_expected_errors matcher.match(actual) do
+      error %i[tail tail], 'expected a cyclic structure but actual has already been visited'
     end
   end
 
@@ -88,11 +88,11 @@ describe Matcher::ReferenceMatcher do
 
     actual = { head: 1, tail: { head: 2, tail: nil } }
 
-    assert_errors matcher.match(actual) do
+    assert_expected_errors matcher.match(actual) do
       _or do
-        error :head, 'expected 1 to be not kind of Integer'
-        error %i[tail head], 'expected 2 to be not kind of Integer'
-        error %i[tail tail], 'expected nil to not be nil'
+        error :head, 'did not expect a kind of Integer but got 1'
+        error %i[tail head], 'did not expect a kind of Integer but got 2'
+        error %i[tail tail], 'did not expect nil'
       end
     end
 
@@ -120,8 +120,8 @@ describe Matcher::ReferenceMatcher do
 
     assert_predicate matcher.match(ring_of(1, 2, 3)), :valid?
 
-    assert_errors matcher.match(ring_of(1, nil, 3)),
-      next: { value: 'expected nil to be kind of Integer' }
+    assert_expected_errors matcher.match(ring_of(1, nil, 3)),
+      next: { value: 'expected a kind of Integer but got nil' }
   end
 
   it 'allows cycles: negated' do
@@ -136,12 +136,12 @@ describe Matcher::ReferenceMatcher do
       ~ring
     end
 
-    assert_errors matcher.match(ring_of(1, 2, 3)) do
+    assert_expected_errors matcher.match(ring_of(1, 2, 3)) do
       _or do
-        error :value, 'expected 1 to be not kind of Integer'
-        error %i[next value], 'expected 2 to be not kind of Integer'
-        error %i[next next value], 'expected 3 to be not kind of Integer'
-        error %i[next next next], 'expected not a valid cyclic structure'
+        error :value, 'did not expect a kind of Integer but got 1'
+        error %i[next value], 'did not expect a kind of Integer but got 2'
+        error %i[next next value], 'did not expect a kind of Integer but got 3'
+        error %i[next next next], 'did not expect a valid cyclic structure'
       end
     end
 
@@ -157,7 +157,7 @@ describe Matcher::ReferenceMatcher do
 
     bar = 'bar'
 
-    assert_errors matcher.match([bar, bar]),
+    assert_expected_errors matcher.match([bar, bar]),
       0 => 'expected "foo" but got "bar"',
       1 => 'actual has already failed before'
   end
@@ -174,9 +174,9 @@ describe Matcher::ReferenceMatcher do
 
     assert_predicate matcher.match([bar, bar]), :valid?
 
-    assert_errors matcher.match([foo, foo]) do
+    assert_expected_errors matcher.match([foo, foo]) do
       _or do
-        error 0, 'expected "foo" to not be "foo"'
+        error 0, 'did not expect "foo"'
         error 1, 'actual has already failed before'
       end
     end

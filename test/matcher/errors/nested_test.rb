@@ -11,6 +11,11 @@ describe Matcher::Errors::Nested do
       Nested.from(Call.build { _1[:foo] }, element('foo is wrong'))
   end
 
+  it '::from: empty keys' do
+    assert_equal element('foo is wrong'),
+      Nested.from([], element('foo is wrong'))
+  end
+
   it '::from: chained expression key' do
     assert_equal nested(:foo, nested(:bar, element('foo is wrong'))),
       Nested.from(Call.build { _1[:foo][:bar] }, element('foo is wrong'))

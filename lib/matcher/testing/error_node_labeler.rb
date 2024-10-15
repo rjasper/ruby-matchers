@@ -3,7 +3,8 @@
 module Matcher
   module Testing
     class ErrorNodeLabeler
-      def initialize
+      def initialize(phrasing = nil)
+        @phrasing = phrasing
         @label_count = 0
         @element_label_index = {}
         @group_label_index = {}
@@ -30,7 +31,7 @@ module Matcher
         end
       end
 
-      Leaf = Struct.new(:label, :path, :element) do
+      Leaf = Struct.new(:label, :path, :message) do
         def hash
           label
         end
@@ -53,7 +54,11 @@ module Matcher
           label_tree_helper(error.node, List.new(error.key, path), leaves)
         when Errors::Element
           label = element_label_for(path, error)
-          leaves << Leaf.new(label, path, error)
+          message = error.message
+          message = @phrasing.call(path, message) if
+            @phrasing && message.is_a?(Message)
+
+          leaves << Leaf.new(label, path, message)
 
           label
         else
@@ -62,7 +67,11 @@ module Matcher
       end
 
       def element_label_for(path, element)
-        key = [path, element.message]
+        message = element.message
+        message = @phrasing.call(path, message) if
+          @phrasing && message.is_a?(Message)
+
+        key = [path, message]
 
         @element_label_index[key] ||= (@label_count += 1)
       end

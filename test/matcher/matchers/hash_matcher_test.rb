@@ -3,20 +3,32 @@
 require 'test_helper'
 
 describe Matcher::HashMatcher do
-  it 'match type' do
+  it 'expects a Hash' do
     matcher = Matcher::HashMatcher.new({})
 
-    assert_errors matcher.match(1), 'expected a Hash but got 1'
+    assert_errors matcher.match(1), msg_not(:kind_of, 1, Hash)
+    assert_expected_errors matcher.match(1), 'expected a kind of Hash but got 1'
+  end
+
+  it 'expects key to be included' do
+    matcher = Matcher.build do
+      { foo: 'foo' }
+    end
+
+    assert_errors matcher.match({}),
+      foo: msg_not(:having_key, {}, :foo)
+    assert_expected_errors matcher.match({}),
+      foo: 'expected to include key :foo but got {}'
   end
 
   it 'match all entries' do
     matcher = Matcher::HashMatcher.new({ foo: v('foo') })
 
     assert_predicate matcher.match({ foo: 'foo' }), :valid?
-    assert_errors matcher.match({ foo: 'foo', bar: 'bar' }),
-      bar: 'expected entry for :bar to not be present'
-    assert_errors matcher.match({}),
-      foo: 'expected entry for :foo but found nothing'
+    assert_expected_errors matcher.match({ foo: 'foo', bar: 'bar' }),
+      bar: 'did not expect to include key :bar but got {:foo=>"foo", :bar=>"bar"}'
+    assert_expected_errors matcher.match({}),
+      foo: 'expected to include key :foo but got {}'
   end
 
   it 'match partial entries' do
@@ -24,18 +36,18 @@ describe Matcher::HashMatcher do
 
     assert_predicate matcher.match({ foo: 'foo' }), :valid?
     assert_predicate matcher.match({ foo: 'foo', bar: 'bar' }), :valid?
-    assert_errors matcher.match({}),
-      foo: 'expected entry for :foo but found nothing'
+    assert_expected_errors matcher.match({}),
+      foo: 'expected to include key :foo but got {}'
   end
 
   it 'match nested hash' do
     matcher = Matcher::HashMatcher.new({ foo: h(bar: v('baz')) })
 
     assert_predicate matcher.match({ foo: { bar: 'baz' } }), :valid?
-    assert_errors matcher.match({ foo: { bar: 'buzz' } }),
+    assert_expected_errors matcher.match({ foo: { bar: 'buzz' } }),
       foo: { bar: 'expected "baz" but got "buzz"' }
-    assert_errors matcher.match({ foo: 'foo' }),
-      foo: 'expected a Hash but got "foo"'
+    assert_expected_errors matcher.match({ foo: 'foo' }),
+      foo: msg_not(:kind_of, 'foo', Hash)
   end
 
   it 'pass key' do
@@ -43,7 +55,7 @@ describe Matcher::HashMatcher do
       { a: _ == key.to_s.upcase }
     end
 
-    assert_errors matcher.match({ a: 'B' }),
+    assert_expected_errors matcher.match({ a: 'B' }),
       a: 'expected _ to be k.to_s.upcase ("A") but got "B" for k = :a'
   end
 
@@ -56,7 +68,7 @@ describe Matcher::HashMatcher do
     self_hash[:self] = self_hash
 
     assert_predicate matcher.match(self_hash), :valid?
-    assert_errors matcher.match({ self: {} }),
+    assert_expected_errors matcher.match({ self: {} }),
       self: 'expected _ to be parent ({:self=>{}}) but got {}'
   end
 

@@ -6,11 +6,11 @@ describe Matcher::NegatedEachMatcher do
   it 'match not each' do
     matcher = ~Matcher::EachMatcher.new(v(1))
 
-    assert_errors matcher.match([1, 1, 1]) do
+    assert_expected_errors matcher.match([1, 1, 1]) do
       _or do
-        error(0, 'expected 1 to not be 1')
-        error(1, 'expected 1 to not be 1')
-        error(2, 'expected 1 to not be 1')
+        error(0, 'did not expect 1')
+        error(1, 'did not expect 1')
+        error(2, 'did not expect 1')
       end
     end
 

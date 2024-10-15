@@ -2,42 +2,40 @@
 
 module Matcher
   class BlockMatcher < Base
-    def initialize(block, message = nil, negated: false)
+    def initialize(block, description = nil, negated: false)
       super()
 
       @block = block
-      @message = message
+      @description = description
       @negated = negated
     end
 
     def ~
-      BlockMatcher.new(@block, @message, negated: !@negated)
+      BlockMatcher.new(@block, @description, negated: !@negated)
     end
 
     def check(actual)
-      errors << message_for(actual) if @negated ^ !@block.call(actual, **values)
+      errors << build_message if @negated ^ !@block.call(actual, **values)
     end
     protected :check
 
     def to_s
-      message = @message || "-> { #{block_location} }"
+      string = @description || "-> { #{block_location} }"
 
       if @negated
-        "neg(#{message})"
+        "neg(#{string})"
       else
-        message
+        string
       end
     end
 
     private
 
-    def message_for(actual)
-      expected = @negated ? 'did not expect' : 'expected'
-
-      if @message
-        "#{expected} #{@message} but got #{actual.inspect}"
+    def build_message
+      if @description
+        expected.not_if(@negated).described_by(@description)
       else
-        "#{expected} to satisfy condition #{block_location} but got #{actual.inspect}"
+        expected(namespace: :block).not_if(@negated).satisfied(block_location)
       end
     end
 

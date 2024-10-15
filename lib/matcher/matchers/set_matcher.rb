@@ -16,14 +16,14 @@ module Matcher
 
     def check(actual)
       unless actual.is_a?(Array)
-        errors << "expected an Array but got #{actual.inspect}" unless @negated
+        errors << expected.kind_of(Array) unless @negated
         return
       end
 
       if @array.length != actual.length
         return if @negated
 
-        errors << "expected length of #{@array.length} but got #{actual.length}"
+        errors << expected.length_of(@array.length)
       end
 
       missing = @array.clone
@@ -45,10 +45,10 @@ module Matcher
 
       if @negated
         # when negated then missing.empty? <=> extra.empty?
-        errors << "expected array to not be an equal set to #{@array} but got #{actual}" if missing.empty?
+        errors << report(namespace: :set).equal(@array) if missing.empty?
       else
-        missing.each { errors << "expected array to include #{_1.inspect}" }
-        extra.each { errors[_1] << "unexpected item #{actual[_1].inspect}" }
+        missing.each { errors << expected(_1).included_in(actual) }
+        extra.each { errors[_1] << report(actual[_1]).included_in(actual) }
       end
     end
     protected :check

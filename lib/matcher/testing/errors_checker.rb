@@ -3,12 +3,16 @@
 module Matcher
   module Testing
     class ErrorsChecker
-      def self.check(expected, actual)
-        new.check(expected, actual)
+      def self.check(expected, actual, phrasing: nil)
+        new(phrasing).check(expected, actual)
+      end
+
+      def initialize(phrasing = nil)
+        @phrasing = phrasing
       end
 
       def check(expected, actual)
-        labeler = ErrorNodeLabeler.new
+        labeler = ErrorNodeLabeler.new(@phrasing)
         expected_label, expected_leaves = labeler.label_tree(expected)
         actual_label, actual_leaves = labeler.label_tree(actual)
 
@@ -54,7 +58,7 @@ module Matcher
           path = Errors::Nested.key_to_s(key, path)
         end
 
-        "#{path}: #{leaf.element.message}"
+        "#{path}: #{leaf.message}"
       end
     end
   end
