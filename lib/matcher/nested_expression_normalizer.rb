@@ -190,7 +190,7 @@ module Matcher
         expression.kwargs
       end
 
-      Call.new(receiver, expression.method, *args, **kwargs, &expression.block)
+      Call.new(receiver, expression.method, args, kwargs, expression.block)
     end
 
     def split(expression, tail)

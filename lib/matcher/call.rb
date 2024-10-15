@@ -52,7 +52,7 @@ module Matcher
       Matcher.build_session&.[](Call)&.delete(:last_assign)
     end
 
-    def initialize(receiver, method, *args, **kwargs, &block)
+    def initialize(receiver, method, args = [], kwargs = {}, block = nil)
       @receiver = receiver
       @method = method
       @args = args
@@ -86,25 +86,25 @@ module Matcher
         elsif binary? && %i[< > <= >= == != =~ !~ && ||].include?(@method)
           case @method
           when :<
-            Call.new(@receiver, :>=, *@args)
+            Call.new(@receiver, :>=, @args)
           when :>
-            Call.new(@receiver, :<=, *@args)
+            Call.new(@receiver, :<=, @args)
           when :<=
-            Call.new(@receiver, :>, *@args)
+            Call.new(@receiver, :>, @args)
           when :>=
-            Call.new(@receiver, :<, *@args)
+            Call.new(@receiver, :<, @args)
           when :==
-            Call.new(@receiver, :!=, *@args)
+            Call.new(@receiver, :!=, @args)
           when :!=
-            Call.new(@receiver, :==, *@args)
+            Call.new(@receiver, :==, @args)
           when :=~
-            Call.new(@receiver, :!~, *@args)
+            Call.new(@receiver, :!~, @args)
           when :!~
-            Call.new(@receiver, :=~, *@args)
+            Call.new(@receiver, :=~, @args)
           when :'&&'
-            Call.new(@receiver.negated, :'||', Expression.negate(@args[0]))
+            Call.new(@receiver.negated, :'||', [Expression.negate(@args[0])])
           when :'||'
-            Call.new(@receiver.negated, :'&&', Expression.negate(@args[0]))
+            Call.new(@receiver.negated, :'&&', [Expression.negate(@args[0])])
           else
             raise "Unexpected method: #{method.inspect}"
           end
@@ -159,7 +159,7 @@ module Matcher
     end
 
     def new_root(receiver)
-      Call.new(receiver, @method, *@args, **@kwargs, &@block)
+      Call.new(receiver, @method, @args, @kwargs, @block)
     end
 
     def ==(other)

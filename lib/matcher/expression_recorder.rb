@@ -20,11 +20,11 @@ module Matcher
       ExpressionRecorder.to_expression(object)
     end
 
-    def self.record(recorder, method, *args, **kwargs, &)
+    def self.record(recorder, method, *args, **kwargs, &block)
       receiver = ExpressionRecorder.to_expression(recorder)
       args = args.map { transform(_1) }
       kwargs = kwargs.transform_values { transform(_1) }
-      expression = Call.new(receiver, method, *args, **kwargs, &)
+      expression = Call.new(receiver, method, args, kwargs, block)
 
       ExpressionRecorder.new(expression)
     end

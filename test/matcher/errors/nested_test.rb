@@ -31,7 +31,7 @@ describe Matcher::Errors::Nested do
   it '::from: constant expression root' do
     math = Matcher::Constant.new(Math)
     actual = Matcher::Variable.actual
-    expression = Matcher::Call.new(math, :sqrt, actual)
+    expression = Matcher::Call.new(math, :sqrt, [actual])
     element = Matcher::Errors::Element.new('something went wrong')
 
     assert_equal Nested.new(expression, element),
