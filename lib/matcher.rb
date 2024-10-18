@@ -66,7 +66,8 @@ module Matcher
   NULL = Object.new.freeze
 
   def self.null?(object)
-    !ExpressionRecorder.recorder?(object) && object.equal?(NULL)
+    # Note that for an ExpressionRecorder object == NULL won't work.
+    NULL == object
   end
 
   def self.build(thread_safe: false, &)
