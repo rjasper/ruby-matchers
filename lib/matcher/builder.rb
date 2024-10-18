@@ -78,6 +78,20 @@ module Matcher
     end
     alias lo logical_operators
 
+    def pass_through_blocks(arg = NULL, &)
+      # Note that arg might be a recorder where #nil? won't work.
+
+      if Matcher.null?(arg)
+        Matcher.with_settings(pass_through_blocks: true, &)
+      else
+        Matcher.with_settings(pass_through_blocks: true) do
+          yield arg
+        end
+      end
+
+    end
+    alias ptb pass_through_blocks
+
     def assign
       value = ExpressionRecorder.transform(yield)
 

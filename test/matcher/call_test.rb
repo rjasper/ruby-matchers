@@ -147,7 +147,9 @@ describe Matcher::Call do
     end
 
     expression = Call.build do |obj|
-      obj.instance_exec { @foo }
+      Matcher.with_settings(pass_through_blocks: true) do
+        obj.instance_exec { @foo }
+      end
     end
 
     assert_equal 'foo', expression.evaluate({ actual: klass.new })
