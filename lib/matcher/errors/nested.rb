@@ -64,6 +64,8 @@ module Matcher
       attr_reader :key, :node
 
       def initialize(key, node)
+        super()
+
         @key = key
         @node = node
       end

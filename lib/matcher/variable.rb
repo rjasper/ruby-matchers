@@ -15,6 +15,8 @@ module Matcher
     attr_reader :symbol
 
     def initialize(symbol)
+      super()
+
       @symbol = symbol
     end
 

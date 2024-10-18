@@ -53,6 +53,8 @@ module Matcher
     end
 
     def initialize(receiver, method, args = [], kwargs = {}, block = nil)
+      super()
+
       @receiver = receiver
       @method = method
       @args = args

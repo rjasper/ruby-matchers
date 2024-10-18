@@ -6,6 +6,8 @@ module Matcher
       attr_reader :message
 
       def initialize(message)
+        super()
+
         @message = message
       end
 

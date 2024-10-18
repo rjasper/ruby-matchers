@@ -5,6 +5,8 @@ module Matcher
     attr_reader :block
 
     def initialize(to_s: false, &block)
+      super()
+
       @block = block
       @to_s = to_s
     end
