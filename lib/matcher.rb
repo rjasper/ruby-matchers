@@ -3,6 +3,7 @@
 require_relative "matcher/version"
 
 require 'matcher/base'
+require 'matcher/block'
 require 'matcher/expression'
 require 'matcher/call'
 require 'matcher/constant'

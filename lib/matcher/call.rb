@@ -137,7 +137,9 @@ module Matcher
         actual_receiver.respond_to?(@method)
 
       begin
-        actual_receiver.send(@method, *args, **kwargs, &@block)
+        block = @block.is_a?(Matcher::Block) ? @block&.to_proc(values:) : @block
+
+        actual_receiver.send(@method, *args, **kwargs, &block)
           .tap { chain&.push(_1) }
       rescue StandardError => e
         raise EvaluationError.new(e, self, actual_receiver, values)
@@ -153,6 +155,8 @@ module Matcher
         variables = @receiver.variables +
           @args.flat_map(&variables_from_arg) +
           @kwargs.each_value.flat_map(&variables_from_arg)
+
+        variables.concat(@block.variables) if @block
 
         variables.uniq
       end
@@ -224,7 +228,7 @@ module Matcher
         args_and_kwargs = args_and_kwargs_string(substitutions)
         string = "#{receiver}.#{@method}"
         string += "(#{args_and_kwargs})" unless args_and_kwargs.empty?
-        string += ' { ... }' if @block
+        string += @block.is_a?(Block) ? " #{@block.to_s(as_block: true)}" : ' { ... }' if @block
 
         string
       end
