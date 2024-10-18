@@ -6,14 +6,17 @@ describe 'examples' do
   it 'tree' do
     matcher = Matcher.build do
       declare :low, :high
+      inf = Float::INFINITY
 
       refs[:node] = {
-        key: all(Integer, lo { (!low | (_ > low)) & (!high | (_ < high)) }),
-        left: setvar(high: ->(high:, parent:) { [parent[:key], high].compact.max }) ^
+        key: all(Integer, lo { (_ > low) & (_ < high) }),
+        left: setvar(high: ->(high:, parent:) { [parent[:key], high].min }) ^
           (of(nil) | refs[:node]),
-        right: setvar(low: ->(low:, parent:) { [parent[:key], low].compact.min }) ^
+        right: setvar(low: ->(low:, parent:) { [parent[:key], low].max }) ^
           (of(nil) | refs[:node]),
       }
+
+      setvar(low: -inf, high: inf) ^ refs[:node]
     end
 
     tree = {
@@ -35,7 +38,7 @@ describe 'examples' do
         error 'expected nil but got {:key=>7, :left=>{:key=>5, :left=>nil, :right=>nil}, :right=>{:key=>10, :left=>nil, :right=>nil}}'
         _or(:left) do
           error 'expected nil but got {:key=>5, :left=>nil, :right=>nil}'
-          error :key, 'expected (!low || _ > low) && (!high || _ < high) to be truthy for low = 5, _ = 5, high = 7'
+          error :key, 'expected _ > low && _ < high to be truthy for _ = 5, low = 5, high = 7'
         end
       end
     end

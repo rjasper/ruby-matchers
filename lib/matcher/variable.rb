@@ -23,7 +23,11 @@ module Matcher
     end
 
     def evaluate(values, chain = nil)
-      values[@symbol].tap { chain << _1 if chain }
+      value = values[@symbol]
+
+      raise "no value for #{@symbol.inspect}" if value.nil? && !values.key?(@symbol)
+
+      value.tap { chain << _1 if chain }
     end
 
     def ==(other)
