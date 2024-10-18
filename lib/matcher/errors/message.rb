@@ -14,25 +14,15 @@ module Matcher
 
     def ==(other)
       return true if equal?(other)
-      return false unless other.instance_of?(self.class)
 
-      @key.eql?(other.key) &&
-        @negated.eql?(other.negated) &&
-        @actual.eql?(other.actual) &&
-        @args == other.args &&
-        @kwargs == other.kwargs
-    end
-
-    def eql?(other)
-      return true if equal?(other)
-      return false unless other.instance_of?(self.class)
-
-      @key.eql?(other.key) &&
-        @negated.eql?(other.negated) &&
+      other.instance_of?(Message) &&
+        @key.eql?(other.key) &&
+        @negated == other.negated &&
         @actual.eql?(other.actual) &&
         @args.eql?(other.args) &&
         @kwargs.eql?(other.kwargs)
     end
+    alias eql? ==
 
     def hash
       @hash ||= [@key, @negated, @actual, @args, @kwargs].hash

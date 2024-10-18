@@ -28,7 +28,8 @@ module Matcher
       def ==(other)
         return true if equal?(other)
 
-        other.is_a?(And) && @nodes == other.nodes
+        other.instance_of?(And) &&
+          @nodes == other.nodes
       end
 
       def &(other)

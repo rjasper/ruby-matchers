@@ -71,7 +71,9 @@ module Matcher
       def ==(other)
         return true if equal?(other)
 
-        other.is_a?(Nested) && @key == other.key && @node == other.node
+        other.instance_of?(Nested) &&
+          @key.eql?(other.key) &&
+          @node == other.node
       end
 
       def &(other)

@@ -21,14 +21,12 @@ module Matcher
     end
 
     def ==(other)
-      other.equal?(self) ||
-        other.instance_of?(Constant) && other.constant == @constant
-    end
+      return true if equal?(other)
 
-    def eql?(other)
-      other.equal?(self) ||
-        other.instance_of?(Constant) && other.constant.eql?(@constant)
+      other.instance_of?(Constant) &&
+        @constant.eql?(other.constant)
     end
+    alias eql? ==
 
     def hash
       @constant.hash

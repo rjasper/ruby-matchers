@@ -12,7 +12,8 @@ module Matcher
       def ==(other)
         return true if equal?(other)
 
-        other.is_a?(Element) && @message == other.message
+        other.instance_of?(Element) &&
+          @message == other.message
       end
 
       def &(other)

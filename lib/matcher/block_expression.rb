@@ -26,8 +26,10 @@ module Matcher
     end
 
     def ==(other)
-      other.equal?(self) ||
-        other.instance_of?(BlockExpression) && other.block == @block
+      return true if equal?(other)
+
+      other.instance_of?(BlockExpression) &&
+        other.block == @block
     end
     alias eql? ==
 

@@ -165,24 +165,14 @@ module Matcher
     def ==(other)
       return true if equal?(other)
 
-      other.is_a?(Call) &&
+      other.instance_of?(Call) &&
         other.receiver == @receiver &&
         other.method == @method &&
-        other.args == @args &&
-        other.kwargs == @kwargs &&
-        other.block == @block
-    end
-
-    def eql?(other)
-      return true if equal?(other)
-
-      other.is_a?(Call) &&
-        other.receiver.eql?(@receiver) &&
-        other.method.eql?(@method) &&
         other.args.eql?(@args) &&
         other.kwargs.eql?(@kwargs) &&
-        other.block.eql?(@block)
+        other.block == @block
     end
+    alias eql? ==
 
     def hash
       @hash ||= [@receiver, @args, @method, @kwargs, @block].hash
