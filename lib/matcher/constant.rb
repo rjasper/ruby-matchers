@@ -32,6 +32,10 @@ module Matcher
       @constant.hash
     end
 
+    def substitute(_replacements)
+      self
+    end
+
     def to_s(substitutions: nil)
       @constant.inspect
     end

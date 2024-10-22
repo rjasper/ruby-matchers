@@ -41,6 +41,11 @@ module Matcher
       @symbol.hash
     end
 
+    def substitute(replacements)
+      symbol = replacements[@symbol]
+      symbol ? Variable.new(symbol) : self
+    end
+
     def to_s(substitutions: Expression.default_substitutions)
       substitutions&.[](@symbol) || @symbol.to_s
     end

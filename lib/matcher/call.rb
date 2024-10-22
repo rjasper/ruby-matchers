@@ -194,6 +194,38 @@ module Matcher
       yield self
     end
 
+    def substitute(replacements)
+      replacement_names = replacements.keys
+
+      return self unless replacement_names.intersect?(variables)
+
+      receiver = @receiver.substitute(replacements)
+
+      no_change = nil
+      substitute = lambda do |expression|
+        if expression.is_a?(Expression)
+          result = expression.substitute(replacements)
+          no_change = false unless result.equal?(expression)
+
+          result
+        else
+          expression
+        end
+      end
+
+      no_change = true
+      args = @args.map(&substitute)
+      args = @args if no_change
+
+      no_change = true
+      kwargs = @kwargs.transform_values(&substitute)
+      kwargs = @kwargs if no_change
+
+      block = block.is_a?(Matcher::Block) ? @block.substitute(replacements) : @block
+
+      Call.new(receiver, @method, args, kwargs, block)
+    end
+
     def to_s(substitutions: Expression.default_substitutions)
       receiver = parenthesize(@receiver, substitutions)
 

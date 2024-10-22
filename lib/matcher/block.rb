@@ -87,6 +87,16 @@ module Matcher
       @variables ||= @expression.variables - @parameters.map { _2 }
     end
 
+    def substitute(replacements)
+      replacements = replacements.slice(*variables)
+
+      return self if replacements.empty?
+
+      expression = @expression.substitute(replacements)
+
+      Block.new(@parameters, expression, context:)
+    end
+
     def to_proc(values: nil)
       @proc ||= begin
         kwlist = @parameters.map { |_type, name| "#{name}:" }.join(', ')
