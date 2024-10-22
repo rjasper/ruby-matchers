@@ -78,6 +78,10 @@ module Matcher
       @args.length == 1 && @kwargs.empty? && !@block
     end
 
+    def assignment?
+      @method.end_with?('=') && !%i[<= >= == === !=].include?(@method)
+    end
+
     def negated
       @negated ||= begin
         if unary? && @method == :!
@@ -137,9 +141,10 @@ module Matcher
 
       begin
         block = @block.is_a?(Matcher::Block) ? @block&.to_proc(values:) : @block
+        result = actual_receiver.send(@method, *args, **kwargs, &block)
+        chain&.push(result)
 
-        actual_receiver.send(@method, *args, **kwargs, &block)
-          .tap { chain&.push(_1) }
+        assignment? ? args.last : result
       rescue StandardError => e
         raise EvaluationError.new(e, self, actual_receiver, values)
       end

@@ -6,6 +6,15 @@ Call = Matcher::Call
 Variable = Matcher::Variable
 
 describe Matcher::Call do
+  it 'returns operand of assignment' do
+    actual = Variable.new(:actual)
+    call = Matcher::Call.new(actual, :foo=, [2])
+    struct = Struct.new(:foo).new
+
+    assert_equal 2, call.evaluate({ actual: struct })
+    assert_equal 2, struct.foo
+  end
+
   # rubocop:disable Style/CaseEquality, Layout/SpaceBeforeBrackets, Style/SymbolProc
   it '#to_s' do
     examine = lambda do |expected, &block|
