@@ -23,9 +23,14 @@ module Matcher
       parameters = block.parameters
       args = []
       kwargs = {}
+      parameter_names = Set.new
+      variable_object_ids = Set.new
 
       parameters.each do |type, name|
-        recorder = ExpressionRecorder.new(Variable.new(name))
+        parameter_names << name
+        variable = Variable.new(name)
+        variable_object_ids << variable.object_id
+        recorder = ExpressionRecorder.new(variable)
 
         case type
         when :req, :opt
@@ -43,10 +48,16 @@ module Matcher
 
       result = block.call(*args, **kwargs)
 
-      expression = if ExpressionRecorder.recorder?(result)
-        ExpressionRecorder.to_expression(result)
+      if ExpressionRecorder.recorder?(result)
+        expression = ExpressionRecorder.to_expression(result)
+
+        ExpressionWalker.each_variable(expression) do |variable|
+          raise "parameter `#{variable.symbol}' shadows an outer variable" if
+            parameter_names.include?(variable.symbol) &&
+              !variable_object_ids.include?(variable.object_id)
+        end
       else
-        Constant.new(result)
+        expression = Constant.new(result)
       end
 
       new(parameters, expression, context:)
