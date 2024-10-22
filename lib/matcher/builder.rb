@@ -38,7 +38,7 @@ module Matcher
         Constant.new(constant)
       end
 
-      ExpressionRecorder.new(expression)
+      expression.to_recorder
     end
 
     def expr_s(constant = NULL, &)
@@ -120,7 +120,7 @@ module Matcher
           @cache[symbol] ||= Variable.new(symbol)
         end
 
-        ExpressionRecorder.new(variable)
+        variable.to_recorder
       end
     end
 

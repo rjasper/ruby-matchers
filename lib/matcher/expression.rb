@@ -34,6 +34,10 @@ module Matcher
       to_s
     end
 
+    def to_recorder
+      ExpressionRecorder.new(self)
+    end
+
     def self.with_substitutions(**substitutions)
       Thread.current[:matcher_expression_substitutions] = substitutions
 

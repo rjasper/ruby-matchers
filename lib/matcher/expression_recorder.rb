@@ -25,9 +25,8 @@ module Matcher
       args = args.map { transform(_1) }
       kwargs = kwargs.transform_values { transform(_1) }
       block = Matcher::Block.build(&block) if block && !Matcher.settings[:pass_through_blocks]
-      expression = Call.new(receiver, method, args, kwargs, block)
 
-      ExpressionRecorder.new(expression)
+      Call.new(receiver, method, args, kwargs, block).to_recorder
     end
 
     def initialize(expression)

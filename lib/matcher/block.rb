@@ -30,13 +30,12 @@ module Matcher
         parameter_names << name
         variable = Variable.new(name)
         variable_object_ids << variable.object_id
-        recorder = ExpressionRecorder.new(variable)
 
         case type
         when :req, :opt
-          args << recorder
+          args << variable.to_recorder
         when :key, :keyreq
-          kwargs[name] = recorder
+          kwargs[name] = variable.to_recorder
         when :rest
           raise "*#{name unless name == :*} not allowed"
         when :keyrest

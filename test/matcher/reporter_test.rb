@@ -13,7 +13,7 @@ describe Matcher::Reporter do
       nested(Matcher::Call.build { |_| _ + _ }, element('2 roots')),
       nested(:too_long,
         nested(Matcher::Call.build { |_| _ + _ + _ }, element('3 long roots'))),
-      nested(Matcher::Call.build { |_| Matcher::ExpressionRecorder.new(math).sqrt(_) }, element('square root of root')),
+      nested(Matcher::Call.build { |_| math.to_recorder.sqrt(_) }, element('square root of root')),
       _or(
         element('either correct this'),
         _and(

@@ -7,10 +7,7 @@ module Matcher
     def self.build(*symbols)
       symbols.unshift(:actual) if symbols.empty?
 
-      recorders = symbols.map do |symbol|
-        variable = Variable.new(symbol)
-        ExpressionRecorder.new(variable)
-      end
+      recorders = symbols.map { Variable.new(_1).to_recorder }
 
       recorder = yield *recorders
 
