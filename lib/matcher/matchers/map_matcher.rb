@@ -2,29 +2,6 @@
 
 module Matcher
   class MapMatcher < Base
-    def self.map_errors(node, projection, path)
-      case node
-      when Errors::Empty
-        node
-      when Errors::And, Errors::Or
-        children = node.nodes.map { map_errors(_1, projection, path) }
-        node.class.new(children)
-      when Errors::Nested
-        if node.key.is_a?(Integer)
-          nested_projection = Errors::Nested.from(path, node.node)
-          Errors::Nested.from(node.key, nested_projection)
-        else
-          node
-        end
-      when Errors::Element
-        body = projection.to_s(substitutions: { actual: 'it' })
-        key = Errors::Nested::Key.new(".map { |it| #{body} }")
-        Errors::Nested.from(key, node)
-      else
-        raise "Unexpected node: #{node.inspect}"
-      end
-    end
-
     def initialize(projection, matcher, index: :index, original: :original)
       super()
 
@@ -60,7 +37,7 @@ module Matcher
 
       mapped_errors = yield @matcher, mapped, @original => actual
 
-      errors << MapMatcher.map_errors(mapped_errors, @projection, path)
+      errors << map_errors(mapped_errors)
     end
     protected :check
 
@@ -68,10 +45,95 @@ module Matcher
       "map(#{@projection}, #{@matcher})"
     end
 
-    private
+    class MapContext < Block::Context
+      def initialize(block, values, index: :index)
+        super(block, values)
 
-    def path
-      @path ||= NestedExpressionNormalizer.normalize(@projection)
+        @index_sym = index
+        @index = 0
+      end
+
+      def evaluate(values)
+        values[@index_sym] ||= @index
+        result = super
+        @index += 1
+
+        result
+      end
     end
+
+    module ErrorMapping
+      private
+
+      def map_errors(node)
+        case node
+        when Errors::Empty
+          node
+        when Errors::And, Errors::Or
+          children = node.nodes.map { map_errors(_1) }
+          node.class.new(children)
+        when Errors::Nested
+          if node.key.is_a?(Integer)
+            nested_projection = Errors::Nested.from(path, node.node)
+            Errors::Nested.from(node.key, nested_projection)
+          else
+            node
+          end
+        when Errors::Element
+          Errors::Nested.from(nested_key, node)
+        else
+          raise "Unexpected node: #{node.inspect}"
+        end
+      end
+
+      def path
+        @path ||= NestedExpressionNormalizer.normalize(@projection)
+      end
+
+      def nested_key
+        actual_variable = Variable.new(:actual)
+        symbol = find_free_symbol(@projection)
+        parameters = [[:opt, symbol]]
+        expression = @projection.substitute(actual: symbol, @original => :actual)
+
+        has_index = @projection.variables.include?(@index)
+        index_sym = @index
+        actual_value = self.actual
+
+        context = lambda do |block, values|
+          values.merge!(actual: actual_value)
+
+          if has_index
+            MapContext.new(block, values, index: index_sym)
+          else
+            Block::Context.new(block, values)
+          end
+        end
+
+        block = Block.new(parameters, expression, context:)
+        Call.new(actual_variable, :map, [], {}, block)
+      end
+
+      def find_free_symbol(expression)
+        parameters = ExpressionWalker.each_block(expression).flat_map do |block|
+          block.parameters.map { |_type, name| name }
+        end
+
+        identifiers = (expression.variables + parameters).to_set(&:to_s)
+
+        return :e unless identifiers.include?('e')
+
+        i = 2
+        loop do
+          name = "e#{i}"
+
+          return name.to_sym unless identifiers.include?(name)
+
+          i += 1
+        end
+      end
+    end
+
+    include ErrorMapping
   end
 end

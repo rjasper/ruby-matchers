@@ -2,6 +2,8 @@
 
 module Matcher
   class NegatedMapMatcher < Base
+    include MapMatcher::ErrorMapping
+
     def initialize(projection, matcher, index: :index, original: :original)
       super()
 
@@ -31,7 +33,7 @@ module Matcher
 
       mapped_errors = yield @neg_matcher, mapped, @original => actual
 
-      errors << MapMatcher.map_errors(mapped_errors, @projection, path)
+      errors << map_errors(mapped_errors)
     end
     protected :check
 

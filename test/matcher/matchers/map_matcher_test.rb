@@ -22,7 +22,8 @@ describe Matcher::MapMatcher do
     assert_expected_errors match([{ foo: 1 }, { foo: 1 }]) { map(_[:foo] + 1, [1, 2]) },
       0 => { foo: { expr { _1 + 1 } => 'expected 1 but got 2' } }
 
-    key = Matcher::Errors::Nested::Key.new('.map { |it| it[:foo] }')
+    key = Matcher::Call.build { |_| _.map { |e| e[:foo] } }
+
     assert_expected_errors match([{ foo: 1 }, { foo: 1 }]) { map(_[:foo], _.is_a?(String)) },
       key => 'expected _ to be a kind of String but got [1, 1]'
   end
