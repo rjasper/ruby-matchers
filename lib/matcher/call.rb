@@ -264,7 +264,12 @@ module Matcher
         args_and_kwargs = args_and_kwargs_string(substitutions)
         string = "#{receiver}.#{@method}"
         string += "(#{args_and_kwargs})" unless args_and_kwargs.empty?
-        string += @block.is_a?(Block) ? " #{@block.to_s(as_block: true)}" : ' { ... }' if @block
+
+        if @block.is_a?(Block)
+          string += " #{@block.to_s(as_block: true)}"
+        elsif @block && !@block.is_a?(SymbolProc)
+          string += ' { ... }'
+        end
 
         string
       end
@@ -364,7 +369,10 @@ module Matcher
         end
       end
 
-      (args + kwargs).join(', ')
+      list = args + kwargs
+      list << "&#{@block.symbol.inspect}" if @block&.is_a?(SymbolProc)
+
+      list.join(', ')
     end
 
     def parenthesize(operand, substitutions)

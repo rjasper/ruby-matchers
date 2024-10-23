@@ -67,6 +67,7 @@ describe Matcher::Call do
     examine.call('_.foo') { _1.foo }
     examine.call('_.foo(1, a: 2)') { _1.foo(1, a: 2) }
     examine.call('_.foo { 2 }') { _1.foo { 2 } }
+    examine.call('_.foo(&:bar)') { _1.foo(&:bar) }
     examine.call('_.foo(1, a: 2) { 3 }') { _1.foo(1, a: 2) { 3 } }
 
     examine.call('_.+@(1)') { _1.+@(1) }

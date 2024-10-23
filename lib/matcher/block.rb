@@ -20,6 +20,10 @@ module Matcher
     end
 
     def self.build(context: DEFAULT_CONTEXT, &block)
+      return SymbolProc.new(block) if
+        block.parameters == [[:req], [:rest]] &&
+          /\(&:(\w+|".*")\)/.match?(block.to_s)
+
       parameters = block.parameters
       args = []
       kwargs = {}

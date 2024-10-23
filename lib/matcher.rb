@@ -7,6 +7,7 @@ require 'matcher/block'
 require 'matcher/expression'
 require 'matcher/call'
 require 'matcher/constant'
+require 'matcher/symbol_proc'
 require 'matcher/variable'
 
 require 'matcher/abstract_phrasing'

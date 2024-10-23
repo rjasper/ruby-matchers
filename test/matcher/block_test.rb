@@ -13,5 +13,12 @@ describe Matcher::Block do
 
       assert_equal "parameter `a' shadows an outer variable", e.message
     end
+
+    it 'creates SymbolProc from symbol notation' do
+      block = Matcher::Block.build(&:foo)
+      struct = Struct.new(:foo).new('foo')
+
+      assert_equal 'foo', block.to_proc.call(struct)
+    end
   end
 end
