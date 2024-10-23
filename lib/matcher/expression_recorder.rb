@@ -3,58 +3,36 @@
 module Matcher
   class ExpressionRecorder
     def self.recorder?(object)
-      object.__class__ == ExpressionRecorder
-    rescue NoMethodError
-      false
+      Object.instance_method(:kind_of?)
+        .bind_call(object, ExpressionRecorder)
     end
 
     def self.to_expression(recorder)
-      raise "no recorder given, got #{recorder.inspect}" unless recorder?(recorder)
-
-      recorder.__expression__
+      Object.instance_method(:instance_variable_get)
+        .bind_call(recorder, :@expression)
     end
 
     def self.transform(object)
-      return object unless recorder?(object)
-
-      ExpressionRecorder.to_expression(object)
+      recorder?(object) ? to_expression(object) : object
     end
 
-    def self.record(recorder, method, *args, **kwargs, &block)
-      receiver = ExpressionRecorder.to_expression(recorder)
-      args = args.map { transform(_1) }
-      kwargs = kwargs.transform_values { transform(_1) }
-      block = Matcher::Block.build(&block) if block && !Matcher.settings[:pass_through_blocks]
-
-      Call.new(receiver, method, args, kwargs, block).to_recorder
-    end
+    (instance_methods - %i[__id__ __send__ object_id])
+      .each { undef_method _1 }
 
     def initialize(expression)
       @expression = expression
     end
 
-    alias __class__ class
+    def method_missing(method, *args, **kwargs, &block)
+      transform = ExpressionRecorder.method(:transform)
+      args = args.map(&transform)
+      kwargs = kwargs.transform_values(&transform)
+      block = Matcher::Block.build(&block) if block && !Matcher.settings[:pass_through_blocks]
 
-    (instance_methods - %i[__id__ __send__ __class__ object_id])
-      .each { undef_method _1 }
-
-    def __expression__
-      @expression
+      Call.new(@expression, method, args, kwargs, block).to_recorder
     end
 
-    %w[! == != <=> === =~ !~].each do |operator|
-      class_eval <<~CODE, __FILE__, __LINE__ + 1
-        def #{operator}(...)                                                    # def ==(...)
-          ExpressionRecorder.record(self, :#{operator}, ...)                    #   ExpressionRecorder.record(self, :==, ...)
-        end                                                                     # end
-      CODE
-    end
-
-    def method_missing(...)
-      ExpressionRecorder.record(self, ...)
-    end
-
-    def respond_to_missing?(...)
+    def respond_to_missing?(_method, _include_private = false)
       true
     end
   end
