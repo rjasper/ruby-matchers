@@ -2,6 +2,8 @@
 
 require_relative "matcher/version"
 
+require 'singleton'
+
 require 'matcher/base'
 require 'matcher/block'
 require 'matcher/expression'

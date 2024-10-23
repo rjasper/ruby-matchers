@@ -45,18 +45,44 @@ module Matcher
       "map(#{@projection}, #{@matcher})"
     end
 
+    class MapContextFactory
+      attr_reader :index
+
+      def initialize(index)
+        @index = index
+      end
+
+      def create(block, values)
+        MapContext.new(block, values, @index)
+      end
+
+      def ==(other)
+        return true if equal?(other)
+
+        other.instance_of?(MapContextFactory) &&
+          @index.eql?(other.index)
+      end
+      alias eql? ==
+
+      def hash
+        @index.hash
+      end
+    end
+
     class MapContext < Block::Context
-      def initialize(block, values, index: :index)
+      attr_reader :index
+
+      def initialize(block, values, index)
         super(block, values)
 
-        @index_sym = index
-        @index = 0
+        @index = index
+        @counter = 0
       end
 
       def evaluate(values)
-        values[@index_sym] ||= @index
+        values[@index] = @counter
         result = super
-        @index += 1
+        @counter += 1
 
         result
       end
@@ -95,22 +121,16 @@ module Matcher
         symbol = find_free_symbol(@projection)
         parameters = [[:opt, symbol]]
         expression = @projection.substitute(actual: symbol, @original => :actual)
+        free_variables = expression.variables - [symbol]
 
-        has_index = @projection.variables.include?(@index)
-        index_sym = @index
-        actual_value = self.actual
-
-        context = lambda do |block, values|
-          values.merge!(actual: actual_value)
-
-          if has_index
-            MapContext.new(block, values, index: index_sym)
-          else
-            Block::Context.new(block, values)
-          end
+        context = if free_variables.include?(@index)
+          MapContextFactory.new(@index)
+        elsif !free_variables.empty?
+          Block::ContextFactory.instance
         end
 
         block = Block.new(parameters, expression, context:)
+
         Call.new(actual_variable, :map, [], {}, block)
       end
 

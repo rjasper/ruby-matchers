@@ -2,14 +2,20 @@
 
 module Matcher
   class Block
-    DEFAULT_CONTEXT = lambda do |expression, values|
-      Context.new(expression, values)
+    class ContextFactory
+      include Singleton
+
+      def create(block, values)
+        Context.new(block, values)
+      end
     end
 
     class Context
+      attr_reader :expression, :values
+
       def initialize(block, values)
         @expression = block.expression
-        @values = values
+        @values = values.slice(*block.variables)
       end
 
       def evaluate(values)
@@ -19,7 +25,7 @@ module Matcher
       end
     end
 
-    def self.build(context: DEFAULT_CONTEXT, &block)
+    def self.build(context: ContextFactory.instance, &block)
       return SymbolProc.new(block) if
         block.parameters == [[:req], [:rest]] &&
           /\(&:(\w+|".*")\)/.match?(block.to_s)
@@ -59,8 +65,11 @@ module Matcher
             parameter_names.include?(variable.symbol) &&
               !variable_object_ids.include?(variable.object_id)
         end
+
+        context = nil if expression.variables.to_set.subset?(parameter_names)
       else
         expression = Constant.new(result)
+        context = nil
       end
 
       new(parameters, expression, context:)
@@ -68,7 +77,7 @@ module Matcher
 
     attr_reader :parameters, :expression, :context
 
-    def initialize(parameters, expression, context: DEFAULT_CONTEXT)
+    def initialize(parameters, expression, context: ContextFactory.instance)
       @parameters = parameters
       @expression = expression
       @context = context
@@ -76,14 +85,16 @@ module Matcher
 
     def ==(other)
       return true if equal?(other)
-      return false unless other.instance_of?(Block)
 
-      @parameters.eql?(other.parameters) && @expression == other.expression
+      other.instance_of?(Block) &&
+        @parameters.eql?(other.parameters) &&
+        @expression == other.expression &&
+        @context == other.context
     end
     alias eql? ==
 
     def hash
-      [@parameters, @expression].hash
+      [@parameters, @expression, @context].hash
     end
 
     def variables
@@ -110,7 +121,7 @@ module Matcher
       end
 
       if @context
-        context = @context.call(self, values)
+        context = @context.create(self, values)
 
         lambda do |*args, **kwargs|
           context.instance_exec(*args, **kwargs, &@proc)
