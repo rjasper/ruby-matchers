@@ -28,6 +28,21 @@ describe Matcher::MapMatcher do
       key => 'expected _ to be a kind of String but got [1, 1]'
   end
 
+  it 'nested error key evaluates to mapped actual' do
+    matcher = Matcher.build do
+      map(original.length * 100 + index * 10 + _, equal([209, 218]))
+    end
+
+    actual = [9, 8, 7]
+    errors = matcher.match(actual)
+
+    assert_kind_of Matcher::Errors::Nested, errors
+    assert_equal '_.map { |e| _.length * 100 + i * 10 + e }', errors.key.to_s
+    assert_kind_of Matcher::Errors::Element, errors.node
+    assert_equal msg_not(:equal, [309, 318, 327], [209, 218]), errors.node.message
+    assert_equal [309, 318, 327], errors.key.evaluate({ actual: })
+  end
+
   it 'pass index' do
     actual = [{ a: 10 }, { a: 20 }, { a: 40 }]
 
