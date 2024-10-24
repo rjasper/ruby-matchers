@@ -71,11 +71,19 @@ module Matcher
     end
 
     def unary?
-      @args.empty? && @kwargs.empty? && !@block
+      knary?(0)
     end
 
     def binary?
-      @args.length == 1 && @kwargs.empty? && !@block
+      knary?(1)
+    end
+
+    def ternary?
+      knary?(2)
+    end
+
+    def knary?(arity)
+      @args.length == arity && @kwargs.empty? && !@block
     end
 
     def assignment?

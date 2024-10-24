@@ -37,8 +37,23 @@ module Matcher
     end
 
     def apply
-      block = self.class.dict[@message.key]
-      instance_exec(*@message.args, **@message.kwargs, &block)
+      phrase(@message.key, *@message.args, **@message.kwargs)
+    end
+
+    def phrase(key, *, **)
+      block = self.class.dict[key]
+
+      if block
+        instance_exec(*, **, &block)
+      else
+        "got #{actual.inspect} but found no message for #{key.inspect}#{" (negated)" if negated}"
+      end
+    end
+
+    def phrase_negated(key, *, **)
+      message = Message.new(key, !negated, actual, *, **)
+
+      self.class.new(@path, message).apply
     end
   end
 end

@@ -24,8 +24,8 @@ describe Matcher::MapMatcher do
 
     key = Matcher::Call.build { |_| _.map { |e| e[:foo] } }
 
-    assert_expected_errors match([{ foo: 1 }, { foo: 1 }]) { map(_[:foo], _.is_a?(String)) },
-      key => 'expected _ to be a kind of String but got [1, 1]'
+    assert_expected_errors match([{ foo: 1 }, { foo: 1 }]) { map(_[:foo], _.sum == 3) },
+      key => 'expected _.sum to be 3 but got 2 for _ = [1, 1]'
   end
 
   it 'nested error key evaluates to mapped actual' do

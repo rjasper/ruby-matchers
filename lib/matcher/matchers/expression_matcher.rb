@@ -57,6 +57,74 @@ module Matcher
     end
 
     def message_for(values, chain)
+      if @expression.is_a?(Call)
+        message_for_call(values, chain)
+      else
+        expected.not_if(@negated).truthy
+      end
+    end
+
+    def actual_receiver?
+      receiver = @expression.receiver
+      receiver.is_a?(Variable) && receiver.symbol == :actual
+    end
+
+    def operand_constant?(n = 0)
+      operand = @expression.args[n]
+      !operand.is_a?(Expression) || operand.is_a?(Constant)
+    end
+
+    def operand(n = 0)
+      operand = @expression.args[n]
+      operand.is_a?(Constant) ? operand.constant : operand
+    end
+
+    def message_for_call(values, chain)
+      if actual_receiver?
+        if @expression.binary? && operand_constant?
+          operand = @expression.args[0]
+          operand = operand.constant if operand.is_a?(Constant)
+
+          case @expression.method
+          when :<
+            return expected.not_if(@negated).lower_than(operand)
+          when :>
+            return expected.not_if(@negated).greater_than(operand)
+          when :<=
+            return expected.not_if(@negated).lower_or_equal_than(operand)
+          when :>=
+            return expected.not_if(@negated).greater_or_equal_than(operand)
+          when :<=>
+            # <=> returns nil if operands are uncomparable
+            return expected.not_if(@negated).comparable_to(operand)
+          when :==
+            return expected.not_if(@negated).equal(operand)
+          when :!=
+            return expected.not_if(@negated).not.equal(operand)
+          when :=~
+            return expected.not_if(@negated).matching(operand)
+          when :!~
+            return expected.not_if(@negated).not.matching(operand)
+          when :is_a?, :kind_of?
+            return expected.not_if(@negated).kind_of(operand)
+          when :instance_of?
+            return expected.not_if(@negated).instance_of(operand)
+          when :respond_to?
+            return expected.not_if(@negated).responding_to(operand)
+          when :key?
+            return expected.not_if(@negated).having_key(operand)
+          when :include?
+            return expected.not_if(@negated).included_in(operand)
+          end
+        elsif @expression.method == :! && @expression.unary?
+          return expected.not_if(@negated).falsy
+        elsif @expression.method == :between? && ternary? && operand_constant?(0) && operand_constant?(1)
+          return expected.not_if(@negated).between(operand(0)..operand(1))
+        elsif @expression.method.end_with?('?') && @expression.unary?
+          return expected.not_if(@negated).predicate(@expression.method)
+        end
+      end
+
       if predicate?
         predicate_message(values, chain)
       else

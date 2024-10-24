@@ -14,12 +14,68 @@ module Matcher
       end
     end
 
+    define(:lower_than) do |operand|
+      if negated || (actual <=> operand).nil?
+        "#{verb} a value < #{operand.inspect} but got #{actual.inspect}"
+      else
+        phrase_negated(:greater_or_equal_than, operand)
+      end
+    end
+
+    define(:greater_than) do |operand|
+      if negated || (actual <=> operand).nil?
+        "#{verb} a value > #{operand.inspect} but got #{actual.inspect}"
+      else
+        phrase_negated(:lower_or_equal_than, operand)
+      end
+    end
+
+    define(:lower_or_equal_than) do |operand|
+      if negated || (actual <=> operand).nil?
+        "#{verb} a value <= #{operand.inspect} but got #{actual.inspect}"
+      else
+        phrase_negated(:greater_than, operand)
+      end
+    end
+
+    define(:greater_or_equal_than) do |operand|
+      if negated || (actual <=> operand).nil?
+        "#{verb} a value >= #{operand.inspect} but got #{actual.inspect}"
+      else
+        phrase_negated(:lower_than, operand)
+      end
+    end
+
+    define(:comparable_to) do |operand|
+      "#{verb} a value comparable to #{operand.inspect} but got #{actual.inspect}"
+    end
+
+    define(:truthy) do
+      if negated
+        "#{verb} a truthy value but got #{actual.inspect}"
+      else
+        phrase_negated(:falsy)
+      end
+    end
+
+    define(:falsy) do
+      if negated
+        "#{verb} a falsy value but got #{actual.inspect}"
+      else
+        phrase_negated(:truthy)
+      end
+    end
+
     define(:described_by) do |description|
       "#{verb} #{description} but got #{actual.inspect}"
     end
 
     define(:having_key) do |key|
       "#{verb} to include key #{key.inspect} but got #{actual.inspect}"
+    end
+
+    define(:instance_of) do |klass|
+      "#{verb} an instance of #{klass} but got #{actual.inspect}"
     end
 
     define(:kind_of) do |klass|
@@ -40,6 +96,12 @@ module Matcher
 
     define(:responding_to) do |method|
       "#{verb} #{actual.inspect} to respond to #{method.inspect}"
+    end
+
+    define(:predicate) do |predicate|
+      predicate = predicate.to_s.delete_suffix('?')
+
+      "#{verb} value to be #{predicate} but got #{actual.inspect}"
     end
 
     namespace(:block) do

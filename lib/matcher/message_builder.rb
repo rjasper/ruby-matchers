@@ -24,6 +24,26 @@ module Matcher
       message(:equal, value)
     end
 
+    def lower_than(operand)
+      message(:lower_than, operand)
+    end
+
+    def greater_than(operand)
+      message(:greater_than, operand)
+    end
+
+    def lower_or_equal_than(operand)
+      message(:lower_or_equal_than, operand)
+    end
+
+    def greater_or_equal_than(operand)
+      message(:greater_or_equal_than, operand)
+    end
+
+    def comparable_to(operand)
+      message(:comparable_to, operand)
+    end
+
     def described_by(description)
       message(:described_by, description)
     end
@@ -50,6 +70,14 @@ module Matcher
 
     def responding_to(method)
       message(:responding_to, method)
+    end
+
+    def included_in(operand)
+      message(:included_in, operand)
+    end
+
+    def predicate(name)
+      message(:predicate, name)
     end
 
     private
