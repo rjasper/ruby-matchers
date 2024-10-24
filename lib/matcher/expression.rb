@@ -2,6 +2,18 @@
 
 module Matcher
   class Expression
+    class ExpressionBuilder
+      include ExpressionBuilding
+    end
+
+    def self.build(&)
+      result = Matcher.with_build_session do
+        ExpressionBuilder.new.instance_exec(&)
+      end
+
+      ExpressionRecorder.transform(result)
+    end
+
     def self.negate(obj)
       if obj.is_a?(Expression)
         obj.negated

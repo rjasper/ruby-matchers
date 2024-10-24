@@ -4,6 +4,8 @@ require_relative "matcher/version"
 
 require 'singleton'
 
+require 'matcher/expression_building'
+
 require 'matcher/base'
 require 'matcher/block'
 require 'matcher/expression'
@@ -15,6 +17,7 @@ require 'matcher/variable'
 require 'matcher/abstract_phrasing'
 require 'matcher/assertions'
 require 'matcher/block_expression'
+require 'matcher/expression_pattern_builder'
 require 'matcher/builder'
 require 'matcher/expected_phrasing'
 require 'matcher/expression_recorder'
