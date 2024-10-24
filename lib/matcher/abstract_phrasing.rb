@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'forwardable'
-
 module Matcher
   class AbstractPhrasing
     extend Forwardable

@@ -3,8 +3,10 @@
 require_relative "matcher/version"
 
 require 'singleton'
+require 'forwardable'
 
 require 'matcher/expression_building'
+require 'matcher/pattern_building'
 
 require 'matcher/base'
 require 'matcher/block'
@@ -14,18 +16,27 @@ require 'matcher/constant'
 require 'matcher/symbol_proc'
 require 'matcher/variable'
 
+require 'matcher/pattern'
+require 'matcher/hole'
+require 'matcher/call_hole'
+require 'matcher/capture_hole'
+require 'matcher/constant_hole'
+require 'matcher/method_hole'
+
 require 'matcher/abstract_phrasing'
 require 'matcher/assertions'
 require 'matcher/block_expression'
-require 'matcher/expression_pattern_builder'
 require 'matcher/builder'
 require 'matcher/expected_phrasing'
 require 'matcher/expression_recorder'
 require 'matcher/expression_walker'
+require 'matcher/list'
+require 'matcher/ast_mapping'
 require 'matcher/message_builder'
 require 'matcher/nested_expression_normalizer'
 require 'matcher/pipe'
 require 'matcher/reporter'
+require 'matcher/rule_set'
 require 'matcher/utils'
 
 require 'matcher/errors/node'
