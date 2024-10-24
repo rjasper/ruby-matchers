@@ -134,28 +134,38 @@ module Matcher
     end
 
     def evaluate(values, chain = nil)
-      actual_receiver = @receiver.evaluate(values, chain)
+      receiver = @receiver.evaluate(values, chain)
 
-      return actual_receiver if @method == :'&&' && !actual_receiver
-      return actual_receiver if @method == :'||' && actual_receiver
+      return receiver if lazy?(receiver)
 
       args = evaluate_args(values)
       kwargs = evaluate_kwargs(values)
 
-      return args[0] if %i[&& ||].include?(@method)
+      return args[0] if logical_operator?
 
-      raise NotRespondingError.new(self, actual_receiver, values) unless
-        actual_receiver.respond_to?(@method)
+      invoke(values, receiver, args, kwargs)
+        .tap { chain&.push(_1) }
+    end
 
-      begin
-        block = @block.is_a?(Matcher::Block) ? @block&.to_proc(values:) : @block
-        result = actual_receiver.send(@method, *args, **kwargs, &block)
-        chain&.push(result)
-
-        assignment? ? args.last : result
-      rescue StandardError => e
-        raise EvaluationError.new(e, self, actual_receiver, values)
+    def evaluate_tree(values)
+      if @receiver.is_a?(Call)
+        receiver_t = @receiver.evaluate_tree(values)
+        receiver = receiver_t.last
+      else
+        receiver = @receiver.evaluate(values)
+        receiver_t = [receiver]
       end
+
+      return [receiver_t, nil, nil, receiver] if lazy?(receiver)
+
+      args, args_t = evaluate_args_tree(values)
+      kwargs, kwargs_t = evaluate_kwargs_tree(values)
+
+      return [receiver_t, args_t, kwargs_t, args[0]] if logical_operator?
+
+      value = invoke(values, receiver, args, kwargs)
+
+      [receiver_t, args_t, kwargs_t, value]
     end
 
     def variables
@@ -346,6 +356,28 @@ module Matcher
 
     private
 
+    def lazy?(receiver)
+      @method == :'&&' && !receiver || @method == :'||' && receiver
+    end
+
+    def logical_operator?
+      %i[&& ||].include?(@method)
+    end
+
+    def invoke(values, receiver, args, kwargs)
+      raise NotRespondingError.new(self, receiver, values) unless
+        receiver.respond_to?(@method)
+
+      begin
+        block = @block.is_a?(Matcher::Block) ? @block&.to_proc(values:) : @block
+        result = receiver.send(@method, *args, **kwargs, &block)
+
+        assignment? ? args.last : result
+      rescue StandardError => e
+        raise EvaluationError.new(e, self, receiver, values)
+      end
+    end
+
     def set_last_assign
       build_session = Matcher.build_session
 
@@ -365,6 +397,53 @@ module Matcher
       @kwargs.transform_values do |kwarg|
         kwarg.is_a?(Expression) ? kwarg.evaluate(values) : kwarg
       end
+    end
+
+    def evaluate_args_tree(values)
+      n = @args.length
+      args = Array.new(n)
+      args_t = Array.new(n)
+
+      @args.each_with_index do |arg, i|
+        case arg
+        when Call
+          arg_t = arg.evaluate_tree(values)
+          args[i] = arg_t.last
+          args_t[i] = arg_t
+        when Expression
+          value = arg.evaluate(values)
+          args[i] = value
+          args_t[i] = [value]
+        else
+          args[i] = arg
+          args_t[i] = [arg]
+        end
+      end
+
+      [args, args_t]
+    end
+
+    def evaluate_kwargs_tree(values)
+      kwargs = {}
+      kwargs_t = {}
+
+      @kwargs.each do |key, kwarg|
+        case kwarg
+        when Call
+          kwarg_t = kwarg.evaluate_tree(values)
+          kwargs[key] = kwarg_t.last
+          kwargs_t[key] = kwarg_t
+        when Expression
+          value = kwarg.evaluate(values)
+          kwargs[key] = value
+          kwargs_t[key] = [value]
+        else
+          kwargs[key] = kwarg
+          kwargs_t[key] = [kwarg]
+        end
+      end
+
+      [kwargs, kwargs_t]
     end
 
     def args_and_kwargs_string(substitutions)
