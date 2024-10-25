@@ -13,7 +13,7 @@ module Matcher
     end
 
     def self.transform(object)
-      recorder?(object) ? to_expression(object) : object
+      recorder?(object) ? to_expression(object) : Constant.new(object)
     end
 
     (instance_methods - %i[__id__ __send__ object_id])

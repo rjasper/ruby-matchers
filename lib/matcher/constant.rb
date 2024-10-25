@@ -10,6 +10,10 @@ module Matcher
       @constant = constant
     end
 
+    def negated
+      Constant.new(!@constant)
+    end
+
     def variables
       []
     end

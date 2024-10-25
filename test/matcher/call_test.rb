@@ -7,8 +7,10 @@ Variable = Matcher::Variable
 
 describe Matcher::Call do
   it 'returns operand of assignment' do
-    actual = Variable.new(:actual)
-    call = Matcher::Call.new(actual, :foo=, [2])
+    call = Matcher::Expression.build do
+      assign { _.foo = 2 }
+    end
+
     struct = Struct.new(:foo).new
 
     assert_equal 2, call.evaluate({ actual: struct })

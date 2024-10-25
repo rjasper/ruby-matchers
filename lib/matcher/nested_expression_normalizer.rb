@@ -203,7 +203,9 @@ module Matcher
           e = trace && trace.reduce(Variable.actual) { _2.new_root(_1) }
 
           tail = List.new(e, tail) if e
-          tail = List.new(cur.args[0], tail)
+          arg = cur.args[0]
+          arg = arg.constant if arg.is_a?(Constant)
+          tail = List.new(arg, tail)
 
           trace = nil
           segment = cur.receiver

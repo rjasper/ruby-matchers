@@ -138,8 +138,8 @@ module Matcher
 
       return receiver if lazy?(receiver)
 
-      args = evaluate_args(values)
-      kwargs = evaluate_kwargs(values)
+      args = @args.map { _1.evaluate(values) }
+      kwargs = @kwargs.transform_values { _1.evaluate(values) }
 
       return args[0] if logical_operator?
 
@@ -387,36 +387,20 @@ module Matcher
       call_session[:last_assign] = self
     end
 
-    def evaluate_args(values)
-      @args.map do |arg|
-        arg.is_a?(Expression) ? arg.evaluate(values) : arg
-      end
-    end
-
-    def evaluate_kwargs(values)
-      @kwargs.transform_values do |kwarg|
-        kwarg.is_a?(Expression) ? kwarg.evaluate(values) : kwarg
-      end
-    end
-
     def evaluate_args_tree(values)
       n = @args.length
       args = Array.new(n)
       args_t = Array.new(n)
 
       @args.each_with_index do |arg, i|
-        case arg
-        when Call
+        if arg.is_a?(Call)
           arg_t = arg.evaluate_tree(values)
           args[i] = arg_t.last
           args_t[i] = arg_t
-        when Expression
+        else
           value = arg.evaluate(values)
           args[i] = value
           args_t[i] = [value]
-        else
-          args[i] = arg
-          args_t[i] = [arg]
         end
       end
 
@@ -428,18 +412,14 @@ module Matcher
       kwargs_t = {}
 
       @kwargs.each do |key, kwarg|
-        case kwarg
-        when Call
+        if kwarg.is_a?(Call)
           kwarg_t = kwarg.evaluate_tree(values)
           kwargs[key] = kwarg_t.last
           kwargs_t[key] = kwarg_t
-        when Expression
+        else
           value = kwarg.evaluate(values)
           kwargs[key] = value
           kwargs_t[key] = [value]
-        else
-          kwargs[key] = kwarg
-          kwargs_t[key] = [kwarg]
         end
       end
 

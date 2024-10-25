@@ -80,14 +80,23 @@ module Matcher
 
     def assign
       value = ExpressionRecorder.transform(yield)
-
       call = Call.last_assign
+
       Call.reset_last_assign
 
-      raise "Could not return last assignment" if
-        !call&.binary? || !call.args[0].equal?(value)
+      status = if call&.binary?
+        arg = call.args[0]
 
-      call
+        if value.is_a?(Constant)
+          arg.is_a?(Constant) && value.constant.equal?(arg.constant)
+        else
+          value.equal?(arg)
+        end
+      end
+
+      raise 'Could not return last assignment' unless status
+
+      call.to_recorder
     end
 
     def vars
