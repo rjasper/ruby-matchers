@@ -13,22 +13,7 @@ module Matcher
       def label_tree(error)
         leaves = []
 
-        [label_tree_helper(error, nil, leaves), leaves]
-      end
-
-      List = Struct.new(:head, :tail) do
-        def hash
-          @hash ||= [head, tail.hash].hash
-        end
-
-        def eql?(other)
-          head.eql?(other.head) && tail.eql?(other.tail)
-        end
-
-        def reverse_each(&)
-          tail&.reverse_each(&)
-          yield head
-        end
+        [label_tree_helper(error, List.empty, leaves), leaves]
       end
 
       Leaf = Struct.new(:label, :path, :message) do
@@ -51,7 +36,7 @@ module Matcher
           child_labels = error.nodes.map { label_tree_helper(_1, path, leaves) }
           group_label_for(error, child_labels.sort)
         when Errors::Nested
-          label_tree_helper(error.node, List.new(error.key, path), leaves)
+          label_tree_helper(error.node, path << error.key, leaves)
         when Errors::Element
           label = element_label_for(path, error)
           message = error.message

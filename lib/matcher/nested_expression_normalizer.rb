@@ -22,18 +22,18 @@ module Matcher
       if n == 1 && paths[0]
         actual_chain = paths[0].last
 
-        return split(@expression, nil) if actual_chain.expression == @expression
+        return split(@expression, List.empty) if actual_chain.expression == @expression
 
         last = substitute([actual_chain.id], tree)
 
-        return split(actual_chain.expression, List.new(last))
+        return split(actual_chain.expression, List.one(last))
       elsif n > 1
         common_expression, ids = find_common_expression(paths)
 
         if common_expression
           last = substitute(ids, tree)
 
-          return split(common_expression, List.new(last))
+          return split(common_expression, List.one(last))
         end
       end
 
@@ -43,27 +43,6 @@ module Matcher
     Tree = Struct.new(:subtrees, :id)
     IdExpression = Struct.new(:id, :expression)
 
-    List = Struct.new(:head, :tail) do
-      include Enumerable
-
-      def last
-        tail&.last || head
-      end
-
-      def each
-        c = self
-
-        while c
-          yield c.head
-          c = c.tail
-        end
-      end
-
-      def to_a
-        to_enum.to_a
-      end
-    end
-
     private
 
     def analyze
@@ -71,7 +50,7 @@ module Matcher
       @counter = 0
 
       tree = catch(:abort) do
-        analyze_helper(@expression, nil)
+        analyze_helper(@expression, List.empty)
       end
 
       paths = @paths
@@ -85,16 +64,16 @@ module Matcher
       when Call
         id = (@counter += 1)
         id_expression = IdExpression.new(id, expression)
-        next_trace = List.new(id_expression, trace)
+        next_trace = trace << id_expression
         receiver_tree = analyze_helper(expression.receiver, next_trace)
 
         arg_subtrees = expression.args.lazy.with_index.filter_map do |arg, i|
-          arg_tree = analyze_helper(arg, nil)
+          arg_tree = analyze_helper(arg, List.empty)
           [i, arg_tree] if arg_tree
         end.to_h
 
         kwarg_subtrees = expression.kwargs.lazy.filter_map do |key, value|
-          kwarg_tree = analyze_helper(value, nil)
+          kwarg_tree = analyze_helper(value, List.empty)
           [key, kwarg_tree] if kwarg_tree
         end.to_h
 
@@ -107,7 +86,7 @@ module Matcher
       when Variable
         return if expression.symbol != :actual
 
-        @paths << trace
+        @paths << trace unless trace.empty?
       when BlockExpression
         throw(:abort) if expression.variables.include?(:actual)
       else
@@ -194,23 +173,23 @@ module Matcher
     end
 
     def split(expression, tail)
-      trace = nil
+      trace = List.empty
       segment = expression
       cur = expression
 
       while cur.is_a?(Call)
         if cur.method == :[] && cur.binary?
-          e = trace && trace.reduce(Variable.actual) { _2.new_root(_1) }
+          e = !trace.empty? && trace.reduce(Variable.actual) { _2.new_root(_1) }
 
-          tail = List.new(e, tail) if e
+          tail <<= e if e
           arg = cur.args[0]
           arg = arg.constant if arg.is_a?(Constant)
-          tail = List.new(arg, tail)
+          tail <<= arg
 
-          trace = nil
+          trace = List.empty
           segment = cur.receiver
         else
-          trace = List.new(cur, trace)
+          trace <<= cur
         end
 
         cur = cur.receiver
@@ -219,7 +198,7 @@ module Matcher
       result = if segment.is_a?(Variable) && segment.symbol == :actual
         tail
       else
-        List.new(segment, tail)
+        tail << segment
       end
 
       result.to_a
