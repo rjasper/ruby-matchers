@@ -36,6 +36,10 @@ module Matcher
       Call.new(self, :!)
     end
 
+    def evaluate_tree(values)
+      [evaluate(values)]
+    end
+
     def visit
       return to_enum(:visit) unless block_given?
 

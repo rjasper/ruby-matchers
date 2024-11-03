@@ -148,13 +148,8 @@ module Matcher
     end
 
     def evaluate_tree(values)
-      if @receiver.is_a?(Call)
-        receiver_t = @receiver.evaluate_tree(values)
-        receiver = receiver_t.last
-      else
-        receiver = @receiver.evaluate(values)
-        receiver_t = [receiver]
-      end
+      receiver_t = @receiver.evaluate_tree(values)
+      receiver = receiver_t.last
 
       return [receiver_t, nil, nil, receiver] if lazy?(receiver)
 
@@ -393,15 +388,9 @@ module Matcher
       args_t = Array.new(n)
 
       @args.each_with_index do |arg, i|
-        if arg.is_a?(Call)
-          arg_t = arg.evaluate_tree(values)
-          args[i] = arg_t.last
-          args_t[i] = arg_t
-        else
-          value = arg.evaluate(values)
-          args[i] = value
-          args_t[i] = [value]
-        end
+        arg_t = arg.evaluate_tree(values)
+        args[i] = arg_t.last
+        args_t[i] = arg_t
       end
 
       [args, args_t]
@@ -412,15 +401,9 @@ module Matcher
       kwargs_t = {}
 
       @kwargs.each do |key, kwarg|
-        if kwarg.is_a?(Call)
-          kwarg_t = kwarg.evaluate_tree(values)
-          kwargs[key] = kwarg_t.last
-          kwargs_t[key] = kwarg_t
-        else
-          value = kwarg.evaluate(values)
-          kwargs[key] = value
-          kwargs_t[key] = [value]
-        end
+        kwarg_t = kwarg.evaluate_tree(values)
+        kwargs[key] = kwarg_t.last
+        kwargs_t[key] = kwarg_t
       end
 
       [kwargs, kwargs_t]
