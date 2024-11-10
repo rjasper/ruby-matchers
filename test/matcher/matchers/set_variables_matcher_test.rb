@@ -10,11 +10,11 @@ describe Matcher::SetVariablesMatcher do
 
     assert_predicate matcher.match('foo'), :valid?
     assert_expected_errors matcher.match('bar'),
-      'expected _ to be myvar ("foo") but got "bar"'
+      'expected _ == myvar but got "bar" == "foo"'
 
     negated = ~matcher
 
-    assert_expected_errors negated.match('foo'), 'expected _ to not be myvar ("foo")'
+    assert_expected_errors negated.match('foo'), 'expected _ != myvar but got "foo" != "foo"'
     assert_predicate negated.match('bar'), :valid?
   end
 
@@ -62,8 +62,8 @@ describe Matcher::SetVariablesMatcher do
     assert_expected_errors matcher.match(actual),
       value: 'expected 42 but got 16',
       child: {
-        depth: 'expected _ to be depth (1) but got 2',
-        value: 'expected _ to be parent_value / 2 + 2 (10) but got 11 for parent_value = 16'
+        depth: 'expected _ == depth but got 2 == 1',
+        value: 'expected _ == parent_value / 2 + 2 but got 11 == 10, where parent_value = 16'
       }
   end
 

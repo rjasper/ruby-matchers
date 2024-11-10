@@ -48,7 +48,7 @@ describe Matcher::ArrayMatcher do
 
     assert_predicate matcher.match([0, 10, 20]), :valid?
     assert_expected_errors matcher.match([0, 11, 20]),
-      1 => 'expected _ to be i * 10 (10) but got 11 for i = 1'
+      1 => 'expected _ == i * 10 but got 11 == 10, where i = 1'
   end
 
   it 'pass parent' do
@@ -60,7 +60,7 @@ describe Matcher::ArrayMatcher do
 
     assert_predicate matcher.match([1, 3, 5]), :valid?
     assert_expected_errors matcher.match([1, 5, 3]),
-      2 => 'expected parent[i - 1] to be < parent[i] (3) but got 5 for parent = [1, 5, 3], i = 2'
+      2 => 'expected parent[i - 1] < parent[i] but got 5 < 3, where parent = [1, 5, 3], i = 2'
   end
 
   it '#to_s' do

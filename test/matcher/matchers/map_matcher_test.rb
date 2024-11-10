@@ -13,10 +13,10 @@ describe Matcher::MapMatcher do
 
   it 'generates error messages' do
     assert_expected_errors match(nil) { map(_, [1]) },
-      "expected object to respond to `map' but got nil"
+      "expected an object responding to `map' but got nil"
     assert_expected_errors match([nil, nil]) { map(_[:foo], all) },
-      0 => 'expected _ to respond to [] but got nil',
-      1 => 'expected _ to respond to [] but got nil'
+      0 => "expected an object responding to `[]' but got nil",
+      1 => "expected an object responding to `[]' but got nil"
     assert_expected_errors match([{ foo: 1 }, { foo: 3 }]) { map(_[:foo], [1, 2]) },
       1 => { foo: 'expected 2 but got 3' }
     assert_expected_errors match([{ foo: 1 }, { foo: 1 }]) { map(_[:foo] + 1, [1, 2]) },
@@ -25,7 +25,7 @@ describe Matcher::MapMatcher do
     key = Matcher::Call.build { |_| _.map { |e| e[:foo] } }
 
     assert_expected_errors match([{ foo: 1 }, { foo: 1 }]) { map(_[:foo], _.sum == 3) },
-      key => 'expected _.sum to be 3 but got 2 for _ = [1, 1]'
+      key => 'expected _.sum == 3 but got 2 == 3, where _ = [1, 1]'
   end
 
   it 'nested error key evaluates to mapped actual' do
@@ -62,6 +62,6 @@ describe Matcher::MapMatcher do
 
     assert_predicate matcher.match(array), :valid?
     assert_expected_errors matcher.match([{ a: 1 }]),
-      0 => { a: 'expected _ to be original ([{:a=>1}]) but got 1' }
+      0 => { a: 'expected _ == original but got 1 == [{:a=>1}]' }
   end
 end

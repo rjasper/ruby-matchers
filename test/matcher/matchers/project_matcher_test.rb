@@ -16,7 +16,7 @@ describe Matcher::ProjectMatcher do
     assert_expected_errors matcher.match(my_struct.new('bar')),
       expr { _1.value } => 'expected "foo" but got "bar"'
     assert_expected_errors matcher.match(1),
-      'expected _ to respond to value but got 1'
+      "expected an object responding to `value' but got 1"
   end
 
   it '#to_s' do

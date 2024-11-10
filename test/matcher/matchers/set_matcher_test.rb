@@ -42,7 +42,7 @@ describe Matcher::SetMatcher do
     assert_predicate matcher.match(self_array), :valid?
 
     assert_expected_errors matcher.match([1]),
-      'expected _ == parent to be included in [1]',
+      'expected _ == parent to be included but got [1]',
       0 => 'did not expect 1 to be included but got [1]'
   end
 

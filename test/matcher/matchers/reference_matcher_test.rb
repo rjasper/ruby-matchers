@@ -29,7 +29,7 @@ describe Matcher::ReferenceMatcher do
     end
 
     assert_expected_errors matcher.match([0, 0]),
-      1 => 'expected _ to be i (1) but got 0'
+      1 => 'expected _ == i but got 0 == 1'
 
     assert_predicate matcher.match([0, 1]), :valid?
   end

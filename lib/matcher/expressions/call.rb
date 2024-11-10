@@ -292,48 +292,47 @@ module Matcher
     end
 
     class NotRespondingError < Error
-      attr_reader :call, :receiver, :values
+      attr_reader :call, :receiver, :given
 
       def initialize(call, receiver, values)
         @call = call
         @receiver = receiver
-        @values = values
+        @given = values.slice(*call.receiver.variables)
 
-        message = "#{@call.receiver.inspect} does not respond to " \
-          "#{@call.method} where #{@call.given_values(values)}"
-
-        super(message)
+        super("#{call.receiver} does not respond to #{call.method.inspect}")
       end
 
       def message_for_errors
-        expression = @call.receiver.inspect
-        method = @call.method
-        actual = @receiver.inspect
-
-        string = "expected #{expression} to respond to #{method} but got #{actual}"
-        string += " where #{@call.given_values(@values)}" if @call.receiver.instance_of?(Call)
-
-        string
+        if @call.receiver == Variable.actual
+          Message.new(:responding_to, true, @receiver, @call.method)
+        else
+          Message.new(
+            %i[expression responding_to],
+            true,
+            nil,
+            @call.receiver,
+            @receiver,
+            @call.method,
+            @given,
+          )
+        end
       end
     end
 
     class EvaluationError < Error
-      def initialize(error, call, receiver, values)
+      attr_reader :error, :call, :given
+
+      def initialize(error, call, values)
         @error = error
         @call = call
-        @receiver = receiver
-        @values = values
+        @given = values.slice(*call.variables)
 
-        given_receiver = "#{@call.receiver} = #{receiver.inspect}"
-        given_values = @call.given_values(values)
-        given = given_values.empty? ? given_receiver : "#{given_receiver}, #{given_values}"
-
-        message = "#{call} raised #{error.class} where #{given}: #{error.message}"
-
-        super(message)
+        super("#{call} raised #{error.class}: #{error.message}")
       end
 
-      alias message_for_errors message
+      def message_for_errors
+        Message.new(%i[expression raising], false, nil, @call, @error, @given)
+      end
     end
 
     def given_values(values, substitutions: Expression.default_substitutions)
@@ -369,7 +368,7 @@ module Matcher
 
         assignment? ? args.last : result
       rescue StandardError => e
-        raise EvaluationError.new(e, self, receiver, values)
+        raise EvaluationError.new(e, self, values)
       end
     end
 

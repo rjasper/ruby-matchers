@@ -56,7 +56,7 @@ describe Matcher::HashMatcher do
     end
 
     assert_expected_errors matcher.match({ a: 'B' }),
-      a: 'expected _ to be k.to_s.upcase ("A") but got "B" for k = :a'
+      a: 'expected _ == k.to_s.upcase but got "B" == "A", where k = :a'
   end
 
   it 'pass parent' do
@@ -69,7 +69,7 @@ describe Matcher::HashMatcher do
 
     assert_predicate matcher.match(self_hash), :valid?
     assert_expected_errors matcher.match({ self: {} }),
-      self: 'expected _ to be parent ({:self=>{}}) but got {}'
+      self: 'expected _ == parent but got {} == {:self=>{}}'
   end
 
   it '#to_s: all entries' do

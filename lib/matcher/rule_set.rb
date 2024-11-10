@@ -5,16 +5,16 @@ module Matcher
     Rule = Struct.new(:patterns, :block)
 
     module RuleBuilding
-      def transform(symbol, *patterns, &block)
+      def transform(*patterns, &block)
         patterns.map! { Pattern.of(_1) }
-        @rules[symbol] = TransformRule.new(patterns, block)
+        @rules << TransformRule.new(patterns, block)
 
         nil
       end
 
-      def message(symbol, *patterns, &block)
+      def message(*patterns, &block)
         patterns.map! { Pattern.of(_1) }
-        @rules[symbol] = MessageRule.new(patterns, block)
+        @rules << MessageRule.new(patterns, block)
 
         nil
       end
@@ -24,7 +24,7 @@ module Matcher
       include PatternBuilding
       include RuleBuilding
 
-      def initialize(rules = {})
+      def initialize(rules = [])
         @rules = rules
       end
 
@@ -37,7 +37,7 @@ module Matcher
           extend PatternBuilding
           extend RuleBuilding
 
-          @rules = {}
+          @rules = []
 
           class << self
             attr_reader :rules
@@ -112,7 +112,7 @@ module Matcher
       end
     end
 
-    def initialize(rules = {}, &)
+    def initialize(rules = [], &)
       @rules = rules
 
       configure(&) if block_given?
@@ -168,7 +168,7 @@ module Matcher
     private
 
     def find_rule(expression, mapping)
-      @rules.each_value do |rule|
+      @rules.each do |rule|
         rule.patterns.each do |pattern|
           match = pattern.match(expression, mapping)
 

@@ -10,8 +10,8 @@ describe Matcher::NegatedEachPairMatcher do
 
     assert_expected_errors matcher.match({ '1' => 1, 'a' => :a }) do
       _or do
-        error '1', 'expected k to not be v.to_s ("1") for v = 1'
-        error 'a', 'expected k to not be v.to_s ("a") for v = :a'
+        error '1', 'expected k != v.to_s but got "1" != "1", where v = 1'
+        error 'a', 'expected k != v.to_s but got "a" != "a", where v = :a'
       end
     end
 

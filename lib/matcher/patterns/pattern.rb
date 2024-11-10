@@ -29,11 +29,15 @@ module Matcher
     def_delegator :@expression, :to_s
     def_delegator :@expression, :inspect
 
+    MatchNode = Struct.new(:expression, :mapping)
+
     def match(expression, mapping = AstMapping.new)
       result = {}
 
       catch(:mismatch) do
         match_helper(expression, @expression, mapping, result)
+
+        result[:root] ||= MatchNode.new(expression, mapping)
 
         return result
       end
@@ -42,8 +46,6 @@ module Matcher
     end
 
     private
-
-    MatchNode = Struct.new(:expression, :mapping)
 
     def match_helper(expression, pattern, mapping, result)
       if (hole = get_hole(pattern))

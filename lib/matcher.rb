@@ -190,3 +190,5 @@ module Matcher
     end
   end
 end
+
+require 'matcher/matchers/expression_matcher/message_rules'

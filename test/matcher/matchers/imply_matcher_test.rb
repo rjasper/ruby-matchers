@@ -19,7 +19,7 @@ describe Matcher::ImplyMatcher do
     end
 
     assert_expected_errors matcher.match('hello'),
-      'expected _.downcase to not be _ ("hello")'
+      'expected _.downcase != _ but got "hello" != "hello"'
     assert_expected_errors matcher.match(1),
       'expected a kind of String but got 1'
     assert_predicate matcher.match('Hello'), :valid?

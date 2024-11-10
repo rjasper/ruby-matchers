@@ -105,7 +105,7 @@ module Matcher
     end
 
     define(:responding_to) do |method|
-      "#{verb} object to respond to `#{method}' but got #{actual.inspect}"
+      "#{verb} an object responding to `#{method}' but got #{actual.inspect}"
     end
 
     define(:predicate) do |predicate|
@@ -162,6 +162,134 @@ module Matcher
       end
     end
 
+    namespace(:expression) do
+      define(:truthy) do |expression, value, given|
+        "#{verb} #{expression} to be truthy " \
+          "but got #{value.inspect}#{where_text(given, expression)}"
+      end
+
+      define(:falsy) do |expression, value, given|
+        "#{verb} #{expression} to be falsy " \
+          "but got #{value.inspect}#{where_text(given, expression)}"
+      end
+
+      define(:between) do |expression, value, min, max, given|
+        "#{verb} #{expression} to be between #{min.inspect} and #{max.inspect} " \
+          "but got #{value.inspect}#{where_text(given, expression)}"
+      end
+
+      negated_comparisons =
+        { :== => :!=, :!= => :==, :< => :>=, :> => :<=, :<= => :>, :>= => :< }
+
+      define(:comparison) do |expression, left, right, given|
+        can_negate = !negated &&
+          (method = negated_comparisons[expression.method]) &&
+          (%i[== !=].include?(method) || left <=> right)
+
+        verb = if can_negate
+          expression = Call.new(
+            expression.receiver,
+            method,
+            expression.args,
+            expression.kwargs,
+          )
+
+          verb(negated: true)
+        else
+          self.verb
+        end
+
+        "#{verb} #{expression} but got " \
+          "#{left.inspect} #{expression.method} #{right.inspect}" \
+          "#{where_text(given, expression.receiver, expression.args[0])}"
+      end
+
+      define(:same) do |left_expression, right_expression, left, right, given|
+        "#{verb} #{left_expression} to be same as #{right_expression} " \
+          "but got #{left.inspect} (id=#{left.object_id})" \
+          "#{" and #{right.inspect} (id=#{right.object_id})" if negated}" \
+          "#{where_text(given, left_expression, right_expression)}"
+      end
+
+      define(:comparable_to) do |expression, value, operand, given|
+        "#{verb} #{expression} to be comparable to #{operand.inspect} " \
+          "but got #{value.inspect}#{where_text(given, expression)}"
+      end
+
+      define(:having_key) do |expression, value, key, given|
+        "#{verb} #{expression} to include key #{key.inspect} " \
+          "but got #{value.inspect}#{where_text(given, expression)}"
+      end
+
+      define(:instance_of) do |expression, value, klass, given|
+        "#{verb} #{expression} to be an instance of #{klass} " \
+          "but got #{value.inspect}#{where_text(given, expression)}"
+      end
+
+      define(:kind_of) do |expression, value, klass, given|
+        "#{verb} #{expression} to be a kind of #{klass} " \
+          "but got #{value.inspect}#{where_text(given, expression)}"
+      end
+
+      define(:length_of) do |expression, exp, act, given|
+        "#{verb} #{expression} to have length of #{exp}" \
+          "#{" but was #{act}" if negated}#{where_text(given, expression)}"
+      end
+
+      define(:matching) do |expression, value, pattern, given|
+        "#{verb} #{expression} to match #{pattern.inspect} " \
+          "but got #{value.inspect}#{where_text(given, expression)}"
+      end
+
+      match_at_words = {
+        :== => 'at',
+        :!= => 'not at',
+        :< => 'before',
+        :> => 'after',
+        :<= => 'at or before',
+        :>= => 'at or after',
+      }
+
+      define(:match_at) do |expression, value, pattern, position, comparison, operand, given|
+        comparison_word = match_at_words[comparison]
+
+        message = String.new
+        message << "#{verb} #{expression} to match #{pattern.inspect} #{comparison_word} #{operand} "
+        message << "but was at #{position} " if
+          operand != position || comparison != (negated ? :!= : :==)
+        message << "for #{value.inspect}#{where_text(given, expression)}"
+
+        message
+      end
+
+      define(:including) do |expression, value, item, given|
+        "#{verb} #{expression} to include #{item.inspect} " \
+          "but got #{value.inspect}#{where_text(given, expression)}"
+      end
+
+      define(:in) do |expression, value, collection, given|
+        "#{verb} #{expression} to be included in #{collection.inspect} " \
+          "but got #{value.inspect}#{where_text(given, expression)}"
+      end
+
+      define(:responding_to) do |expression, value, method, given|
+        "#{verb} #{expression} to respond to `#{method}' " \
+          "but got #{value.inspect}#{where_text(given, expression)}"
+      end
+
+      define(:raising) do |expression, error, given|
+        "#{verb} #{expression} to raise #{error.class}" \
+          "#{where_text(given, expression)}: #{error.message}"
+      end
+
+      define(:predicate) do |expression, value, predicate, given|
+        predicate = predicate.to_s.delete_suffix('?')
+
+        "#{verb} #{expression} to be #{predicate} " \
+          "but got #{value.inspect}#{where_text(given, expression)}"
+      end
+    end
+
     private
 
     def verb(negated: self.negated)
@@ -177,6 +305,23 @@ module Matcher
 
     def join(objects)
       objects.map(&:to_s).join(', ')
+    end
+
+    def where_text(values, *expressions)
+      return '' if values.empty?
+
+      substitutions = Expression.default_substitutions
+
+      except = expressions.filter_map { _1.symbol if _1.is_a?(Variable) }
+      symbols = expressions.flat_map(&:variables).uniq - except
+
+      return '' if symbols.empty?
+
+      list = symbols
+        .map { "#{substitutions[_1] || _1} = #{values.fetch(_1).inspect}" }
+        .join(', ')
+
+      ", where #{list}"
     end
   end
 end

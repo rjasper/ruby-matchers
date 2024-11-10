@@ -38,7 +38,7 @@ describe 'examples' do
         error 'expected nil but got {:key=>7, :left=>{:key=>5, :left=>nil, :right=>nil}, :right=>{:key=>10, :left=>nil, :right=>nil}}'
         _or(:left) do
           error 'expected nil but got {:key=>5, :left=>nil, :right=>nil}'
-          error :key, 'expected _ > low && _ < high to be truthy for _ = 5, low = 5, high = 7'
+          error :key, 'expected _ > low && _ < high to be truthy but got false, where _ = 5, low = 5, high = 7'
         end
       end
     end
@@ -104,8 +104,8 @@ describe 'examples' do
     assert_equal 'Math.sqrt(_) > 2', matcher.inspect
 
     assert_no_errors matcher.match(9)
-    assert_errors matcher.match(4),
-      'expected Math.sqrt(_) to be > 2 but got 2.0 for _ = 4'
+    assert_expected_errors matcher.match(4),
+      'expected Math.sqrt(_) > 2 but got 2.0 > 2, where _ = 4'
   end
 
   it 'expressions: block receiver' do
@@ -115,7 +115,7 @@ describe 'examples' do
 
     assert_equal 'expr_s { |_| [_, 10] }.sum >= 15', matcher.inspect
     assert_no_errors matcher.match(10)
-    assert_errors matcher.match(2),
-      'expected expr_s { |_| [_, 10] }.sum to be >= 15 but got 12 for _ = 2'
+    assert_expected_errors matcher.match(2),
+      'expected expr_s { |_| [_, 10] }.sum >= 15 but got 12 >= 15, where _ = 2'
   end
 end

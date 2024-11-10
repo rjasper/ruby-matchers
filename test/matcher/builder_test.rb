@@ -38,7 +38,7 @@ describe Matcher::Builder do
     assert_predicate matcher.match(3), :valid?
     assert_predicate matcher.match(9), :valid?
     assert_expected_errors matcher.match(6), 'expected value to be odd but got 6'
-    assert_expected_errors matcher.match(7), 'expected _ % 3 to be 0 but got 1 for _ = 7'
+    assert_expected_errors matcher.match(7), 'expected _ % 3 == 0 but got 1 == 0, where _ = 7'
   end
 
   it '#any' do
@@ -52,7 +52,7 @@ describe Matcher::Builder do
     assert_expected_errors matcher.match(17) do
       _or do
         error 'expected value to be even but got 17'
-        error 'expected _ % 5 to be 0 but got 2 for _ = 17'
+        error 'expected _ % 5 == 0 but got 2 == 0, where _ = 17'
         error 'expected 37 but got 17'
       end
     end
