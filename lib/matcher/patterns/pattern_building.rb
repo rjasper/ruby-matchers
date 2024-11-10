@@ -28,6 +28,12 @@ module Matcher
       hole(key, excludes: :actual)
     end
 
+    def var(key)
+      hole = VariableHole.new(key)
+
+      Constant.new(hole).to_recorder
+    end
+
     def const(key)
       hole = ConstantHole.new(key)
 

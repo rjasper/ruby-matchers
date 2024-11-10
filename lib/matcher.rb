@@ -26,6 +26,7 @@ require 'matcher/patterns/capture_hole'
 require 'matcher/patterns/constant_hole'
 require 'matcher/patterns/method_hole'
 require 'matcher/patterns/pattern'
+require 'matcher/patterns/variable_hole'
 
 require 'matcher/abstract_phrasing'
 require 'matcher/assertions'
