@@ -100,6 +100,10 @@ describe Matcher::Call do
     examine.call('(_ + [1])[0]') { |x| (x + [1])[0] }
     examine.call('(_ + 1).foo') { |x| (x + 1).foo }
     examine.call('_[0] + [1]') { |x| x[0] + [1] }
+    examine.call('_ - _ - _') { |x| x - x - x }
+    examine.call('_ - (_ - _)') { |x| x - (x - x) }
+    examine.call('(_ == _) == _') { |x| (x == x) == x }
+    examine.call('_ == (_ == _)') { |x| x == (x == x) }
   end
   # rubocop:enable Style/CaseEquality, Layout/SpaceBeforeBrackets, Style/SymbolProc
 

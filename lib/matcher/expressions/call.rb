@@ -126,11 +126,13 @@ module Matcher
     end
 
     def precedence
-      has_precedence = (unary? && UNARY_OPERATORS.include?(@method)) ||
-        (binary? && BINARY_OPERATORS.include?(@method))
+      @precedence ||= begin
+        has_precedence = (unary? && UNARY_OPERATORS.include?(@method)) ||
+          (binary? && BINARY_OPERATORS.include?(@method))
 
-      # if method is not an operator then precedence is highest (-1)
-      has_precedence ? OPERATOR_PRECEDENCE[@method] : -1
+        # if method is not an operator then precedence is highest (-1)
+        has_precedence ? OPERATOR_PRECEDENCE[@method] : -1
+      end
     end
 
     def evaluate(values, chain = nil)
@@ -242,7 +244,7 @@ module Matcher
     end
 
     def to_s(substitutions: Expression.default_substitutions)
-      receiver = parenthesize(@receiver, substitutions)
+      receiver = parenthesize(@receiver, false, substitutions)
 
       case @method
       when :!, :~, :+@, :-@
@@ -250,10 +252,10 @@ module Matcher
         return "#{@method[0]}#{receiver}" if unary?
       when :+, :-, :*, :/, :%, :<, :>, :<=, :>=, :<=>, :==, :===, :!=, :=~, :!~, :&, :|, :^, :<<, :>>, :'&&', :'||'
         # foo + bar
-        return "#{receiver} #{@method} #{parenthesize(@args[0], substitutions)}" if binary?
+        return "#{receiver} #{@method} #{parenthesize(@args[0], true, substitutions)}" if binary?
       when :**
         # foo**2
-        return "#{receiver}**#{parenthesize(@args[0], substitutions)}" if binary?
+        return "#{receiver}**#{parenthesize(@args[0], true, substitutions)}" if binary?
       when :[]
         # foo[a, b, ...]
         return "#{receiver}[#{args_and_kwargs_string(substitutions)}]#{' { ... }' if @block}"
@@ -424,15 +426,24 @@ module Matcher
       list.join(', ')
     end
 
-    def parenthesize(operand, substitutions)
+    def parenthesize(operand, is_rhs, substitutions)
       return operand.inspect unless operand.is_a?(Expression)
 
       operand_string = operand.to_s(substitutions:)
 
       return operand_string unless operand.instance_of?(Call)
 
-      # if operand's precedence is lower (higher index) than ours
-      operand.precedence > precedence ? "(#{operand_string})" : operand_string
+      # parenthesize if operand's precedence is lower (higher index) than ours
+      need_parentheses = if is_rhs
+        # also parenthesize rhs if precedence is the same
+        operand.precedence >= precedence
+      else
+        # also parenthesize lhs if both operators are any of: <=> == === != =~ !~
+        operand.precedence > precedence ||
+          operand.precedence == precedence && %i[<=> == === != =~ !~].include?(@method)
+      end
+
+      need_parentheses ? "(#{operand_string})" : operand_string
     end
   end
 end
