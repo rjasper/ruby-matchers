@@ -23,7 +23,7 @@ module Matcher
 
     def check(actual)
       unless visited.add?(actual.object_id)
-        errors << expected(namespace: :reference).not_if(@negated).cyclic if
+        errors << expected.namespace(:reference).not_if(@negated).cyclic if
           @negated == @cyclic
 
         return
@@ -44,7 +44,7 @@ module Matcher
 
         errors << target_errors
       elsif !cached_result
-        errors << report(namespace: :reference).failed_from_cache
+        errors << report.namespace(:reference).failed_from_cache
       end
     end
 

@@ -35,7 +35,7 @@ module Matcher
       if @description
         expected.not_if(@negated).described_by(@description)
       else
-        expected(namespace: :block).not_if(@negated).satisfied(block_location)
+        expected.namespace(:block).not_if(@negated).satisfied(block_location)
       end
     end
 

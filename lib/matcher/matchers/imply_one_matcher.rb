@@ -28,12 +28,12 @@ module Matcher
         errors << if @else
           yield @else
         else
-          report(namespace: :imply_one).no_condition_satisfied(@matchers.map(&:condition))
+          report.namespace(:imply_one).no_condition_satisfied(@matchers.map(&:condition))
         end
 
         return
       elsif matchers.length > 1
-        errors << report(namespace: :imply_one).multiple_conditions_satisfied(matchers.map(&:condition))
+        errors << report.namespace(:imply_one).multiple_conditions_satisfied(matchers.map(&:condition))
       end
 
       matchers.each { errors << yield(_1.matcher) }

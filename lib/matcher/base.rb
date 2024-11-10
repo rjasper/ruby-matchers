@@ -83,12 +83,12 @@ module Matcher
       @stack.last.errors
     end
 
-    def report(actual = self.actual, namespace: nil)
-      MessageBuilder.new(namespace, false, actual)
+    def report(actual = self.actual)
+      StandardMessageBuilder.new(false, actual)
     end
 
-    def expected(actual = self.actual, namespace: nil)
-      MessageBuilder.new(namespace, true, actual)
+    def expected(actual = self.actual)
+      StandardMessageBuilder.new(true, actual)
     end
 
     def session(key = nil)

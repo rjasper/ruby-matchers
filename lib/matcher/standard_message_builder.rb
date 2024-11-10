@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
 module Matcher
-  class MessageBuilder
-    def initialize(namespace, negated, actual)
-      @namespace = namespace
-      @negated = negated
-      @actual = actual
+  class StandardMessageBuilder < BaseMessageBuilder
+    def namespace(namespace)
+      NamespacedMessageBuilder.new(@negated, @actual, namespace)
     end
 
     def not
-      MessageBuilder.new(@namespace, !@negated, @actual)
+      StandardMessageBuilder.new(!@negated, @actual)
     end
 
     def not_if(condition)
@@ -78,19 +76,6 @@ module Matcher
 
     def predicate(name)
       message(:predicate, name)
-    end
-
-    private
-
-    def message(key, *, **)
-      key = [@namespace, key] if @namespace
-
-      Message.new(key, @negated, @actual, *, **)
-    end
-    alias method_missing message
-
-    def respond_to_missing?(_name, _include_private = false)
-      true
     end
   end
 end

@@ -34,10 +34,10 @@ module Matcher
       if @time
         errors << expected.not_if(@negated).equal(@time) if @negated ^ (time != @time)
       elsif @negated
-        errors << expected(namespace: :iso8601).not.valid
+        errors << expected.namespace(:iso8601).not.valid
       end
     rescue ArgumentError
-      errors << expected(namespace: :iso8601).valid unless @negated
+      errors << expected.namespace(:iso8601).valid unless @negated
     end
     protected :check
 
