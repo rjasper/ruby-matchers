@@ -54,8 +54,8 @@ module Matcher
       message(:kind_of, klass)
     end
 
-    def length_of(length)
-      message(:length_of, length)
+    def length_of(exp, act)
+      message(:length_of, exp, act)
     end
 
     def matching(pattern)

@@ -20,7 +20,7 @@ module Matcher
         return
       end
 
-      errors << expected.length_of(@array.length) if @array.length != actual.length
+      errors << expected.length_of(@array.length, actual.length) if @array.length != actual.length
 
       [@array.length, actual.length].min.times do |i|
         errors[i] << yield(@array[i], actual[i], @index => i, @parent => actual)

@@ -23,7 +23,7 @@ module Matcher
       if @array.length != actual.length
         return if @negated
 
-        errors << expected.length_of(@array.length)
+        errors << expected.length_of(@array.length, actual.length)
       end
 
       missing = @array.clone

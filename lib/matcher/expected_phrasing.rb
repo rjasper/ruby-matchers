@@ -83,8 +83,8 @@ module Matcher
       "#{verb} a kind of #{klass} but got #{actual.inspect}"
     end
 
-    define(:length_of) do |length|
-      "#{verb} length of #{length} but got #{actual.length}"
+    define(:length_of) do |exp, act|
+      "#{verb} length of #{exp}#{" but was #{act}" if negated}"
     end
 
     define(:matching) do |pattern|

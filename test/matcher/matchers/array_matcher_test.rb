@@ -15,10 +15,10 @@ describe Matcher::ArrayMatcher do
 
     errors = matcher.match([1])
 
-    assert_errors errors, msg_not(:length_of, [1], 2)
-    assert_expected_errors errors, 'expected length of 2 but got 1'
+    assert_errors errors, msg_not(:length_of, [1], 2, 1)
+    assert_expected_errors errors, 'expected length of 2 but was 1'
 
-    assert_errors matcher.match([1, 2, 3]), msg_not(:length_of, [1, 2, 3], 2)
+    assert_errors matcher.match([1, 2, 3]), msg_not(:length_of, [1, 2, 3], 2, 3)
   end
 
   it 'match array' do
@@ -28,9 +28,9 @@ describe Matcher::ArrayMatcher do
     assert_expected_errors matcher.match(nil),
       'expected a kind of Array but got nil'
     assert_expected_errors matcher.match([]),
-      'expected length of 3 but got 0'
+      'expected length of 3 but was 0'
     assert_expected_errors matcher.match([1, 2, 3, 4]),
-      'expected length of 3 but got 4'
+      'expected length of 3 but was 4'
     assert_expected_errors matcher.match([4, 5, 6]),
       0 => 'expected 1 but got 4',
       1 => 'expected 2 but got 5',
