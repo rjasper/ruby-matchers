@@ -158,7 +158,7 @@ module Matcher
 
     namespace(:set) do
       define(:equal) do |set|
-        "#{verb} #{actual.inspect} to be an equal set to #{set.inspect}"
+        "#{verb} object to be an equal set to #{set.inspect} but got #{actual.inspect}"
       end
     end
 

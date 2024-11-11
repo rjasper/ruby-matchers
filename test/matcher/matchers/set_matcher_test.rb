@@ -23,7 +23,7 @@ describe Matcher::SetMatcher do
     negated = ~matcher
 
     assert_expected_errors negated.match([3, 1, 2]),
-      'did not expect [3, 1, 2] to be an equal set to [1, 2, 3]'
+      'did not expect object to be an equal set to [1, 2, 3] but got [3, 1, 2]'
 
     assert_predicate negated.match(nil), :valid?
     assert_predicate negated.match([]), :valid?
