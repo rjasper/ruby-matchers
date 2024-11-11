@@ -14,8 +14,8 @@ module Matcher
       condition ? self.not : self
     end
 
-    def between(range)
-      message(:between, range)
+    def between(min, max, exclude_end = false)
+      message(:between, min, max, exclude_end)
     end
 
     def equal(value)

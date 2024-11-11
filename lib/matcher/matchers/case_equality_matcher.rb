@@ -33,7 +33,7 @@ module Matcher
       when Class
         expected.not_if(@negated).kind_of(@object)
       when Range
-        expected.not_if(@negated).between(@object)
+        expected.not_if(@negated).between(@object.begin, @object.end, @object.exclude_end?)
       when Regexp
         expected.not_if(@negated).matching(@object)
       when Set

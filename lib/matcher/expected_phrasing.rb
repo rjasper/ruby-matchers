@@ -2,8 +2,9 @@
 
 module Matcher
   class ExpectedPhrasing < AbstractPhrasing
-    define(:between) do |range|
-      "#{verb} #{actual.inspect} to be between #{range}"
+    define(:between) do |min, max, exclude_end|
+      "#{verb} value to be between #{min.inspect} and " \
+        "#{max.inspect}#{' (exclusive)' if exclude_end} but got #{actual.inspect}"
     end
 
     define(:equal) do |value|

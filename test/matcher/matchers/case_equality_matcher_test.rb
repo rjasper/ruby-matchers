@@ -24,7 +24,7 @@ describe Matcher::CaseEqualityMatcher do
     assert_expected_errors Matcher::CaseEqualityMatcher.new(Set[2, 3]).match(1),
       'expected 1 to be included in #<Set: {2, 3}>'
     assert_expected_errors match(1) { 2..3 },
-      'expected 1 to be between 2..3'
+      'expected value to be between 2 and 3 but got 1'
     assert_expected_errors Matcher::CaseEqualityMatcher.new('foo').match('bar'),
       'expected "foo" but got "bar"'
 
@@ -35,7 +35,7 @@ describe Matcher::CaseEqualityMatcher do
     assert_expected_errors Matcher::CaseEqualityMatcher.new(Set[2, 3]).~.match(2),
       'did not expect 2 to be included in #<Set: {2, 3}>'
     assert_expected_errors not_match(2) { 1..3 },
-      'did not expect 2 to be between 1..3'
+      'did not expect value to be between 1 and 3 but got 2'
     assert_expected_errors Matcher::CaseEqualityMatcher.new('foo').~.match('foo'),
       'did not expect "foo"'
   end
