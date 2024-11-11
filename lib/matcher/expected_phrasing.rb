@@ -15,6 +15,11 @@ module Matcher
       end
     end
 
+    define(:same) do |object|
+      "#{verb} same as #{object.inspect} (id=#{object.object_id})" \
+        "#{" but got #{actual.inspect} (id=#{actual.object_id})" if negated}"
+    end
+
     define(:lower_than) do |operand|
       if negated || (actual <=> operand).nil?
         "#{verb} a value < #{operand.inspect} but got #{actual.inspect}"
