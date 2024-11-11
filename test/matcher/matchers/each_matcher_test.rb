@@ -8,7 +8,7 @@ describe Matcher::EachMatcher do
 
     assert_predicate matcher.match([1, 1, 1]), :valid?
     assert_expected_errors matcher.match(nil),
-      'expected nil to respond to :each'
+      "expected object to respond to `each' but got nil"
     assert_expected_errors matcher.match([1, 2, 3]),
       1 => 'expected 1 but got 2',
       2 => 'expected 1 but got 3'

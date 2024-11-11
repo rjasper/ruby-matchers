@@ -100,7 +100,7 @@ module Matcher
     end
 
     define(:responding_to) do |method|
-      "#{verb} #{actual.inspect} to respond to #{method.inspect}"
+      "#{verb} object to respond to `#{method}' but got #{actual.inspect}"
     end
 
     define(:predicate) do |predicate|

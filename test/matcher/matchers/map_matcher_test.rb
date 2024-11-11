@@ -13,7 +13,7 @@ describe Matcher::MapMatcher do
 
   it 'generates error messages' do
     assert_expected_errors match(nil) { map(_, [1]) },
-      'expected nil to respond to :map'
+      "expected object to respond to `map' but got nil"
     assert_expected_errors match([nil, nil]) { map(_[:foo], all) },
       0 => 'expected _ to respond to [] but got nil',
       1 => 'expected _ to respond to [] but got nil'

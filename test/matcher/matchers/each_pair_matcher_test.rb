@@ -11,7 +11,7 @@ describe Matcher::EachPairMatcher do
     assert_predicate matcher.match({ '1' => 1, 'a' => :a }), :valid?
 
     assert_expected_errors matcher.match([1, 2, 3]),
-      'expected [1, 2, 3] to respond to :each_pair'
+      "expected object to respond to `each_pair' but got [1, 2, 3]"
     assert_expected_errors matcher.match({ '1' => 1, 'a' => :a, 0 => '0' }),
       0 => 'expected k to be v.to_s ("0") but got 0 for v = "0"'
   end
