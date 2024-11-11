@@ -37,7 +37,7 @@ module Matcher
       when Regexp
         expected.not_if(@negated).matching(@object)
       when Set
-        expected.not_if(@negated).included_in(@object)
+        expected.not_if(@negated).in(@object)
       else
         expected.not_if(@negated).equal(@object)
       end

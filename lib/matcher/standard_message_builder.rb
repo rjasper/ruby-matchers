@@ -70,8 +70,12 @@ module Matcher
       message(:responding_to, method)
     end
 
-    def included_in(operand)
-      message(:included_in, operand)
+    def in(collection)
+      message(:in, collection)
+    end
+
+    def including(item)
+      message(:including, item)
     end
 
     def predicate(name)

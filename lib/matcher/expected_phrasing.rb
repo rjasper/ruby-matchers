@@ -91,8 +91,12 @@ module Matcher
       "#{verb} #{actual.inspect} to match #{pattern.inspect}"
     end
 
-    define(:included_in) do |collection|
-      "#{verb} #{actual.inspect} to be included in #{collection.inspect}"
+    define(:in) do |collection|
+      "#{verb} object to be included in #{collection.inspect} but got #{actual.inspect}"
+    end
+
+    define(:including) do |item|
+      "#{verb} #{item.inspect} to be included but got #{actual.inspect}"
     end
 
     define(:responding_to) do |method|
