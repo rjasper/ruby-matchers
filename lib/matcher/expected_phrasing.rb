@@ -88,7 +88,7 @@ module Matcher
     end
 
     define(:matching) do |pattern|
-      "#{verb} #{actual.inspect} to match #{pattern.inspect}"
+      "#{verb} value to match #{pattern.inspect} but got #{actual.inspect}"
     end
 
     define(:in) do |collection|

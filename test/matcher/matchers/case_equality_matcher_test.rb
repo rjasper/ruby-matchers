@@ -20,7 +20,7 @@ describe Matcher::CaseEqualityMatcher do
     assert_expected_errors match('hi') { Integer },
       'expected a kind of Integer but got "hi"'
     assert_expected_errors match('foo') { /bar/ },
-      'expected "foo" to match /bar/'
+      'expected value to match /bar/ but got "foo"'
     assert_expected_errors Matcher::CaseEqualityMatcher.new(Set[2, 3]).match(1),
       'expected object to be included in #<Set: {2, 3}> but got 1'
     assert_expected_errors match(1) { 2..3 },
@@ -31,7 +31,7 @@ describe Matcher::CaseEqualityMatcher do
     assert_expected_errors not_match(1) { Integer },
       'did not expect a kind of Integer but got 1'
     assert_expected_errors not_match('foobar') { /bar/ },
-      'did not expect "foobar" to match /bar/'
+      'did not expect value to match /bar/ but got "foobar"'
     assert_expected_errors Matcher::CaseEqualityMatcher.new(Set[2, 3]).~.match(2),
       'did not expect object to be included in #<Set: {2, 3}> but got 2'
     assert_expected_errors not_match(2) { 1..3 },
