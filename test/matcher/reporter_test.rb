@@ -9,11 +9,11 @@ describe Matcher::Reporter do
     errors = _and(
       element('base wrong'),
       nested(:nested, element('nested wrong')),
-      nested(:foo, nested(Matcher::Call.build(&:bar), element('foobar'))),
-      nested(Matcher::Call.build { |_| _ + _ }, element('2 roots')),
+      nested(:foo, nested(expression { _.bar }, element('foobar'))),
+      nested(expression { _ + _ }, element('2 roots')),
       nested(:too_long,
-        nested(Matcher::Call.build { |_| _ + _ + _ }, element('3 long roots'))),
-      nested(Matcher::Call.build { |_| math.to_recorder.sqrt(_) }, element('square root of root')),
+        nested(expression { _ + _ + _ }, element('3 long roots'))),
+      nested(expression { math.to_recorder.sqrt(_) }, element('square root of root')),
       _or(
         element('either correct this'),
         _and(

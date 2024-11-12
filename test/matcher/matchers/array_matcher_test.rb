@@ -38,11 +38,8 @@ describe Matcher::ArrayMatcher do
   end
 
   it 'pass index' do
-    expression = Matcher::Call.build(:actual, :index) do |_, i|
-      _ == i * 10
-    end
-
-    item_matcher = Matcher.of(expression)
+    exp = expression { _ == i * 10 }
+    item_matcher = Matcher.of(exp)
 
     matcher = Matcher::ArrayMatcher.new([item_matcher, item_matcher, item_matcher])
 

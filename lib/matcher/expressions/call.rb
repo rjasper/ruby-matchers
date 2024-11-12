@@ -4,16 +4,6 @@ module Matcher
   class Call < Expression
     attr_reader :receiver, :method, :args, :kwargs, :block
 
-    def self.build(*symbols)
-      symbols.unshift(:actual) if symbols.empty?
-
-      recorders = symbols.map { Variable.new(_1).to_recorder }
-
-      recorder = yield *recorders
-
-      ExpressionRecorder.to_expression(recorder)
-    end
-
     UNARY_OPERATORS = %i[! ~ +@ -@].freeze
     BINARY_OPERATORS = %i[+ - * ** / % < > <= >= <=> == === != =~ !~ & | ^ << >> && ||].freeze
 

@@ -7,7 +7,7 @@ Variable = Matcher::Variable
 
 describe Matcher::Call do
   it 'returns operand of assignment' do
-    call = Matcher::Expression.build do
+    call = expression do
       assign { _.foo = 2 }
     end
 
@@ -17,122 +17,122 @@ describe Matcher::Call do
     assert_equal 2, struct.foo
   end
 
-  # rubocop:disable Style/CaseEquality, Layout/SpaceBeforeBrackets, Style/SymbolProc
+  # rubocop:disable Style/CaseEquality, Layout/SpaceBeforeBrackets
   it '#to_s' do
     examine = lambda do |expected, &block|
-      assert_equal expected, Call.build(&block).to_s
+      assert_equal expected, expression(&block).to_s
     end
 
-    examine.call('_') { _1 }
-    examine.call('!_') { !_1 }
-    examine.call('~_') { ~_1 }
-    examine.call('+_') { +_1 }
-    examine.call('-_') { -_1 }
+    examine.call('_') { _ }
+    examine.call('!_') { !_ }
+    examine.call('~_') { ~_ }
+    examine.call('+_') { +_ }
+    examine.call('-_') { -_ }
 
-    examine.call('_ + 2') { _1 + 2 }
-    examine.call('_ - 2') { _1 - 2 }
-    examine.call('_ * 2') { _1 * 2 }
-    examine.call('_ / 2') { _1 / 2 }
-    examine.call('_ % 2') { _1 % 2 }
-    examine.call('_ < 2') { _1 < 2 }
-    examine.call('_ > 2') { _1 > 2 }
-    examine.call('_ <= 2') { _1 <= 2 }
-    examine.call('_ >= 2') { _1 >= 2 }
-    examine.call('_ <=> 2') { _1 <=> 2 }
-    examine.call('_ == 2') { _1 == 2 }
-    examine.call('_ === 2') { _1 === 2 }
-    examine.call('_ != 2') { _1 != 2 }
-    examine.call('_ =~ 2') { _1 =~ 2 }
-    examine.call('_ !~ 2') { _1 !~ 2 }
-    examine.call('_ & 2') { _1 & 2 }
-    examine.call('_ | 2') { _1 | 2 }
-    examine.call('_ ^ 2') { _1 ^ 2 }
-    examine.call('_ << 2') { _1 << 2 }
-    examine.call('_ >> 2') { _1 >> 2 }
+    examine.call('_ + 2') { _ + 2 }
+    examine.call('_ - 2') { _ - 2 }
+    examine.call('_ * 2') { _ * 2 }
+    examine.call('_ / 2') { _ / 2 }
+    examine.call('_ % 2') { _ % 2 }
+    examine.call('_ < 2') { _ < 2 }
+    examine.call('_ > 2') { _ > 2 }
+    examine.call('_ <= 2') { _ <= 2 }
+    examine.call('_ >= 2') { _ >= 2 }
+    examine.call('_ <=> 2') { _ <=> 2 }
+    examine.call('_ == 2') { _ == 2 }
+    examine.call('_ === 2') { _ === 2 }
+    examine.call('_ != 2') { _ != 2 }
+    examine.call('_ =~ 2') { _ =~ 2 }
+    examine.call('_ !~ 2') { _ !~ 2 }
+    examine.call('_ & 2') { _ & 2 }
+    examine.call('_ | 2') { _ | 2 }
+    examine.call('_ ^ 2') { _ ^ 2 }
+    examine.call('_ << 2') { _ << 2 }
+    examine.call('_ >> 2') { _ >> 2 }
 
     Matcher.with_settings(logical_operators: true) do
-      examine.call('_ && 2') { _1 & 2 }
-      examine.call('_ || 2') { _1 | 2 }
+      examine.call('_ && 2') { _ & 2 }
+      examine.call('_ || 2') { _ | 2 }
     end
 
-    examine.call('_**2') { _1**2 }
+    examine.call('_**2') { _**2 }
 
-    examine.call('_[1, 2, a: 3]') { _1[1, 2, a: 3] }
-    examine.call('_[1, 2, a: 3] { ... }') { _1[1, 2, a: 3] { 4 } }
+    examine.call('_[1, 2, a: 3]') { _[1, 2, a: 3] }
+    examine.call('_[1, 2, a: 3] { ... }') { _[1, 2, a: 3] { 4 } }
 
-    examine.call('_[1] = 2') { _1.[]=(1, 2) }
-    examine.call('_[1, 2] = 3') { _1.[]=(1, 2, 3) }
+    examine.call('_[1] = 2') { _.[]=(1, 2) }
+    examine.call('_[1, 2] = 3') { _.[]=(1, 2, 3) }
 
     assert_equal '_.foo = "bar"',
       Call.new(Variable.actual, :foo=, ['bar']).to_s
 
-    examine.call('_.foo') { _1.foo }
-    examine.call('_.foo(1, a: 2)') { _1.foo(1, a: 2) }
-    examine.call('_.foo { 2 }') { _1.foo { 2 } }
-    examine.call('_.foo(&:bar)') { _1.foo(&:bar) }
-    examine.call('_.foo(1, a: 2) { 3 }') { _1.foo(1, a: 2) { 3 } }
+    examine.call('_.foo') { _.foo }
+    examine.call('_.foo(1, a: 2)') { _.foo(1, a: 2) }
+    examine.call('_.foo { 2 }') { _.foo { 2 } }
+    examine.call('_.foo(&:bar)') { _.foo(&:bar) }
+    examine.call('_.foo(1, a: 2) { 3 }') { _.foo(1, a: 2) { 3 } }
 
-    examine.call('_.+@(1)') { _1.+@(1) }
-    examine.call('_.+@ { "" }') { _1.+@ { '' } }
+    examine.call('_.+@(1)') { _.+@(1) }
+    examine.call('_.+@ { "" }') { _.+@ { '' } }
 
-    examine.call('_.+') { _1.+ }
-    examine.call('_.+(1, 2)') { _1.+(1, 2) }
-    examine.call('_.+ { 1 }') { _1.+ { 1 } }
+    examine.call('_.+') { _.+ }
+    examine.call('_.+(1, 2)') { _.+(1, 2) }
+    examine.call('_.+ { 1 }') { _.+ { 1 } }
 
-    examine.call('_.**') { _1.** }
-    examine.call('_.**(1, 2)') { _1.**(1, 2) }
-    examine.call('_.** { 1 }') { _1.** { 1 } }
+    examine.call('_.**') { _.** }
+    examine.call('_.**(1, 2)') { _.**(1, 2) }
+    examine.call('_.** { 1 }') { _.** { 1 } }
 
-    examine.call('_.[]=') { _1.[]= }
-    examine.call('_.[]=(1)') { _1.[]=(1) }
-    examine.call('_.[]=(1, 2, a: 3)') { _1.[]=(1, 2, a: 3) }
-    examine.call('_.[]=(1, 2) { 3 }') { _1.[]=(1, 2) { 3 } }
-    examine.call('_.[]= { 1 }') { _1.[]= { 1 } }
+    examine.call('_.[]=') { _.[]= }
+    examine.call('_.[]=(1)') { _.[]=(1) }
+    examine.call('_.[]=(1, 2, a: 3)') { _.[]=(1, 2, a: 3) }
+    examine.call('_.[]=(1, 2) { 3 }') { _.[]=(1, 2) { 3 } }
+    examine.call('_.[]= { 1 }') { _.[]= { 1 } }
 
     # precedence and parentheses
-    examine.call('(_ + 1) * 2') { |x| (x + 1) * 2 }
-    examine.call('_ + 1') { |x| x + 1 }
-    examine.call('_ + _ * 2') { |x| x + x * 2 }
-    examine.call('_ * (_ + 2)') { |x| x * (x + 2) }
-    examine.call('_ + _ - 1') { |x| x + x - 1 }
-    examine.call('-(_ + 1)') { |x| -(x + 1) }
-    examine.call('-_ + 1') { |x| -x + 1 }
-    examine.call('(_ + [1])[0]') { |x| (x + [1])[0] }
-    examine.call('(_ + 1).foo') { |x| (x + 1).foo }
-    examine.call('_[0] + [1]') { |x| x[0] + [1] }
-    examine.call('_ - _ - _') { |x| x - x - x }
-    examine.call('_ - (_ - _)') { |x| x - (x - x) }
-    examine.call('(_ == _) == _') { |x| (x == x) == x }
-    examine.call('_ == (_ == _)') { |x| x == (x == x) }
+    examine.call('(_ + 1) * 2') { (_ + 1) * 2 }
+    examine.call('_ + 1') { _ + 1 }
+    examine.call('_ + _ * 2') { _ + _ * 2 }
+    examine.call('_ * (_ + 2)') { _ * (_ + 2) }
+    examine.call('_ + _ - 1') { _ + _ - 1 }
+    examine.call('-(_ + 1)') { -(_ + 1) }
+    examine.call('-_ + 1') { -_ + 1 }
+    examine.call('(_ + [1])[0]') { (_ + [1])[0] }
+    examine.call('(_ + 1).foo') { (_ + 1).foo }
+    examine.call('_[0] + [1]') { _[0] + [1] }
+    examine.call('_ - _ - _') { _ - _ - _ }
+    examine.call('_ - (_ - _)') { _ - (_ - _) }
+    examine.call('(_ == _) == _') { (_ == _) == _ }
+    examine.call('_ == (_ == _)') { _ == (_ == _) }
   end
-  # rubocop:enable Style/CaseEquality, Layout/SpaceBeforeBrackets, Style/SymbolProc
+  # rubocop:enable Style/CaseEquality, Layout/SpaceBeforeBrackets
 
   it 'negated' do
     examine = lambda do |expected, &block|
-      assert_equal expected, Call.build(&block).negated.to_s
+      assert_equal expected, expression(&block).negated.to_s
     end
 
-    examine.call('!_') { _1 }
-    examine.call('_') { !_1 }
-    examine.call('_ != 2') { _1 == 2 }
-    examine.call('_ == 2') { _1 != 2 }
-    examine.call('_ !~ 2') { _1 =~ 2 }
-    examine.call('_ =~ 2') { _1 !~ 2 }
-    examine.call('_ >= 2') { _1 < 2 }
-    examine.call('_ <= 2') { _1 > 2 }
-    examine.call('_ > 2') { _1 <= 2 }
-    examine.call('_ < 2') { _1 >= 2 }
+    examine.call('!_') { _ }
+    examine.call('_') { !_ }
+    examine.call('_ != 2') { _ == 2 }
+    examine.call('_ == 2') { _ != 2 }
+    examine.call('_ !~ 2') { _ =~ 2 }
+    examine.call('_ =~ 2') { _ !~ 2 }
+    examine.call('_ >= 2') { _ < 2 }
+    examine.call('_ <= 2') { _ > 2 }
+    examine.call('_ > 2') { _ <= 2 }
+    examine.call('_ < 2') { _ >= 2 }
 
     Matcher.with_settings(logical_operators: true) do
-      examine.call('!_ || false') { _1 & 2 }
-      examine.call('!_ && false') { _1 | 2 }
+      examine.call('!_ || false') { _ & 2 }
+      examine.call('!_ && false') { _ | 2 }
     end
   end
 
   it 'logical operators' do
     call = Matcher.with_settings(logical_operators: true) do
-      Call.build(:a, :b, :c) do |a, b, c|
-        a | b & c
+      expression do
+        vars[:a] | vars[:b] & vars[:c]
       end
     end
 
@@ -144,15 +144,13 @@ describe Matcher::Call do
   end
 
   it '#to_s: root' do
-    expression = Call.build { _1.bar + 1 }
+    exp = expression { _.bar + 1 }
 
-    assert_equal 'foo.bar + 1', expression.to_s(substitutions: { actual: 'foo' })
+    assert_equal 'foo.bar + 1', exp.to_s(substitutions: { actual: 'foo' })
   end
 
   it 'records class' do
-    expression = Call.build { _1.class } # rubocop:disable Style/SymbolProc
-
-    assert_equal :class, expression.method
+    assert_equal :class, expression { _.class }.method
   end
 
   it 'records instance_exec' do
@@ -162,12 +160,10 @@ describe Matcher::Call do
       end
     end
 
-    expression = Call.build do |obj|
-      Matcher.with_settings(pass_through_blocks: true) do
-        obj.instance_exec { @foo }
-      end
+    exp = expression do
+      pass_through_blocks { _.instance_exec { @foo } }
     end
 
-    assert_equal 'foo', expression.evaluate({ actual: klass.new })
+    assert_equal 'foo', exp.evaluate({ actual: klass.new })
   end
 end

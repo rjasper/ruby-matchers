@@ -7,7 +7,7 @@ Call = Matcher::Call
 
 describe Matcher::Errors::Nested do
   it '::from: simple key' do
-    assert_equal Nested.new(Call.build { _1[:foo] }, element('foo is wrong')),
+    assert_equal Nested.new(expression { _[:foo] }, element('foo is wrong')),
       Nested.from(:foo, element('foo is wrong'))
   end
 
@@ -16,10 +16,10 @@ describe Matcher::Errors::Nested do
   end
 
   it '::from: expression key' do
-    expression = Call.build { _1 + 1 }
+    exp = expression { _ + 1 }
 
-    assert_equal Nested.new(expression, element('something went wrong')),
-      Nested.from(expression, element('something went wrong'))
+    assert_equal Nested.new(exp, element('something went wrong')),
+      Nested.from(exp, element('something went wrong'))
   end
 
   it '::from: constant expression root' do
@@ -33,9 +33,7 @@ describe Matcher::Errors::Nested do
   end
 
   it '::from: root expression key' do
-    expression = Call.build { _1 }
-
     assert_equal element('something went wrong'),
-      Nested.from(expression, element('something went wrong'))
+      Nested.from(Variable.actual, element('something went wrong'))
   end
 end

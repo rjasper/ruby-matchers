@@ -93,7 +93,7 @@ describe 'examples' do
     assert_predicate matcher.match(%w[123 456]), :valid?
 
     assert_expected_errors matcher.match(%w[123 456 7890]),
-      2 => { Matcher::Call.build { _1.length } => 'expected 3 but got 4' }
+      2 => { expression { _.length } => 'expected 3 but got 4' }
   end
 
   it 'expressions: constant receiver' do

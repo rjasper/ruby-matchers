@@ -111,7 +111,8 @@ describe Matcher::Builder do
       assign { _.foo += 1 }
     end
 
-    expected = Matcher::Call.new(Matcher::Variable.actual, :foo=, [Matcher::Call.build { |_| _.foo + 1 }])
+    operand = expression { _.foo + 1 }
+    expected = Matcher::Call.new(Matcher::Variable.actual, :foo=, [operand])
 
     assert_kind_of Matcher::ExpressionMatcher, matcher
     assert_equal expected,

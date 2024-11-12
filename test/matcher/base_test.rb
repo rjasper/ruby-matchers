@@ -10,7 +10,7 @@ describe Matcher::Base do
 
     Matcher.stub(:max_depth, 2) do
       assert_errors matcher.match(Object.new),
-        expr { _1.dup } => { expr { _1.dup } => 'match level too deep: 3' }
+        expression { _.dup.dup } => 'match level too deep: 3'
     end
   end
 end

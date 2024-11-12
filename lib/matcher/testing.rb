@@ -23,8 +23,8 @@ module Matcher
       HashMatcher.new(hash)
     end
 
-    def expr(&)
-      Call.build(&)
+    def expression(&)
+      Expression.build(&)
     end
 
     def empty
