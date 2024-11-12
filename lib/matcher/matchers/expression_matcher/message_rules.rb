@@ -95,12 +95,12 @@ module Matcher
 
       # falsy
       message !_ do
-        standard_message.falsy
+        standard_message.not.truthy
       end
 
       # falsy expression
       message !hole(:expression) do |v, e|
-        expression_message.falsy(e[:expression], v[:expression], given)
+        expression_message.not.truthy(e[:expression], v[:expression], given)
       end
 
       # transform instance_of?

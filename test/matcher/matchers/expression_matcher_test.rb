@@ -259,11 +259,11 @@ describe Matcher::ExpressionMatcher do
     assert_expected_errors match(Unmatchable.new) { _.itself =~ 'foo' },
       'expected _.itself =~ "foo" to be truthy but got nil, where _ = unmatchable'
     assert_expected_errors not_match(Unmatchable.new) { _.itself !~ 'foo' },
-      'did not expect _.itself !~ "foo" to be truthy but got true, where _ = unmatchable'
+      'expected _.itself !~ "foo" to be falsy but got true, where _ = unmatchable'
     assert_expected_errors match(Matchable.new) { _.itself !~ 'foo' },
       'expected _.itself !~ "foo" to be truthy but got false, where _ = matchable'
     assert_expected_errors not_match(Matchable.new) { _.itself =~ 'foo' },
-      'did not expect _.itself =~ "foo" to be truthy but got 0, where _ = matchable'
+      'expected _.itself =~ "foo" to be falsy but got 0, where _ = matchable'
   end
 
   it 'matches regexp at' do

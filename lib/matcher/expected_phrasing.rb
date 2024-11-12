@@ -57,19 +57,10 @@ module Matcher
     end
 
     define(:truthy) do
-      if negated
-        "#{verb} a truthy value but got #{actual.inspect}"
-      else
-        phrase_negated(:falsy)
-      end
-    end
+      verb = verb(negated: true)
+      truthy_or_falsy = negated ? 'truthy' : 'falsy'
 
-    define(:falsy) do
-      if negated
-        "#{verb} a falsy value but got #{actual.inspect}"
-      else
-        phrase_negated(:truthy)
-      end
+      "#{verb} a #{truthy_or_falsy} value but got #{actual.inspect}"
     end
 
     define(:described_by) do |description|
@@ -164,12 +155,10 @@ module Matcher
 
     namespace(:expression) do
       define(:truthy) do |expression, value, given|
-        "#{verb} #{expression} to be truthy " \
-          "but got #{value.inspect}#{where_text(given, expression)}"
-      end
+        verb = verb(negated: true)
+        truthy_or_falsy = negated ? 'truthy' : 'falsy'
 
-      define(:falsy) do |expression, value, given|
-        "#{verb} #{expression} to be falsy " \
+        "#{verb} #{expression} to be #{truthy_or_falsy} " \
           "but got #{value.inspect}#{where_text(given, expression)}"
       end
 
