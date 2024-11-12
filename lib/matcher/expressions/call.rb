@@ -252,7 +252,7 @@ module Matcher
         end
       when :[]
         # foo[a, b, ...]
-        return "#{receiver}[#{args_and_kwargs_string(substitutions)}]#{' { ... }' if @block}"
+        return "#{receiver}[#{args_and_kwargs_string(substitutions)}]#{block_string}"
       when :[]=
         # foo[a, b, ...] = 1
         if @args.length >= 2 && @kwargs.empty? && !@block
@@ -273,12 +273,7 @@ module Matcher
         args_and_kwargs = args_and_kwargs_string(substitutions)
         string = "#{receiver}.#{@method}"
         string += "(#{args_and_kwargs})" unless args_and_kwargs.empty?
-
-        if @block.is_a?(Block)
-          string += " #{@block.to_s(as_block: true)}"
-        elsif @block && !@block.is_a?(SymbolProc)
-          string += ' { ... }'
-        end
+        string += block_string
 
         string
       end
@@ -418,6 +413,16 @@ module Matcher
       list << "&#{@block.symbol.inspect}" if @block&.is_a?(SymbolProc)
 
       list.join(', ')
+    end
+
+    def block_string
+      if @block.is_a?(Block)
+        " #{@block.to_s(as_block: true)}"
+      elsif @block && !@block.is_a?(SymbolProc)
+        ' { ... }'
+      else
+        ''
+      end
     end
 
     def parenthesize(operand, is_rhs, substitutions)
