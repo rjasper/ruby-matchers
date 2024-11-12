@@ -18,9 +18,7 @@ module Matcher
       []
     end
 
-    def evaluate(_values, chain = nil)
-      chain << @constant if chain
-
+    def evaluate(_values)
       @constant
     end
 

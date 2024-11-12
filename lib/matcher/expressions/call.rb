@@ -125,8 +125,8 @@ module Matcher
       end
     end
 
-    def evaluate(values, chain = nil)
-      receiver = @receiver.evaluate(values, chain)
+    def evaluate(values)
+      receiver = @receiver.evaluate(values)
 
       return receiver if lazy?(receiver)
 
@@ -136,7 +136,6 @@ module Matcher
       return args[0] if logical_operator?
 
       invoke(values, receiver, args, kwargs)
-        .tap { chain&.push(_1) }
     end
 
     def evaluate_tree(values)
