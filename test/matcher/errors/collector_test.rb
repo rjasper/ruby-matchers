@@ -48,12 +48,12 @@ describe Matcher::Errors::Collector do
   end
 
   it 'nested via expression' do
-    expression = Matcher::Call.build { _1[:foo][:bar] }
+    expression = Matcher::Call.build { _1[:foo] }
 
     collector = Collector.new
     collector[expression] << element('foobar')
 
-    assert_equal nested(:foo, nested(:bar, element('foobar'))), collector.node
+    assert_equal nested(:foo, element('foobar')), collector.node
   end
 
   it '#<<: base error' do

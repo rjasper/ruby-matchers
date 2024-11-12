@@ -13,6 +13,8 @@ module Matcher
 
       def check(expected, actual)
         labeler = ErrorNodeLabeler.new(@phrasing)
+        expected = normalize(expected)
+        actual = normalize(actual)
         expected_label, expected_leaves = labeler.label_tree(expected)
         actual_label, actual_leaves = labeler.label_tree(actual)
 
@@ -29,16 +31,39 @@ module Matcher
 
         <<~TEXT
           expected:
-          
+
           #{reporter.report(expected).chomp}
-          
+
           but got:
-          
+
           #{reporter.report(actual).chomp}
         TEXT
       end
 
       private
+
+      def normalize(node, path = nil)
+        case node
+        when Errors::Empty
+          node
+        when Errors::And, Errors::Or
+          children = node.nodes.map { normalize(_1) }
+
+          if node.nodes.lazy.zip(children).all? { _1.equal?(_2) }
+            node
+          else
+            node.class.new(children)
+          end
+        when Errors::Element
+          path ? Errors::Nested.from(path, node) : node
+        when Errors::Nested
+          key = path ? key.new_root(path) : key
+
+          normalize(node.node, key)
+        else
+          raise "Unexpected node: #{node.inspect}"
+        end
+      end
 
       def missing_message(prefix, missing)
         return nil if missing.empty?

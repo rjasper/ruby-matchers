@@ -21,17 +21,11 @@ module Matcher
         return
       end
 
-      errors[path] << yield(@neg_matcher, result)
+      errors[@expression] << yield(@neg_matcher, result)
     end
 
     def to_s
       "~project(#{@expression}, #{@matcher})"
-    end
-
-    private
-
-    def path
-      @path ||= NestedExpressionNormalizer.normalize(@expression)
     end
   end
 end

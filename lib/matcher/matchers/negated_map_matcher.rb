@@ -40,11 +40,5 @@ module Matcher
     def to_s
       "~map(#{@projection}, #{@matcher})"
     end
-
-    private
-
-    def path
-      @path ||= NestedExpressionNormalizer.normalize(@projection)
-    end
   end
 end

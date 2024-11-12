@@ -4,37 +4,26 @@ module Matcher
   module Errors
     class Nested < Node
       def self.from(key, node)
-        return node if node.is_a?(Empty)
+        return node if node.is_a?(Empty) || key == Variable.actual
 
-        keys = if key.is_a?(Array)
-          key
-        elsif key.is_a?(Expression)
-          NestedExpressionNormalizer.normalize(key)
-        else
-          return Nested.new(key, node)
-        end
+        key = Call.new(Variable.actual, :[], [Constant.new(key)]) unless key.is_a?(Expression)
 
-        keys.reverse_each.reduce(node) { Nested.new(_2, _1) }
+        Nested.new(key, node)
       end
 
       def self.key_to_s(key, path)
-        case key
-        when Expression
-          remaining = 20 + path.length
-          key.visit do |expr|
-            next if !expr.is_a?(Variable) || expr.symbol != :actual
+        remaining = 20 + path.length
+        key.visit do |expr|
+          next if !expr.is_a?(Variable) || expr.symbol != :actual
 
-            remaining -= path.length
-            break if remaining < 0
-          end
+          remaining -= path.length
+          break if remaining < 0
+        end
 
-          if remaining >= 0
-            key.to_s(substitutions: { actual: path })
-          else
-            "#{path} -> #{key}"
-          end
+        if remaining >= 0
+          key.to_s(substitutions: { actual: path })
         else
-          "#{path}[#{key.inspect}]"
+          "#{path} -> #{key}"
         end
       end
 

@@ -6,25 +6,19 @@ Nested = Matcher::Errors::Nested
 Call = Matcher::Call
 
 describe Matcher::Errors::Nested do
-  it '::from: simple expression key' do
-    assert_equal nested(:foo, element('foo is wrong')),
-      Nested.from(Call.build { _1[:foo] }, element('foo is wrong'))
+  it '::from: simple key' do
+    assert_equal Nested.new(Call.build { _1[:foo] }, element('foo is wrong')),
+      Nested.from(:foo, element('foo is wrong'))
   end
 
-  it '::from: empty keys' do
-    assert_equal element('foo is wrong'),
-      Nested.from([], element('foo is wrong'))
+  it '::from: empty error' do
+    assert_equal empty, Nested.from(:foo, empty)
   end
 
-  it '::from: chained expression key' do
-    assert_equal nested(:foo, nested(:bar, element('foo is wrong'))),
-      Nested.from(Call.build { _1[:foo][:bar] }, element('foo is wrong'))
-  end
-
-  it '::from: advanced expression key' do
+  it '::from: expression key' do
     expression = Call.build { _1 + 1 }
 
-    assert_equal nested(expression, element('something went wrong')),
+    assert_equal Nested.new(expression, element('something went wrong')),
       Nested.from(expression, element('something went wrong'))
   end
 

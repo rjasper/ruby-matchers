@@ -36,7 +36,7 @@ module Matcher
     end
 
     def nested(key, node)
-      Errors::Nested.new(key, node)
+      Errors::Nested.from(key, node)
     end
 
     def _and(*nodes)

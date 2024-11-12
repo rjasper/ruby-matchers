@@ -99,9 +99,18 @@ module Matcher
           children = node.nodes.map { map_errors(_1) }
           node.class.new(children)
         when Errors::Nested
-          if node.key.is_a?(Integer)
-            nested_projection = Errors::Nested.from(path, node.node)
-            Errors::Nested.from(node.key, nested_projection)
+          key = node.key
+
+          is_index = key.is_a?(Call) &&
+            key.binary? &&
+            key.receiver == Variable.actual &&
+            (operand = key.args[0]) &&
+            operand.is_a?(Constant) &&
+            operand.constant.is_a?(Integer)
+
+          if is_index
+            nested_projection = Errors::Nested.from(@projection, node.node)
+            Errors::Nested.from(key, nested_projection)
           else
             node
           end
@@ -110,10 +119,6 @@ module Matcher
         else
           raise "Unexpected node: #{node.inspect}"
         end
-      end
-
-      def path
-        @path ||= NestedExpressionNormalizer.normalize(@projection)
       end
 
       def nested_key
