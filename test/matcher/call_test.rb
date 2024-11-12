@@ -23,85 +23,83 @@ describe Matcher::Call do
       assert_equal expected, expression(&block).to_s
     end
 
-    examine.call('_') { _ }
-    examine.call('!_') { !_ }
-    examine.call('~_') { ~_ }
-    examine.call('+_') { +_ }
-    examine.call('-_') { -_ }
+    examine['_'] { _ }
+    examine['!_'] { !_ }
+    examine['~_'] { ~_ }
+    examine['+_'] { +_ }
+    examine['-_'] { -_ }
 
-    examine.call('_ + 2') { _ + 2 }
-    examine.call('_ - 2') { _ - 2 }
-    examine.call('_ * 2') { _ * 2 }
-    examine.call('_ / 2') { _ / 2 }
-    examine.call('_ % 2') { _ % 2 }
-    examine.call('_ < 2') { _ < 2 }
-    examine.call('_ > 2') { _ > 2 }
-    examine.call('_ <= 2') { _ <= 2 }
-    examine.call('_ >= 2') { _ >= 2 }
-    examine.call('_ <=> 2') { _ <=> 2 }
-    examine.call('_ == 2') { _ == 2 }
-    examine.call('_ === 2') { _ === 2 }
-    examine.call('_ != 2') { _ != 2 }
-    examine.call('_ =~ 2') { _ =~ 2 }
-    examine.call('_ !~ 2') { _ !~ 2 }
-    examine.call('_ & 2') { _ & 2 }
-    examine.call('_ | 2') { _ | 2 }
-    examine.call('_ ^ 2') { _ ^ 2 }
-    examine.call('_ << 2') { _ << 2 }
-    examine.call('_ >> 2') { _ >> 2 }
+    examine['_ + 2'] { _ + 2 }
+    examine['_ - 2'] { _ - 2 }
+    examine['_ * 2'] { _ * 2 }
+    examine['_ / 2'] { _ / 2 }
+    examine['_ % 2'] { _ % 2 }
+    examine['_ < 2'] { _ < 2 }
+    examine['_ > 2'] { _ > 2 }
+    examine['_ <= 2'] { _ <= 2 }
+    examine['_ >= 2'] { _ >= 2 }
+    examine['_ <=> 2'] { _ <=> 2 }
+    examine['_ == 2'] { _ == 2 }
+    examine['_ === 2'] { _ === 2 }
+    examine['_ != 2'] { _ != 2 }
+    examine['_ =~ 2'] { _ =~ 2 }
+    examine['_ !~ 2'] { _ !~ 2 }
+    examine['_ & 2'] { _ & 2 }
+    examine['_ | 2'] { _ | 2 }
+    examine['_ ^ 2'] { _ ^ 2 }
+    examine['_ << 2'] { _ << 2 }
+    examine['_ >> 2'] { _ >> 2 }
 
-    Matcher.with_settings(logical_operators: true) do
-      examine.call('_ && 2') { _ & 2 }
-      examine.call('_ || 2') { _ | 2 }
-    end
+    examine['_ && 2'] { logical_operators { _ & 2 } }
+    examine['_ || 2'] { logical_operators { _ | 2 } }
 
-    examine.call('_**2') { _**2 }
+    examine['_**2'] { _**2 }
 
-    examine.call('_[1, 2, a: 3]') { _[1, 2, a: 3] }
-    examine.call('_[1, 2, a: 3] { ... }') { _[1, 2, a: 3] { 4 } }
+    examine['_[1, 2, a: 3]'] { _[1, 2, a: 3] }
+    examine['_[1, 2, a: 3] { ... }'] { _[1, 2, a: 3] { 4 } }
 
-    examine.call('_[1] = 2') { _.[]=(1, 2) }
-    examine.call('_[1, 2] = 3') { _.[]=(1, 2, 3) }
-    examine.call('_.foo = "bar"') { assign { _.foo = 'bar' } }
+    examine['_[1] = 2'] { _.[]=(1, 2) }
+    examine['_[1, 2] = 3'] { _.[]=(1, 2, 3) }
+    examine['_.foo = "bar"'] { assign { _.foo = 'bar' } }
 
-    examine.call('_.foo') { _.foo }
-    examine.call('_.foo(1, a: 2)') { _.foo(1, a: 2) }
-    examine.call('_.foo { 2 }') { _.foo { 2 } }
-    examine.call('_.foo(&:bar)') { _.foo(&:bar) }
-    examine.call('_.foo(1, a: 2) { 3 }') { _.foo(1, a: 2) { 3 } }
+    examine['_.foo'] { _.foo }
+    examine['_.foo(1, a: 2)'] { _.foo(1, a: 2) }
+    examine['_.foo { 2 }'] { _.foo { 2 } }
+    examine['_.foo(&:bar)'] { _.foo(&:bar) }
+    examine['_.foo(1, a: 2) { 3 }'] { _.foo(1, a: 2) { 3 } }
 
-    examine.call('_.+@(1)') { _.+@(1) }
-    examine.call('_.+@ { "" }') { _.+@ { '' } }
+    examine['_.+@(1)'] { _.+@(1) }
+    examine['_.+@ { "" }'] { _.+@ { '' } }
 
-    examine.call('_.+') { _.+ }
-    examine.call('_.+(1, 2)') { _.+(1, 2) }
-    examine.call('_.+ { 1 }') { _.+ { 1 } }
+    examine['_.+'] { _.+ }
+    examine['_.+(1, 2)'] { _.+(1, 2) }
+    examine['_.+ { 1 }'] { _.+ { 1 } }
 
-    examine.call('_.**') { _.** }
-    examine.call('_.**(1, 2)') { _.**(1, 2) }
-    examine.call('_.** { 1 }') { _.** { 1 } }
+    examine['_.**'] { _.** }
+    examine['_.**(1, 2)'] { _.**(1, 2) }
+    examine['_.** { 1 }'] { _.** { 1 } }
 
-    examine.call('_.[]=') { _.[]= }
-    examine.call('_.[]=(1)') { _.[]=(1) }
-    examine.call('_.[]=(1, 2, a: 3)') { _.[]=(1, 2, a: 3) }
-    examine.call('_.[]=(1, 2) { 3 }') { _.[]=(1, 2) { 3 } }
-    examine.call('_.[]= { 1 }') { _.[]= { 1 } }
+    examine['_.[]='] { _.[]= }
+    examine['_.[]=(1)'] { _.[]=(1) }
+    examine['_.[]=(1, 2, a: 3)'] { _.[]=(1, 2, a: 3) }
+    examine['_.[]=(1, 2) { 3 }'] { _.[]=(1, 2) { 3 } }
+    examine['_.[]= { 1 }'] { _.[]= { 1 } }
 
     # precedence and parentheses
-    examine.call('(_ + 1) * 2') { (_ + 1) * 2 }
-    examine.call('_ + 1') { _ + 1 }
-    examine.call('_ + _ * 2') { _ + _ * 2 }
-    examine.call('_ * (_ + 2)') { _ * (_ + 2) }
-    examine.call('_ + _ - 1') { _ + _ - 1 }
-    examine.call('-(_ + 1)') { -(_ + 1) }
-    examine.call('-_ + 1') { -_ + 1 }
-    examine.call('(_ + [1])[0]') { (_ + [1])[0] }
-    examine.call('(_ + 1).foo') { (_ + 1).foo }
-    examine.call('_[0] + [1]') { _[0] + [1] }
-    examine.call('_ - _ - _') { _ - _ - _ }
-    examine.call('_ - (_ - _)') { _ - (_ - _) }
-    examine.call('(_ == _) == _') { (_ == _) == _ }
-    examine.call('_ == (_ == _)') { _ == (_ == _) }
+    examine['(_ + 1) * 2'] { (_ + 1) * 2 }
+    examine['_ + 1'] { _ + 1 }
+    examine['_ + _ * 2'] { _ + _ * 2 }
+    examine['_ * (_ + 2)'] { _ * (_ + 2) }
+    examine['_ + _ - 1'] { _ + _ - 1 }
+    examine['-(_ + 1)'] { -(_ + 1) }
+    examine['-_ + 1'] { -_ + 1 }
+    examine['(_ + [1])[0]'] { (_ + [1])[0] }
+    examine['(_ + 1).foo'] { (_ + 1).foo }
+    examine['_[0] + [1]'] { _[0] + [1] }
+    examine['_ - _ - _'] { _ - _ - _ }
+    examine['_ - (_ - _)'] { _ - (_ - _) }
+    examine['(_ == _) == _'] { (_ == _) == _ }
+    examine['_ == (_ == _)'] { _ == (_ == _) }
   end
   # rubocop:enable Style/CaseEquality, Layout/SpaceBeforeBrackets
 
@@ -110,20 +108,20 @@ describe Matcher::Call do
       assert_equal expected, expression(&block).negated.to_s
     end
 
-    examine.call('!_') { _ }
-    examine.call('_') { !_ }
-    examine.call('_ != 2') { _ == 2 }
-    examine.call('_ == 2') { _ != 2 }
-    examine.call('_ !~ 2') { _ =~ 2 }
-    examine.call('_ =~ 2') { _ !~ 2 }
-    examine.call('_ >= 2') { _ < 2 }
-    examine.call('_ <= 2') { _ > 2 }
-    examine.call('_ > 2') { _ <= 2 }
-    examine.call('_ < 2') { _ >= 2 }
+    examine['!_'] { _ }
+    examine['_'] { !_ }
+    examine['_ != 2'] { _ == 2 }
+    examine['_ == 2'] { _ != 2 }
+    examine['_ !~ 2'] { _ =~ 2 }
+    examine['_ =~ 2'] { _ !~ 2 }
+    examine['_ >= 2'] { _ < 2 }
+    examine['_ <= 2'] { _ > 2 }
+    examine['_ > 2'] { _ <= 2 }
+    examine['_ < 2'] { _ >= 2 }
 
     Matcher.with_settings(logical_operators: true) do
-      examine.call('!_ || false') { _ & 2 }
-      examine.call('!_ && false') { _ | 2 }
+      examine['!_ || false'] { _ & 2 }
+      examine['!_ && false'] { _ | 2 }
     end
   end
 
