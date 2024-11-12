@@ -2,9 +2,16 @@
 
 module Matcher
   class ExpectedPhrasing < AbstractPhrasing
-    define(:between) do |min, max, exclude_end|
-      "#{verb} value to be between #{min.inspect} and " \
-        "#{max.inspect}#{' (exclusive)' if exclude_end} but got #{actual.inspect}"
+    define(:truthy) do
+      verb = verb(negated: true)
+      truthy_or_falsy = negated ? 'truthy' : 'falsy'
+
+      "#{verb} a #{truthy_or_falsy} value but got #{actual.inspect}"
+    end
+
+    define(:same) do |object|
+      "#{verb} same as #{object.inspect} (id=#{object.object_id})" \
+        "#{" but got #{actual.inspect} (id=#{actual.object_id})" if negated}"
     end
 
     define(:equal) do |value|
@@ -13,11 +20,6 @@ module Matcher
       else
         "#{verb} #{actual.inspect}"
       end
-    end
-
-    define(:same) do |object|
-      "#{verb} same as #{object.inspect} (id=#{object.object_id})" \
-        "#{" but got #{actual.inspect} (id=#{actual.object_id})" if negated}"
     end
 
     define(:lower_than) do |operand|
@@ -56,35 +58,17 @@ module Matcher
       "#{verb} a value comparable to #{operand.inspect} but got #{actual.inspect}"
     end
 
-    define(:truthy) do
-      verb = verb(negated: true)
-      truthy_or_falsy = negated ? 'truthy' : 'falsy'
-
-      "#{verb} a #{truthy_or_falsy} value but got #{actual.inspect}"
-    end
-
-    define(:described_by) do |description|
-      "#{verb} #{description} but got #{actual.inspect}"
-    end
-
-    define(:having_key) do |key|
-      "#{verb} to include key #{key.inspect} but got #{actual.inspect}"
-    end
-
-    define(:instance_of) do |klass|
-      "#{verb} an instance of #{klass} but got #{actual.inspect}"
-    end
-
-    define(:kind_of) do |klass|
-      "#{verb} a kind of #{klass} but got #{actual.inspect}"
+    define(:between) do |min, max, exclude_end|
+      "#{verb} value to be between #{min.inspect} and " \
+        "#{max.inspect}#{' (exclusive)' if exclude_end} but got #{actual.inspect}"
     end
 
     define(:length_of) do |exp, act|
       "#{verb} length of #{exp}#{" but was #{act}" if negated}"
     end
 
-    define(:matching) do |pattern|
-      "#{verb} value to match #{pattern.inspect} but got #{actual.inspect}"
+    define(:having_key) do |key|
+      "#{verb} to include key #{key.inspect} but got #{actual.inspect}"
     end
 
     define(:in) do |collection|
@@ -93,6 +77,18 @@ module Matcher
 
     define(:including) do |item|
       "#{verb} #{item.inspect} to be included but got #{actual.inspect}"
+    end
+
+    define(:matching) do |pattern|
+      "#{verb} value to match #{pattern.inspect} but got #{actual.inspect}"
+    end
+
+    define(:instance_of) do |klass|
+      "#{verb} an instance of #{klass} but got #{actual.inspect}"
+    end
+
+    define(:kind_of) do |klass|
+      "#{verb} a kind of #{klass} but got #{actual.inspect}"
     end
 
     define(:responding_to) do |method|
@@ -105,52 +101,8 @@ module Matcher
       "#{verb} value to be #{predicate} but got #{actual.inspect}"
     end
 
-    namespace(:block) do
-      define(:satisfied) do |block_location|
-        "#{verb} to satisfy condition #{block_location} but got #{actual.inspect}"
-      end
-    end
-
-    namespace(:imply_one) do
-      define(:no_condition_satisfied) do |conditions|
-        "#{negated_verb} #{actual.inspect} to satisfy one of these conditions: #{join(conditions)}"
-      end
-
-      define(:multiple_conditions_satisfied) do |conditions|
-        "#{negated_verb} #{actual.inspect} to satisfy only one condition, but met these: #{join(conditions)}"
-      end
-    end
-
-    namespace(:iso8601) do
-      define(:valid) do
-        "#{verb} an ISO 8601 string but got #{actual.inspect}"
-      end
-    end
-
-    namespace(:negated) do
-      define(:valid) do |matcher|
-        "#{verb} #{matcher} to be valid but got #{actual.inspect}"
-      end
-    end
-
-    namespace(:reference) do
-      define(:cyclic) do
-        if negated
-          "#{verb} a cyclic structure but actual has already been visited"
-        else
-          "#{verb} a valid cyclic structure"
-        end
-      end
-
-      define(:failed_from_cache) do
-        'actual has already failed before'
-      end
-    end
-
-    namespace(:set) do
-      define(:equal) do |set|
-        "#{verb} object to be an equal set to #{set.inspect} but got #{actual.inspect}"
-      end
+    define(:described_by) do |description|
+      "#{verb} #{description} but got #{actual.inspect}"
     end
 
     namespace(:expression) do
@@ -162,9 +114,11 @@ module Matcher
           "but got #{value.inspect}#{where_text(given, expression)}"
       end
 
-      define(:between) do |expression, value, min, max, given|
-        "#{verb} #{expression} to be between #{min.inspect} and #{max.inspect} " \
-          "but got #{value.inspect}#{where_text(given, expression)}"
+      define(:same) do |left_expression, right_expression, left, right, given|
+        "#{verb} #{left_expression} to be same as #{right_expression} " \
+          "but got #{left.inspect} (id=#{left.object_id})" \
+          "#{" and #{right.inspect} (id=#{right.object_id})" if negated}" \
+          "#{where_text(given, left_expression, right_expression)}"
       end
 
       negated_comparisons =
@@ -193,16 +147,19 @@ module Matcher
           "#{where_text(given, expression.receiver, expression.args[0])}"
       end
 
-      define(:same) do |left_expression, right_expression, left, right, given|
-        "#{verb} #{left_expression} to be same as #{right_expression} " \
-          "but got #{left.inspect} (id=#{left.object_id})" \
-          "#{" and #{right.inspect} (id=#{right.object_id})" if negated}" \
-          "#{where_text(given, left_expression, right_expression)}"
-      end
-
       define(:comparable_to) do |expression, value, operand, given|
         "#{verb} #{expression} to be comparable to #{operand.inspect} " \
           "but got #{value.inspect}#{where_text(given, expression)}"
+      end
+
+      define(:between) do |expression, value, min, max, given|
+        "#{verb} #{expression} to be between #{min.inspect} and #{max.inspect} " \
+          "but got #{value.inspect}#{where_text(given, expression)}"
+      end
+
+      define(:length_of) do |expression, exp, act, given|
+        "#{verb} #{expression} to have length of #{exp}" \
+          "#{" but was #{act}" if negated}#{where_text(given, expression)}"
       end
 
       define(:having_key) do |expression, value, key, given|
@@ -210,19 +167,14 @@ module Matcher
           "but got #{value.inspect}#{where_text(given, expression)}"
       end
 
-      define(:instance_of) do |expression, value, klass, given|
-        "#{verb} #{expression} to be an instance of #{klass} " \
+      define(:in) do |expression, value, collection, given|
+        "#{verb} #{expression} to be included in #{collection.inspect} " \
           "but got #{value.inspect}#{where_text(given, expression)}"
       end
 
-      define(:kind_of) do |expression, value, klass, given|
-        "#{verb} #{expression} to be a kind of #{klass} " \
+      define(:including) do |expression, value, item, given|
+        "#{verb} #{expression} to include #{item.inspect} " \
           "but got #{value.inspect}#{where_text(given, expression)}"
-      end
-
-      define(:length_of) do |expression, exp, act, given|
-        "#{verb} #{expression} to have length of #{exp}" \
-          "#{" but was #{act}" if negated}#{where_text(given, expression)}"
       end
 
       define(:matching) do |expression, value, pattern, given|
@@ -251,13 +203,13 @@ module Matcher
         message
       end
 
-      define(:including) do |expression, value, item, given|
-        "#{verb} #{expression} to include #{item.inspect} " \
+      define(:instance_of) do |expression, value, klass, given|
+        "#{verb} #{expression} to be an instance of #{klass} " \
           "but got #{value.inspect}#{where_text(given, expression)}"
       end
 
-      define(:in) do |expression, value, collection, given|
-        "#{verb} #{expression} to be included in #{collection.inspect} " \
+      define(:kind_of) do |expression, value, klass, given|
+        "#{verb} #{expression} to be a kind of #{klass} " \
           "but got #{value.inspect}#{where_text(given, expression)}"
       end
 
@@ -266,16 +218,64 @@ module Matcher
           "but got #{value.inspect}#{where_text(given, expression)}"
       end
 
-      define(:raising) do |expression, error, given|
-        "#{verb} #{expression} to raise #{error.class}" \
-          "#{where_text(given, expression)}: #{error.message}"
-      end
-
       define(:predicate) do |expression, value, predicate, given|
         predicate = predicate.to_s.delete_suffix('?')
 
         "#{verb} #{expression} to be #{predicate} " \
           "but got #{value.inspect}#{where_text(given, expression)}"
+      end
+
+      define(:raising) do |expression, error, given|
+        "#{verb} #{expression} to raise #{error.class}" \
+          "#{where_text(given, expression)}: #{error.message}"
+      end
+    end
+
+    namespace(:negated) do
+      define(:valid) do |matcher|
+        "#{verb} #{matcher} to be valid but got #{actual.inspect}"
+      end
+    end
+
+    namespace(:block) do
+      define(:satisfied) do |block_location|
+        "#{verb} to satisfy condition #{block_location} but got #{actual.inspect}"
+      end
+    end
+
+    namespace(:imply_one) do
+      define(:no_condition_satisfied) do |conditions|
+        "#{negated_verb} #{actual.inspect} to satisfy one of these conditions: #{join(conditions)}"
+      end
+
+      define(:multiple_conditions_satisfied) do |conditions|
+        "#{negated_verb} #{actual.inspect} to satisfy only one condition, but met these: #{join(conditions)}"
+      end
+    end
+
+    namespace(:iso8601) do
+      define(:valid) do
+        "#{verb} an ISO 8601 string but got #{actual.inspect}"
+      end
+    end
+
+    namespace(:reference) do
+      define(:cyclic) do
+        if negated
+          "#{verb} a cyclic structure but actual has already been visited"
+        else
+          "#{verb} a valid cyclic structure"
+        end
+      end
+
+      define(:failed_from_cache) do
+        'actual has already failed before'
+      end
+    end
+
+    namespace(:set) do
+      define(:equal) do |set|
+        "#{verb} object to be an equal set to #{set.inspect} but got #{actual.inspect}"
       end
     end
 

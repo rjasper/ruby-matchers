@@ -14,8 +14,12 @@ module Matcher
       condition ? self.not : self
     end
 
-    def between(min, max, exclude_end = false)
-      message(:between, min, max, exclude_end)
+    def truthy
+      message(:truthy)
+    end
+
+    def same(object)
+      message(:same, object)
     end
 
     def equal(value)
@@ -42,32 +46,16 @@ module Matcher
       message(:comparable_to, operand)
     end
 
-    def described_by(description)
-      message(:described_by, description)
-    end
-
-    def having_key(key)
-      message(:having_key, key)
-    end
-
-    def kind_of(klass)
-      message(:kind_of, klass)
+    def between(min, max, exclude_end = false)
+      message(:between, min, max, exclude_end)
     end
 
     def length_of(exp, act)
       message(:length_of, exp, act)
     end
 
-    def matching(pattern)
-      message(:matching, pattern)
-    end
-
-    def member_of(collection)
-      message(:member_of, collection)
-    end
-
-    def responding_to(method)
-      message(:responding_to, method)
+    def having_key(key)
+      message(:having_key, key)
     end
 
     def in(collection)
@@ -78,8 +66,28 @@ module Matcher
       message(:including, item)
     end
 
+    def matching(pattern)
+      message(:matching, pattern)
+    end
+
+    def instance_of(klass)
+      message(:instance_of, klass)
+    end
+
+    def kind_of(klass)
+      message(:kind_of, klass)
+    end
+
+    def responding_to(method)
+      message(:responding_to, method)
+    end
+
     def predicate(name)
       message(:predicate, name)
+    end
+
+    def described_by(description)
+      message(:described_by, description)
     end
   end
 end
