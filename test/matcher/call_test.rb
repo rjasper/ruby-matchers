@@ -57,6 +57,7 @@ describe Matcher::Call do
 
     examine['_[1, 2, a: 3]'] { _[1, 2, a: 3] }
     examine['_[1, 2, a: 3] { |x| x * 4 }'] { _[1, 2, a: 3] { |x| x * 4 } }
+    examine['_[1, 2, a: 3, &:four]'] { _[1, 2, a: 3, &:four] }
 
     examine['_[1] = 2'] { _.[]=(1, 2) }
     examine['_[1, 2] = 3'] { _.[]=(1, 2, 3) }
@@ -66,6 +67,7 @@ describe Matcher::Call do
     examine['_.foo(1, a: 2)'] { _.foo(1, a: 2) }
     examine['_.foo { 2 }'] { _.foo { 2 } }
     examine['_.foo(&:bar)'] { _.foo(&:bar) }
+    examine['_.foo(&:"42")'] { _.foo(&:'42') }
     examine['_.foo(1, a: 2) { 3 }'] { _.foo(1, a: 2) { 3 } }
 
     examine['_.+@(1)'] { _.+@(1) }
