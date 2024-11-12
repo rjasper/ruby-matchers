@@ -240,20 +240,24 @@ module Matcher
       when :!, :~, :+@, :-@
         # !foo
         return "#{@method[0]}#{receiver}" if unary?
-      when :+, :-, :*, :/, :%, :<, :>, :<=, :>=, :<=>, :==, :===, :!=, :=~, :!~, :&, :|, :^, :<<, :>>, :'&&', :'||'
-        # foo + bar
-        return "#{receiver} #{@method} #{parenthesize(@args[0], true, substitutions)}" if binary?
-      when :**
-        # foo**2
-        return "#{receiver}**#{parenthesize(@args[0], true, substitutions)}" if binary?
+      when :+, :-, :*, :/, :%, :**,:<, :>, :<=, :>=, :<=>, :==, :===, :!=, :=~, :!~, :&, :|, :^, :<<, :>>, :'&&', :'||'
+        if binary?
+          operand = parenthesize(@args[0], true, substitutions)
+
+          # foo**2
+          return "#{receiver}**#{operand}" if @method == :**
+
+          # foo + bar
+          return "#{receiver} #{@method} #{operand}"
+        end
       when :[]
         # foo[a, b, ...]
         return "#{receiver}[#{args_and_kwargs_string(substitutions)}]#{' { ... }' if @block}"
       when :[]=
         # foo[a, b, ...] = 1
         if @args.length >= 2 && @kwargs.empty? && !@block
-          first_args = @args[0..-2].map { Expression.to_string(_1, substitutions:) }.join(', ')
-          last_arg = Expression.to_string(@args[-1], substitutions:)
+          first_args = @args[0..-2].map { _1.to_s(substitutions:) }.join(', ')
+          last_arg = @args[-1].to_s(substitutions:)
 
           return "#{receiver}[#{first_args}] = #{last_arg}"
         end
@@ -262,7 +266,7 @@ module Matcher
       if @method.end_with?('=') && @method != :[]= && binary?
         # foo.bar = 42
 
-        "#{receiver}.#{@method[0..-2]} = #{Expression.to_string(@args[0], substitutions:)}"
+        "#{receiver}.#{@method[0..-2]} = #{@args[0].to_s(substitutions:)}"
       else
         # foo.bar OR foo.bar(arg1, arg2, ...)
 
@@ -401,12 +405,12 @@ module Matcher
     end
 
     def args_and_kwargs_string(substitutions)
-      args = @args.map { Expression.to_string(_1, substitutions:)}
+      args = @args.map { _1.to_s(substitutions:)}
       kwargs = @kwargs.map do |k, v|
         if k.is_a?(Symbol)
           "#{k}: #{v.inspect}"
         else
-          "#{k.inspect} => #{Expression.to_string(v, substitutions:)}"
+          "#{k.inspect} => #{v.to_s(substitutions:)}"
         end
       end
 

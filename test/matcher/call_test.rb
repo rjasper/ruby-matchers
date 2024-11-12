@@ -62,9 +62,7 @@ describe Matcher::Call do
 
     examine.call('_[1] = 2') { _.[]=(1, 2) }
     examine.call('_[1, 2] = 3') { _.[]=(1, 2, 3) }
-
-    assert_equal '_.foo = "bar"',
-      Call.new(Variable.actual, :foo=, ['bar']).to_s
+    examine.call('_.foo = "bar"') { assign { _.foo = 'bar' } }
 
     examine.call('_.foo') { _.foo }
     examine.call('_.foo(1, a: 2)') { _.foo(1, a: 2) }
