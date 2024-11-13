@@ -9,7 +9,7 @@ describe Matcher::NegatedMatcher do
 
     assert_expected_errors matcher.match(1),
       'did not expect 1 to be valid but got 1'
-    assert_predicate matcher.match(2), :valid?
+    assert_no_errors matcher.match(2)
   end
 
   it '#to_s' do

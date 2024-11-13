@@ -24,7 +24,7 @@ describe Matcher::HashMatcher do
   it 'match all entries' do
     matcher = Matcher::HashMatcher.new({ foo: v('foo') })
 
-    assert_predicate matcher.match({ foo: 'foo' }), :valid?
+    assert_no_errors matcher.match({ foo: 'foo' })
     assert_expected_errors matcher.match({ foo: 'foo', bar: 'bar' }),
       bar: 'did not expect to include key :bar but got {:foo=>"foo", :bar=>"bar"}'
     assert_expected_errors matcher.match({}),
@@ -34,8 +34,8 @@ describe Matcher::HashMatcher do
   it 'match partial entries' do
     matcher = Matcher::HashMatcher.new({ foo: v('foo') }, partial: true)
 
-    assert_predicate matcher.match({ foo: 'foo' }), :valid?
-    assert_predicate matcher.match({ foo: 'foo', bar: 'bar' }), :valid?
+    assert_no_errors matcher.match({ foo: 'foo' })
+    assert_no_errors matcher.match({ foo: 'foo', bar: 'bar' })
     assert_expected_errors matcher.match({}),
       foo: 'expected to include key :foo but got {}'
   end
@@ -43,7 +43,7 @@ describe Matcher::HashMatcher do
   it 'match nested hash' do
     matcher = Matcher::HashMatcher.new({ foo: h(bar: v('baz')) })
 
-    assert_predicate matcher.match({ foo: { bar: 'baz' } }), :valid?
+    assert_no_errors matcher.match({ foo: { bar: 'baz' } })
     assert_expected_errors matcher.match({ foo: { bar: 'buzz' } }),
       foo: { bar: 'expected "baz" but got "buzz"' }
     assert_expected_errors matcher.match({ foo: 'foo' }),
@@ -67,7 +67,7 @@ describe Matcher::HashMatcher do
     self_hash = {}
     self_hash[:self] = self_hash
 
-    assert_predicate matcher.match(self_hash), :valid?
+    assert_no_errors matcher.match(self_hash)
     assert_expected_errors matcher.match({ self: {} }),
       self: 'expected _ == parent but got {} == {:self=>{}}'
   end

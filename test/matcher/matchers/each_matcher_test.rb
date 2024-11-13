@@ -6,7 +6,7 @@ describe Matcher::EachMatcher do
   it 'match each' do
     matcher = Matcher::EachMatcher.new(v(1))
 
-    assert_predicate matcher.match([1, 1, 1]), :valid?
+    assert_no_errors matcher.match([1, 1, 1])
     assert_expected_errors matcher.match(nil),
       "expected an object responding to `each' but got nil"
     assert_expected_errors matcher.match([1, 2, 3]),

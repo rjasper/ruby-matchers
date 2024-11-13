@@ -15,7 +15,7 @@ describe Matcher::NegatedEachPairMatcher do
       end
     end
 
-    assert_predicate matcher.match({ '1' => 1, 'a' => :a, 0 => '0' }), :valid?
+    assert_no_errors matcher.match({ '1' => 1, 'a' => :a, 0 => '0' })
   end
 
   it '#to_s' do

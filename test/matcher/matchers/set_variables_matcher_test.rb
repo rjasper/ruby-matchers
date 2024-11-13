@@ -8,14 +8,14 @@ describe Matcher::SetVariablesMatcher do
       setvar({ myvar: 'foo' }, _ == vars[:myvar])
     end
 
-    assert_predicate matcher.match('foo'), :valid?
+    assert_no_errors matcher.match('foo')
     assert_expected_errors matcher.match('bar'),
       'expected _ == myvar but got "bar" == "foo"'
 
     negated = ~matcher
 
     assert_expected_errors negated.match('foo'), 'expected _ != myvar but got "foo" != "foo"'
-    assert_predicate negated.match('bar'), :valid?
+    assert_no_errors negated.match('bar')
   end
 
   it 'set variables via block' do
@@ -48,7 +48,7 @@ describe Matcher::SetVariablesMatcher do
       }
     }
 
-    assert_predicate matcher.match(actual), :valid?
+    assert_no_errors matcher.match(actual)
 
     actual = {
       depth: 0,

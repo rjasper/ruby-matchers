@@ -7,7 +7,7 @@ describe Matcher::MapMatcher do
     projection = expression { _[:foo] }
     matcher = Matcher::MapMatcher.new(projection, a([v(1), v(2)]))
 
-    assert_predicate matcher.match([{ foo: 1 }, { foo: 2 }]), :valid?
+    assert_no_errors matcher.match([{ foo: 1 }, { foo: 2 }])
     refute_predicate matcher.match([]), :valid?
   end
 
@@ -60,7 +60,7 @@ describe Matcher::MapMatcher do
     array = []
     array << { a: array }
 
-    assert_predicate matcher.match(array), :valid?
+    assert_no_errors matcher.match(array)
     assert_expected_errors matcher.match([{ a: 1 }]),
       0 => { a: 'expected _ == original but got 1 == [{:a=>1}]' }
   end

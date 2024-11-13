@@ -10,7 +10,7 @@ describe Matcher::ProjectMatcher do
       project(_.value, 'foo')
     end
 
-    assert_predicate matcher.match(my_struct.new('foo')), :valid?
+    assert_no_errors matcher.match(my_struct.new('foo'))
     refute_predicate matcher.match(my_struct.new('bar')), :valid?
 
     assert_expected_errors matcher.match(my_struct.new('bar')),

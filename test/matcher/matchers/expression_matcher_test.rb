@@ -35,11 +35,11 @@ end
 describe Matcher::ExpressionMatcher do
   it 'evaluates expressions' do
     refute_predicate match(2) { _ > 2 }, :valid?
-    assert_predicate match(3) { _.odd? }, :valid?
-    assert_predicate match(3) { _ + _ * 2 == 9 }, :valid?
-    assert_predicate match('Hello World') { _.upcase.gsub(' ', '_') == 'HELLO_WORLD' }, :valid?
+    assert_no_errors match(3) { _.odd? }
+    assert_no_errors match(3) { _ + _ * 2 == 9 }
+    assert_no_errors match('Hello World') { _.upcase.gsub(' ', '_') == 'HELLO_WORLD' }
 
-    assert_predicate not_match(4) { _.odd? }, :valid?
+    assert_no_errors not_match(4) { _.odd? }
     refute_predicate not_match(5) { _.odd? }, :valid?
   end
 
@@ -369,7 +369,7 @@ describe Matcher::ExpressionMatcher do
     assert_expected_errors matcher.match(0),
       'did not expect 1 / _ to raise ZeroDivisionError, where _ = 0: divided by 0'
 
-    assert_predicate (~matcher).match(0), :valid?
+    assert_no_errors (~matcher).match(0)
   end
 
   it '#to_s' do

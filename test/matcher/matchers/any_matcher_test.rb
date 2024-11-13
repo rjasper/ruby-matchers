@@ -7,8 +7,8 @@ describe Matcher::AnyMatcher do
     values = [1, 2].map { Matcher.of(_1) }
     matcher = Matcher::AnyMatcher.new(values)
 
-    assert_predicate matcher.match(1), :valid?
-    assert_predicate matcher.match(2), :valid?
+    assert_no_errors matcher.match(1)
+    assert_no_errors matcher.match(2)
     refute_predicate matcher.match(3), :valid?
 
     assert_expected_errors matcher.match(4) do

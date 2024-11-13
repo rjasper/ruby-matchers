@@ -12,10 +12,10 @@ describe Matcher::NegatedProjectMatcher do
 
     assert_expected_errors matcher.match(my_struct.new('foo')),
       expression { _.value } => 'did not expect "foo"'
-    assert_predicate matcher.match(my_struct.new('bar')), :valid?
+    assert_no_errors matcher.match(my_struct.new('bar'))
 
-    assert_predicate matcher.match(my_struct.new('bar')), :valid?
-    assert_predicate matcher.match(1), :valid?
+    assert_no_errors matcher.match(my_struct.new('bar'))
+    assert_no_errors matcher.match(1)
   end
 
   it '#to_s' do

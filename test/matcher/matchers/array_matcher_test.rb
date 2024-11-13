@@ -24,7 +24,7 @@ describe Matcher::ArrayMatcher do
   it 'match array' do
     matcher = Matcher::ArrayMatcher.new([v(1), v(2), v(3)])
 
-    assert_predicate matcher.match([1, 2, 3]), :valid?
+    assert_no_errors matcher.match([1, 2, 3])
     assert_expected_errors matcher.match(nil),
       'expected a kind of Array but got nil'
     assert_expected_errors matcher.match([]),
@@ -43,7 +43,7 @@ describe Matcher::ArrayMatcher do
 
     matcher = Matcher::ArrayMatcher.new([item_matcher, item_matcher, item_matcher])
 
-    assert_predicate matcher.match([0, 10, 20]), :valid?
+    assert_no_errors matcher.match([0, 10, 20])
     assert_expected_errors matcher.match([0, 11, 20]),
       1 => 'expected _ == i * 10 but got 11 == 10, where i = 1'
   end
@@ -55,7 +55,7 @@ describe Matcher::ArrayMatcher do
 
     matcher = Matcher::ArrayMatcher.new([Matcher.of(Integer), item_matcher, item_matcher])
 
-    assert_predicate matcher.match([1, 3, 5]), :valid?
+    assert_no_errors matcher.match([1, 3, 5])
     assert_expected_errors matcher.match([1, 5, 3]),
       2 => 'expected parent[i - 1] < parent[i] but got 5 < 3, where parent = [1, 5, 3], i = 2'
   end

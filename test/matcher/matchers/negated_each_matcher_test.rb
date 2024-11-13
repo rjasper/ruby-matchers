@@ -14,8 +14,8 @@ describe Matcher::NegatedEachMatcher do
       end
     end
 
-    assert_predicate matcher.match(nil), :valid?
-    assert_predicate matcher.match([1, 2, 3]), :valid?
+    assert_no_errors matcher.match(nil)
+    assert_no_errors matcher.match([1, 2, 3])
   end
 
   it '#to_s' do

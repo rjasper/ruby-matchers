@@ -6,7 +6,7 @@ describe Matcher::NegatedHashMatcher do
   it 'match not type' do
     matcher = Matcher::NegatedHashMatcher.new({})
 
-    assert_predicate matcher.match(1), :valid?
+    assert_no_errors matcher.match(1)
   end
 
   it 'match not all entries' do
@@ -17,8 +17,8 @@ describe Matcher::NegatedHashMatcher do
     assert_expected_errors matcher.match({ foo: 'foo' }),
       foo: 'did not expect "foo"'
 
-    assert_predicate matcher.match({ foo: 'foo', bar: 'bar' }), :valid?
-    assert_predicate matcher.match({}), :valid?
+    assert_no_errors matcher.match({ foo: 'foo', bar: 'bar' })
+    assert_no_errors matcher.match({})
   end
 
   it 'match not partial entries' do
@@ -31,7 +31,7 @@ describe Matcher::NegatedHashMatcher do
     assert_expected_errors matcher.match({ foo: 'foo', bar: 'bar' }),
       foo: 'did not expect "foo"'
 
-    assert_predicate matcher.match({}), :valid?
+    assert_no_errors matcher.match({})
   end
 
   it 'match not nested hash' do
@@ -42,8 +42,8 @@ describe Matcher::NegatedHashMatcher do
     assert_expected_errors matcher.match({ foo: { bar: 'baz' } }),
       foo: { bar: 'did not expect "baz"' }
 
-    assert_predicate matcher.match({ foo: { bar: 'buzz' } }), :valid?
-    assert_predicate matcher.match({ foo: 'foo' }), :valid?
+    assert_no_errors matcher.match({ foo: { bar: 'buzz' } })
+    assert_no_errors matcher.match({ foo: 'foo' })
   end
 
   it '#to_s: all entries' do

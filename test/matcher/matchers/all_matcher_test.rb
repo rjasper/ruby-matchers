@@ -8,7 +8,7 @@ describe Matcher::AllMatcher do
     even = Matcher::BlockMatcher.new(-> { _1.even? }, 'an even number')
     matcher = Matcher::AllMatcher.new([divisible_by_three, even])
 
-    assert_predicate matcher.match(6), :valid?
+    assert_no_errors matcher.match(6)
     refute_predicate matcher.match(9), :valid?
     refute_predicate matcher.match(4), :valid?
 

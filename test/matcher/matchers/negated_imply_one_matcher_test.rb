@@ -11,7 +11,7 @@ describe Matcher::NegatedImplyOneMatcher do
       )
     end
 
-    assert_predicate matcher.match(2), :valid?
+    assert_no_errors matcher.match(2)
 
     assert_expected_errors matcher.match('string'),
       'did not expect "string"'
@@ -30,8 +30,8 @@ describe Matcher::NegatedImplyOneMatcher do
     assert_expected_errors matcher.match('string'), 'did not expect "string"'
     assert_expected_errors matcher.match(nil), 'did not expect nil'
 
-    assert_predicate matcher.match('foo'), :valid?
-    assert_predicate matcher.match(1), :valid?
+    assert_no_errors matcher.match('foo')
+    assert_no_errors matcher.match(1)
   end
 
   it 'match not mutiple' do
@@ -42,7 +42,7 @@ describe Matcher::NegatedImplyOneMatcher do
       )
     end
 
-    assert_predicate matcher.match({ foo: true, bar: true, data: 'bar' }), :valid?
+    assert_no_errors matcher.match({ foo: true, bar: true, data: 'bar' })
 
     assert_expected_errors matcher.match({ foo: true, data: 'foo' }),
       data: 'did not expect "foo"'

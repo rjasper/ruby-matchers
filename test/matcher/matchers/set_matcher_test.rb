@@ -6,7 +6,7 @@ describe Matcher::SetMatcher do
   it 'match array' do
     matcher = Matcher::SetMatcher.new([v(1), v(2), v(3)])
 
-    assert_predicate matcher.match([3, 1, 2]), :valid?
+    assert_no_errors matcher.match([3, 1, 2])
     assert_expected_errors matcher.match(nil),
       'expected a kind of Array but got nil'
     assert_expected_errors matcher.match([]),
@@ -25,10 +25,10 @@ describe Matcher::SetMatcher do
     assert_expected_errors negated.match([3, 1, 2]),
       'did not expect object to be an equal set to [1, 2, 3] but got [3, 1, 2]'
 
-    assert_predicate negated.match(nil), :valid?
-    assert_predicate negated.match([]), :valid?
-    assert_predicate negated.match([1, 2, 3, 4]), :valid?
-    assert_predicate negated.match([1, 2, 4]), :valid?
+    assert_no_errors negated.match(nil)
+    assert_no_errors negated.match([])
+    assert_no_errors negated.match([1, 2, 3, 4])
+    assert_no_errors negated.match([1, 2, 4])
   end
 
   it 'pass parent' do
@@ -39,7 +39,7 @@ describe Matcher::SetMatcher do
     self_array = []
     self_array << self_array
 
-    assert_predicate matcher.match(self_array), :valid?
+    assert_no_errors matcher.match(self_array)
 
     assert_expected_errors matcher.match([1]),
       'expected _ == parent to be included but got [1]',

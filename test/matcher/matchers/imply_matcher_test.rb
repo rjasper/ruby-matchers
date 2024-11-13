@@ -8,9 +8,9 @@ describe Matcher::ImplyMatcher do
       imply(String, 'string')
     end
 
-    assert_predicate matcher.match('string'), :valid?
+    assert_no_errors matcher.match('string')
     refute_predicate matcher.match('foo'), :valid?
-    assert_predicate matcher.match(1), :valid?
+    assert_no_errors matcher.match(1)
   end
 
   it 'match negated imply' do
@@ -22,7 +22,7 @@ describe Matcher::ImplyMatcher do
       'expected _.downcase != _ but got "hello" != "hello"'
     assert_expected_errors matcher.match(1),
       'expected a kind of String but got 1'
-    assert_predicate matcher.match('Hello'), :valid?
+    assert_no_errors matcher.match('Hello')
   end
 
   it '#to_s' do

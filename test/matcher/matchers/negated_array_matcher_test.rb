@@ -14,11 +14,11 @@ describe Matcher::NegatedArrayMatcher do
       end
     end
 
-    assert_predicate matcher.match([1, 2, 4]), :valid?
-    assert_predicate matcher.match(nil), :valid?
-    assert_predicate matcher.match([]), :valid?
-    assert_predicate matcher.match([1, 2, 3, 4]), :valid?
-    assert_predicate matcher.match([4, 5, 6]), :valid?
+    assert_no_errors matcher.match([1, 2, 4])
+    assert_no_errors matcher.match(nil)
+    assert_no_errors matcher.match([])
+    assert_no_errors matcher.match([1, 2, 3, 4])
+    assert_no_errors matcher.match([4, 5, 6])
   end
 
   it '#to_s' do

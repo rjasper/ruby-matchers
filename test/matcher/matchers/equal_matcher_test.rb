@@ -9,7 +9,7 @@ describe Matcher::EqualMatcher do
     end
 
     assert_kind_of Matcher::EqualMatcher, matcher
-    assert_predicate matcher.match(42), :valid?
+    assert_no_errors matcher.match(42)
     refute_predicate matcher.match(1), :valid?
 
     assert_expected_errors matcher.match(23),
@@ -21,7 +21,7 @@ describe Matcher::EqualMatcher do
       equal(23)
     end
 
-    assert_predicate matcher.match(5), :valid?
+    assert_no_errors matcher.match(5)
     refute_predicate matcher.match(23), :valid?
 
     assert_expected_errors matcher.match(23),

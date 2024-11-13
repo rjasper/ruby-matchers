@@ -6,7 +6,7 @@ describe Matcher::BlockMatcher do
   it 'validates blocks' do
     matcher = Matcher::BlockMatcher.new(-> { _1 > 2 }, nil)
 
-    assert_predicate matcher.match(4), :valid?
+    assert_no_errors matcher.match(4)
     refute_predicate matcher.match(0), :valid?
   end
 

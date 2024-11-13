@@ -8,7 +8,7 @@ describe Matcher::EachPairMatcher do
       each_pair(key == value.to_s)
     end
 
-    assert_predicate matcher.match({ '1' => 1, 'a' => :a }), :valid?
+    assert_no_errors matcher.match({ '1' => 1, 'a' => :a })
 
     assert_expected_errors matcher.match([1, 2, 3]),
       "expected an object responding to `each_pair' but got [1, 2, 3]"

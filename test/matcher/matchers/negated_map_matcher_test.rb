@@ -15,6 +15,6 @@ describe Matcher::MapMatcher do
       end
     end
 
-    assert_predicate matcher.match([]), :valid?
+    assert_no_errors matcher.match([])
   end
 end

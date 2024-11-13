@@ -31,7 +31,7 @@ describe Matcher::ReferenceMatcher do
     assert_expected_errors matcher.match([0, 0]),
       1 => 'expected _ == i but got 0 == 1'
 
-    assert_predicate matcher.match([0, 1]), :valid?
+    assert_no_errors matcher.match([0, 1])
   end
 
   it 'negated ref' do
@@ -41,7 +41,7 @@ describe Matcher::ReferenceMatcher do
       ~refs[:foo]
     end
 
-    assert_predicate matcher.match(25), :valid?
+    assert_no_errors matcher.match(25)
     assert_expected_errors matcher.match(42), 'did not expect 42'
   end
 
@@ -62,7 +62,7 @@ describe Matcher::ReferenceMatcher do
 
     actual = { head: 1, tail: { head: 2, tail: nil } }
 
-    assert_predicate matcher.match(actual), :valid?
+    assert_no_errors matcher.match(actual)
 
     actual[:tail][:tail] = actual
 
@@ -98,7 +98,7 @@ describe Matcher::ReferenceMatcher do
 
     actual[:tail][:tail] = actual
 
-    assert_predicate matcher.match(actual), :valid?
+    assert_no_errors matcher.match(actual)
   end
 
   def ring_of(*list)
@@ -118,7 +118,7 @@ describe Matcher::ReferenceMatcher do
       ring
     end
 
-    assert_predicate matcher.match(ring_of(1, 2, 3)), :valid?
+    assert_no_errors matcher.match(ring_of(1, 2, 3))
 
     assert_expected_errors matcher.match(ring_of(1, nil, 3)),
       next: { value: 'expected a kind of Integer but got nil' }
@@ -145,7 +145,7 @@ describe Matcher::ReferenceMatcher do
       end
     end
 
-    assert_predicate matcher.match(ring_of(1, nil, 3)), :valid?
+    assert_no_errors matcher.match(ring_of(1, nil, 3))
   end
 
   it 'caches results' do
@@ -172,7 +172,7 @@ describe Matcher::ReferenceMatcher do
     foo = 'foo'
     bar = 'bar'
 
-    assert_predicate matcher.match([bar, bar]), :valid?
+    assert_no_errors matcher.match([bar, bar])
 
     assert_expected_errors matcher.match([foo, foo]) do
       _or do
