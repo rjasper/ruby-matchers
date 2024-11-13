@@ -106,7 +106,7 @@ module Matcher
     end
   end
 
-  CASE_EQUALITY_CLASSES = [Class, Range, Regexp].freeze
+  CASE_EQUALITY_CLASSES = [Module, Range, Regexp].freeze
 
   def self.max_depth
     @max_depth ||= 5000

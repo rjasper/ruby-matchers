@@ -30,7 +30,7 @@ module Matcher
 
     def not_equal_message
       case @object
-      when Class
+      when Module
         expected.not_if(@negated).kind_of(@object)
       when Range
         expected.not_if(@negated).between(@object.begin, @object.end, @object.exclude_end?)
