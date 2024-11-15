@@ -17,18 +17,13 @@ module Matcher
     end
 
     def check(_actual)
-      begin
-        condition_errors = yield @condition
-      rescue Call::Error
-        return
-      end
+      condition_errors = yield @condition
 
-      unless condition_errors.valid?
-        errors << condition_errors
-        return
+      errors << if condition_errors.valid?
+        yield(@neg_matcher)
+      else
+        condition_errors
       end
-
-      errors << yield(@neg_matcher)
     end
     protected :check
 

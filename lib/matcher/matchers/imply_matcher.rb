@@ -16,12 +16,7 @@ module Matcher
     end
 
     def check(_actual)
-      begin
-        return unless yield(@condition).valid?
-      rescue Call::Error => e
-        errors << e.message_for_errors
-        return
-      end
+      return unless yield(@condition).valid?
 
       errors << yield(@matcher)
     end
