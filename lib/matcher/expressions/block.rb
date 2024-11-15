@@ -60,6 +60,11 @@ module Matcher
       if ExpressionRecorder.recorder?(result)
         expression = ExpressionRecorder.to_expression(result)
 
+        return SymbolProc.new(expression.method) if
+          expression.is_a?(Call) &&
+            expression.unary? &&
+            expression.receiver == Variable.actual
+
         ExpressionWalker.each_variable(expression) do |variable|
           raise "parameter `#{variable.symbol}' shadows an outer variable" if
             parameter_names.include?(variable.symbol) &&

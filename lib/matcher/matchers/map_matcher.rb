@@ -122,21 +122,29 @@ module Matcher
       end
 
       def nested_key
-        actual_variable = Variable.new(:actual)
-        symbol = find_free_symbol(@projection)
-        parameters = [[:opt, symbol]]
-        expression = @projection.substitute(actual: symbol, @original => :actual)
-        free_variables = expression.variables - [symbol]
+        proj = @projection
+        actual_var = Variable.actual
 
-        context = if free_variables.include?(@index)
-          MapContextFactory.new(@index)
-        elsif !free_variables.empty?
-          Block::ContextFactory.instance
+        as_symbol_proc = proj.is_a?(Call) && proj.unary? && proj.receiver == actual_var
+
+        block = if as_symbol_proc
+          SymbolProc.new(proj.method)
+        else
+          symbol = find_free_symbol(proj)
+          parameters = [[:opt, symbol]]
+          expression = proj.substitute(actual: symbol, @original => :actual)
+          free_variables = expression.variables - [symbol]
+
+          context = if free_variables.include?(@index)
+            MapContextFactory.new(@index)
+          elsif !free_variables.empty?
+            Block::ContextFactory.instance
+          end
+
+          Block.new(parameters, expression, context:)
         end
 
-        block = Block.new(parameters, expression, context:)
-
-        Call.new(actual_variable, :map, [], {}, block)
+        Call.new(actual_var, :map, [], {}, block)
       end
 
       def find_free_symbol(expression)
