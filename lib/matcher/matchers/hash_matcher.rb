@@ -31,10 +31,10 @@ module Matcher
       @hash.each do |key, value|
         actual_value = actual[key]
 
-        errors[key] << if actual_value.nil? && !actual.key?(key)
-          expected.having_key(key)
+        if actual_value.nil? && !actual.key?(key)
+          errors << expected.having_key(key)
         else
-          yield(value, actual_value, @key => key, @parent => actual)
+          errors[key] << yield(value, actual_value, @key => key, @parent => actual)
         end
       end
     end

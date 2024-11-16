@@ -24,7 +24,7 @@ describe Matcher::HashMatcher do
     negated = ~matcher
 
     assert_expected_errors matcher.match({}),
-      foo: 'expected to include key :foo but got {}'
+      'expected to include key :foo but got {}'
     assert_no_errors negated.match({})
   end
 
@@ -41,7 +41,7 @@ describe Matcher::HashMatcher do
     assert_no_errors negated.match({ foo: 'foo', bar: 'bar' })
 
     assert_expected_errors matcher.match({}),
-      foo: 'expected to include key :foo but got {}'
+      'expected to include key :foo but got {}'
     assert_no_errors negated.match({})
   end
 
@@ -58,7 +58,7 @@ describe Matcher::HashMatcher do
       foo: 'did not expect "foo"'
 
     assert_expected_errors matcher.match({}),
-      foo: 'expected to include key :foo but got {}'
+      'expected to include key :foo but got {}'
     assert_no_errors negated.match({})
   end
 
