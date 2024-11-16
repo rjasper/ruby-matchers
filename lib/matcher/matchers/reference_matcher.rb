@@ -23,8 +23,7 @@ module Matcher
 
     def check(actual)
       unless visited.add?(actual.object_id)
-        errors << expected.namespace(:reference).not_if(@negated).cyclic if
-          @negated == @cyclic
+        errors << report.namespace(:reference).cyclic if @negated == @cyclic
 
         return
       end

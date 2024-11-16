@@ -261,11 +261,8 @@ module Matcher
 
     namespace(:reference) do
       define(:cyclic) do
-        if negated
-          "#{verb} a cyclic structure but actual has already been visited"
-        else
-          "#{verb} a valid cyclic structure"
-        end
+        "#{verb} a cyclic structure" \
+          "#{' but actual has already been visited' unless negated}"
       end
 
       define(:failed_from_cache) do
