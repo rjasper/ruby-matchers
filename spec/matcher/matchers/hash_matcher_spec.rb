@@ -11,6 +11,16 @@ describe Matcher::HashMatcher do
     assert_kind_of(kind, Matcher.build { partial_r({ foo: 'bar' }) })
   end
 
+  it 'builds partial hash matcher recursively with partial_r' do
+    matcher = Matcher.build do
+      partial_r({ a: { a1: 'a1' } })
+    end
+
+    assert_no_errors matcher.match({ a: { a1: 'a1', a2: 'a2' }, b: 'b' })
+    assert_errors matcher.~.match({ a: { a1: 'a1', a2: 'a2' }, b: 'b' }),
+      a: { a1: 'did not expect "a1"' }
+  end
+
   it 'expects a Hash' do
     matcher = Matcher.build { {} }
 

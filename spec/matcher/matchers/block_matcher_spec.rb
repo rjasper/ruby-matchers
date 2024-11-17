@@ -3,12 +3,9 @@
 require 'test_helper'
 
 describe Matcher::BlockMatcher do
-  it 'is built by satisfy' do
-    matcher = Matcher.build do
-      satisfy { _1 > 2 }
-    end
-
-    assert_kind_of Matcher::BlockMatcher, matcher
+  it 'is built by satisfy and from Proc' do
+    assert_kind_of(Matcher::BlockMatcher, Matcher.build { satisfy { _1 > 2 } })
+    assert_kind_of(Matcher::BlockMatcher, Matcher.build { -> { _1 > 2 } })
   end
 
   it 'matches without description' do
