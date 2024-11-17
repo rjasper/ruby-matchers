@@ -13,10 +13,10 @@ describe Matcher::EqualMatcher do
     negated = ~matcher
 
     assert_no_errors matcher.match(42)
-    assert_expected_errors negated.match(42),
+    assert_errors negated.match(42),
       'did not expect 42'
 
-    assert_expected_errors matcher.match(23),
+    assert_errors matcher.match(23),
       'expected 42 but got 23'
     assert_no_errors negated.match(23)
   end

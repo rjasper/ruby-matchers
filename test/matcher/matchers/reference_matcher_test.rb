@@ -28,7 +28,7 @@ describe Matcher::ReferenceMatcher do
     valid_list = { head: 1, tail: { head: 2, tail: nil } }
 
     assert_no_errors matcher.match(valid_list)
-    assert_expected_errors negated.match(valid_list) do
+    assert_errors negated.match(valid_list) do
       _or do
         error :head, 'did not expect a kind of Integer but got 1'
         error %i[tail head], 'did not expect a kind of Integer but got 2'
@@ -38,7 +38,7 @@ describe Matcher::ReferenceMatcher do
 
     invalid_list = { head: 1, tail: { head: 2, tail: { head: 3 } } }
 
-    assert_expected_errors matcher.match(invalid_list),
+    assert_errors matcher.match(invalid_list),
       tail: { tail: 'expected to include key :tail but got {:head=>3}' }
     assert_no_errors negated.match(invalid_list)
   end
@@ -53,14 +53,14 @@ describe Matcher::ReferenceMatcher do
     negated = ~matcher
 
     assert_no_errors matcher.match(['foo', 'foo'])
-    assert_expected_errors negated.match(['foo', 'foo']) do
+    assert_errors negated.match(['foo', 'foo']) do
       _or do
         error 0, 'did not expect "foo"'
         error 1, 'actual has already failed before'
       end
     end
 
-    assert_expected_errors matcher.match(['bar', 'bar']),
+    assert_errors matcher.match(['bar', 'bar']),
       0 => 'expected "foo" but got "bar"',
       1 => 'actual has already failed before'
     assert_no_errors negated.match(['bar', 'bar'])
@@ -76,14 +76,14 @@ describe Matcher::ReferenceMatcher do
     negated = ~matcher
 
     assert_no_errors matcher.match([0, 1])
-    assert_expected_errors negated.match([0, 1]) do
+    assert_errors negated.match([0, 1]) do
       _or do
         error 0, 'expected _ != i but got 0 != 0'
         error 1, 'expected _ != i but got 1 != 1'
       end
     end
 
-    assert_expected_errors matcher.match([0, 0]),
+    assert_errors matcher.match([0, 0]),
       1 => 'expected _ == i but got 0 == 1'
     assert_no_errors negated.match([0, 0])
   end
@@ -108,7 +108,7 @@ describe Matcher::ReferenceMatcher do
     actual = { head: 1, tail: { head: 2, tail: nil } }
 
     assert_no_errors matcher.match(actual)
-    assert_expected_errors negated.match(actual) do
+    assert_errors negated.match(actual) do
       _or do
         error :head, 'did not expect a kind of Integer but got 1'
         error %i[tail head], 'did not expect a kind of Integer but got 2'
@@ -118,7 +118,7 @@ describe Matcher::ReferenceMatcher do
 
     actual[:tail][:tail] = actual
 
-    assert_expected_errors matcher.match(actual) do
+    assert_errors matcher.match(actual) do
       error %i[tail tail], 'did not expect a cyclic structure but actual has already been visited'
     end
     assert_no_errors negated.match(actual)
@@ -146,7 +146,7 @@ describe Matcher::ReferenceMatcher do
     ring1 = ring_of[1, 2, 3]
 
     assert_no_errors matcher.match(ring1)
-    assert_expected_errors negated.match(ring1) do
+    assert_errors negated.match(ring1) do
       _or do
         error :value, 'did not expect a kind of Integer but got 1'
         error %i[next value], 'did not expect a kind of Integer but got 2'
@@ -157,7 +157,7 @@ describe Matcher::ReferenceMatcher do
 
     ring2 = ring_of[1, nil, 3]
 
-    assert_expected_errors matcher.match(ring2),
+    assert_errors matcher.match(ring2),
       next: { value: 'expected a kind of Integer but got nil' }
     assert_no_errors negated.match(ring2)
   end

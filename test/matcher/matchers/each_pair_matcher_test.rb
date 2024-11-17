@@ -16,7 +16,7 @@ describe Matcher::EachPairMatcher do
       each_pair([:key, 'value'])
     end
 
-    assert_expected_errors matcher.match(nil),
+    assert_errors matcher.match(nil),
       "expected an object responding to `each_pair' but got nil"
     assert_no_errors matcher.~.match(nil)
   end
@@ -29,14 +29,14 @@ describe Matcher::EachPairMatcher do
     negated = ~matcher
 
     assert_no_errors matcher.match({ '1' => 1, 'a' => :a })
-    assert_expected_errors negated.match({ '1' => 1, 'a' => :a }) do
+    assert_errors negated.match({ '1' => 1, 'a' => :a }) do
       _or do
         error '1', 'expected k != v.to_s but got "1" != "1", where v = 1'
         error 'a', 'expected k != v.to_s but got "a" != "a", where v = :a'
       end
     end
 
-    assert_expected_errors matcher.match({ '1' => 1, 'a' => :a, 0 => '0' }),
+    assert_errors matcher.match({ '1' => 1, 'a' => :a, 0 => '0' }),
       0 => 'expected k == v.to_s but got 0 == "0", where v = "0"'
     assert_no_errors negated.match({ '1' => 1, 'a' => :a, 0 => '0' })
   end

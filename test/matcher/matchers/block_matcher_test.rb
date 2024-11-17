@@ -20,10 +20,10 @@ describe Matcher::BlockMatcher do
     negated = ~matcher
 
     assert_no_errors matcher.match(4)
-    assert_expected_errors negated.match(4),
+    assert_errors negated.match(4),
       "did not expect to satisfy condition block_matcher_test.rb:#{lineno} but got 4"
 
-    assert_expected_errors matcher.match(0),
+    assert_errors matcher.match(0),
       "expected to satisfy condition block_matcher_test.rb:#{lineno} but got 0"
     assert_no_errors negated.match(0)
   end
@@ -36,10 +36,10 @@ describe Matcher::BlockMatcher do
     negated = ~matcher
 
     assert_no_errors matcher.match(42)
-    assert_expected_errors negated.match(42),
+    assert_errors negated.match(42),
       'did not expect an answer to everything but got 42'
 
-    assert_expected_errors matcher.match(3),
+    assert_errors matcher.match(3),
       'expected an answer to everything but got 3'
     assert_no_errors negated.match(3)
   end

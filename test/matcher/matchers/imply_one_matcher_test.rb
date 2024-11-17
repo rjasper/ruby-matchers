@@ -24,7 +24,7 @@ describe Matcher::ImplyOneMatcher do
 
     negated = ~matcher
 
-    assert_expected_errors matcher.match(:a),
+    assert_errors matcher.match(:a),
       'expected :a to satisfy one of these conditions: String, Integer'
     assert_no_errors negated.match(:a)
   end
@@ -40,18 +40,18 @@ describe Matcher::ImplyOneMatcher do
     negated = ~matcher
 
     assert_no_errors matcher.match('string')
-    assert_expected_errors negated.match('string'),
+    assert_errors negated.match('string'),
       'did not expect "string"'
 
     assert_no_errors matcher.match(1)
-    assert_expected_errors negated.match(1),
+    assert_errors negated.match(1),
       'did not expect 1'
 
-    assert_expected_errors matcher.match('text'),
+    assert_errors matcher.match('text'),
       'expected "string" but got "text"'
     assert_no_errors negated.match('text')
 
-    assert_expected_errors matcher.match(2),
+    assert_errors matcher.match(2),
       'expected 1 but got 2'
     assert_no_errors negated.match(2)
   end
@@ -66,7 +66,7 @@ describe Matcher::ImplyOneMatcher do
 
     negated = ~matcher
 
-    assert_expected_errors matcher.match({ foo: true, bar: true, data: 'bar' }),
+    assert_errors matcher.match({ foo: true, bar: true, data: 'bar' }),
       'expected {:foo=>true, :bar=>true, :data=>"bar"} to satisfy only one condition, but met these: _[:foo] == true, _[:bar] == true',
       data: 'expected "foo" but got "bar"'
     assert_no_errors negated.match({ foo: true, bar: true, data: 'bar' })
@@ -83,18 +83,18 @@ describe Matcher::ImplyOneMatcher do
     negated = ~matcher
 
     assert_no_errors matcher.match('string')
-    assert_expected_errors negated.match('string'),
+    assert_errors negated.match('string'),
       'did not expect "string"'
 
     assert_no_errors matcher.match(nil)
-    assert_expected_errors negated.match(nil),
+    assert_errors negated.match(nil),
       'did not expect nil'
 
-    assert_expected_errors matcher.match('foo'),
+    assert_errors matcher.match('foo'),
       'expected "string" but got "foo"'
     assert_no_errors negated.match('foo')
 
-    assert_expected_errors matcher.match(1),
+    assert_errors matcher.match(1),
       'expected nil but got 1'
     assert_no_errors negated.match(1)
   end

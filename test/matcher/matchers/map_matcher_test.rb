@@ -12,7 +12,7 @@ describe Matcher::MapMatcher do
   it 'expects actual to respond to :map' do
     matcher = Matcher.build { map(_.length, [1, 2]) }
 
-    assert_expected_errors matcher.match(nil),
+    assert_errors matcher.match(nil),
       "expected an object responding to `map' but got nil"
     assert_no_errors matcher.~.match(nil)
   end
@@ -20,7 +20,7 @@ describe Matcher::MapMatcher do
   it 'rescues from call errors' do
     matcher = Matcher.build { map(_.length, [1]) }
 
-    assert_expected_errors matcher.match([nil]),
+    assert_errors matcher.match([nil]),
       0 => "expected an object responding to `length' but got nil"
     assert_no_errors matcher.~.match([nil])
   end
@@ -31,14 +31,14 @@ describe Matcher::MapMatcher do
     t = self
 
     assert_no_errors matcher.match([[1], [1, 2]])
-    assert_expected_errors negated.match([[1], [1, 2]]) do
+    assert_errors negated.match([[1], [1, 2]]) do
       _or do
         error t.expression { _[0].length }, 'did not expect 1'
         error t.expression { _[1].length }, 'did not expect 2'
       end
     end
 
-    assert_expected_errors matcher.match([[1], [1, 2, 3]]),
+    assert_errors matcher.match([[1], [1, 2, 3]]),
       expression { _[1].length } => 'expected 2 but got 3'
     assert_no_errors negated.match([[1], [1, 2, 3]])
   end
@@ -49,10 +49,10 @@ describe Matcher::MapMatcher do
     key = expression { _.map(&:length) }
 
     assert_no_errors matcher.match([[1], [2, 3], [4]])
-    assert_expected_errors negated.match([[1], [2, 3], [4]]),
+    assert_errors negated.match([[1], [2, 3], [4]]),
       key => 'expected _.sum != 4 but got 4 != 4, where _ = [1, 2, 1]'
 
-    assert_expected_errors matcher.match([[1], [2, 3]]),
+    assert_errors matcher.match([[1], [2, 3]]),
       key => 'expected _.sum == 4 but got 3 == 4, where _ = [1, 2]'
     assert_no_errors negated.match([[1], [2, 3]])
   end
@@ -75,7 +75,7 @@ describe Matcher::MapMatcher do
   it 'passes index' do
     matcher = Matcher.build { map(_[:a] + i, [10, 21, 32]) }
 
-    assert_expected_errors matcher.match([{ a: 10 }, { a: 20 }, { a: 40 }]),
+    assert_errors matcher.match([{ a: 10 }, { a: 20 }, { a: 40 }]),
       expression { _[2][:a] + i } => 'expected 32 but got 42'
   end
 
@@ -88,7 +88,7 @@ describe Matcher::MapMatcher do
     array << { a: array }
 
     assert_no_errors matcher.match(array)
-    assert_expected_errors matcher.match([{ a: 1 }]),
+    assert_errors matcher.match([{ a: 1 }]),
       0 => { a: 'expected _ == original but got 1 == [{:a=>1}]' }
   end
 

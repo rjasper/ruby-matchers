@@ -19,10 +19,10 @@ describe Matcher::SetVariablesMatcher do
     negated = ~matcher
 
     assert_no_errors matcher.match('foo')
-    assert_expected_errors negated.match('foo'),
+    assert_errors negated.match('foo'),
       'expected _ != myvar but got "foo" != "foo"'
 
-    assert_expected_errors matcher.match('bar'),
+    assert_errors matcher.match('bar'),
       'expected _ == myvar but got "bar" == "foo"'
     assert_no_errors negated.match('bar')
   end
@@ -54,7 +54,7 @@ describe Matcher::SetVariablesMatcher do
     }
 
     assert_no_errors matcher.match(actual)
-    assert_expected_errors negated.match(actual) do
+    assert_errors negated.match(actual) do
       _or do
         error :depth, 'expected _ != depth but got 0 != 0'
         error :value, 'did not expect 42'
@@ -72,7 +72,7 @@ describe Matcher::SetVariablesMatcher do
       },
     }
 
-    assert_expected_errors matcher.match(actual),
+    assert_errors matcher.match(actual),
       value: 'expected 42 but got 16',
       child: {
         depth: 'expected _ == depth but got 2 == 1',

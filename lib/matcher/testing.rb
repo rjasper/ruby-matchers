@@ -27,10 +27,6 @@ module Matcher
     end
 
     def assert_errors(actual, *base, **nested, &block)
-      assert_errors_helper(actual, base, nested, block)
-    end
-
-    def assert_expected_errors(actual, *base, **nested, &block)
       assert_errors_helper(actual, base, nested, block, phrasing: ExpectedPhrasing.phrasing)
     end
 

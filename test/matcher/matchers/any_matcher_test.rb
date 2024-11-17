@@ -14,14 +14,14 @@ describe Matcher::AnyMatcher do
     negated = ~matcher
 
     assert_no_errors matcher.match(1)
-    assert_expected_errors negated.match(1),
+    assert_errors negated.match(1),
       'did not expect 1'
 
     assert_no_errors matcher.match(2)
-    assert_expected_errors negated.match(2),
+    assert_errors negated.match(2),
       'did not expect 2'
 
-    assert_expected_errors matcher.match(4) do
+    assert_errors matcher.match(4) do
       _or do
         error 'expected 1 but got 4'
         error 'expected 2 but got 4'

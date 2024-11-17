@@ -12,7 +12,7 @@ describe Matcher::ProjectMatcher do
   it 'expects no call errors' do
     matcher = Matcher.build { project(_.sum, 4) }
 
-    assert_expected_errors matcher.match(nil),
+    assert_errors matcher.match(nil),
       "expected an object responding to `sum' but got nil"
     assert_no_errors matcher.~.match(nil)
   end
@@ -21,10 +21,10 @@ describe Matcher::ProjectMatcher do
     negated = ~matcher
 
     assert_no_errors matcher.match([2, 2])
-    assert_expected_errors negated.match([2, 2]),
+    assert_errors negated.match([2, 2]),
       expression { _.sum } => 'did not expect 4'
 
-    assert_expected_errors matcher.match([2, 3]),
+    assert_errors matcher.match([2, 3]),
       expression { _.sum } => 'expected 4 but got 5'
     assert_no_errors negated.match([2, 3])
   end

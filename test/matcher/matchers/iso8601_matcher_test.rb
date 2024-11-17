@@ -12,7 +12,7 @@ describe Matcher::Iso8601Matcher do
   it 'expects a String' do
     matcher = Matcher.build { iso8601 }
 
-    assert_expected_errors matcher.match(1), 'expected a kind of String but got 1'
+    assert_errors matcher.match(1), 'expected a kind of String but got 1'
     assert_no_errors matcher.~.match(1)
   end
 
@@ -21,10 +21,10 @@ describe Matcher::Iso8601Matcher do
     negated = ~matcher
 
     assert_no_errors matcher.match('2024-07-04T14:09:39+02:00')
-    assert_expected_errors negated.match('2024-07-04T14:09:39+02:00'),
+    assert_errors negated.match('2024-07-04T14:09:39+02:00'),
       'did not expect an ISO 8601 string but got "2024-07-04T14:09:39+02:00"'
 
-    assert_expected_errors matcher.match('foobar'), 'expected an ISO 8601 string but got "foobar"'
+    assert_errors matcher.match('foobar'), 'expected an ISO 8601 string but got "foobar"'
     assert_no_errors negated.match('foobar')
   end
 
@@ -33,10 +33,10 @@ describe Matcher::Iso8601Matcher do
     negated = ~matcher
 
     assert_no_errors matcher.match('2024-07-04T14:09:39+02:00')
-    assert_expected_errors negated.match('2024-07-04T14:09:39+02:00'),
+    assert_errors negated.match('2024-07-04T14:09:39+02:00'),
       'did not expect "2024-07-04T14:09:39+02:00"'
 
-    assert_expected_errors matcher.match('2020-01-05T12:20:32+02:00'),
+    assert_errors matcher.match('2020-01-05T12:20:32+02:00'),
       'expected 2024-07-04 14:09:39 +0200 but got "2020-01-05T12:20:32+02:00"'
     assert_no_errors negated.match('2020-01-05T12:20:32+02:00')
   end
@@ -46,7 +46,7 @@ describe Matcher::Iso8601Matcher do
     matcher = Matcher.build { iso8601(time) }
 
     assert_no_errors matcher.match('2024-07-04T14:09:39+02:00')
-    assert_expected_errors matcher.match('2020-01-05T12:20:32+02:00'),
+    assert_errors matcher.match('2020-01-05T12:20:32+02:00'),
       'expected 2024-07-04 14:09:39 +0200 but got "2020-01-05T12:20:32+02:00"'
   end
 

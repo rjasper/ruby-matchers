@@ -16,10 +16,10 @@ describe Matcher::CaseEqualityMatcher do
     negated = ~matcher
 
     assert_no_errors matcher.match('asdf')
-    assert_expected_errors negated.match('asdf'),
+    assert_errors negated.match('asdf'),
       'did not expect a kind of String but got "asdf"'
 
-    assert_expected_errors matcher.match(1),
+    assert_errors matcher.match(1),
       'expected a kind of String but got 1'
     assert_no_errors negated.match(1)
   end
@@ -29,10 +29,10 @@ describe Matcher::CaseEqualityMatcher do
     negated = ~matcher
 
     assert_no_errors matcher.match(2)
-    assert_expected_errors negated.match(2),
+    assert_errors negated.match(2),
       'did not expect value to be between 1 and 3 but got 2'
 
-    assert_expected_errors matcher.match(4),
+    assert_errors matcher.match(4),
       'expected value to be between 1 and 3 but got 4'
     assert_no_errors negated.match(4)
   end
@@ -42,10 +42,10 @@ describe Matcher::CaseEqualityMatcher do
     negated = ~matcher
 
     assert_no_errors matcher.match('foo')
-    assert_expected_errors negated.match('foo'),
+    assert_errors negated.match('foo'),
       'did not expect value to match /f/ but got "foo"'
 
-    assert_expected_errors matcher.match('bar'),
+    assert_errors matcher.match('bar'),
       'expected value to match /f/ but got "bar"'
     assert_no_errors negated.match('bar')
   end
@@ -55,10 +55,10 @@ describe Matcher::CaseEqualityMatcher do
     negated = ~matcher
 
     assert_no_errors matcher.match(1)
-    assert_expected_errors negated.match(1),
+    assert_errors negated.match(1),
       'did not expect object to be included in #<Set: {1, 2}> but got 1'
 
-    assert_expected_errors matcher.match(3),
+    assert_errors matcher.match(3),
       'expected object to be included in #<Set: {1, 2}> but got 3'
     assert_no_errors negated.match(3)
   end
@@ -68,10 +68,10 @@ describe Matcher::CaseEqualityMatcher do
     negated = ~matcher
 
     assert_no_errors matcher.match('foo')
-    assert_expected_errors negated.match('foo'),
+    assert_errors negated.match('foo'),
       'did not expect "foo"'
 
-    assert_expected_errors matcher.match('bar'),
+    assert_errors matcher.match('bar'),
       'expected "foo" but got "bar"'
     assert_no_errors negated.match('bar')
   end

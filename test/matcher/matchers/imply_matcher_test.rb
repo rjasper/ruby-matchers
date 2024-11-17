@@ -14,15 +14,15 @@ describe Matcher::ImplyMatcher do
     negated = ~matcher
 
     assert_no_errors matcher.match('string')
-    assert_expected_errors negated.match('string'),
+    assert_errors negated.match('string'),
       'did not expect "string"'
 
-    assert_expected_errors matcher.match('foo'),
+    assert_errors matcher.match('foo'),
       'expected "string" but got "foo"'
     assert_no_errors negated.match('foo')
 
     assert_no_errors matcher.match(1)
-    assert_expected_errors negated.match(1),
+    assert_errors negated.match(1),
       'expected a kind of String but got 1'
   end
 

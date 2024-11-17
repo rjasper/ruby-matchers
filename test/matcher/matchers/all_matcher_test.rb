@@ -20,22 +20,22 @@ describe Matcher::AllMatcher do
     negated = ~matcher
 
     assert_no_errors matcher.match(6)
-    assert_expected_errors negated.match(6) do
+    assert_errors negated.match(6) do
       _or do
         error 'did not expect a number divisible by 3 but got 6'
         error 'did not expect an even number but got 6'
       end
     end
 
-    assert_expected_errors matcher.match(9),
+    assert_errors matcher.match(9),
       'expected an even number but got 9'
     assert_no_errors negated.match(9)
 
-    assert_expected_errors matcher.match(4),
+    assert_errors matcher.match(4),
       'expected a number divisible by 3 but got 4'
     assert_no_errors negated.match(4)
 
-    assert_expected_errors matcher.match(5),
+    assert_errors matcher.match(5),
       'expected a number divisible by 3 but got 5',
       'expected an even number but got 5'
     assert_no_errors negated.match(5)

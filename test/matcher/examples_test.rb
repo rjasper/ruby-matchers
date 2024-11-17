@@ -33,7 +33,7 @@ describe 'examples' do
       }
     }
 
-    assert_expected_errors matcher.match(tree) do
+    assert_errors matcher.match(tree) do
       _or(:right) do
         error 'expected nil but got {:key=>7, :left=>{:key=>5, :left=>nil, :right=>nil}, :right=>{:key=>10, :left=>nil, :right=>nil}}'
         _or(:left) do
@@ -92,7 +92,7 @@ describe 'examples' do
 
     assert_no_errors matcher.match(%w[123 456])
 
-    assert_expected_errors matcher.match(%w[123 456 7890]),
+    assert_errors matcher.match(%w[123 456 7890]),
       2 => { expression { _.length } => 'expected 3 but got 4' }
   end
 
@@ -104,7 +104,7 @@ describe 'examples' do
     assert_equal 'Math.sqrt(_) > 2', matcher.inspect
 
     assert_no_errors matcher.match(9)
-    assert_expected_errors matcher.match(4),
+    assert_errors matcher.match(4),
       'expected Math.sqrt(_) > 2 but got 2.0 > 2, where _ = 4'
   end
 
@@ -115,7 +115,7 @@ describe 'examples' do
 
     assert_equal 'expr_s { |_| [_, 10] }.sum >= 15', matcher.inspect
     assert_no_errors matcher.match(10)
-    assert_expected_errors matcher.match(2),
+    assert_errors matcher.match(2),
       'expected expr_s { |_| [_, 10] }.sum >= 15 but got 12 >= 15, where _ = 2'
   end
 end

@@ -12,7 +12,7 @@ describe Matcher::ArrayMatcher do
   it 'expects an Array' do
     matcher = Matcher.build { [1, 2] }
 
-    assert_expected_errors matcher.match(nil),
+    assert_errors matcher.match(nil),
       'expected a kind of Array but got nil'
     assert_no_errors matcher.~.match(nil)
   end
@@ -21,11 +21,11 @@ describe Matcher::ArrayMatcher do
     matcher = Matcher.build { [1, 2] }
     negated = ~matcher
 
-    assert_expected_errors matcher.match([1]),
+    assert_errors matcher.match([1]),
       'expected length of 2 but was 1'
     assert_no_errors negated.match([1])
 
-    assert_expected_errors matcher.match([1, 2, 3]),
+    assert_errors matcher.match([1, 2, 3]),
       'expected length of 2 but was 3'
     assert_no_errors negated.match([1, 2, 3])
   end
@@ -35,7 +35,7 @@ describe Matcher::ArrayMatcher do
     negated = ~matcher
 
     assert_no_errors matcher.match([1, 2, 3])
-    assert_expected_errors negated.match([1, 2, 3]) do
+    assert_errors negated.match([1, 2, 3]) do
       _or do
         error 0, 'did not expect 1'
         error 1, 'did not expect 2'
@@ -43,7 +43,7 @@ describe Matcher::ArrayMatcher do
       end
     end
 
-    assert_expected_errors matcher.match([4, 5, 6]),
+    assert_errors matcher.match([4, 5, 6]),
       0 => 'expected 1 but got 4',
       1 => 'expected 2 but got 5',
       2 => 'expected 3 but got 6'
@@ -59,7 +59,7 @@ describe Matcher::ArrayMatcher do
 
     assert_no_errors matcher.match([0, 10, 20])
 
-    assert_expected_errors matcher.match([0, 11, 20]),
+    assert_errors matcher.match([0, 11, 20]),
       1 => 'expected _ == i * 10 but got 11 == 10, where i = 1'
   end
 
@@ -72,7 +72,7 @@ describe Matcher::ArrayMatcher do
 
     assert_no_errors matcher.match([1, 3, 5])
 
-    assert_expected_errors matcher.match([1, 5, 3]),
+    assert_errors matcher.match([1, 5, 3]),
       2 => 'expected parent[i - 1] < parent[i] but got 5 < 3, where parent = [1, 5, 3], i = 2'
   end
 
