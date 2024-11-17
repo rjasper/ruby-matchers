@@ -3,39 +3,33 @@
 require 'test_helper'
 
 describe Matcher::EqualMatcher do
-  it 'matches' do
-    matcher = Matcher.build do
-      equal(42)
-    end
+  it 'is built by equal and from objects' do
+    assert_kind_of(Matcher::EqualMatcher, Matcher.build { equal(String) })
+    assert_kind_of(Matcher::EqualMatcher, Matcher.build { 1 })
+  end
 
-    assert_kind_of Matcher::EqualMatcher, matcher
+  it 'matches' do
+    matcher = Matcher.build { 42 }
+    negated = ~matcher
+
     assert_no_errors matcher.match(42)
-    refute_predicate matcher.match(1), :valid?
+    assert_expected_errors negated.match(42),
+      'did not expect 42'
 
     assert_expected_errors matcher.match(23),
       'expected 42 but got 23'
-  end
-
-  it '#~' do
-    matcher = ~Matcher.build do
-      equal(23)
-    end
-
-    assert_no_errors matcher.match(5)
-    refute_predicate matcher.match(23), :valid?
-
-    assert_expected_errors matcher.match(23),
-      'did not expect 23'
+    assert_no_errors negated.match(23)
   end
 
   it '#to_s' do
     matcher = Matcher::EqualMatcher.new(1)
 
     assert_equal '1', matcher.to_s
-    assert_equal 'neg(1)', (~matcher).to_s
+    assert_equal 'neg(1)', matcher.~.to_s
 
     matcher = Matcher::EqualMatcher.new(1..10)
+
     assert_equal 'equal(1..10)', matcher.to_s
-    assert_equal '~equal(1..10)', (~matcher).to_s
+    assert_equal '~equal(1..10)', matcher.~.to_s
   end
 end

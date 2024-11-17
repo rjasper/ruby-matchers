@@ -82,7 +82,7 @@ describe 'examples' do
       }
     end
 
-    assert_predicate matcher.match({ value: 2 }), :valid?
+    assert_no_errors matcher.match({ value: 2 })
   end
 
   it 'map ^ each' do
@@ -90,7 +90,7 @@ describe 'examples' do
       map(_.length) ^ each(3)
     end
 
-    assert_predicate matcher.match(%w[123 456]), :valid?
+    assert_no_errors matcher.match(%w[123 456])
 
     assert_expected_errors matcher.match(%w[123 456 7890]),
       2 => { expression { _.length } => 'expected 3 but got 4' }

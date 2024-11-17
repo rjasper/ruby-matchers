@@ -3,33 +3,33 @@
 require 'test_helper'
 
 describe Matcher::ImplyMatcher do
-  it 'match imply' do
-    matcher = Matcher.build do
-      imply(String, 'string')
-    end
+  it 'is built by imply' do
+    matcher = Matcher.build { imply(Integer, 1) }
 
-    assert_no_errors matcher.match('string')
-    refute_predicate matcher.match('foo'), :valid?
-    assert_no_errors matcher.match(1)
+    assert_kind_of Matcher::ImplyMatcher, matcher
   end
 
-  it 'match negated imply' do
-    matcher = ~Matcher.build do
-      imply(String, _.downcase == _)
-    end
+  it 'matches against implied matchers' do
+    matcher = Matcher.build { imply(String, 'string') }
+    negated = ~matcher
 
-    assert_expected_errors matcher.match('hello'),
-      'expected _.downcase != _ but got "hello" != "hello"'
-    assert_expected_errors matcher.match(1),
+    assert_no_errors matcher.match('string')
+    assert_expected_errors negated.match('string'),
+      'did not expect "string"'
+
+    assert_expected_errors matcher.match('foo'),
+      'expected "string" but got "foo"'
+    assert_no_errors negated.match('foo')
+
+    assert_no_errors matcher.match(1)
+    assert_expected_errors negated.match(1),
       'expected a kind of String but got 1'
-    assert_no_errors matcher.match('Hello')
   end
 
   it '#to_s' do
-    matcher = Matcher.build do
-      imply(String, 'string')
-    end
+    matcher = Matcher.build { imply(String, 'string') }
 
     assert_equal 'imply(String, "string")', matcher.to_s
+    assert_equal '~imply(String, "string")', matcher.~.to_s
   end
 end

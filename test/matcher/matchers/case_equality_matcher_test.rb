@@ -3,41 +3,77 @@
 require 'test_helper'
 
 describe Matcher::CaseEqualityMatcher do
-  it '#matches case equality' do
-    examine = -> { Matcher::CaseEqualityMatcher.new(_1).match(_2).valid? }
+  it 'is built from Module, Range, and Regexp' do
+    kind = Matcher::CaseEqualityMatcher
 
-    assert examine.call(String, 'asdf')
-    refute examine.call(String, 1)
-    assert examine.call(1..3, 2)
-    refute examine.call(1..3, 4)
-    assert examine.call(/f/, 'foo')
-    refute examine.call(/f/, 'bar')
-    assert examine.call(Set[1, 2], 1)
-    refute examine.call(Set[1, 2], 3)
+    assert_kind_of(kind, Matcher.build { String })
+    assert_kind_of(kind, Matcher.build { 1..3 })
+    assert_kind_of(kind, Matcher.build { /f/ })
   end
 
-  it 'generates error messages' do
-    assert_expected_errors match('hi') { Integer },
-      'expected a kind of Integer but got "hi"'
-    assert_expected_errors match('foo') { /bar/ },
-      'expected value to match /bar/ but got "foo"'
-    assert_expected_errors Matcher::CaseEqualityMatcher.new(Set[2, 3]).match(1),
-      'expected object to be included in #<Set: {2, 3}> but got 1'
-    assert_expected_errors match(1) { 2..3 },
-      'expected value to be between 2 and 3 but got 1'
-    assert_expected_errors Matcher::CaseEqualityMatcher.new('foo').match('bar'),
-      'expected "foo" but got "bar"'
+  it 'matches Module' do
+    matcher = Matcher.build { String }
+    negated = ~matcher
 
-    assert_expected_errors not_match(1) { Integer },
-      'did not expect a kind of Integer but got 1'
-    assert_expected_errors not_match('foobar') { /bar/ },
-      'did not expect value to match /bar/ but got "foobar"'
-    assert_expected_errors Matcher::CaseEqualityMatcher.new(Set[2, 3]).~.match(2),
-      'did not expect object to be included in #<Set: {2, 3}> but got 2'
-    assert_expected_errors not_match(2) { 1..3 },
+    assert_no_errors matcher.match('asdf')
+    assert_expected_errors negated.match('asdf'),
+      'did not expect a kind of String but got "asdf"'
+
+    assert_expected_errors matcher.match(1),
+      'expected a kind of String but got 1'
+    assert_no_errors negated.match(1)
+  end
+
+  it 'matches Range' do
+    matcher = Matcher.build { 1..3 }
+    negated = ~matcher
+
+    assert_no_errors matcher.match(2)
+    assert_expected_errors negated.match(2),
       'did not expect value to be between 1 and 3 but got 2'
-    assert_expected_errors Matcher::CaseEqualityMatcher.new('foo').~.match('foo'),
+
+    assert_expected_errors matcher.match(4),
+      'expected value to be between 1 and 3 but got 4'
+    assert_no_errors negated.match(4)
+  end
+
+  it 'matches Regexp' do
+    matcher = Matcher.build { /f/ }
+    negated = ~matcher
+
+    assert_no_errors matcher.match('foo')
+    assert_expected_errors negated.match('foo'),
+      'did not expect value to match /f/ but got "foo"'
+
+    assert_expected_errors matcher.match('bar'),
+      'expected value to match /f/ but got "bar"'
+    assert_no_errors negated.match('bar')
+  end
+
+  it 'matches Set' do
+    matcher = Matcher::CaseEqualityMatcher.new(Set[1, 2])
+    negated = ~matcher
+
+    assert_no_errors matcher.match(1)
+    assert_expected_errors negated.match(1),
+      'did not expect object to be included in #<Set: {1, 2}> but got 1'
+
+    assert_expected_errors matcher.match(3),
+      'expected object to be included in #<Set: {1, 2}> but got 3'
+    assert_no_errors negated.match(3)
+  end
+
+  it 'matches other objects' do
+    matcher = Matcher::CaseEqualityMatcher.new('foo')
+    negated = ~matcher
+
+    assert_no_errors matcher.match('foo')
+    assert_expected_errors negated.match('foo'),
       'did not expect "foo"'
+
+    assert_expected_errors matcher.match('bar'),
+      'expected "foo" but got "bar"'
+    assert_no_errors negated.match('bar')
   end
 
   it '#to_s' do

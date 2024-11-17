@@ -10,7 +10,7 @@ describe Matcher::Builder do
       end
     end
 
-    assert_predicate matcher.match(1000), :valid?
+    assert_no_errors matcher.match(1000)
     refute_predicate matcher.match(10), :valid?
   end
 
@@ -19,7 +19,7 @@ describe Matcher::Builder do
       partial({ a: 'a' })
     end
 
-    assert_predicate matcher.match({ a: 'a', b: 'b' }), :valid?
+    assert_no_errors matcher.match({ a: 'a', b: 'b' })
   end
 
   it '#partial_r' do
@@ -27,7 +27,7 @@ describe Matcher::Builder do
       partial_r({ a: { a1: 'a1' } })
     end
 
-    assert_predicate matcher.match({ a: { a1: 'a1', a2: 'a2' }, b: 'b' }), :valid?
+    assert_no_errors matcher.match({ a: { a1: 'a1', a2: 'a2' }, b: 'b' })
   end
 
   it '#all' do
@@ -35,8 +35,8 @@ describe Matcher::Builder do
       all(_.odd?, _ % 3 == 0)
     end
 
-    assert_predicate matcher.match(3), :valid?
-    assert_predicate matcher.match(9), :valid?
+    assert_no_errors matcher.match(3)
+    assert_no_errors matcher.match(9)
     assert_expected_errors matcher.match(6), 'expected value to be odd but got 6'
     assert_expected_errors matcher.match(7), 'expected _ % 3 == 0 but got 1 == 0, where _ = 7'
   end
@@ -46,9 +46,9 @@ describe Matcher::Builder do
       any(_.even?, _ % 5 == 0, 37)
     end
 
-    assert_predicate matcher.match(4), :valid?
-    assert_predicate matcher.match(15), :valid?
-    assert_predicate matcher.match(37), :valid?
+    assert_no_errors matcher.match(4)
+    assert_no_errors matcher.match(15)
+    assert_no_errors matcher.match(37)
     assert_expected_errors matcher.match(17) do
       _or do
         error 'expected value to be even but got 17'
@@ -63,7 +63,7 @@ describe Matcher::Builder do
       42
     end
 
-    assert_predicate matcher.match(42), :valid?
+    assert_no_errors matcher.match(42)
     refute_predicate matcher.match(23), :valid?
   end
 
@@ -72,7 +72,7 @@ describe Matcher::Builder do
       -> { _1 > 0 }
     end
 
-    assert_predicate matcher.match(10), :valid?
+    assert_no_errors matcher.match(10)
     refute_predicate matcher.match(-1), :valid?
   end
 
@@ -81,7 +81,7 @@ describe Matcher::Builder do
       [1, 2, 3]
     end
 
-    assert_predicate matcher.match([1, 2, 3]), :valid?
+    assert_no_errors matcher.match([1, 2, 3])
     refute_predicate matcher.match([4]), :valid?
   end
 
@@ -90,7 +90,7 @@ describe Matcher::Builder do
       { a: 1 }
     end
 
-    assert_predicate matcher.match({ a: 1 }), :valid?
+    assert_no_errors matcher.match({ a: 1 })
     refute_predicate matcher.match({ a: 2 }), :valid?
     refute_predicate matcher.match({ a: 1, b: 2 }), :valid?
   end

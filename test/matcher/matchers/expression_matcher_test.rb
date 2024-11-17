@@ -33,14 +33,10 @@ class Unmatchable
 end
 
 describe Matcher::ExpressionMatcher do
-  it 'evaluates expressions' do
-    refute_predicate match(2) { _ > 2 }, :valid?
-    assert_no_errors match(3) { _.odd? }
-    assert_no_errors match(3) { _ + _ * 2 == 9 }
-    assert_no_errors match('Hello World') { _.upcase.gsub(' ', '_') == 'HELLO_WORLD' }
+  it 'is built from ExpressionRecorder' do
+    matcher = Matcher.build { _ + 1 }
 
-    assert_no_errors not_match(4) { _.odd? }
-    refute_predicate not_match(5) { _.odd? }, :valid?
+    assert_kind_of Matcher::ExpressionMatcher, matcher
   end
 
   it 'matches truthy and falsy' do
@@ -377,5 +373,16 @@ describe Matcher::ExpressionMatcher do
 
     assert_equal '_ * 3 > 9', matcher.to_s
     assert_equal 'neg(_ * 3 > 9)', (~matcher).to_s
+  end
+
+  private
+
+  def match(actual, &)
+    Matcher.build(&).match(actual)
+  end
+
+  def not_match(actual, &)
+    matcher = ~Matcher.build(&)
+    matcher.match(actual)
   end
 end

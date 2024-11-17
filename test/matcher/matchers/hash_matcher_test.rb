@@ -3,54 +3,83 @@
 require 'test_helper'
 
 describe Matcher::HashMatcher do
-  it 'expects a Hash' do
-    matcher = Matcher::HashMatcher.new({})
+  it 'is built from Hash and by partial' do
+    kind = Matcher::HashMatcher
 
-    assert_errors matcher.match(1), msg_not(:kind_of, 1, Hash)
-    assert_expected_errors matcher.match(1), 'expected a kind of Hash but got 1'
+    assert_kind_of(kind, Matcher.build { { foo: 'bar' } })
+    assert_kind_of(kind, Matcher.build { partial({ foo: 'bar' }) })
+    assert_kind_of(kind, Matcher.build { partial_r({ foo: 'bar' }) })
+  end
+
+  it 'expects a Hash' do
+    matcher = Matcher.build { {} }
+
+    assert_expected_errors matcher.match(1),
+      'expected a kind of Hash but got 1'
+    assert_no_errors matcher.~.match(1)
   end
 
   it 'expects key to be included' do
-    matcher = Matcher.build do
-      { foo: 'foo' }
-    end
+    matcher = Matcher.build { { foo: 'foo' } }
+    negated = ~matcher
 
-    assert_errors matcher.match({}),
-      foo: msg_not(:having_key, {}, :foo)
     assert_expected_errors matcher.match({}),
       foo: 'expected to include key :foo but got {}'
+    assert_no_errors negated.match({})
   end
 
-  it 'match all entries' do
-    matcher = Matcher::HashMatcher.new({ foo: v('foo') })
+  it 'matches all entries' do
+    matcher = Matcher.build { { foo: 'foo' } }
+    negated = ~matcher
 
     assert_no_errors matcher.match({ foo: 'foo' })
+    assert_expected_errors negated.match({ foo: 'foo' }),
+      foo: 'did not expect "foo"'
+
     assert_expected_errors matcher.match({ foo: 'foo', bar: 'bar' }),
       bar: 'did not expect to include key :bar but got {:foo=>"foo", :bar=>"bar"}'
+    assert_no_errors negated.match({ foo: 'foo', bar: 'bar' })
+
     assert_expected_errors matcher.match({}),
       foo: 'expected to include key :foo but got {}'
+    assert_no_errors negated.match({})
   end
 
-  it 'match partial entries' do
-    matcher = Matcher::HashMatcher.new({ foo: v('foo') }, partial: true)
+  it 'matches partial entries' do
+    matcher = Matcher.build { partial({ foo: 'foo' }) }
+    negated = ~matcher
 
     assert_no_errors matcher.match({ foo: 'foo' })
+    assert_expected_errors negated.match({ foo: 'foo' }),
+      foo: 'did not expect "foo"'
+
     assert_no_errors matcher.match({ foo: 'foo', bar: 'bar' })
+    assert_expected_errors negated.match({ foo: 'foo', bar: 'bar' }),
+      foo: 'did not expect "foo"'
+
     assert_expected_errors matcher.match({}),
       foo: 'expected to include key :foo but got {}'
+    assert_no_errors negated.match({})
   end
 
-  it 'match nested hash' do
-    matcher = Matcher::HashMatcher.new({ foo: h(bar: v('baz')) })
+  it 'matches a nested hashes' do
+    matcher = Matcher.build { { foo: { bar: 'baz' } } }
+    negated = ~matcher
 
     assert_no_errors matcher.match({ foo: { bar: 'baz' } })
+    assert_expected_errors negated.match({ foo: { bar: 'baz' } }),
+      foo: { bar: 'did not expect "baz"' }
+
     assert_expected_errors matcher.match({ foo: { bar: 'buzz' } }),
       foo: { bar: 'expected "baz" but got "buzz"' }
+    assert_no_errors negated.match({ foo: { bar: 'buzz' } })
+
     assert_expected_errors matcher.match({ foo: 'foo' }),
-      foo: msg_not(:kind_of, 'foo', Hash)
+      foo: 'expected a kind of Hash but got "foo"'
+    assert_no_errors negated.match({ foo: 'foo' })
   end
 
-  it 'pass key' do
+  it 'passes key' do
     matcher = Matcher.build do
       { a: _ == key.to_s.upcase }
     end
@@ -59,7 +88,7 @@ describe Matcher::HashMatcher do
       a: 'expected _ == k.to_s.upcase but got "B" == "A", where k = :a'
   end
 
-  it 'pass parent' do
+  it 'passes parent' do
     matcher = Matcher.build do
       { self: _ == parent }
     end
@@ -73,14 +102,16 @@ describe Matcher::HashMatcher do
   end
 
   it '#to_s: all entries' do
-    matcher = Matcher::HashMatcher.new({ a: h(b: v('c')) })
+    matcher = Matcher.build { { a: { b: 'c' } } }
 
     assert_equal '{:a=>{:b=>"c"}}', matcher.to_s
+    assert_equal 'neg({:a=>{:b=>"c"}})', matcher.~.to_s
   end
 
   it '#to_s: partial entries' do
-    matcher = Matcher::HashMatcher.new({ a: h(b: v('c')) }, partial: true)
+    matcher = Matcher.build { partial({ a: { b: 'c' } }) }
 
     assert_equal 'partial({:a=>{:b=>"c"}})', matcher.to_s
+    assert_equal '~partial({:a=>{:b=>"c"}})', matcher.~.to_s
   end
 end

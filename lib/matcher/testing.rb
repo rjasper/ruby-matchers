@@ -2,27 +2,6 @@
 
 module Matcher
   module Testing
-    def match(actual, &)
-      Matcher.build(&).match(actual)
-    end
-
-    def not_match(actual, &)
-      matcher = ~Matcher.build(&)
-      matcher.match(actual)
-    end
-
-    def v(value)
-      EqualMatcher.new(value)
-    end
-
-    def a(array)
-      ArrayMatcher.new(array)
-    end
-
-    def h(**hash)
-      HashMatcher.new(hash)
-    end
-
     def expression(&)
       Expression.build(&)
     end
@@ -47,33 +26,6 @@ module Matcher
       Errors::Or.new(nodes)
     end
 
-    def msg(key, actual, *, **)
-      Message.new(key, false, actual, *, **)
-    end
-
-    def msg_not(key, actual, *, **)
-      Message.new(key, true, actual, *, **)
-    end
-
-    def assert_errors_helper(actual, base, nested, block, phrasing: nil)
-      raise 'cannot pass expected errors directly if block given' if
-        (!base.empty? || !nested.empty?) && block
-
-      expected_nodes = if block
-        Testing::ErrorBuilder.build_nodes(&block)
-      else
-        base.map { Errors::Element.new(_1) } +
-          nested_from_hash(nested)
-      end
-
-      expected = Errors::And.from(expected_nodes)
-      message = Testing::ErrorsChecker.check(expected, actual, phrasing:)
-
-      return unless message
-
-      assert false, message
-    end
-
     def assert_errors(actual, *base, **nested, &block)
       assert_errors_helper(actual, base, nested, block)
     end
@@ -91,6 +43,24 @@ module Matcher
     end
 
     private
+
+    def assert_errors_helper(actual, base, nested, block, phrasing: nil)
+      raise 'cannot pass expected errors directly if block given' if
+        (!base.empty? || !nested.empty?) && block
+
+      expected_nodes = if block
+        Testing::ErrorBuilder.build_nodes(&block)
+      else
+        base.map { Errors::Element.new(_1) } + nested_from_hash(nested)
+      end
+
+      expected = Errors::And.from(expected_nodes)
+      message = Testing::ErrorsChecker.check(expected, actual, phrasing:)
+
+      return unless message
+
+      assert false, message
+    end
 
     def nested_from_hash(hash)
       hash.map do |key, value|

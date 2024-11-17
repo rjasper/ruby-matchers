@@ -3,41 +3,46 @@
 require 'test_helper'
 
 describe Matcher::SetVariablesMatcher do
-  it 'set variable to value' do
-    matcher = Matcher.build do
-      setvar({ myvar: 'foo' }, _ == vars[:myvar])
-    end
+  it 'is build by setvar' do
+    kind = Matcher::SetVariablesMatcher
 
-    assert_no_errors matcher.match('foo')
-    assert_expected_errors matcher.match('bar'),
-      'expected _ == myvar but got "bar" == "foo"'
+    assert_kind_of(kind, Matcher.build { setvar({ n: 1 }, _ == vars[:n]) })
+    assert_kind_of(kind, Matcher.build { setvar(n: 1) ^ (_ == vars[:n]) })
+  end
+
+  it 'sets variable to value' do
+    matcher = Matcher.build do
+      setvar(myvar: 'foo') ^
+        (_ == vars[:myvar])
+    end
 
     negated = ~matcher
 
-    assert_expected_errors negated.match('foo'), 'expected _ != myvar but got "foo" != "foo"'
+    assert_no_errors matcher.match('foo')
+    assert_expected_errors negated.match('foo'),
+      'expected _ != myvar but got "foo" != "foo"'
+
+    assert_expected_errors matcher.match('bar'),
+      'expected _ == myvar but got "bar" == "foo"'
     assert_no_errors negated.match('bar')
   end
 
-  it 'set variables via block' do
+  it 'sets variables via block' do
     matcher = Matcher.build do
       setvar(
-        {
-          depth: 0,
-          parent_value: ->(_) { _[:value] }
-        },
-        {
+        depth: 0,
+        parent_value: ->(_) { _[:value] },
+      ) ^ {
+        depth: _ == vars[:depth],
+        value: 42,
+        child: setvar(depth: ->(depth:) { depth + 1 }) ^ {
           depth: _ == vars[:depth],
-          value: 42,
-          child: setvar(
-            { depth: ->(depth:) { depth + 1 } },
-            {
-              depth: _ == vars[:depth],
-              value: _ == vars[:parent_value] / 2 + 2,
-            },
-          ),
-        }
-      )
+          value: _ == vars[:parent_value] / 2 + 2,
+        },
+      }
     end
+
+    negated = ~matcher
 
     actual = {
       depth: 0,
@@ -45,10 +50,18 @@ describe Matcher::SetVariablesMatcher do
       child: {
         depth: 1,
         value: 23,
-      }
+      },
     }
 
     assert_no_errors matcher.match(actual)
+    assert_expected_errors negated.match(actual) do
+      _or do
+        error :depth, 'expected _ != depth but got 0 != 0'
+        error :value, 'did not expect 42'
+        error %i[child depth], 'expected _ != depth but got 1 != 1'
+        error %i[child value], 'expected _ != parent_value / 2 + 2 but got 23 != 23, where parent_value = 42'
+      end
+    end
 
     actual = {
       depth: 0,
@@ -56,15 +69,16 @@ describe Matcher::SetVariablesMatcher do
       child: {
         depth: 2,
         value: 11,
-      }
+      },
     }
 
     assert_expected_errors matcher.match(actual),
       value: 'expected 42 but got 16',
       child: {
         depth: 'expected _ == depth but got 2 == 1',
-        value: 'expected _ == parent_value / 2 + 2 but got 11 == 10, where parent_value = 16'
+        value: 'expected _ == parent_value / 2 + 2 but got 11 == 10, where parent_value = 16',
       }
+    assert_no_errors negated.match(actual)
   end
 
   it '#to_s' do
@@ -83,6 +97,8 @@ describe Matcher::SetVariablesMatcher do
         (setvar(a: 0, b: ->(_) { 2 * _ }) ^ -> { false }).to_s
       t.assert_equal "setvar(a: 0, b: ->(_) { ... }) ^ partial({:foo=>42})",
         (setvar(a: 0, b: ->(_) { 2 * _ }) ^ partial({ foo: 42 })).to_s
+
+      t.assert_equal 'setvar(a: 0) ^ neg(_ > a)', neg(setvar(a: 0) ^ (_ > a)).to_s
 
       nil
     end

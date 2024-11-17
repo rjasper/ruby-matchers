@@ -3,45 +3,61 @@
 require 'test_helper'
 
 describe Matcher::BlockMatcher do
-  it 'validates blocks' do
-    matcher = Matcher::BlockMatcher.new(-> { _1 > 2 }, nil)
+  it 'is built by satisfy' do
+    matcher = Matcher.build do
+      satisfy { _1 > 2 }
+    end
 
-    assert_no_errors matcher.match(4)
-    refute_predicate matcher.match(0), :valid?
+    assert_kind_of Matcher::BlockMatcher, matcher
   end
 
-  it 'generates message' do
-    matcher = Matcher::BlockMatcher.new(-> { _1 == 42 }, 'an answer to everything')
+  it 'matches without description' do
+    lineno = __LINE__ + 2
+    matcher = Matcher.build do
+      satisfy { _1 > 2 }
+    end
 
-    assert_errors matcher.match(3),
-      msg_not(:described_by, 3, 'an answer to everything')
-    assert_errors (~matcher).match(42),
-      msg(:described_by, 42, 'an answer to everything')
+    negated = ~matcher
+
+    assert_no_errors matcher.match(4)
+    assert_expected_errors negated.match(4),
+      "did not expect to satisfy condition block_matcher_test.rb:#{lineno} but got 4"
+
+    assert_expected_errors matcher.match(0),
+      "expected to satisfy condition block_matcher_test.rb:#{lineno} but got 0"
+    assert_no_errors negated.match(0)
+  end
+
+  it 'matches with description' do
+    matcher = Matcher.build do
+      satisfy('an answer to everything') { _1 == 42 }
+    end
+
+    negated = ~matcher
+
+    assert_no_errors matcher.match(42)
+    assert_expected_errors negated.match(42),
+      'did not expect an answer to everything but got 42'
 
     assert_expected_errors matcher.match(3),
       'expected an answer to everything but got 3'
-    assert_expected_errors (~matcher).match(42),
-      'did not expect an answer to everything but got 42'
-
-    matcher = Matcher::BlockMatcher.new(-> { _1 == 'foo' })
-    lineno = __LINE__ - 1
-
-    assert_expected_errors matcher.match('bar'),
-      "expected to satisfy condition block_matcher_test.rb:#{lineno} but got \"bar\""
-    assert_expected_errors (~matcher).match('foo'),
-      "did not expect to satisfy condition block_matcher_test.rb:#{lineno} but got \"foo\""
+    assert_no_errors negated.match(3)
   end
 
-  it '#to_s: with message' do
-    matcher = Matcher::BlockMatcher.new(-> { _1 % 3 == 0 }, 'a number divisible by three')
+  it '#to_s: with description' do
+    matcher = Matcher.build do
+      satisfy('a number divisible by three') { _1 % 3 == 0 }
+    end
 
     assert_equal 'a number divisible by three', matcher.to_s
     assert_equal 'neg(a number divisible by three)', (~matcher).to_s
   end
 
-  it '#to_s: no message' do
-    matcher = Matcher::BlockMatcher.new(-> { true })
-    lineno = __LINE__ - 1
+  it '#to_s: without description' do
+    lineno = __LINE__ + 2
+    matcher = Matcher.build do
+      satisfy { true }
+    end
 
     assert_equal "-> { block_matcher_test.rb:#{lineno} }",
       matcher.to_s
