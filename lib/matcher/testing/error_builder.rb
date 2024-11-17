@@ -3,14 +3,16 @@
 module Matcher
   module Testing
     class ErrorBuilder
+      def self.build(&)
+        nodes = build_nodes(&)
+
+        Errors::And.from(nodes)
+      end
+
       def self.build_nodes(&)
         builder = ErrorBuilder.new
         builder.instance_exec(&)
         builder.nodes
-      end
-
-      def self.build_node(&)
-        build_nodes(&).last
       end
 
       attr_reader :nodes

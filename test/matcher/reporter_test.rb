@@ -4,28 +4,30 @@ require 'test_helper'
 
 describe Matcher::Reporter do
   it 'looks nice' do
-    math = Matcher::Constant.new(Math)
+    t = self
 
-    errors = _and(
-      element('base wrong'),
-      nested(:nested, element('nested wrong')),
-      nested(:foo, nested(expression { _.bar }, element('foobar'))),
-      nested(expression { _ + _ }, element('2 roots')),
-      nested(:too_long,
-        nested(expression { _ + _ + _ }, element('3 long roots'))),
-      nested(expression { math.to_recorder.sqrt(_) }, element('square root of root')),
-      _or(
-        element('either correct this'),
-        _and(
-          element('or all of this'),
-          element('and this'),
-        ),
-        _or(
-          nested(1, element('or1')),
-          nested(2, element('or2')),
-        ),
-      ),
-    )
+    errors = build_errors do
+      error 'base wrong'
+      error :nested, 'nested wrong'
+      error t.expression { _[:foo].bar }, 'foobar'
+      error t.expression { _ + _ }, '2 roots'
+      error [:too_long, t.expression { _ + _ + _ }], '3 long roots'
+      error t.expression { expr(Math).sqrt(_) }, 'square root of root'
+
+      _or do
+        error 'either correct this'
+
+        _and do
+          error 'or all of this'
+          error 'and this'
+
+          _or do
+            error 1, 'or1'
+            error 2, 'or2'
+          end
+        end
+      end
+    end
 
     assert_equal <<~TEXT, Matcher::Reporter.new.report(errors)
       root: base wrong
@@ -38,7 +40,7 @@ describe Matcher::Reporter do
       - root: either correct this
       - root: or all of this
         root: and this
-      - expected at least one error to be absent:
+        expected at least one error to be absent:
         - root[1]: or1
         - root[2]: or2
     TEXT

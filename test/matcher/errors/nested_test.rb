@@ -6,6 +6,8 @@ Nested = Matcher::Errors::Nested
 Call = Matcher::Call
 
 describe Matcher::Errors::Nested do
+  include Matcher::ErrorsHelpers
+
   it '::from: simple key' do
     assert_equal Nested.new(expression { _[:foo] }, element('foo is wrong')),
       Nested.from(:foo, element('foo is wrong'))
@@ -34,6 +36,6 @@ describe Matcher::Errors::Nested do
 
   it '::from: root expression key' do
     assert_equal element('something went wrong'),
-      Nested.from(Variable.actual, element('something went wrong'))
+      Nested.from(Matcher::Variable.actual, element('something went wrong'))
   end
 end

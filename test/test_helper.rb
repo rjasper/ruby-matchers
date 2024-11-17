@@ -3,6 +3,7 @@
 $LOAD_PATH.unshift File.expand_path("../lib", __dir__)
 require "matcher"
 require 'matcher/testing'
+require 'errors_helpers'
 
 require "minitest/autorun"
 

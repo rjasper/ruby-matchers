@@ -3,18 +3,17 @@
 require 'test_helper'
 
 ErrorsChecker = Matcher::Testing::ErrorsChecker
-ErrorBuilder = Matcher::Testing::ErrorBuilder
 
 describe Matcher::Testing::ErrorsChecker do
   it 'compare trees' do
-    expected = ErrorBuilder.build_node do
+    expected = build_errors do
       _or(:foo) do
         error(:bar, 'error1')
         error('error2')
       end
     end
 
-    actual = ErrorBuilder.build_node do
+    actual = build_errors do
       _or do
         error(:foo, 'error2')
         error(%i[foo bar], 'error1')
@@ -25,14 +24,14 @@ describe Matcher::Testing::ErrorsChecker do
   end
 
   it 'hierarchie mismatch' do
-    expected = ErrorBuilder.build_node do
+    expected = build_errors do
       _and do
         error 'a'
         error 'b'
       end
     end
 
-    actual = ErrorBuilder.build_node do
+    actual = build_errors do
       _or do
         error 'a'
         error 'b'

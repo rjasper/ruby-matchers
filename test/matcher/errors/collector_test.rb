@@ -5,6 +5,8 @@ require 'test_helper'
 Collector = Matcher::Errors::Collector
 
 describe Matcher::Errors::Collector do
+  include Matcher::ErrorsHelpers
+
   it 'empty' do
     assert_equal empty, Collector.new.node
   end
