@@ -93,7 +93,7 @@ describe Matcher::SetVariablesMatcher do
         (setvar(a: 0, b: ->(_) { 2 * _ }) ^ (a + b).even?).to_s
       t.assert_equal 'setvar(a: 0, b: ->(_) { ... }) ^ [a, b]',
         (setvar(a: 0, b: ->(_) { 2 * _ }) ^ [a, b]).to_s
-      t.assert_equal "setvar(a: 0, b: ->(_) { ... }) ^ -> { set_variables_matcher_test.rb:#{__LINE__ + 1} }",
+      t.assert_equal "setvar(a: 0, b: ->(_) { ... }) ^ -> { set_variables_matcher_spec.rb:#{__LINE__ + 1} }",
         (setvar(a: 0, b: ->(_) { 2 * _ }) ^ -> { false }).to_s
       t.assert_equal "setvar(a: 0, b: ->(_) { ... }) ^ partial({:foo=>42})",
         (setvar(a: 0, b: ->(_) { 2 * _ }) ^ partial({ foo: 42 })).to_s

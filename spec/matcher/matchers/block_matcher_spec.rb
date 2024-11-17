@@ -21,10 +21,10 @@ describe Matcher::BlockMatcher do
 
     assert_no_errors matcher.match(4)
     assert_errors negated.match(4),
-      "did not expect to satisfy condition block_matcher_test.rb:#{lineno} but got 4"
+      "did not expect to satisfy condition block_matcher_spec.rb:#{lineno} but got 4"
 
     assert_errors matcher.match(0),
-      "expected to satisfy condition block_matcher_test.rb:#{lineno} but got 0"
+      "expected to satisfy condition block_matcher_spec.rb:#{lineno} but got 0"
     assert_no_errors negated.match(0)
   end
 
@@ -59,9 +59,9 @@ describe Matcher::BlockMatcher do
       satisfy { true }
     end
 
-    assert_equal "-> { block_matcher_test.rb:#{lineno} }",
+    assert_equal "-> { block_matcher_spec.rb:#{lineno} }",
       matcher.to_s
-    assert_equal "neg(-> { block_matcher_test.rb:#{lineno} })",
+    assert_equal "neg(-> { block_matcher_spec.rb:#{lineno} })",
       (~matcher).to_s
   end
 end
