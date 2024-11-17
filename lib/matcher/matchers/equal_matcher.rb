@@ -28,4 +28,10 @@ module Matcher
       end
     end
   end
+
+  module MatcherBuilding
+    def equal(value)
+      EqualMatcher.new(value)
+    end
+  end
 end

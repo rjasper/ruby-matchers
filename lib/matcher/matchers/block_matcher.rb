@@ -45,4 +45,10 @@ module Matcher
       "#{File.basename(file)}:#{line}"
     end
   end
+
+  module MatcherBuilding
+    def satisfy(message = nil, &block)
+      BlockMatcher.new(block, message)
+    end
+  end
 end

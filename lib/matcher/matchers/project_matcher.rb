@@ -28,4 +28,15 @@ module Matcher
       "project(#{@expression}, #{@matcher})"
     end
   end
+
+  module MatcherBuilding
+    def project(recorder, matcher = NULL)
+      return Pipe.new { project(recorder, _1) } if Matcher.null?(matcher)
+
+      expression = ExpressionRecorder.to_expression(recorder)
+      matcher = Matcher.of(matcher)
+
+      ProjectMatcher.new(expression, matcher)
+    end
+  end
 end

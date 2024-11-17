@@ -35,4 +35,10 @@ module Matcher
       "any(#{@matchers.map(&:to_s).join(', ')})"
     end
   end
+
+  module MatcherBuilding
+    def any(*matchers)
+      AnyMatcher.new(matchers.map { Matcher.of(_1) })
+    end
+  end
 end

@@ -37,4 +37,12 @@ module Matcher
       "each_pair(#{@matcher})"
     end
   end
+
+  module MatcherBuilding
+    def each_pair(matcher = NULL)
+      return Pipe.new { each_pair(_1) } if Matcher.null?(matcher)
+
+      EachPairMatcher.new(Matcher.of(matcher))
+    end
+  end
 end

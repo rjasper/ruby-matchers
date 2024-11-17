@@ -73,4 +73,14 @@ module Matcher
       end
     end
   end
+
+  module MatcherBuilding
+    def refs?
+      !@refs.nil?
+    end
+
+    def refs
+      @refs ||= ReferenceMatcher::Collection.new
+    end
+  end
 end

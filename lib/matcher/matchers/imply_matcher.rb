@@ -26,4 +26,15 @@ module Matcher
       "imply(#{@condition}, #{@matcher})"
     end
   end
+
+  module MatcherBuilding
+    def imply(condition, matcher = NULL)
+      return Pipe.new { imply(condition, _1) } if Matcher.null?(matcher)
+
+      condition = Matcher.of(condition)
+      matcher = Matcher.of(matcher)
+
+      ImplyMatcher.new(condition, matcher)
+    end
+  end
 end

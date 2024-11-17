@@ -56,4 +56,13 @@ module Matcher
       matchers.map { _1.condition.to_s }.join(', ')
     end
   end
+
+  module MatcherBuilding
+    def imply_one(*matchers, else: NULL)
+      els = { else: }[:else]
+      els = Matcher.null?(els) ? nil : Matcher.of(els)
+
+      ImplyOneMatcher.new(matchers, else: els)
+    end
+  end
 end

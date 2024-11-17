@@ -21,4 +21,12 @@ module Matcher
       "neg(#{@matcher})"
     end
   end
+
+  module MatcherBuilding
+    def neg(matcher = NULL)
+      return Pipe.new { neg(_1) } if Matcher.null?(matcher)
+
+      ~Matcher.of(matcher)
+    end
+  end
 end

@@ -32,4 +32,12 @@ module Matcher
       "each(#{@matcher})"
     end
   end
+
+  module MatcherBuilding
+    def each(matcher = NULL)
+      return Pipe.new { each(_1) } if Matcher.null?(matcher)
+
+      EachMatcher.new(Matcher.of(matcher))
+    end
+  end
 end

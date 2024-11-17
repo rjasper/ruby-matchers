@@ -7,6 +7,7 @@ require 'forwardable'
 
 require 'matcher/expressions/expression_building'
 require 'matcher/patterns/pattern_building'
+require 'matcher/matcher_building'
 
 require 'matcher/base'
 require 'matcher/abstract_phrasing'
@@ -82,6 +83,7 @@ require 'matcher/matchers/negated_matcher'
 require 'matcher/matchers/negated_project_matcher'
 require 'matcher/matchers/project_matcher'
 require 'matcher/matchers/reference_matcher'
+require 'matcher/matchers/reference_matcher/collection'
 require 'matcher/matchers/set_matcher'
 require 'matcher/matchers/set_variables_matcher'
 

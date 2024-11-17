@@ -47,4 +47,18 @@ module Matcher
       "setvar(#{assign_parts.join(', ')}) ^ #{matcher}"
     end
   end
+
+  module MatcherBuilding
+    def setvar(assigns = nil, matcher = NULL, **kwargs)
+      raise "Cannot set both assigns and kwargs" if assigns && !kwargs.empty?
+
+      assigns = kwargs unless assigns
+
+      return Pipe.new { setvar(assigns, _1) } if Matcher.null?(matcher)
+
+      matcher = Matcher.of(matcher)
+
+      SetVariablesMatcher.new(assigns, matcher)
+    end
+  end
 end

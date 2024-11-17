@@ -29,4 +29,10 @@ module Matcher
       "all(#{@matchers.map(&:to_s).join(', ')})"
     end
   end
+
+  module MatcherBuilding
+    def all(*matchers)
+      AllMatcher.new(matchers.map { Matcher.of(_1) })
+    end
+  end
 end

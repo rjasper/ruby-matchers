@@ -169,4 +169,15 @@ module Matcher
 
     include ErrorMapping
   end
+
+  module MatcherBuilding
+    def map(recorder, matcher = NULL)
+      return Pipe.new { map(recorder, _1) } if Matcher.null?(matcher)
+
+      expression = ExpressionRecorder.to_expression(recorder)
+      matcher = Matcher.of(matcher)
+
+      MapMatcher.new(expression, matcher)
+    end
+  end
 end

@@ -45,4 +45,10 @@ module Matcher
       "#{'~' if @negated}iso8601#{"(#{@time.iso8601.inspect})" if @time}"
     end
   end
+
+  module MatcherBuilding
+    def iso8601(string_or_time = nil)
+      Iso8601Matcher.new(string_or_time)
+    end
+  end
 end

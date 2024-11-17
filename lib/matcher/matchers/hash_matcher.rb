@@ -57,4 +57,18 @@ module Matcher
       end
     end
   end
+
+  module MatcherBuilding
+    def partial(hash)
+      hash = hash.transform_values { of(_1) }
+      HashMatcher.new(hash, partial: true)
+    end
+
+    def partial_r(hash)
+      return of(hash) if ExpressionRecorder.recorder?(hash) || !hash.is_a?(Hash)
+
+      hash = hash.transform_values { partial_r(_1) }
+      HashMatcher.new(hash, partial: true)
+    end
+  end
 end

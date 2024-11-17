@@ -57,4 +57,10 @@ module Matcher
       "#{'~' if @negated}set(#{@array})"
     end
   end
+
+  module MatcherBuilding
+    def set(array)
+      SetMatcher.new(array.map { Matcher.of(_1) })
+    end
+  end
 end
