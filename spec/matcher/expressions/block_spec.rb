@@ -4,6 +4,19 @@ require 'test_helper'
 
 describe Matcher::Block do
   describe '::build' do
+    it 'records expression inside block' do
+      block = Matcher::Block.build { |a, b:| a + b }
+
+      assert_equal expression { vars[:a] + vars[:b] }, block.expression
+    end
+
+    it 'records constant' do
+      block = Matcher::Block.build { 42 }
+      constant = Matcher::Constant.new(42)
+
+      assert_equal constant, block.expression
+    end
+
     it 'raises when a outer variable is shadowed' do
       outer_a = Matcher::Variable.new(:a)
 
