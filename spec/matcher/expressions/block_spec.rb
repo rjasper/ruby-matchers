@@ -34,4 +34,54 @@ describe Matcher::Block do
       assert_equal 'foo', block.to_proc.call(struct)
     end
   end
+
+  it '#variables' do
+    foo = Matcher::Variable.new(:foo)
+    block = Matcher::Block.build { |bar| foo.to_recorder + bar }
+
+    assert_equal [:foo], block.variables
+  end
+
+  it '#substitute' do
+    x = Matcher::Variable.new(:x)
+    z = Matcher::Variable.new(:z)
+    block = Matcher::Block.build { |y| x.to_recorder + y }
+
+    substituted = block.substitute(x: :z)
+
+    assert_equal Matcher::Block.build { |y| z.to_recorder + y }, substituted
+    assert_equal 5, substituted.to_proc(values: { z: 2 }).call(3)
+  end
+
+  describe '#to_proc' do
+    it 'evaluates simple expressions' do
+      block = Matcher::Block.build { |a, b| a * 10 + b }
+
+      assert_equal 23, block.to_proc[2, 3]
+    end
+
+    it 'evaluates context sensitive expressions' do
+      x = Matcher::Variable.new(:x)
+      block = Matcher::Block.build { |y| x.to_recorder * 10 + y }
+
+      assert_equal 42, block.to_proc(values: { x: 4 }).call(2)
+    end
+  end
+
+  describe '#to_s' do
+    it 'without args' do
+      foo = Matcher::Variable.new(:foo)
+      block = Matcher::Block.build { foo.to_recorder + 1 }
+
+      assert_equal '-> { foo + 1 }', block.to_s
+      assert_equal '{ foo + 1 }', block.to_s(as_block: true)
+    end
+
+    it 'with args' do
+      block = Matcher::Block.build { |foo, bar:| foo + bar }
+
+      assert_equal '->(foo, bar:) { foo + bar }', block.to_s
+      assert_equal '{ |foo, bar:| foo + bar }', block.to_s(as_block: true)
+    end
+  end
 end
