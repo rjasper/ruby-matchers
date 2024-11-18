@@ -157,5 +157,9 @@ module Matcher
         end
       end.join(', ')
     end
+
+    def evaluate(values)
+      @expression.evaluate(**values)
+    end
   end
 end
