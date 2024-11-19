@@ -34,6 +34,7 @@ require 'matcher/patterns/variable_hole'
 require 'matcher/assertions'
 require 'matcher/ast_mapping'
 require 'matcher/builder'
+require 'matcher/debug'
 require 'matcher/expected_phrasing'
 require 'matcher/expression_labeler'
 require 'matcher/list'
@@ -192,6 +193,8 @@ module Matcher
       Thread.current[:matcher_build_session] = nil
     end
   end
+
+  Debug.init
 end
 
 require 'matcher/matchers/expression_matcher/message_rules'
