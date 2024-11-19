@@ -3,6 +3,12 @@
 require 'test_helper'
 
 describe Matcher::BlockExpression do
+  it '#variables' do
+    expr = Matcher::BlockExpression.new { |_, x:| _ == x }
+
+    assert_equal %i[actual x], expr.variables
+  end
+
   it '#evaluate' do
     expr = Matcher::BlockExpression.new { |_, foo:| [_, foo] }
     assert_equal [42, 'bar'], expr.evaluate({ actual: 42, foo: 'bar' })
