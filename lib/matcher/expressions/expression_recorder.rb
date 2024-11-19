@@ -24,6 +24,13 @@ module Matcher
     end
 
     def method_missing(method, *args, **kwargs, &block)
+      # *.hash.to_int indicates that "*" is used in a Hash as key
+      return @expression.receiver.hash if method == :to_int &&
+        @expression.is_a?(Call) &&
+        @expression.method == :hash &&
+        args.empty? && kwargs.empty? && !block &&
+        @expression.unary?
+
       transform = ExpressionRecorder.method(:transform)
       args = args.map(&transform)
       kwargs = kwargs.transform_values(&transform)
