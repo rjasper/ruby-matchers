@@ -2,27 +2,34 @@
 
 module Matcher
   class BlockExpression < Expression
-    def initialize(block, to_s: false)
+    def initialize(block, substitution: nil, to_s: false)
       super()
 
       @block = block
+      @substitution = substitution
       @to_s = to_s
     end
 
-    attr_reader :block, :parameters
+    attr_reader :block, :substitution
 
     def variables
-      @variables ||= @block.parameters.filter_map.with_index do |(type, name), i|
-        case type
-        when :req, :opt
-          :actual if i == 0
-        when :keyreq, :key
-          name
+      @variables ||= begin
+        variables = @block.parameters.filter_map.with_index do |(type, name), i|
+          case type
+          when :req, :opt
+            :actual if i == 0
+          when :keyreq, :key
+            name
+          end
         end
+
+        @substitution ? variables.map { @substitution[_1] || _1 } : variables
       end
     end
 
     def evaluate(values)
+      values = substitute_hash(values, @substitution) if @substitution
+
       Utils.call_block(@block, values)
     end
 
@@ -30,12 +37,23 @@ module Matcher
       return true if equal?(other)
 
       other.instance_of?(BlockExpression) &&
-        other.block == @block
+        other.block == @block &&
+        other.substitution == @substitution
     end
     alias eql? ==
 
     def hash
       @block.hash
+    end
+
+    def substitute(replacements)
+      replacements = replacements.slice(*variables)
+
+      return self if replacements.empty?
+
+      replacements = substitute_hash(@substitution, replacements) if @substitution
+
+      BlockExpression.new(@block, substitution: replacements, to_s: @to_s)
     end
 
     def to_s(substitutions: nil)
@@ -65,6 +83,17 @@ module Matcher
         "#{expr} { #{body} }"
       else
         "#{expr} { |#{args_and_kwargs}| #{body} }"
+      end
+    end
+
+    private
+
+    def substitute_hash(hash, substitution)
+      hash.to_h do |k, v|
+        k2 = substitution[k]
+        v2 = k2.nil? && !substitution.key?(k2) ? v : hash[k2]
+
+        [k, v2]
       end
     end
   end

@@ -23,11 +23,11 @@ module Matcher
       end
     end
 
-    def self.call_block(block, values)
+    def self.call_block(block, values, parameters: block.parameters)
       args = []
       kwargs = {}
 
-      block.parameters.each do |type, name|
+      parameters.each do |type, name|
         case type
         when :req, :opt, :rest
           args << values[:actual] if args.length == 0
