@@ -15,11 +15,11 @@ module Matcher
       end
     end
 
-    def expr(constant = NULL, to_s: false, &)
+    def expr(constant = NULL, to_s: false, &block)
       raise "constant and block given" if !Matcher.null?(constant) && block_given?
 
       expression = if block_given?
-        BlockExpression.new(to_s:, &)
+        BlockExpression.new(block, to_s:)
       else
         Constant.new(constant)
       end

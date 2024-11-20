@@ -2,14 +2,14 @@
 
 module Matcher
   class BlockExpression < Expression
-    attr_reader :block
-
-    def initialize(to_s: false, &block)
+    def initialize(block, to_s: false)
       super()
 
       @block = block
       @to_s = to_s
     end
+
+    attr_reader :block, :parameters
 
     def variables
       @variables ||= @block.parameters.filter_map.with_index do |(type, name), i|
