@@ -3,6 +3,22 @@
 require 'test_helper'
 
 describe Matcher::BlockExpression do
+  it 'prohibits more than one arg' do
+    err = assert_raises StandardError do
+      build { |a, b| a + b }
+    end
+
+    assert_equal 'BlockExpression cannot have more than 1 arg', err.message
+  end
+
+  it 'prohibits actual kwarg' do
+    err = assert_raises StandardError do
+      build { |actual:| actual + 1 }
+    end
+
+    assert_equal 'BlockExpression cannot have an kwarg called "actual"', err.message
+  end
+
   it '#variables' do
     expr = build { |_, x:| _ == x }
 

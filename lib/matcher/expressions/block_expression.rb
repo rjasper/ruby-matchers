@@ -5,12 +5,25 @@ module Matcher
     def initialize(block, substitution: nil, to_s: false)
       super()
 
+      check_parameters(block.parameters)
+
       @block = block
       @substitution = substitution
       @to_s = to_s
     end
 
     attr_reader :block, :substitution
+
+    def check_parameters(parameters)
+      parameters.each_with_index do |(type, name), i|
+        case type
+        when :req, :opt
+          raise 'BlockExpression cannot have more than 1 arg' if i > 0
+        when :keyreq, :key
+          raise 'BlockExpression cannot have an kwarg called "actual"' if name == :actual
+        end
+      end
+    end
 
     def variables
       @variables ||= begin
