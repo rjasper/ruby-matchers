@@ -17,6 +17,30 @@ describe Matcher::Block do
       assert_equal constant, block.expression
     end
 
+    it 'raises on rest args' do
+      err = assert_raises StandardError do
+        Matcher::Block.build { |*args| args }
+      end
+
+      assert_equal '*args not allowed', err.message
+    end
+
+    it 'raises on rest kwargs' do
+      err = assert_raises StandardError do
+        Matcher::Block.build { |**kwargs| kwargs }
+      end
+
+      assert_equal '**kwargs not allowed', err.message
+    end
+
+    it 'raises on given block' do
+      err = assert_raises StandardError do
+        Matcher::Block.build { |&block| block }
+      end
+
+      assert_equal '&block not allowed', err.message
+    end
+
     it 'raises when a outer variable is shadowed' do
       outer_a = Matcher::Variable.new(:a)
 
