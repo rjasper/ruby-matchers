@@ -20,7 +20,7 @@ module Matcher
       end
 
       def initialize(nodes)
-        raise "nodes less than 2" if nodes.length < 2
+        raise 'nodes fewer than 2' if nodes.length < 2
 
         super()
 
