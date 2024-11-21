@@ -57,6 +57,14 @@ describe Matcher::Block do
 
       assert_equal 'foo', block.to_proc.call(struct)
     end
+
+    it 'simplifies a block to a SymbolProc' do
+      block = Matcher::Block.build { |x| x.foo }
+      symbol_proc = Matcher::SymbolProc.new(:foo)
+
+      assert_kind_of Matcher::SymbolProc, block
+      assert_equal symbol_proc, block
+    end
   end
 
   it '#variables' do
