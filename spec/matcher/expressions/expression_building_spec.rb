@@ -26,4 +26,12 @@ describe Matcher::ExpressionBuilding do
     assert_equal expected,
       matcher.expression
   end
+
+  it '#pass_through_blocks' do
+    exp = expression do
+      pass_through_blocks { _.map { |x| x ? 2 * x : 0 } }
+    end
+
+    assert_equal [2, 4, 6, 0], exp.evaluate(actual: [1, 2, 3, nil])
+  end
 end
