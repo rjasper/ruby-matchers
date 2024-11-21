@@ -47,7 +47,7 @@ module Matcher
       def |(other)
         return self if other.is_a?(Empty)
 
-        dup << other
+        clone << other
       end
 
       def add(other)
@@ -79,6 +79,16 @@ module Matcher
         self
       end
       alias << add
+
+      def clone
+        klone = super
+        klone.instance_exec do
+          @nodes = @nodes.dup
+        end
+
+        klone
+      end
+      alias dup clone
 
       def to_s
         @nodes.map(&:to_s).join(' | ')
