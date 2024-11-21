@@ -19,7 +19,7 @@ module Matcher
       raise "constant and block given" if !Matcher.null?(constant) && block_given?
 
       expression = if block_given?
-        BlockExpression.new(block, to_s:)
+        ProcExpression.new(block, to_s:)
       else
         Constant.new(constant)
       end

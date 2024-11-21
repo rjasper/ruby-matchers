@@ -15,7 +15,7 @@ require 'matcher/base_message_builder'
 
 require 'matcher/expressions/expression'
 require 'matcher/expressions/block'
-require 'matcher/expressions/block_expression'
+require 'matcher/expressions/proc_expression'
 require 'matcher/expressions/call'
 require 'matcher/expressions/constant'
 require 'matcher/expressions/expression_recorder'

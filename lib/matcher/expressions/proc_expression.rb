@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Matcher
-  class BlockExpression < Expression
+  class ProcExpression < Expression
     def initialize(block, substitution: nil, to_s: false)
       super()
 
@@ -18,9 +18,9 @@ module Matcher
       parameters.each_with_index do |(type, name), i|
         case type
         when :req, :opt
-          raise 'BlockExpression cannot have more than 1 arg' if i > 0
+          raise 'ProcExpression cannot have more than 1 arg' if i > 0
         when :keyreq, :key
-          raise 'BlockExpression cannot have an kwarg called "actual"' if name == :actual
+          raise 'ProcExpression cannot have an kwarg called "actual"' if name == :actual
         end
       end
     end
@@ -49,7 +49,7 @@ module Matcher
     def ==(other)
       return true if equal?(other)
 
-      other.instance_of?(BlockExpression) &&
+      other.instance_of?(ProcExpression) &&
         other.block == @block &&
         other.substitution == @substitution
     end
@@ -66,7 +66,7 @@ module Matcher
 
       replacements = substitute_hash(@substitution, replacements) if @substitution
 
-      BlockExpression.new(@block, substitution: replacements, to_s: @to_s)
+      ProcExpression.new(@block, substitution: replacements, to_s: @to_s)
     end
 
     def to_s(substitutions: nil)

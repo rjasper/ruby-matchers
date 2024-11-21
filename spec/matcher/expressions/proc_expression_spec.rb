@@ -2,13 +2,13 @@
 
 require 'test_helper'
 
-describe Matcher::BlockExpression do
+describe Matcher::ProcExpression do
   it 'prohibits more than one arg' do
     err = assert_raises StandardError do
       build { |a, b| a + b }
     end
 
-    assert_equal 'BlockExpression cannot have more than 1 arg', err.message
+    assert_equal 'ProcExpression cannot have more than 1 arg', err.message
   end
 
   it 'prohibits actual kwarg' do
@@ -16,7 +16,7 @@ describe Matcher::BlockExpression do
       build { |actual:| actual + 1 }
     end
 
-    assert_equal 'BlockExpression cannot have an kwarg called "actual"', err.message
+    assert_equal 'ProcExpression cannot have an kwarg called "actual"', err.message
   end
 
   it '#variables' do
@@ -64,6 +64,6 @@ describe Matcher::BlockExpression do
   private
 
   def build(to_s: false, &block)
-    Matcher::BlockExpression.new(block, to_s:)
+    Matcher::ProcExpression.new(block, to_s:)
   end
 end

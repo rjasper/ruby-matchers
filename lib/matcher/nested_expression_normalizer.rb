@@ -87,7 +87,7 @@ module Matcher
         return if expression.symbol != :actual
 
         @paths << trace unless trace.empty?
-      when BlockExpression
+      when ProcExpression
         throw(:abort) if expression.variables.include?(:actual)
       else
         nil

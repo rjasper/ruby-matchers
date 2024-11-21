@@ -26,8 +26,8 @@ module Matcher
         block_l = label_for_block(expression.block)
 
         label_for([Call, receiver_l, expression.method, args_l, kwargs_l, block_l])
-      when BlockExpression
-        label_for([BlockExpression, expression.block])
+      when ProcExpression
+        label_for([ProcExpression, expression.block])
       else
         raise "unexpected expression: #{expression.inspect}"
       end

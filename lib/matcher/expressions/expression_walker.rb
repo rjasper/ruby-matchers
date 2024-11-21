@@ -43,7 +43,7 @@ module Matcher
         expression.args.each { traverse(_1) }
         expression.kwargs.each { traverse(_2) }
         traverse_block(expression.block) if expression.block
-      when BlockExpression
+      when ProcExpression
         @block_expression_visitor&.call(expression)
       end
     end
