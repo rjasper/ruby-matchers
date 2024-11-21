@@ -289,7 +289,7 @@ module Matcher
         @receiver = receiver
         @given = values.slice(*call.receiver.variables)
 
-        super("#{call.receiver} does not respond to #{call.method.inspect}")
+        super("#{call.receiver} does not respond to `#{call.method}'")
       end
 
       def message_for_errors
