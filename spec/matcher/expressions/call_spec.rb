@@ -2,9 +2,6 @@
 
 require 'test_helper'
 
-Call = Matcher::Call
-Variable = Matcher::Variable
-
 describe Matcher::Call do
   it 'returns operand of assignment' do
     call = expression do
@@ -134,11 +131,14 @@ describe Matcher::Call do
       end
     end
 
-    a = Variable.new(:a)
-    b = Variable.new(:b)
-    c = Variable.new(:c)
+    a = Matcher::Variable.new(:a)
+    b = Matcher::Variable.new(:b)
+    c = Matcher::Variable.new(:c)
 
-    assert_equal Call.new(a, :'||', [Call.new(b, :'&&', [c])]), call
+    ampersand = Matcher::Call.new(b, :'&&', [c])
+    pipe = Matcher::Call.new(a, :'||', [ampersand])
+
+    assert_equal pipe, call
   end
 
   it '#to_s: root' do

@@ -2,9 +2,11 @@
 
 require 'test_helper'
 
-ErrorsChecker = Matcher::Testing::ErrorsChecker
-
 describe Matcher::Testing::ErrorsChecker do
+  let(:errors_checker) do
+    Matcher::Testing::ErrorsChecker.new
+  end
+
   it 'compare trees' do
     expected = build_errors do
       _or(:foo) do
@@ -20,7 +22,7 @@ describe Matcher::Testing::ErrorsChecker do
       end
     end
 
-    assert_nil ErrorsChecker.check(expected, actual)
+    assert_nil errors_checker.check(expected, actual)
   end
 
   it 'hierarchie mismatch' do
@@ -38,7 +40,7 @@ describe Matcher::Testing::ErrorsChecker do
       end
     end
 
-    assert_equal <<~TEXT, ErrorsChecker.check(expected, actual)
+    assert_equal <<~TEXT, errors_checker.check(expected, actual)
       expected:
       
       root: a

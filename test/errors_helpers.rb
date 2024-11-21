@@ -11,6 +11,10 @@ module Matcher
     end
 
     def nested(key, node)
+      Errors::Nested.new(key, node)
+    end
+
+    def nested_from(key, node)
       Errors::Nested.from(key, node)
     end
 
