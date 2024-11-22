@@ -26,6 +26,8 @@ module Matcher
       @expression = expression
     end
 
+    attr_reader :expression
+
     def_delegator :@expression, :to_s
     def_delegator :@expression, :inspect
 
