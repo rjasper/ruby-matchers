@@ -12,6 +12,10 @@ module Matcher
       @kwargs = kwargs
     end
 
+    def negate!
+      @negated = !@negated
+    end
+
     def ==(other)
       return true if equal?(other)
 

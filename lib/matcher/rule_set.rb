@@ -5,9 +5,9 @@ module Matcher
     Rule = Struct.new(:patterns, :block)
 
     module RuleBuilding
-      def transform(*patterns, &block)
+      def transform(*patterns, negate: false, &block)
         patterns.map! { Pattern.of(_1) }
-        @rules << TransformRule.new(patterns, block)
+        @rules << TransformRule.new(patterns, negate, block)
 
         nil
       end
@@ -47,12 +47,17 @@ module Matcher
     end
 
     class TransformRule
-      def initialize(patterns, block)
+      def initialize(patterns, negate, block)
         @patterns = patterns
+        @negate = negate
         @block = block
       end
 
       attr_reader :patterns
+
+      def negate?
+        @negate
+      end
 
       def apply(match)
         TransformBuilder.instance.instance_exec(match, &@block)
@@ -102,13 +107,20 @@ module Matcher
       def initialize(value_paths, expressions, block)
         @value_paths = value_paths
         @expressions = expressions
+        @negate = false
         @block = block
+      end
+
+      def negate!
+        @negate = !@negate
       end
 
       def create(matcher, value_tree)
         values = @value_paths.transform_values { _1.reduce(value_tree, :[]) }
+        message = matcher.instance_exec(values, @expressions, &@block)
+        message.negate! if @negate
 
-        matcher.instance_exec(values, @expressions, &@block)
+        message
       end
     end
 
@@ -129,14 +141,20 @@ module Matcher
       cur = expression
       mapping = AstMapping.new
       result = nil
+      negate = false
 
       while (rule, match = find_rule(cur, mapping))
         result = rule.apply(match)
 
-        return result unless rule.is_a?(TransformRule)
+        if rule.is_a?(MessageRule)
+          result.negate! if negate
+
+          return result
+        end
 
         cur = result.expression
         mapping = result.mapping
+        negate = !negate if rule.negate?
       end
 
       result
