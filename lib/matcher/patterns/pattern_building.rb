@@ -6,36 +6,28 @@ module Matcher
 
     def capture(key, pattern)
       pattern = ExpressionRecorder.transform(pattern)
-      hole = CaptureHole.new(key, pattern)
 
-      Constant.new(hole).to_recorder
+      CaptureHole.new(key, pattern).to_recorder
     end
 
     def hole(key)
-      hole = Hole.new(key)
-
-      Constant.new(hole).to_recorder
+      Hole.new(key).to_recorder
     end
 
     def var(key)
-      hole = VariableHole.new(key)
-
-      Constant.new(hole).to_recorder
+      VariableHole.new(key).to_recorder
     end
 
     def const(key)
-      hole = ConstantHole.new(key)
-
-      Constant.new(hole).to_recorder
+      ConstantHole.new(key).to_recorder
     end
 
     def method_hole(key, receiver, method, *args, **kwargs)
       receiver = ExpressionRecorder.transform(receiver)
       args = args&.map { ExpressionRecorder.transform(_1) }
       kwargs = kwargs&.transform_values { ExpressionRecorder.transform(_1) }
-      hole = MethodHole.new(key, receiver, method, args, kwargs)
 
-      Constant.new(hole).to_recorder
+      MethodHole.new(key, receiver, method, args, kwargs).to_recorder
     end
   end
 end

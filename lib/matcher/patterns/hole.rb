@@ -16,5 +16,9 @@ module Matcher
       "hole(#{@key.inspect})"
     end
     alias inspect to_s
+
+    def to_recorder
+      Constant.new(self).to_recorder
+    end
   end
 end
