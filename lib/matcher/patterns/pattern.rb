@@ -54,7 +54,7 @@ module Matcher
 
         if hole_result
           throw(:mismatch) if hole_result.expression != expression
-        elsif !hole.match?(expression, mapping) { |e, p, m| match_helper(e, p, m, result) }
+        elsif !hole.match?(expression) { |p| match_helper(expression, p, mapping, result) }
           throw(:mismatch)
         else
           result[key] = MatchNode.new(expression, mapping)
@@ -68,8 +68,8 @@ module Matcher
           match_helper(expression.args[i], pattern.args[i], mapping.args[i], result)
         end
 
-        expression.kwargs.each_key do |key|
-          match_helper(expression.kwargs[key], pattern.kwargs[key], mapping.kwargs[key], result)
+        expression.kwargs.each_key do |k|
+          match_helper(expression.kwargs[k], pattern.kwargs[k], mapping.kwargs[k], result)
         end
       elsif expression != pattern
         throw(:mismatch)

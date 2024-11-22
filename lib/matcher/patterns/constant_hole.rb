@@ -2,7 +2,7 @@
 
 module Matcher
   class ConstantHole < Hole
-    def match?(expression, _mapping)
+    def match?(expression)
       expression.is_a?(Constant)
     end
 

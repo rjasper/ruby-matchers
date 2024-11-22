@@ -8,7 +8,7 @@ module Matcher
 
     attr_reader :key
 
-    def match?(expression, _mapping)
+    def match?(_expression)
       true
     end
 

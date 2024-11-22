@@ -11,18 +11,10 @@ module Matcher
       @kwargs = kwargs
     end
 
-    def match?(expression, mapping)
-      return false unless similar?(expression)
+    def match?(expression)
+      return false if !expression.is_a?(Call) || !match_method?(expression.method)
 
-      yield expression.receiver, @receiver, mapping.receiver
-
-      @args.each_index do |i|
-        yield expression.args[i], @args[i], mapping.args[i]
-      end
-
-      expression.kwargs.each_key do |key|
-        yield expression.kwargs[key], @kwargs[key], mapping.kwargs[key]
-      end
+      yield Call.new(@receiver, expression.method, @args, @kwargs)
 
       true
     end
@@ -33,15 +25,6 @@ module Matcher
     alias inspect to_s
 
     private
-
-    def similar?(expression)
-      expression.is_a?(Call) &&
-        !expression.block &&
-        @args.length == expression.args.length &&
-        match_method?(expression.method) &&
-        @kwargs.size == expression.kwargs.size &&
-        @kwargs.keys.sort == expression.kwargs.keys.sort
-    end
 
     def match_method?(method)
       if @method.is_a?(Array)

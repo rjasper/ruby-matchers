@@ -8,8 +8,8 @@ module Matcher
       @pattern = pattern
     end
 
-    def match?(expression, mapping)
-      yield expression, @pattern, mapping
+    def match?(_expression)
+      yield @pattern
 
       true
     end
