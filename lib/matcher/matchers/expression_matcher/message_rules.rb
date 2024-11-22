@@ -56,9 +56,9 @@ module Matcher
       transform(
         method_hole(
           :call,
-          hole(:operand, excludes: :actual),
+          const(:operand),
           %i[== != < > <= >= equal? include? in?],
-          hole(:actual, includes: :actual),
+          capture(:actual, _),
         ),
       ) do |m|
         method = m[:call].expression.method

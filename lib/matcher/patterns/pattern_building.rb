@@ -11,21 +11,10 @@ module Matcher
       Constant.new(hole).to_recorder
     end
 
-    def hole(key, includes: nil, excludes: nil)
-      includes = [includes] if includes.is_a?(Symbol)
-      excludes = [excludes] if excludes.is_a?(Symbol)
-
-      hole = Hole.new(key, includes:, excludes:)
+    def hole(key)
+      hole = Hole.new(key)
 
       Constant.new(hole).to_recorder
-    end
-
-    def actual_hole(key)
-      hole(key, includes: :actual)
-    end
-
-    def operand_hole(key)
-      hole(key, excludes: :actual)
     end
 
     def var(key)

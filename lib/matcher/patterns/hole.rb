@@ -2,18 +2,13 @@
 
 module Matcher
   class Hole
-    def initialize(key, includes: nil, excludes: nil)
+    def initialize(key)
       @key = key
-      @includes = includes
-      @excludes = excludes
     end
 
     attr_reader :key
 
     def match?(expression, _mapping)
-      return false if @includes && !@includes.all? { expression.variables.include?(_1) }
-      return false if @excludes && !@excludes.none? { expression.variables.include?(_1) }
-
       true
     end
 
