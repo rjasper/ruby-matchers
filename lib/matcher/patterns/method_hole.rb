@@ -20,7 +20,11 @@ module Matcher
     end
 
     def to_s
-      "method_hole(#{@key.inspect}, #{@receiver}, #{@method.inspect}, #{@args}, #{@kwargs})"
+      args = @args.map(&:inspect)
+      kwargs = @kwargs.map { "#{_1}: #{_2.inspect}" }
+      list = [@key.inspect, @receiver, @method.inspect].concat(args, kwargs)
+
+      "method_hole(#{list.join(', ')})"
     end
     alias inspect to_s
 
