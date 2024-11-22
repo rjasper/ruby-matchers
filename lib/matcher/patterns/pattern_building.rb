@@ -40,15 +40,6 @@ module Matcher
       Constant.new(hole).to_recorder
     end
 
-    def call_hole(key, receiver: nil, method: nil, args: [], kwargs: {})
-      receiver = ExpressionRecorder.transform(receiver)
-      args = args&.map { ExpressionRecorder.transform(_1) }
-      kwargs = kwargs&.transform_values { ExpressionRecorder.transform(_1) }
-      hole = CallHole.new(key, receiver, method, args, kwargs)
-
-      Constant.new(hole).to_recorder
-    end
-
     def method_hole(key, receiver, method, *args, **kwargs)
       receiver = ExpressionRecorder.transform(receiver)
       args = args&.map { ExpressionRecorder.transform(_1) }

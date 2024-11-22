@@ -24,7 +24,6 @@ require 'matcher/expressions/symbol_proc'
 require 'matcher/expressions/variable'
 
 require 'matcher/patterns/hole'
-require 'matcher/patterns/call_hole'
 require 'matcher/patterns/capture_hole'
 require 'matcher/patterns/constant_hole'
 require 'matcher/patterns/method_hole'
