@@ -25,5 +25,13 @@ module Matcher
     def _or(*nodes)
       Errors::Or.new(nodes)
     end
+
+    def msg(actual)
+      StandardMessageBuilder.new(false, actual)
+    end
+
+    def assert_phrase(expected, message)
+      assert_equal expected, Matcher::ExpectedPhrasing.new(nil, message).apply
+    end
   end
 end
