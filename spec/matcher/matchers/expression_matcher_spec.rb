@@ -62,9 +62,9 @@ describe Matcher::ExpressionMatcher do
       "did not expect same as 1 (id=#{1.object_id})"
 
     assert_errors match(2) { (_ + 1).equal?(_ * 2) },
-      'expected _ + 1 to be same as _ * 2 but got 3 (id=7) and 4 (id=9), where _ = 2'
+      "expected _ + 1 to be same as _ * 2 but got 3 (id=#{3.object_id}) and 4 (id=#{4.object_id}), where _ = 2"
     assert_errors not_match(1) { (_ + 1).equal?(_ * 2) },
-      'did not expect _ + 1 to be same as _ * 2 but got 2 (id=5), where _ = 1'
+      "did not expect _ + 1 to be same as _ * 2 but got 2 (id=#{2.object_id}), where _ = 1"
   end
 
   it 'matches equal' do
@@ -152,12 +152,25 @@ describe Matcher::ExpressionMatcher do
   end
 
   it 'matches between expressions' do
+    assert_no_errors match(5) { _.between?(0, 10) }
+    assert_errors not_match(5) { _.between?(0, 10) },
+      'did not expect value to be between 0 and 10 but got 5'
     assert_errors match(15) { _.between?(0, 10) },
       'expected value to be between 0 and 10 but got 15'
-    assert_errors match(15) { lo { (_ >= 0) & (_ <= 10) } },
-      'expected value to be between 0 and 10 but got 15'
+    assert_no_errors not_match(15) { _.between?(0, 10) }
+
     assert_errors match(15) { (_ * 2).between?(0, 10) },
       'expected _ * 2 to be between 0 and 10 but got 30, where _ = 15'
+
+    assert_no_errors match(5) { (_ * 2).between?(0, 20) }
+    assert_errors not_match(5) { (_ * 2).between?(0, 20) },
+      'did not expect _ * 2 to be between 0 and 20 but got 10, where _ = 5'
+    assert_errors match(15) { (_ * 2).between?(0, 20) },
+      'expected _ * 2 to be between 0 and 20 but got 30, where _ = 15'
+    assert_no_errors not_match(15) { (_ * 2).between?(0, 20) }
+
+    assert_errors match(15) { lo { (_ >= 0) & (_ <= 10) } },
+      'expected value to be between 0 and 10 but got 15'
     assert_errors match(15) { lo { (_ * 2 >= 0) & (_ * 2 <= 10) } },
       'expected _ * 2 to be between 0 and 10 but got 30, where _ = 15'
   end
