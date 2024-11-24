@@ -13,4 +13,18 @@ describe Matcher::Base do
         expression { _.dup.dup } => 'match level too deep: 3'
     end
   end
+
+  it 'scopes values' do
+    matcher = Matcher.build do
+      declare :foo
+
+      setvar(foo: 1) ^ [
+        _ == foo,
+        setvar(foo: 2) ^ (_ == foo),
+        _ == foo,
+      ]
+    end
+
+    assert_no_errors matcher.match([1, 2, 1])
+  end
 end
