@@ -1,0 +1,44 @@
+# frozen_string_literal: true
+
+require 'test_helper'
+
+describe Matcher::Testing::ErrorNodeLabeler do
+  include Matcher::ErrorsHelpers
+
+  let(:labeler) { Matcher::Testing::ErrorNodeLabeler.new }
+
+  it 'returns the same label for equivalent errors' do
+    foo = expression { _[:foo] }
+    bar = expression { _[:bar] }
+    foobar = expression { _[:foo][:bar] }
+
+    error1 = nested(foo, _or(nested(bar, element('baz')), nested(bar, element('qux'))))
+    error2 = nested(foo, nested(bar, _or(element('baz'), element('qux'))))
+    error3 = nested(foobar, _or(element('baz'), element('qux')))
+    error4 = nested(foobar, _or(element('baz'), element('qucks')))
+
+    label1, = labeler.label_tree(error1)
+    label2, = labeler.label_tree(error2)
+    label3, = labeler.label_tree(error3)
+    label4, = labeler.label_tree(error4)
+
+    assert_kind_of Integer, label1
+    assert_equal label1, label2
+    assert_equal label1, label3
+    refute_equal label1, label4
+  end
+
+  it 'returns all leaves' do
+    foo = expression { _[:foo] }
+    bar = expression { _[:bar] }
+    error = nested(foo, _or(nested(bar, element('baz')), nested(bar, element('qux'))))
+
+    *, leaves = labeler.label_tree(error)
+
+    assert_equal 2, leaves.length
+    assert_equal 'baz', leaves[0].message
+    assert_equal [bar, foo], leaves[0].path.to_a
+    assert_equal 'qux', leaves[1].message
+    assert_equal [bar, foo], leaves[1].path.to_a
+  end
+end
