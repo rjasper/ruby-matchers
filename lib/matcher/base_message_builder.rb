@@ -7,6 +7,10 @@ module Matcher
       @actual = actual
     end
 
+    def not
+      self.class.new(!@negated, @actual)
+    end
+
     def not_if(condition)
       condition ? self.not : self
     end

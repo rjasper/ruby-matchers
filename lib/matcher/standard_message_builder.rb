@@ -6,14 +6,6 @@ module Matcher
       NamespacedMessageBuilder.new(@negated, @actual, namespace)
     end
 
-    def not
-      StandardMessageBuilder.new(!@negated, @actual)
-    end
-
-    def not_if(condition)
-      condition ? self.not : self
-    end
-
     def truthy
       message(:truthy)
     end
