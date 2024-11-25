@@ -9,7 +9,7 @@ module Matcher
     def present(matcher = NULL)
       return Pipe.new { present(_1) } if Matcher.null?(matcher)
 
-      all(value.present?, matcher)
+      all(!_.nil?, matcher)
     end
   end
 end
