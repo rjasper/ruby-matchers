@@ -22,13 +22,25 @@ module Matcher
     def |(matcher)
       matcher = Matcher.of(matcher)
 
-      AnyMatcher.new([self, matcher])
+      matchers = if matcher.is_a?(AnyMatcher)
+        [self].concat(matcher.matchers)
+      else
+        [self, matcher]
+      end
+
+      AnyMatcher.new(matchers)
     end
 
     def &(matcher)
       matcher = Matcher.of(matcher)
 
-      AllMatcher.new([self, matcher])
+      matchers = if matcher.is_a?(AllMatcher)
+        [self].concat(matcher.matchers)
+      else
+        [self, matcher]
+      end
+
+      AllMatcher.new(matchers)
     end
 
     StackData = Struct.new(:actual, :vals, :errors)

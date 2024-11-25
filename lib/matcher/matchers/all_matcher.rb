@@ -8,6 +8,8 @@ module Matcher
       @matchers = matchers
     end
 
+    attr_reader :matchers
+
     def &(matcher)
       matcher = Matcher.of(matcher)
 
