@@ -96,6 +96,15 @@ describe Matcher::Errors do
       _and(a1, a2) & b
   end
 
+  it 'a & and(*b) => and(a, *b)' do
+    a = element('a')
+    b1 = element('b1')
+    b2 = element('b2')
+
+    assert_equal a & _and(b1, b2),
+      _and(a, b1, b2)
+  end
+
   it 'and | . => or(and, .)' do
     a1, a2, b = %w[a1 a2 b].map { element(_1) }
 
@@ -174,6 +183,15 @@ describe Matcher::Errors do
 
     assert_equal _or(a1, a2, b),
       _or(a1, a2) | b
+  end
+
+  it 'a | or(*b) => or(a, *b)' do
+    a = element('a')
+    b1 = element('b1')
+    b2 = element('b2')
+
+    assert_equal a | _or(b1, b2),
+      _or(a, b1, b2)
   end
 
   it 'or(*a) | or(*b) => or(*a, *b)' do

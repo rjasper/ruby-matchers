@@ -40,16 +40,6 @@ module Matcher
         clone << other
       end
 
-      def |(other)
-        return self if other.is_a?(Empty)
-
-        if other.is_a?(Or)
-          Or.new([self] + other.nodes)
-        else
-          Or.new([self, other])
-        end
-      end
-
       def add(other)
         case other
         when And

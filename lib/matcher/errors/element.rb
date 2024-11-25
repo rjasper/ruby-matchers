@@ -18,18 +18,6 @@ module Matcher
           @message == other.message
       end
 
-      def &(other)
-        return self if other.is_a?(Empty)
-
-        And.new([self, other])
-      end
-
-      def |(other)
-        return self if other.is_a?(Empty)
-
-        Or.new([self, other])
-      end
-
       def to_s
         @message.inspect
       end

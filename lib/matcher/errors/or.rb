@@ -34,16 +34,6 @@ module Matcher
           @nodes == other.nodes
       end
 
-      def &(other)
-        return self if other.is_a?(Empty)
-
-        if other.is_a?(And)
-          And.new([self] + other.nodes)
-        else
-          And.new([self, other])
-        end
-      end
-
       def |(other)
         return self if other.is_a?(Empty)
 
