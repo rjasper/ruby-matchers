@@ -13,10 +13,10 @@ module Matcher
       end
     end
 
-    attr_reader :node
+    attr_reader :error
 
     def initialize
-      @node = EmptyError.instance
+      @error = EmptyError.instance
       @mode = :and
     end
 
@@ -44,10 +44,10 @@ module Matcher
         @key = key
       end
 
-      def <<(node)
-        node = ErrorCollector.error_from(node)
+      def <<(error)
+        error = ErrorCollector.error_from(error)
 
-        @parent << NestedError.from(@key, node)
+        @parent << NestedError.from(@key, error)
       end
 
       def [](key)
@@ -55,21 +55,21 @@ module Matcher
       end
     end
 
-    def <<(node)
-      return if node.is_a?(EmptyError)
+    def <<(error)
+      return if error.is_a?(EmptyError)
 
-      node = ErrorCollector.error_from(node)
+      error = ErrorCollector.error_from(error)
 
-      case @node
+      case @error
       when EmptyError
-        @node = node
+        @error = error
       when and? ? AndError : OrError
-        @node << node
+        @error << error
       else
         if and?
-          @node &= node
+          @error &= error
         else
-          @node |= node
+          @error |= error
         end
       end
     end
@@ -79,7 +79,7 @@ module Matcher
     end
 
     def clear
-      @node = EmptyError.instance
+      @error = EmptyError.instance
     end
   end
 end

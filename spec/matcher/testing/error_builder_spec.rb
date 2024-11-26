@@ -9,23 +9,23 @@ describe Matcher::Testing::ErrorBuilder do
 
   describe '#error' do
     it 'builds an ElementError' do
-      nodes = klass.build_nodes do
+      errors = klass.build_errors do
         error 'foo'
       end
 
-      assert_equal [element('foo')], nodes
+      assert_equal [element('foo')], errors
     end
 
     it 'builds a nested element if key is given' do
-      nodes = klass.build_nodes do
+      errors = klass.build_errors do
         error :foo, 'bar'
       end
 
-      assert_equal [nested(expression { _[:foo] }, element('bar'))], nodes
+      assert_equal [nested(expression { _[:foo] }, element('bar'))], errors
     end
 
     it 'builds a deeply nested element path is given' do
-      nodes = klass.build_nodes do
+      errors = klass.build_errors do
         error %i[foo bar], 'baz'
       end
 
@@ -33,24 +33,24 @@ describe Matcher::Testing::ErrorBuilder do
       bar = nested(expression { _[:bar] }, baz)
       foo = nested(expression { _[:foo] }, bar)
 
-      assert_equal [foo], nodes
+      assert_equal [foo], errors
     end
   end
 
   describe '#_or' do
-    it 'builds OrError from multiple nodes' do
-      nodes = klass.build_nodes do
+    it 'builds OrError from multiple errors' do
+      errors = klass.build_errors do
         _or do
           error 'foo'
           error 'bar'
         end
       end
 
-      assert_equal [_or(element('foo'), element('bar'))], nodes
+      assert_equal [_or(element('foo'), element('bar'))], errors
     end
 
     it 'builds nested OrError if path is given' do
-      nodes = klass.build_nodes do
+      errors = klass.build_errors do
         _or :foo, :bar do
           error 'baz'
           error 'qux'
@@ -61,24 +61,24 @@ describe Matcher::Testing::ErrorBuilder do
       bar = nested(expression { _[:bar] }, baz_or_quux)
       foo = nested(expression { _[:foo] }, bar)
 
-      assert_equal [foo], nodes
+      assert_equal [foo], errors
     end
   end
 
   describe '#_and' do
-    it 'builds AndError from multiple nodes' do
-      nodes = klass.build_nodes do
+    it 'builds AndError from multiple errors' do
+      errors = klass.build_errors do
         _and do
           error 'foo'
           error 'bar'
         end
       end
 
-      assert_equal [_and(element('foo'), element('bar'))], nodes
+      assert_equal [_and(element('foo'), element('bar'))], errors
     end
 
     it 'builds nested AndError if path is given' do
-      nodes = klass.build_nodes do
+      errors = klass.build_errors do
         _and :foo, :bar do
           error 'baz'
           error 'qux'
@@ -89,7 +89,7 @@ describe Matcher::Testing::ErrorBuilder do
       bar = nested(expression { _[:bar] }, baz_or_quux)
       foo = nested(expression { _[:foo] }, bar)
 
-      assert_equal [foo], nodes
+      assert_equal [foo], errors
     end
   end
 
@@ -98,22 +98,22 @@ describe Matcher::Testing::ErrorBuilder do
       assert_equal(empty, klass.build {})
     end
 
-    it 'returns first node if only one was built' do
-      node = klass.build do
+    it 'returns first error if only one was built' do
+      error = klass.build do
         error 'foo'
       end
 
-      assert_equal element('foo'), node
+      assert_equal element('foo'), error
     end
 
-    it 'combines multiple node into AndError' do
-      node = klass.build do
+    it 'combines multiple error into AndError' do
+      error = klass.build do
         error 'foo'
         error 'bar'
       end
 
-      assert_kind_of Matcher::AndError, node
-      assert_equal [element('foo'), element('bar')], node.nodes
+      assert_kind_of Matcher::AndError, error
+      assert_equal [element('foo'), element('bar')], error.children
     end
   end
 end

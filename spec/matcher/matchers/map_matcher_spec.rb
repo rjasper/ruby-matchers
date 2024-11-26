@@ -66,9 +66,9 @@ describe Matcher::MapMatcher do
 
     assert_kind_of Matcher::NestedError, errors
     assert_equal '_.map { |e| _.length * 100 + i * 10 + e }', errors.key.to_s
-    assert_kind_of Matcher::ElementError, errors.node
+    assert_kind_of Matcher::ElementError, errors.child
     assert_equal 'expected [209, 218] but got [309, 318, 327]',
-      Matcher::ExpectedPhrasing.new(nil, errors.node.message).apply
+      Matcher::ExpectedPhrasing.new(nil, errors.child.message).apply
     assert_equal [309, 318, 327], errors.key.evaluate({ actual: [9, 8, 7] })
   end
 

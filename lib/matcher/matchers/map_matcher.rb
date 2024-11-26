@@ -91,15 +91,15 @@ module Matcher
     module ErrorMapping
       private
 
-      def map_errors(node)
-        case node
+      def map_errors(error)
+        case error
         when EmptyError
-          node
+          error
         when AndError, OrError
-          children = node.nodes.map { map_errors(_1) }
-          node.class.new(children)
+          children = error.children.map { map_errors(_1) }
+          error.class.new(children)
         when NestedError
-          key = node.key
+          key = error.key
 
           is_index = key.is_a?(Call) &&
             key.binary? &&
@@ -109,15 +109,15 @@ module Matcher
             operand.constant.is_a?(Integer)
 
           if is_index
-            nested_projection = NestedError.from(@projection, node.node)
+            nested_projection = NestedError.from(@projection, error.child)
             NestedError.from(key, nested_projection)
           else
-            node
+            error
           end
         when ElementError
-          NestedError.from(nested_key, node)
+          NestedError.from(nested_key, error)
         else
-          raise "Unexpected node: #{node.inspect}"
+          raise "Unexpected error: #{error.inspect}"
         end
       end
 

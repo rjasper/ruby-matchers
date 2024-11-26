@@ -2,14 +2,14 @@
 
 module Matcher
   class OrError < Error
-    attr_reader :nodes
+    attr_reader :children
 
-    def self.from(nodes)
-      length = nodes.length
+    def self.from(children)
+      length = children.length
 
       return EmptyError.instance if length == 0
 
-      nodes.reduce do |left, right|
+      children.reduce do |left, right|
         if left.is_a?(OrError)
           left << right
         else
@@ -18,19 +18,19 @@ module Matcher
       end
     end
 
-    def initialize(nodes)
-      raise 'nodes fewer than 2' if nodes.length < 2
+    def initialize(children)
+      raise 'children fewer than 2' if children.length < 2
 
       super()
 
-      @nodes = nodes
+      @children = children
     end
 
     def ==(other)
       return true if equal?(other)
 
       other.instance_of?(OrError) &&
-        @nodes == other.nodes
+        @children == other.children
     end
 
     def |(other)
@@ -42,27 +42,27 @@ module Matcher
     def add(other)
       case other
       when OrError
-        right = other.nodes.dup
+        right = other.children.dup
 
-        @nodes.each_with_index do |l, i|
+        @children.each_with_index do |l, i|
           next unless l.is_a?(NestedError)
 
           index = right.find_index { _1.is_a?(NestedError) && _1.key == l.key }
 
-          @nodes[i] = l | right.delete_at(index) if index
+          @children[i] = l | right.delete_at(index) if index
         end
 
-        @nodes.concat(right)
+        @children.concat(right)
       when NestedError
-        index = @nodes.find_index { _1.is_a?(NestedError) && _1.key == other.key }
+        index = @children.find_index { _1.is_a?(NestedError) && _1.key == other.key }
 
         if index
-          @nodes[index] |= other
+          @children[index] |= other
         else
-          @nodes << other
+          @children << other
         end
       else
-        @nodes << other
+        @children << other
       end
 
       self
@@ -72,7 +72,7 @@ module Matcher
     def clone
       klone = super
       klone.instance_exec do
-        @nodes = @nodes.dup
+        @children = @children.dup
       end
 
       klone
@@ -80,7 +80,7 @@ module Matcher
     alias dup clone
 
     def to_s
-      @nodes.map(&:to_s).join(' | ')
+      @children.map(&:to_s).join(' | ')
     end
   end
 end

@@ -8,19 +8,19 @@ describe Matcher::ErrorCollector do
   let(:collector) { Matcher::ErrorCollector.new }
 
   it 'empty' do
-    assert_equal empty, collector.node
+    assert_equal empty, collector.error
   end
 
   it 'add empty' do
     collector << empty
 
-    assert_equal empty, collector.node
+    assert_equal empty, collector.error
   end
 
   it 'one' do
     collector << element('foo')
 
-    assert_equal element('foo'), collector.node
+    assert_equal element('foo'), collector.error
   end
 
   it 'and + and' do
@@ -29,13 +29,13 @@ describe Matcher::ErrorCollector do
     collector << _and(a1, a2)
     collector << _and(b1, b2)
 
-    assert_equal _and(a1, a2, b1, b2), collector.node
+    assert_equal _and(a1, a2, b1, b2), collector.error
   end
 
   it 'nested' do
     collector[:foo] << element('foo')
 
-    assert_equal nested(expression { _[:foo] }, element('foo')), collector.node
+    assert_equal nested(expression { _[:foo] }, element('foo')), collector.error
   end
 
   it 'deeply nested' do
@@ -44,7 +44,7 @@ describe Matcher::ErrorCollector do
     foo = expression { _[:foo] }
     bar = expression { _[:bar] }
 
-    assert_equal nested(foo, nested(bar, element('foobar'))), collector.node
+    assert_equal nested(foo, nested(bar, element('foobar'))), collector.error
   end
 
   it 'nested via expression' do
@@ -52,11 +52,11 @@ describe Matcher::ErrorCollector do
 
     foo = expression { _[:foo] }
 
-    assert_equal nested(foo, element('foobar')), collector.node
+    assert_equal nested(foo, element('foobar')), collector.error
   end
 
   it '#<<: base error' do
-    assert_equal empty, collector.node
+    assert_equal empty, collector.error
 
     collector << 'something went wrong'
     collector << 'more errors'
@@ -66,11 +66,11 @@ describe Matcher::ErrorCollector do
       element('more errors'),
     )
 
-    assert_equal expected, collector.node
+    assert_equal expected, collector.error
   end
 
   it '#<<: field error' do
-    assert_equal empty, collector.node
+    assert_equal empty, collector.error
 
     collector[:foo] << 'something went wrong'
     collector[:foo] << 'more errors'
@@ -83,16 +83,16 @@ describe Matcher::ErrorCollector do
       ),
     )
 
-    assert_equal expected, collector.node
+    assert_equal expected, collector.error
   end
 
   it '#<<: empty errors' do
     collector << empty
 
-    assert_equal empty, collector.node
+    assert_equal empty, collector.error
 
     collector << 'something went wrong'
 
-    assert_equal element('something went wrong'), collector.node
+    assert_equal element('something went wrong'), collector.error
   end
 end

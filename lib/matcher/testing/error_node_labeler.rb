@@ -34,12 +34,12 @@ module Matcher
         when EmptyError
           0
         when AndError, OrError
-          child_labels = error.nodes.map { label_tree_helper(_1, path, path_label, leaves) }
+          child_labels = error.children.map { label_tree_helper(_1, path, path_label, leaves) }
           group_label_for(error, child_labels.sort)
         when NestedError
           new_path_label = @expression_labeler.label(error.key, path_label)
 
-          label_tree_helper(error.node, path << error.key, new_path_label, leaves)
+          label_tree_helper(error.child, path << error.key, new_path_label, leaves)
         when ElementError
           label = element_label_for(path, path_label, error)
           message = error.message
@@ -50,7 +50,7 @@ module Matcher
 
           label
         else
-          raise "Unexpected error node: #{error.inspect}"
+          raise "Unexpected error error: #{error.inspect}"
         end
       end
 

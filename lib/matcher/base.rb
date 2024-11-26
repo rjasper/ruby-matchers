@@ -48,8 +48,8 @@ module Matcher
     def match(actual, values = nil)
       return isolate.match(actual, values) if @thread_safe
 
-      errors = ErrorCollector.new
-      (@stack ||= []) << StackData.new(actual, merge_values(values), errors)
+      collector = ErrorCollector.new
+      (@stack ||= []) << StackData.new(actual, merge_values(values), collector)
 
       Matcher.with_session do
         depth = Matcher.session[:depth]
@@ -57,8 +57,8 @@ module Matcher
         if depth == nil
           Matcher.session[:depth] = 0
         elsif depth > Matcher.max_depth
-          errors << "match level too deep: #{depth}"
-          return errors.node
+          collector << "match level too deep: #{depth}"
+          return collector.error
         else
           Matcher.session[:depth] += 1
         end
@@ -76,7 +76,7 @@ module Matcher
         Matcher.session[:depth] -= 1
       end
 
-      errors.node
+      collector.error
     end
 
     def inspect

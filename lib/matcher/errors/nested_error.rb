@@ -2,12 +2,12 @@
 
 module Matcher
   class NestedError < Error
-    def self.from(key, node)
-      return node if node.is_a?(EmptyError) || key == Variable.actual
+    def self.from(key, child)
+      return child if child.is_a?(EmptyError) || key == Variable.actual
 
       key = Call.new(Variable.actual, :[], [Constant.new(key)]) unless key.is_a?(Expression)
 
-      NestedError.new(key, node)
+      NestedError.new(key, child)
     end
 
     def self.key_to_s(key, path)
@@ -26,13 +26,13 @@ module Matcher
       end
     end
 
-    attr_reader :key, :node
+    attr_reader :key, :child
 
-    def initialize(key, node)
+    def initialize(key, child)
       super()
 
       @key = key
-      @node = node
+      @child = child
     end
 
     def ==(other)
@@ -40,26 +40,26 @@ module Matcher
 
       other.instance_of?(NestedError) &&
         @key.eql?(other.key) &&
-        @node == other.node
+        @child == other.child
     end
 
     def &(other)
       return self if other.is_a?(EmptyError)
 
       if other.is_a?(NestedError) && @key == other.key
-        NestedError.new(@key, @node & other.node)
+        NestedError.new(@key, @child & other.child)
       elsif other.is_a?(AndError)
-        nodes = other.nodes
-        index = nodes.find_index { _1.is_a?(NestedError) && _1.key == @key }
+        errors = other.children
+        index = errors.find_index { _1.is_a?(NestedError) && _1.key == @key }
 
         if index
-          new_nodes = nodes.dup
-          new_nodes[index] = self & nodes[index]
+          new_errors = errors.dup
+          new_errors[index] = self & errors[index]
         else
-          new_nodes = [self] + nodes
+          new_errors = [self] + errors
         end
 
-        AndError.new(new_nodes)
+        AndError.new(new_errors)
       else
         AndError.new([self, other])
       end
@@ -69,26 +69,26 @@ module Matcher
       return self if other.is_a?(EmptyError)
 
       if other.is_a?(NestedError) && other.key == @key
-        NestedError.new(@key, @node | other.node)
+        NestedError.new(@key, @child | other.child)
       elsif other.is_a?(OrError)
-        nodes = other.nodes
-        index = nodes.find_index { _1.is_a?(NestedError) && _1.key == @key }
+        errors = other.children
+        index = errors.find_index { _1.is_a?(NestedError) && _1.key == @key }
 
         if index
-          new_nodes = nodes.dup
-          new_nodes[index] = self | nodes[index]
+          new_errors = errors.dup
+          new_errors[index] = self | errors[index]
         else
-          new_nodes = [self] + nodes
+          new_errors = [self] + errors
         end
 
-        OrError.new(new_nodes)
+        OrError.new(new_errors)
       else
         OrError.new([self, other])
       end
     end
 
     def to_s
-      "#{@key} -> #{@node}"
+      "#{@key} -> #{@child}"
     end
   end
 end

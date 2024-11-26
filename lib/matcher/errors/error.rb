@@ -7,7 +7,7 @@ module Matcher
       when EmptyError
         self
       when AndError
-        AndError.new([self].concat(other.nodes))
+        AndError.new([self].concat(other.children))
       else
         AndError.new([self, other])
       end
@@ -18,7 +18,7 @@ module Matcher
       when EmptyError
         self
       when OrError
-        OrError.new([self].concat(other.nodes))
+        OrError.new([self].concat(other.children))
       else
         OrError.new([self, other])
       end

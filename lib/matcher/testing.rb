@@ -29,7 +29,7 @@ module Matcher
         (!base.empty? || !nested.empty?) && block
 
       expected_nodes = if block
-        Testing::ErrorBuilder.build_nodes(&block)
+        Testing::ErrorBuilder.build_errors(&block)
       else
         base.map { ElementError.new(_1) } + nested_from_hash(nested)
       end

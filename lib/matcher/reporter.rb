@@ -2,8 +2,8 @@
 
 module Matcher
   class Reporter
-    def self.report(node)
-      new.report(node)
+    def self.report(error)
+      new.report(error)
     end
 
     def initialize
@@ -13,10 +13,10 @@ module Matcher
       @phrasing = ExpectedPhrasing.phrasing
     end
 
-    def report(node)
+    def report(error)
       @io = StringIO.new
 
-      report_node(node)
+      report_error(error)
 
       string = @io.string
       @io.close
@@ -27,20 +27,20 @@ module Matcher
 
     private
 
-    def report_node(node)
-      case node
+    def report_error(error)
+      case error
       when EmptyError
         report_empty
       when ElementError
-        report_element(node)
+        report_element(error)
       when NestedError
-        report_nested(node)
+        report_nested(error)
       when AndError
-        report_and(node)
+        report_and(error)
       when OrError
-        report_or(node)
+        report_or(error)
       else
-        raise "Illegal node: #{node.inspect}"
+        raise "Illegal error: #{error.inspect}"
       end
     end
 
@@ -59,22 +59,22 @@ module Matcher
       path = NestedError.key_to_s(nested.key, @path_stack.last)
 
       @path_stack.push(path)
-      report_node(nested.node)
+      report_error(nested.child)
       @path_stack.pop
     end
 
-    def report_and(node)
-      node.nodes.each { report_node(_1) }
+    def report_and(error)
+      error.children.each { report_error(_1) }
     end
 
-    def report_or(node)
+    def report_or(error)
       line('expected at least one error to be absent:')
 
-      node.nodes.each do |n|
+      error.children.each do |n|
         line('- ', newline: false)
 
         @level += 1
-        report_node(n)
+        report_error(n)
         @level -= 1
       end
     end

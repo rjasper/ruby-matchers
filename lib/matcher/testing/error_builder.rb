@@ -4,52 +4,52 @@ module Matcher
   module Testing
     class ErrorBuilder
       def self.build(&)
-        nodes = build_nodes(&)
+        errors = build_errors(&)
 
-        AndError.from(nodes)
+        AndError.from(errors)
       end
 
-      def self.build_nodes(&)
+      def self.build_errors(&)
         builder = ErrorBuilder.new
         builder.instance_exec(&)
-        builder.nodes
+        builder.errors
       end
 
-      attr_reader :nodes
+      attr_reader :errors
 
       def initialize
-        @nodes = []
+        @errors = []
       end
 
       def _or(*path, &)
-        nodes = ErrorBuilder.build_nodes(&)
-        node = OrError.from(nodes)
+        errors = ErrorBuilder.build_errors(&)
+        error = OrError.from(errors)
 
-        @nodes << nest(path, node)
+        @errors << nest(path, error)
       end
 
       def _and(*path, &)
-        nodes = ErrorBuilder.build_nodes(&)
-        node = AndError.from(nodes)
+        errors = ErrorBuilder.build_errors(&)
+        error = AndError.from(errors)
 
-        @nodes << nest(path, node)
+        @errors << nest(path, error)
       end
 
       def error(path_or_message, message = nil)
         if message.nil?
-          @nodes << ElementError.new(path_or_message)
+          @errors << ElementError.new(path_or_message)
         else
           path = Array(path_or_message)
           element = ElementError.new(message)
 
-          @nodes << nest(path, element)
+          @errors << nest(path, element)
         end
       end
 
       private
 
-      def nest(path, node)
-        path.reverse_each.reduce(node) { NestedError.from(_2, _1) }
+      def nest(path, error)
+        path.reverse_each.reduce(error) { NestedError.from(_2, _1) }
       end
     end
   end

@@ -39,7 +39,7 @@ module Matcher
         collector[key] << result
       end
 
-      errors << collector.node
+      errors << collector.error
     end
     protected :check
 

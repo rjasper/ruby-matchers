@@ -10,20 +10,20 @@ module Matcher
       ElementError.new(message)
     end
 
-    def nested(key, node)
-      NestedError.new(key, node)
+    def nested(key, error)
+      NestedError.new(key, error)
     end
 
-    def nested_from(key, node)
-      NestedError.from(key, node)
+    def nested_from(key, error)
+      NestedError.from(key, error)
     end
 
-    def _and(*nodes)
-      AndError.new(nodes)
+    def _and(*errors)
+      AndError.new(errors)
     end
 
-    def _or(*nodes)
-      OrError.new(nodes)
+    def _or(*errors)
+      OrError.new(errors)
     end
 
     def msg(actual)
