@@ -94,9 +94,9 @@ require 'matcher/rules/transform_mapping'
 require 'matcher/rules/transform_rule'
 
 require 'matcher/testing/error_builder'
-require 'matcher/testing/error_node_labeler'
-require 'matcher/testing/errors_checker'
-require 'matcher/testing/errors_testing'
+require 'matcher/testing/error_checker'
+require 'matcher/testing/error_labeler'
+require 'matcher/testing/error_testing'
 require 'matcher/testing/expression_labeler'
 require 'matcher/testing/pattern_testing'
 

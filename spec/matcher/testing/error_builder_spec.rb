@@ -2,10 +2,10 @@
 
 require 'test_helper'
 
-describe Matcher::Testing::ErrorBuilder do
-  include Matcher::ErrorsTesting
+describe Matcher::ErrorBuilder do
+  include Matcher::ErrorTesting
 
-  let(:klass) { Matcher::Testing::ErrorBuilder }
+  let(:klass) { Matcher::ErrorBuilder }
 
   describe '#error' do
     it 'builds an ElementError' do

@@ -2,10 +2,10 @@
 
 require 'test_helper'
 
-describe Matcher::Testing::ErrorNodeLabeler do
-  include Matcher::ErrorsTesting
+describe Matcher::ErrorLabeler do
+  include Matcher::ErrorTesting
 
-  let(:labeler) { Matcher::Testing::ErrorNodeLabeler.new }
+  let(:labeler) { Matcher::ErrorLabeler.new }
 
   it 'returns the same label for equivalent errors' do
     foo = expression { _[:foo] }

@@ -3,7 +3,7 @@
 require 'test_helper'
 
 describe Matcher::NestedError do
-  include Matcher::ErrorsTesting
+  include Matcher::ErrorTesting
 
   it '::from: simple key' do
     assert_equal nested(expression { _[:foo] }, element('foo is wrong')),

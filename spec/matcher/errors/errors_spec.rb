@@ -3,7 +3,7 @@
 require 'test_helper'
 
 describe Matcher::Error do
-  include Matcher::ErrorsTesting
+  include Matcher::ErrorTesting
 
   it 'el1 & el2 => and(el1, el2)' do
     e1, e2 = %w[e1 e2].map { element(_1) }

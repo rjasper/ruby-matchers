@@ -7,7 +7,7 @@ module Matcher
     end
 
     def build_errors(&)
-      Testing::ErrorBuilder.build(&)
+      ErrorBuilder.build(&)
     end
 
     def assert_errors(actual, *base, **nested, &block)
@@ -29,13 +29,13 @@ module Matcher
         (!base.empty? || !nested.empty?) && block
 
       expected_nodes = if block
-        Testing::ErrorBuilder.build_errors(&block)
+        ErrorBuilder.build_errors(&block)
       else
         base.map { ElementError.new(_1) } + nested_from_hash(nested)
       end
 
       expected = AndError.from(expected_nodes)
-      message = Testing::ErrorsChecker.check(expected, actual, phrasing:)
+      message = ErrorChecker.check(expected, actual, phrasing:)
 
       return unless message
 
