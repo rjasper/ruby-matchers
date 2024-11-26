@@ -99,6 +99,7 @@ require 'matcher/testing/error_labeler'
 require 'matcher/testing/error_testing'
 require 'matcher/testing/expression_labeler'
 require 'matcher/testing/pattern_testing'
+require 'matcher/testing/pattern_testing_scope'
 
 module Matcher
   NULL = Object.new.freeze
