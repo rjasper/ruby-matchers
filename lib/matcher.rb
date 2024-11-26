@@ -30,6 +30,8 @@ require 'matcher/patterns/method_hole'
 require 'matcher/patterns/pattern'
 require 'matcher/patterns/variable_hole'
 
+require 'matcher/rules/rule_set'
+
 require 'matcher/assertions'
 require 'matcher/ast_mapping'
 require 'matcher/builder'
@@ -41,7 +43,6 @@ require 'matcher/namespaced_message_builder'
 require 'matcher/nested_expression_normalizer'
 require 'matcher/pipe'
 require 'matcher/reporter'
-require 'matcher/rule_set'
 require 'matcher/standard_message_builder'
 require 'matcher/utils'
 
