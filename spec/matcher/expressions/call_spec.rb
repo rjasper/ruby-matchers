@@ -43,7 +43,7 @@ describe Matcher::Call do
     end
 
     it 'raises NotRespondingError' do
-      err = assert_raises Matcher::Call::NotRespondingError do
+      err = assert_raises Matcher::NotRespondingError do
         expression { _.foo }.evaluate(actual: nil)
       end
 
@@ -51,7 +51,7 @@ describe Matcher::Call do
     end
 
     it 'raises EvaluationError' do
-      err = assert_raises Matcher::Call::EvaluationError do
+      err = assert_raises Matcher::EvaluationError do
         expression { (_ - 1) / 0 }.evaluate(actual: 1)
       end
 

@@ -27,7 +27,7 @@ module Matcher
         mapped << @projection.evaluate(
           values.merge(actual: item, @index => i, @original => actual),
         )
-      rescue Call::Error
+      rescue CallError
         return if @negated
       end
 

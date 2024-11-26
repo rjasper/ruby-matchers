@@ -25,7 +25,7 @@ module Matcher
       evaluation = value_tree[-1]
 
       errors << message_factory.create(self, value_tree) if @negated != !evaluation
-    rescue Call::Error => e
+    rescue CallError => e
       errors << e.message_for_errors unless @negated
     end
     protected :check

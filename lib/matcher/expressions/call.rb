@@ -278,53 +278,6 @@ module Matcher
       end
     end
 
-    class Error < StandardError
-    end
-
-    class NotRespondingError < Error
-      attr_reader :call, :receiver, :given
-
-      def initialize(call, receiver, values)
-        @call = call
-        @receiver = receiver
-        @given = values.slice(*call.receiver.variables)
-
-        super("#{call.receiver} does not respond to `#{call.method}'")
-      end
-
-      def message_for_errors
-        if @call.receiver == Variable.actual
-          ErrorMessage.new(:responding_to, true, @receiver, @call.method)
-        else
-          ErrorMessage.new(
-            %i[expression responding_to],
-            true,
-            nil,
-            @call.receiver,
-            @receiver,
-            @call.method,
-            @given,
-          )
-        end
-      end
-    end
-
-    class EvaluationError < Error
-      attr_reader :error, :call, :given
-
-      def initialize(error, call, values)
-        @error = error
-        @call = call
-        @given = values.slice(*call.variables)
-
-        super("#{call} raised #{error.class}: #{error.message}")
-      end
-
-      def message_for_errors
-        ErrorMessage.new(%i[expression raising], false, nil, @call, @error, @given)
-      end
-    end
-
     def given_values(values, substitutions: Expression.default_substitutions)
       parts = variables.filter_map do |symbol|
         value = values[symbol]

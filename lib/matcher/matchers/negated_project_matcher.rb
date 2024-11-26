@@ -17,7 +17,7 @@ module Matcher
     def check(actual)
       begin
         result = @expression.evaluate(values.merge(actual:))
-      rescue Call::Error
+      rescue CallError
         return
       end
 
