@@ -3,7 +3,7 @@
 module Matcher
   class ExpressionMatcher
     module MessageRules
-      include RuleSet::Definition
+      include RuleDefinition
 
       # binary standard expression
       standard_ops = %i[== != < > <= >= <=> =~ !~ equal? is_a? kind_of? instance_of? respond_to? key? include? in?]
