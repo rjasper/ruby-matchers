@@ -23,6 +23,7 @@ module Matcher
 
       errors[@expression] << yield(@matcher, result)
     end
+    protected :check
 
     def to_s
       "project(#{@expression}, #{@matcher})"

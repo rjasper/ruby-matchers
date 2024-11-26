@@ -46,6 +46,7 @@ module Matcher
         errors << report.namespace(:reference).failed_from_cache
       end
     end
+    protected :check
 
     def to_s
       "#{'~' if @negated}refs[#{@key.inspect}]"
