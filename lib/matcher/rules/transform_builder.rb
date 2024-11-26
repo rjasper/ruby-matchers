@@ -18,7 +18,7 @@ module Matcher
       mapping.args = args.map(&:mapping)
       mapping.kwargs = kwargs.transform_values(&:mapping)
 
-      Pattern::MatchNode.new(expression, mapping)
+      PatternMatch.new(expression, mapping)
     end
   end
 end

@@ -31,15 +31,13 @@ module Matcher
     def_delegator :@expression, :to_s
     def_delegator :@expression, :inspect
 
-    MatchNode = Struct.new(:expression, :mapping)
-
     def match(expression, mapping = AstMapping.new)
       result = {}
 
       catch(:mismatch) do
         match_helper(expression, @expression, mapping, result)
 
-        result[:root] ||= MatchNode.new(expression, mapping)
+        result[:root] ||= PatternMatch.new(expression, mapping)
 
         return result
       end
@@ -59,7 +57,7 @@ module Matcher
         elsif !hole.match?(expression) { |p| match_helper(expression, p, mapping, result) }
           throw(:mismatch)
         else
-          result[key] = MatchNode.new(expression, mapping)
+          result[key] = PatternMatch.new(expression, mapping)
         end
       elsif expression.is_a?(Call)
         throw(:mismatch) unless similar_call?(expression, pattern)
