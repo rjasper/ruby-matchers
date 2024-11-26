@@ -6,7 +6,7 @@ module Matcher
       def self.build(&)
         nodes = build_nodes(&)
 
-        Errors::And.from(nodes)
+        AndError.from(nodes)
       end
 
       def self.build_nodes(&)
@@ -23,24 +23,24 @@ module Matcher
 
       def _or(*path, &)
         nodes = ErrorBuilder.build_nodes(&)
-        node = Errors::Or.from(nodes)
+        node = OrError.from(nodes)
 
         @nodes << nest(path, node)
       end
 
       def _and(*path, &)
         nodes = ErrorBuilder.build_nodes(&)
-        node = Errors::And.from(nodes)
+        node = AndError.from(nodes)
 
         @nodes << nest(path, node)
       end
 
       def error(path_or_message, message = nil)
         if message.nil?
-          @nodes << Errors::Element.new(path_or_message)
+          @nodes << ElementError.new(path_or_message)
         else
           path = Array(path_or_message)
-          element = Errors::Element.new(message)
+          element = ElementError.new(message)
 
           @nodes << nest(path, element)
         end
@@ -49,7 +49,7 @@ module Matcher
       private
 
       def nest(path, node)
-        path.reverse_each.reduce(node) { Errors::Nested.from(_2, _1) }
+        path.reverse_each.reduce(node) { NestedError.from(_2, _1) }
       end
     end
   end

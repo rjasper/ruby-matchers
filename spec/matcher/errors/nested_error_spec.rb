@@ -2,7 +2,7 @@
 
 require 'test_helper'
 
-describe Matcher::Errors::Nested do
+describe Matcher::NestedError do
   include Matcher::ErrorsHelpers
 
   it '::from: simple key' do
@@ -25,7 +25,7 @@ describe Matcher::Errors::Nested do
     math = Matcher::Constant.new(Math)
     actual = Matcher::Variable.actual
     expression = Matcher::Call.new(math, :sqrt, [actual])
-    element = Matcher::Errors::Element.new('something went wrong')
+    element = Matcher::ElementError.new('something went wrong')
 
     assert_equal nested(expression, element),
       nested_from(expression, element)

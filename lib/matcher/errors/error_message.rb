@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Matcher
-  class Message
+  class ErrorMessage
     attr_reader :key, :negated, :actual, :args, :kwargs
 
     def initialize(key, negated, actual, *args, **kwargs)
@@ -19,7 +19,7 @@ module Matcher
     def ==(other)
       return true if equal?(other)
 
-      other.instance_of?(Message) &&
+      other.instance_of?(ErrorMessage) &&
         @key.eql?(other.key) &&
         @negated == other.negated &&
         @actual.eql?(other.actual) &&

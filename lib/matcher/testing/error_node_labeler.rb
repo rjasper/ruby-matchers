@@ -31,20 +31,20 @@ module Matcher
 
       def label_tree_helper(error, path, path_label, leaves)
         case error
-        when Errors::Empty
+        when EmptyError
           0
-        when Errors::And, Errors::Or
+        when AndError, OrError
           child_labels = error.nodes.map { label_tree_helper(_1, path, path_label, leaves) }
           group_label_for(error, child_labels.sort)
-        when Errors::Nested
+        when NestedError
           new_path_label = @expression_labeler.label(error.key, path_label)
 
           label_tree_helper(error.node, path << error.key, new_path_label, leaves)
-        when Errors::Element
+        when ElementError
           label = element_label_for(path, path_label, error)
           message = error.message
           message = @phrasing.call(path, message) if
-            @phrasing && message.is_a?(Message)
+            @phrasing && message.is_a?(ErrorMessage)
 
           leaves << Leaf.new(label, path, message)
 
@@ -57,7 +57,7 @@ module Matcher
       def element_label_for(path, path_label, element)
         message = element.message
         message = @phrasing.call(path, message) if
-          @phrasing && message.is_a?(Message)
+          @phrasing && message.is_a?(ErrorMessage)
 
         key = [path_label, message]
 

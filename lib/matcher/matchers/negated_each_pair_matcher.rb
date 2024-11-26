@@ -19,7 +19,7 @@ module Matcher
     def check(actual)
       return unless actual.respond_to?(:each_pair)
 
-      collector = Errors::Collector.new.or!
+      collector = ErrorCollector.new.or!
 
       actual.each do |key, value|
         result = yield @neg_matcher, [key, value], @key => key, @value => value, @parent => actual

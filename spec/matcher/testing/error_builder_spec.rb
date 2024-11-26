@@ -8,7 +8,7 @@ describe Matcher::Testing::ErrorBuilder do
   let(:klass) { Matcher::Testing::ErrorBuilder }
 
   describe '#error' do
-    it 'builds an Element' do
+    it 'builds an ElementError' do
       nodes = klass.build_nodes do
         error 'foo'
       end
@@ -38,7 +38,7 @@ describe Matcher::Testing::ErrorBuilder do
   end
 
   describe '#_or' do
-    it 'builds Or from multiple nodes' do
+    it 'builds OrError from multiple nodes' do
       nodes = klass.build_nodes do
         _or do
           error 'foo'
@@ -49,7 +49,7 @@ describe Matcher::Testing::ErrorBuilder do
       assert_equal [_or(element('foo'), element('bar'))], nodes
     end
 
-    it 'builds nested Or if path is given' do
+    it 'builds nested OrError if path is given' do
       nodes = klass.build_nodes do
         _or :foo, :bar do
           error 'baz'
@@ -66,7 +66,7 @@ describe Matcher::Testing::ErrorBuilder do
   end
 
   describe '#_and' do
-    it 'builds And from multiple nodes' do
+    it 'builds AndError from multiple nodes' do
       nodes = klass.build_nodes do
         _and do
           error 'foo'
@@ -77,7 +77,7 @@ describe Matcher::Testing::ErrorBuilder do
       assert_equal [_and(element('foo'), element('bar'))], nodes
     end
 
-    it 'builds nested And if path is given' do
+    it 'builds nested AndError if path is given' do
       nodes = klass.build_nodes do
         _and :foo, :bar do
           error 'baz'
@@ -94,7 +94,7 @@ describe Matcher::Testing::ErrorBuilder do
   end
 
   describe '::build' do
-    it 'returns Empty if no build was built' do
+    it 'returns EmptyError if no build was built' do
       assert_equal(empty, klass.build {})
     end
 
@@ -106,13 +106,13 @@ describe Matcher::Testing::ErrorBuilder do
       assert_equal element('foo'), node
     end
 
-    it 'combines multiple node into And' do
+    it 'combines multiple node into AndError' do
       node = klass.build do
         error 'foo'
         error 'bar'
       end
 
-      assert_kind_of Matcher::Errors::And, node
+      assert_kind_of Matcher::AndError, node
       assert_equal [element('foo'), element('bar')], node.nodes
     end
   end

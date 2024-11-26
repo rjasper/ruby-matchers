@@ -48,7 +48,7 @@ module Matcher
     def match(actual, values = nil)
       return isolate.match(actual, values) if @thread_safe
 
-      errors = Errors::Collector.new
+      errors = ErrorCollector.new
       (@stack ||= []) << StackData.new(actual, merge_values(values), errors)
 
       Matcher.with_session do

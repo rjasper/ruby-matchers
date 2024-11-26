@@ -294,9 +294,9 @@ module Matcher
 
       def message_for_errors
         if @call.receiver == Variable.actual
-          Message.new(:responding_to, true, @receiver, @call.method)
+          ErrorMessage.new(:responding_to, true, @receiver, @call.method)
         else
-          Message.new(
+          ErrorMessage.new(
             %i[expression responding_to],
             true,
             nil,
@@ -321,7 +321,7 @@ module Matcher
       end
 
       def message_for_errors
-        Message.new(%i[expression raising], false, nil, @call, @error, @given)
+        ErrorMessage.new(%i[expression raising], false, nil, @call, @error, @given)
       end
     end
 

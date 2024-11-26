@@ -93,12 +93,12 @@ module Matcher
 
       def map_errors(node)
         case node
-        when Errors::Empty
+        when EmptyError
           node
-        when Errors::And, Errors::Or
+        when AndError, OrError
           children = node.nodes.map { map_errors(_1) }
           node.class.new(children)
-        when Errors::Nested
+        when NestedError
           key = node.key
 
           is_index = key.is_a?(Call) &&
@@ -109,13 +109,13 @@ module Matcher
             operand.constant.is_a?(Integer)
 
           if is_index
-            nested_projection = Errors::Nested.from(@projection, node.node)
-            Errors::Nested.from(key, nested_projection)
+            nested_projection = NestedError.from(@projection, node.node)
+            NestedError.from(key, nested_projection)
           else
             node
           end
-        when Errors::Element
-          Errors::Nested.from(nested_key, node)
+        when ElementError
+          NestedError.from(nested_key, node)
         else
           raise "Unexpected node: #{node.inspect}"
         end

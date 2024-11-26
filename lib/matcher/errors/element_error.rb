@@ -1,26 +1,24 @@
 # frozen_string_literal: true
 
 module Matcher
-  module Errors
-    class Element < Node
-      attr_reader :message
+  class ElementError < Error
+    attr_reader :message
 
-      def initialize(message)
-        super()
+    def initialize(message)
+      super()
 
-        @message = message
-      end
+      @message = message
+    end
 
-      def ==(other)
-        return true if equal?(other)
+    def ==(other)
+      return true if equal?(other)
 
-        other.instance_of?(Element) &&
-          @message == other.message
-      end
+      other.instance_of?(ElementError) &&
+        @message == other.message
+    end
 
-      def to_s
-        @message.inspect
-      end
+    def to_s
+      @message.inspect
     end
   end
 end

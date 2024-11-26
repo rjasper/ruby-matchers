@@ -29,7 +29,7 @@ module Matcher
         sub_error
       end
 
-      errors << Errors::Or.from(sub_errors)
+      errors << OrError.from(sub_errors)
     end
     protected :check
 

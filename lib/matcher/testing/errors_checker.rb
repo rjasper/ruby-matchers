@@ -55,7 +55,7 @@ module Matcher
         path = 'root'
 
         leaf.path&.reverse_each do |key|
-          path = Errors::Nested.key_to_s(key, path)
+          path = NestedError.key_to_s(key, path)
         end
 
         "#{path}: #{leaf.message}"

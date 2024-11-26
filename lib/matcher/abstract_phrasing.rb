@@ -49,7 +49,7 @@ module Matcher
     end
 
     def phrase_negated(key, *, **)
-      message = Message.new(key, !negated, actual, *, **)
+      message = ErrorMessage.new(key, !negated, actual, *, **)
 
       self.class.new(@path, message).apply
     end

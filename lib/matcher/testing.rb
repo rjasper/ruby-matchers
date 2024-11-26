@@ -31,10 +31,10 @@ module Matcher
       expected_nodes = if block
         Testing::ErrorBuilder.build_nodes(&block)
       else
-        base.map { Errors::Element.new(_1) } + nested_from_hash(nested)
+        base.map { ElementError.new(_1) } + nested_from_hash(nested)
       end
 
-      expected = Errors::And.from(expected_nodes)
+      expected = AndError.from(expected_nodes)
       message = Testing::ErrorsChecker.check(expected, actual, phrasing:)
 
       return unless message
@@ -45,12 +45,12 @@ module Matcher
     def nested_from_hash(hash)
       hash.map do |key, value|
         node = if value.is_a?(Hash)
-          Errors::And.from(nested_from_hash(value))
+          AndError.from(nested_from_hash(value))
         else
-          Errors::Element.new(value)
+          ElementError.new(value)
         end
 
-        Errors::Nested.from(key, node)
+        NestedError.from(key, node)
       end
     end
   end

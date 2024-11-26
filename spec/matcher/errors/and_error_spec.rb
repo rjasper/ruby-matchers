@@ -2,7 +2,7 @@
 
 require 'test_helper'
 
-describe Matcher::Errors::Or do
+describe Matcher::AndError do
   include Matcher::ErrorsHelpers
 
   describe '#&' do
@@ -12,13 +12,13 @@ describe Matcher::Errors::Or do
       c = element('c')
       d = element('d')
 
-      or1 = _or(a, b)
-      or2 = _or(c, d)
+      and1 = _and(a, b)
+      and2 = _and(c, d)
 
-      or3 = or1 | or2
+      and3 = and1 & and2
 
-      assert_equal _or(a, b), or1
-      assert_equal _or(a, b, c, d), or3
+      assert_equal _and(a, b), and1
+      assert_equal _and(a, b, c, d), and3
     end
   end
 end

@@ -29,15 +29,15 @@ module Matcher
 
     def report_node(node)
       case node
-      when Errors::Empty
+      when EmptyError
         report_empty
-      when Errors::Element
+      when ElementError
         report_element(node)
-      when Errors::Nested
+      when NestedError
         report_nested(node)
-      when Errors::And
+      when AndError
         report_and(node)
-      when Errors::Or
+      when OrError
         report_or(node)
       else
         raise "Illegal node: #{node.inspect}"
@@ -50,13 +50,13 @@ module Matcher
 
     def report_element(element)
       message = element.message
-      message = @phrasing.call(@path_stack.last, message) if message.is_a?(Message)
+      message = @phrasing.call(@path_stack.last, message) if message.is_a?(ErrorMessage)
 
       line("#{@path_stack.last}: #{message}")
     end
 
     def report_nested(nested)
-      path = Errors::Nested.key_to_s(nested.key, @path_stack.last)
+      path = NestedError.key_to_s(nested.key, @path_stack.last)
 
       @path_stack.push(path)
       report_node(nested.node)

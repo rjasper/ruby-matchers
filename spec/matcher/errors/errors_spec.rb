@@ -2,7 +2,7 @@
 
 require 'test_helper'
 
-describe Matcher::Errors do
+describe Matcher::Error do
   include Matcher::ErrorsHelpers
 
   it 'el1 & el2 => and(el1, el2)' do

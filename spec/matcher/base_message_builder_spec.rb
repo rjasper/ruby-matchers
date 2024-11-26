@@ -5,11 +5,11 @@ require 'test_helper'
 describe Matcher::BaseMessageBuilder do
   let(:klass) { Matcher::BaseMessageBuilder }
 
-  it 'builds a Message' do
+  it 'builds a ErrorMessage' do
     builder = klass.new(false, 42)
     message = builder.hello('World', foo: 'bar')
 
-    assert_kind_of Matcher::Message, message
+    assert_kind_of Matcher::ErrorMessage, message
     assert_equal false, message.negated
     assert_equal 42, message.actual
     assert_equal :hello, message.key

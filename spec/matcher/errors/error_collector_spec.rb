@@ -2,10 +2,10 @@
 
 require 'test_helper'
 
-describe Matcher::Errors::Collector do
+describe Matcher::ErrorCollector do
   include Matcher::ErrorsHelpers
 
-  let(:collector) { Matcher::Errors::Collector.new }
+  let(:collector) { Matcher::ErrorCollector.new }
 
   it 'empty' do
     assert_equal empty, collector.node
