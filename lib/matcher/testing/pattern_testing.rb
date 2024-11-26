@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Matcher
-  module PatternHelpers
+  module PatternTesting
     class PatternScope
       include PatternBuilding
 

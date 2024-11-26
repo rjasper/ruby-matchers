@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Matcher
-  class AbstractPhrasing
+  class Phrasing
     extend Forwardable
 
     attr_reader :path, :message

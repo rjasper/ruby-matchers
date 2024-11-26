@@ -2,8 +2,8 @@
 
 require 'test_helper'
 
-describe Matcher::BaseMessageBuilder do
-  let(:klass) { Matcher::BaseMessageBuilder }
+describe Matcher::MessageBuilder do
+  let(:klass) { Matcher::MessageBuilder }
 
   it 'builds a ErrorMessage' do
     builder = klass.new(false, 42)

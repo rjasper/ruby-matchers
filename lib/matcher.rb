@@ -5,24 +5,17 @@ require_relative "matcher/version"
 require 'singleton'
 require 'forwardable'
 
-require 'matcher/matcher_building'
 require 'matcher/expressions/expression_building'
+require 'matcher/matchers/matcher_building'
 require 'matcher/patterns/pattern_building'
 
-require 'matcher/base'
-require 'matcher/abstract_phrasing'
-require 'matcher/base_message_builder'
-
 require 'matcher/assertions'
+require 'matcher/base'
 require 'matcher/builder'
 require 'matcher/debug'
-require 'matcher/expected_phrasing'
-require 'matcher/expression_labeler'
 require 'matcher/list'
-require 'matcher/namespaced_message_builder'
 require 'matcher/pipe'
 require 'matcher/reporter'
-require 'matcher/standard_message_builder'
 require 'matcher/utils'
 
 require 'matcher/errors/error'
@@ -69,9 +62,15 @@ require 'matcher/matchers/negated_matcher'
 require 'matcher/matchers/negated_project_matcher'
 require 'matcher/matchers/project_matcher'
 require 'matcher/matchers/reference_matcher'
-require 'matcher/matchers/reference_matcher/collection'
+require 'matcher/matchers/reference_matcher_collection'
 require 'matcher/matchers/set_matcher'
 require 'matcher/matchers/set_variables_matcher'
+
+require 'matcher/messages/phrasing'
+require 'matcher/messages/message_builder'
+require 'matcher/messages/expected_phrasing'
+require 'matcher/messages/namespaced_message_builder'
+require 'matcher/messages/standard_message_builder'
 
 require 'matcher/patterns/hole'
 require 'matcher/patterns/ast_mapping'
@@ -94,6 +93,9 @@ require 'matcher/rules/transform_rule'
 require 'matcher/testing/error_builder'
 require 'matcher/testing/error_node_labeler'
 require 'matcher/testing/errors_checker'
+require 'matcher/testing/errors_testing'
+require 'matcher/testing/expression_labeler'
+require 'matcher/testing/pattern_testing'
 
 module Matcher
   NULL = Object.new.freeze
@@ -204,4 +206,4 @@ module Matcher
   Debug.init
 end
 
-require 'matcher/matchers/expression_matcher/message_rules'
+require 'matcher/messages/message_rules'

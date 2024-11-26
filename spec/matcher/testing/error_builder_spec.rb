@@ -3,7 +3,7 @@
 require 'test_helper'
 
 describe Matcher::Testing::ErrorBuilder do
-  include Matcher::ErrorsHelpers
+  include Matcher::ErrorsTesting
 
   let(:klass) { Matcher::Testing::ErrorBuilder }
 

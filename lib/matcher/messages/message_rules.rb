@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Matcher
-  module ExpressionMatcher::MessageRules
+  module MessageRules
     include RuleDefinition
 
     # binary standard expression

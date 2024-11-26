@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Matcher
-  class ReferenceMatcher::Collection
+  class ReferenceMatcherCollection
     attr_reader :last_object_id, :last_matcher
 
     def initialize

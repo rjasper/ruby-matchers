@@ -3,7 +3,7 @@
 require 'test_helper'
 
 describe Matcher::Testing::ErrorNodeLabeler do
-  include Matcher::ErrorsHelpers
+  include Matcher::ErrorsTesting
 
   let(:labeler) { Matcher::Testing::ErrorNodeLabeler.new }
 

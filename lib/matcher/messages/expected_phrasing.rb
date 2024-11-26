@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Matcher
-  class ExpectedPhrasing < AbstractPhrasing
+  class ExpectedPhrasing < Phrasing
     define(:truthy) do
       verb = verb(negated: true)
       truthy_or_falsy = negated ? 'truthy' : 'falsy'

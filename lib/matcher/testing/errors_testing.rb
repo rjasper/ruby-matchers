@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Matcher
-  module ErrorsHelpers
+  module ErrorsTesting
     def empty
       EmptyError.instance
     end

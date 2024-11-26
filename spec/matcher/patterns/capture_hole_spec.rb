@@ -3,7 +3,7 @@
 require 'test_helper'
 
 describe Matcher::CaptureHole do
-  include Matcher::PatternHelpers
+  include Matcher::PatternTesting
 
   describe '#to_s' do
     it 'looks like capture(:key, pattern)' do

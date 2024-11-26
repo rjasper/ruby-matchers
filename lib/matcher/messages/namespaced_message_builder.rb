@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Matcher
-  class NamespacedMessageBuilder < BaseMessageBuilder
+  class NamespacedMessageBuilder < MessageBuilder
     def initialize(negated, actual, namespace)
       super(negated, actual)
 

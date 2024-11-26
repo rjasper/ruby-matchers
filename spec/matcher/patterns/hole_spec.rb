@@ -3,7 +3,7 @@
 require 'test_helper'
 
 describe Matcher::Hole do
-  include Matcher::PatternHelpers
+  include Matcher::PatternTesting
 
   describe '#to_s' do
     it 'looks like hole(:key)' do

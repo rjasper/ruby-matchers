@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Matcher
-  class BaseMessageBuilder
+  class MessageBuilder
     def initialize(negated, actual)
       @negated = negated
       @actual = actual

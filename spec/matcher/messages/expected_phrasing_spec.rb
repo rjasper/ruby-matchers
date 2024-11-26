@@ -3,7 +3,7 @@
 require 'test_helper'
 
 describe Matcher::ExpectedPhrasing do
-  include Matcher::ErrorsHelpers
+  include Matcher::ErrorsTesting
 
   describe 'standard messages' do
     it 'truthy' do

@@ -3,7 +3,7 @@
 require 'test_helper'
 
 describe Matcher::AndError do
-  include Matcher::ErrorsHelpers
+  include Matcher::ErrorsTesting
 
   describe '#&' do
     it 'does not modify itself' do

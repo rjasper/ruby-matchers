@@ -2,8 +2,8 @@
 
 require 'test_helper'
 
-describe Matcher::AbstractPhrasing do
-  let(:klass) { Class.new(Matcher::AbstractPhrasing) }
+describe Matcher::Phrasing do
+  let(:klass) { Class.new(Matcher::Phrasing) }
 
   it 'phrases a defined message' do
     klass.define(:hello) { |you| "Hello #{you}!" }

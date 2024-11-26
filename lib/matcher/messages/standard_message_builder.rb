@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Matcher
-  class StandardMessageBuilder < BaseMessageBuilder
+  class StandardMessageBuilder < MessageBuilder
     def namespace(namespace)
       NamespacedMessageBuilder.new(@negated, @actual, namespace)
     end

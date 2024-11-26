@@ -80,7 +80,7 @@ module Matcher
     end
 
     def refs
-      @refs ||= ReferenceMatcher::Collection.new
+      @refs ||= ReferenceMatcherCollection.new
     end
   end
 end
