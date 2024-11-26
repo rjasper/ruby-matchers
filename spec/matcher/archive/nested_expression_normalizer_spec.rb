@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'test_helper'
+require 'matcher/archive/nested_expression_normalizer'
 
 describe Matcher::NestedExpressionNormalizer do
   def examine(keys, recorder)
