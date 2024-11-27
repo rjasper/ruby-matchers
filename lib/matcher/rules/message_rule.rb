@@ -10,15 +10,9 @@ module Matcher
     attr_reader :patterns
 
     def apply(match)
-      value_paths = match.transform_values do |match_node|
-        identifiers = match_node.mapping.path.to_a.reverse!
-        identifiers << -1
-        identifiers
-      end
+      expressions = @block.arity >= 2 ? match.expressions : nil
 
-      expressions = match.transform_values(&:expression)
-
-      MessageFactory.new(value_paths, expressions, @block)
+      MessageFactory.new(match.value_paths, expressions, @block)
     end
   end
 end

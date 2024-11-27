@@ -81,6 +81,7 @@ require_relative 'matcher/patterns/capture_hole'
 require_relative 'matcher/patterns/constant_hole'
 require_relative 'matcher/patterns/method_hole'
 require_relative 'matcher/patterns/pattern'
+require_relative 'matcher/patterns/pattern_capture'
 require_relative 'matcher/patterns/pattern_match'
 require_relative 'matcher/patterns/variable_hole'
 

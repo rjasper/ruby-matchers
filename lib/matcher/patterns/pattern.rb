@@ -32,12 +32,12 @@ module Matcher
     def_delegator :@expression, :inspect
 
     def match(expression, mapping = AstMapping.new)
-      result = {}
+      result = PatternMatch.new
 
       catch(:mismatch) do
         match_helper(expression, @expression, mapping, result)
 
-        result[:root] ||= PatternMatch.new(expression, mapping)
+        result.capture(:root, expression, mapping) unless result.include?(:root)
 
         return result
       end
@@ -50,14 +50,14 @@ module Matcher
     def match_helper(expression, pattern, mapping, result)
       if (hole = get_hole(pattern))
         key = hole.key
-        hole_result = result[key]
+        capture = result[key]
 
-        if hole_result
-          throw(:mismatch) if hole_result.expression != expression
+        if capture
+          throw(:mismatch) if capture.expression != expression
         elsif !hole.match?(expression) { |p| match_helper(expression, p, mapping, result) }
           throw(:mismatch)
         else
-          result[key] = PatternMatch.new(expression, mapping)
+          result.capture(key, expression, mapping)
         end
       elsif expression.is_a?(Call)
         throw(:mismatch) unless similar_call?(expression, pattern)
