@@ -11,26 +11,8 @@ module Matcher
 
     def apply(match)
       value_paths = match.transform_values do |match_node|
-        enum = match_node.mapping.path.to_enum(:reverse_each)
-        identifiers = []
-
-        loop do
-          key = enum.next
-
-          case key
-          when :receiver
-            identifiers << 0
-          when :args
-            identifiers << 1
-            identifiers << enum.next
-          when :kwargs
-            identifiers << 2
-            identifiers << enum.next
-          end
-        end
-
+        identifiers = match_node.mapping.path.to_a.reverse!
         identifiers << -1
-
         identifiers
       end
 

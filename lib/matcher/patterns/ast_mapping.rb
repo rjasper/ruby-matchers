@@ -2,6 +2,10 @@
 
 module Matcher
   class AstMapping
+    RECEIVER = 0
+    ARGS = 1
+    KWARGS = 2
+
     def initialize(path = List.empty)
       @path = path
     end
@@ -9,15 +13,15 @@ module Matcher
     attr_reader :path
 
     def receiver
-      @receiver ||= AstMapping.new(@path << :receiver)
+      @receiver ||= AstMapping.new(@path << RECEIVER)
     end
 
     def args
-      @args ||= Args.new(@path << :args, [])
+      @args ||= Args.new(@path << ARGS, [])
     end
 
     def kwargs
-      @kwargs ||= Args.new(@path << :kwargs, {})
+      @kwargs ||= Args.new(@path << KWARGS, {})
     end
 
     class Args
