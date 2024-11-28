@@ -41,18 +41,18 @@ describe Matcher::ImplyOneMatcher do
 
     assert_no_errors matcher.match('string')
     assert_errors negated.match('string'),
-      'did not expect "string"'
+      msg('string').equal('string')
 
     assert_no_errors matcher.match(1)
     assert_errors negated.match(1),
-      'did not expect 1'
+      msg(1).equal(1)
 
     assert_errors matcher.match('text'),
-      'expected "string" but got "text"'
+      msg('text').not.equal('string')
     assert_no_errors negated.match('text')
 
     assert_errors matcher.match(2),
-      'expected 1 but got 2'
+      msg(2).not.equal(1)
     assert_no_errors negated.match(2)
   end
 
@@ -68,7 +68,7 @@ describe Matcher::ImplyOneMatcher do
 
     assert_errors matcher.match({ foo: true, bar: true, data: 'bar' }),
       'expected {:foo=>true, :bar=>true, :data=>"bar"} to satisfy only one condition, but met these: _[:foo] == true, _[:bar] == true',
-      data: 'expected "foo" but got "bar"'
+      data: msg('bar').not.equal('foo')
     assert_no_errors negated.match({ foo: true, bar: true, data: 'bar' })
   end
 
@@ -84,18 +84,18 @@ describe Matcher::ImplyOneMatcher do
 
     assert_no_errors matcher.match('string')
     assert_errors negated.match('string'),
-      'did not expect "string"'
+      msg('string').equal('string')
 
     assert_no_errors matcher.match(nil)
     assert_errors negated.match(nil),
-      'did not expect nil'
+      msg(nil).equal(nil)
 
     assert_errors matcher.match('foo'),
-      'expected "string" but got "foo"'
+      msg('foo').not.equal('string')
     assert_no_errors negated.match('foo')
 
     assert_errors matcher.match(1),
-      'expected nil but got 1'
+      msg(1).not.equal(nil)
     assert_no_errors negated.match(1)
   end
 

@@ -14,10 +14,10 @@ describe Matcher::EqualMatcher do
 
     assert_no_errors matcher.match(42)
     assert_errors negated.match(42),
-      'did not expect 42'
+      msg(42).equal(42)
 
     assert_errors matcher.match(23),
-      'expected 42 but got 23'
+      msg(23).not.equal(42)
     assert_no_errors negated.match(23)
   end
 

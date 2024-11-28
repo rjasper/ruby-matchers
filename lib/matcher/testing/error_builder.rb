@@ -45,6 +45,10 @@ module Matcher
       end
     end
 
+    def msg(actual)
+      StandardMessageBuilder.new(false, actual)
+    end
+
     private
 
     def nest(path, error)

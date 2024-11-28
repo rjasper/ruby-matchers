@@ -13,7 +13,7 @@ describe Matcher::EachMatcher do
     matcher = Matcher.build { each(Integer) }
 
     assert_errors matcher.match(nil),
-      "expected an object responding to `each' but got nil"
+      msg(nil).not.responding_to(:each)
     assert_no_errors matcher.~.match(nil)
   end
 
@@ -24,14 +24,14 @@ describe Matcher::EachMatcher do
     assert_no_errors matcher.match([1, 1])
     assert_errors negated.match([1, 1]) do
       _or do
-        error 0, 'did not expect 1'
-        error 1, 'did not expect 1'
+        error 0, msg(1).equal(1)
+        error 1, msg(1).equal(1)
       end
     end
 
     assert_errors matcher.match([1, 2, 3]),
-      1 => 'expected 1 but got 2',
-      2 => 'expected 1 but got 3'
+      1 => msg(2).not.equal(1),
+      2 => msg(3).not.equal(1)
     assert_no_errors negated.match([1, 2, 3])
   end
 

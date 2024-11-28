@@ -34,10 +34,10 @@ describe Matcher::BlockMatcher do
 
     assert_no_errors matcher.match(42)
     assert_errors negated.match(42),
-      'did not expect an answer to everything but got 42'
+      msg(42).described_by('an answer to everything')
 
     assert_errors matcher.match(3),
-      'expected an answer to everything but got 3'
+      msg(3).not.described_by('an answer to everything')
     assert_no_errors negated.match(3)
   end
 

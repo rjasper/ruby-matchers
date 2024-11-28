@@ -18,7 +18,7 @@ describe Matcher::SetMatcher do
       'did not expect object to be an equal set to [1, 2] but got [2, 1]'
 
     assert_errors matcher.match(nil),
-      'expected a kind of Array but got nil'
+      msg(nil).not.kind_of(Array)
     assert_no_errors negated.match(nil)
   end
 
@@ -26,7 +26,7 @@ describe Matcher::SetMatcher do
     matcher = Matcher.build { set([1, 2, 3]) }
 
     assert_errors matcher.match([1, 2, 3, 4]),
-      'expected length of 3 but was 4'
+      msg([1, 2, 3, 4]).not.length_of(3, 4)
     assert_no_errors matcher.~.match([1, 2, 3, 4])
   end
 
@@ -39,13 +39,13 @@ describe Matcher::SetMatcher do
       'did not expect object to be an equal set to [1, 2, 3] but got [3, 1, 2]'
 
     assert_errors matcher.match([2, 1]),
-      'expected length of 3 but was 2',
-      'expected 3 to be included but got [2, 1]'
+      msg([2, 1]).not.length_of(3, 2),
+      msg([2, 1]).not.including(3)
     assert_no_errors negated.match([2, 1])
 
     assert_errors matcher.match([1, 2, 4]),
-      'expected 3 to be included but got [1, 2, 4]',
-      2 => 'did not expect 4 to be included but got [1, 2, 4]'
+      msg([1, 2, 4]).not.including(3),
+      2 => msg([1, 2, 4]).including(4)
     assert_no_errors negated.match([1, 2, 4])
   end
 
@@ -62,7 +62,7 @@ describe Matcher::SetMatcher do
 
     assert_errors matcher.match([1]),
       'expected _ == parent to be included but got [1]',
-      0 => 'did not expect 1 to be included but got [1]'
+      0 => msg([1]).including(1)
     assert_no_errors negated.match([1])
   end
 

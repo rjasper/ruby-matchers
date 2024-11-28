@@ -17,10 +17,10 @@ describe Matcher::CaseEqualityMatcher do
 
     assert_no_errors matcher.match('asdf')
     assert_errors negated.match('asdf'),
-      'did not expect a kind of String but got "asdf"'
+      msg('asdf').kind_of(String)
 
     assert_errors matcher.match(1),
-      'expected a kind of String but got 1'
+      msg(1).not.kind_of(String)
     assert_no_errors negated.match(1)
   end
 
@@ -30,10 +30,10 @@ describe Matcher::CaseEqualityMatcher do
 
     assert_no_errors matcher.match(2)
     assert_errors negated.match(2),
-      'did not expect value to be between 1 and 3 but got 2'
+      msg(2).between(1, 3)
 
     assert_errors matcher.match(4),
-      'expected value to be between 1 and 3 but got 4'
+      msg(4).not.between(1, 3)
     assert_no_errors negated.match(4)
   end
 
@@ -43,10 +43,10 @@ describe Matcher::CaseEqualityMatcher do
 
     assert_no_errors matcher.match('foo')
     assert_errors negated.match('foo'),
-      'did not expect value to match /f/ but got "foo"'
+      msg('foo').matching(/f/)
 
     assert_errors matcher.match('bar'),
-      'expected value to match /f/ but got "bar"'
+      msg('bar').not.matching(/f/)
     assert_no_errors negated.match('bar')
   end
 
@@ -56,10 +56,10 @@ describe Matcher::CaseEqualityMatcher do
 
     assert_no_errors matcher.match(1)
     assert_errors negated.match(1),
-      'did not expect object to be included in #<Set: {1, 2}> but got 1'
+      msg(1).in(Set[1, 2])
 
     assert_errors matcher.match(3),
-      'expected object to be included in #<Set: {1, 2}> but got 3'
+      msg(3).not.in(Set[1, 2])
     assert_no_errors negated.match(3)
   end
 
@@ -69,10 +69,10 @@ describe Matcher::CaseEqualityMatcher do
 
     assert_no_errors matcher.match('foo')
     assert_errors negated.match('foo'),
-      'did not expect "foo"'
+      msg('foo').equal('foo')
 
     assert_errors matcher.match('bar'),
-      'expected "foo" but got "bar"'
+      msg('bar').not.equal('foo')
     assert_no_errors negated.match('bar')
   end
 

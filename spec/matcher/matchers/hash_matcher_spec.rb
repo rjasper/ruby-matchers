@@ -18,14 +18,14 @@ describe Matcher::HashMatcher do
 
     assert_no_errors matcher.match({ a: { a1: 'a1', a2: 'a2' }, b: 'b' })
     assert_errors matcher.~.match({ a: { a1: 'a1', a2: 'a2' }, b: 'b' }),
-      a: { a1: 'did not expect "a1"' }
+      a: { a1: msg('a1').equal('a1') }
   end
 
   it 'expects a Hash' do
     matcher = Matcher.build { {} }
 
     assert_errors matcher.match(1),
-      'expected a kind of Hash but got 1'
+      msg(1).not.kind_of(Hash)
     assert_no_errors matcher.~.match(1)
   end
 
@@ -34,7 +34,7 @@ describe Matcher::HashMatcher do
     negated = ~matcher
 
     assert_errors matcher.match({}),
-      'expected to include key :foo but got {}'
+      msg({}).not.having_key(:foo)
     assert_no_errors negated.match({})
   end
 
@@ -44,14 +44,14 @@ describe Matcher::HashMatcher do
 
     assert_no_errors matcher.match({ foo: 'foo' })
     assert_errors negated.match({ foo: 'foo' }),
-      foo: 'did not expect "foo"'
+      foo: msg('foo').equal('foo')
 
     assert_errors matcher.match({ foo: 'foo', bar: 'bar' }),
-      bar: 'did not expect to include key :bar but got {:foo=>"foo", :bar=>"bar"}'
+      bar: msg({ foo: 'foo', bar: 'bar' }).having_key(:bar)
     assert_no_errors negated.match({ foo: 'foo', bar: 'bar' })
 
     assert_errors matcher.match({}),
-      'expected to include key :foo but got {}'
+      msg({}).not.having_key(:foo)
     assert_no_errors negated.match({})
   end
 
@@ -61,14 +61,14 @@ describe Matcher::HashMatcher do
 
     assert_no_errors matcher.match({ foo: 'foo' })
     assert_errors negated.match({ foo: 'foo' }),
-      foo: 'did not expect "foo"'
+      foo: msg('foo').equal('foo')
 
     assert_no_errors matcher.match({ foo: 'foo', bar: 'bar' })
     assert_errors negated.match({ foo: 'foo', bar: 'bar' }),
-      foo: 'did not expect "foo"'
+      foo: msg('foo').equal('foo')
 
     assert_errors matcher.match({}),
-      'expected to include key :foo but got {}'
+      msg({}).not.having_key(:foo)
     assert_no_errors negated.match({})
   end
 
@@ -78,14 +78,14 @@ describe Matcher::HashMatcher do
 
     assert_no_errors matcher.match({ foo: { bar: 'baz' } })
     assert_errors negated.match({ foo: { bar: 'baz' } }),
-      foo: { bar: 'did not expect "baz"' }
+      foo: { bar: msg('baz').equal('baz') }
 
     assert_errors matcher.match({ foo: { bar: 'buzz' } }),
-      foo: { bar: 'expected "baz" but got "buzz"' }
+      foo: { bar: msg('buzz').not.equal('baz') }
     assert_no_errors negated.match({ foo: { bar: 'buzz' } })
 
     assert_errors matcher.match({ foo: 'foo' }),
-      foo: 'expected a kind of Hash but got "foo"'
+      foo: msg('foo').not.kind_of(Hash)
     assert_no_errors negated.match({ foo: 'foo' })
   end
 

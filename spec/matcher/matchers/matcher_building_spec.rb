@@ -14,8 +14,8 @@ describe Matcher::MatcherBuilding do
       assert_no_errors matcher.match(1)
       assert_errors matcher.~.match(1) do
         _or do
-          error 'expected value to be nil but got 1'
-          error 'did not expect 1'
+          error msg(1).not.predicate(:nil?)
+          error msg(1).equal(1)
         end
       end
     end
@@ -25,7 +25,7 @@ describe Matcher::MatcherBuilding do
       matcher = build { present(got_it_from_somewhere) }
 
       assert_errors matcher.match(nil),
-        'did not expect value to be nil but got nil'
+        msg(nil).predicate(:nil?)
       assert_no_errors matcher.~.match(1)
     end
 

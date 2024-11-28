@@ -13,7 +13,7 @@ describe Matcher::MapMatcher do
     matcher = Matcher.build { map(_.length, [1, 2]) }
 
     assert_errors matcher.match(nil),
-      "expected an object responding to `map' but got nil"
+      msg(nil).not.responding_to(:map)
     assert_no_errors matcher.~.match(nil)
   end
 
@@ -21,7 +21,7 @@ describe Matcher::MapMatcher do
     matcher = Matcher.build { map(_.length, [1]) }
 
     assert_errors matcher.match([nil]),
-      0 => "expected an object responding to `length' but got nil"
+      0 => msg(nil).not.responding_to(:length)
     assert_no_errors matcher.~.match([nil])
   end
 
@@ -33,13 +33,13 @@ describe Matcher::MapMatcher do
     assert_no_errors matcher.match([[1], [1, 2]])
     assert_errors negated.match([[1], [1, 2]]) do
       _or do
-        error t.expression { _[0].length }, 'did not expect 1'
-        error t.expression { _[1].length }, 'did not expect 2'
+        error t.expression { _[0].length }, msg(1).equal(1)
+        error t.expression { _[1].length }, msg(2).equal(2)
       end
     end
 
     assert_errors matcher.match([[1], [1, 2, 3]]),
-      expression { _[1].length } => 'expected 2 but got 3'
+      expression { _[1].length } => msg(3).not.equal(2)
     assert_no_errors negated.match([[1], [1, 2, 3]])
   end
 
@@ -67,8 +67,8 @@ describe Matcher::MapMatcher do
     assert_kind_of Matcher::NestedError, errors
     assert_equal '_.map { |e| _.length * 100 + i * 10 + e }', errors.key.to_s
     assert_kind_of Matcher::ElementError, errors.child
-    assert_equal 'expected [209, 218] but got [309, 318, 327]',
-      Matcher::ExpectedPhrasing.new(nil, errors.child.message).apply
+    assert_equal msg([309, 318, 327]).not.equal([209, 218]),
+      errors.child.message
     assert_equal [309, 318, 327], errors.key.evaluate({ actual: [9, 8, 7] })
   end
 
@@ -76,7 +76,7 @@ describe Matcher::MapMatcher do
     matcher = Matcher.build { map(_[:a] + i, [10, 21, 32]) }
 
     assert_errors matcher.match([{ a: 10 }, { a: 20 }, { a: 40 }]),
-      expression { _[2][:a] + i } => 'expected 32 but got 42'
+      expression { _[2][:a] + i } => msg(42).not.equal(32)
   end
 
   it 'passes original' do

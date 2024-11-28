@@ -15,16 +15,16 @@ describe Matcher::AnyMatcher do
 
     assert_no_errors matcher.match(1)
     assert_errors negated.match(1),
-      'did not expect 1'
+      msg(1).equal(1)
 
     assert_no_errors matcher.match(2)
     assert_errors negated.match(2),
-      'did not expect 2'
+      msg(2).equal(2)
 
     assert_errors matcher.match(4) do
       _or do
-        error 'expected 1 but got 4'
-        error 'expected 2 but got 4'
+        error msg(4).not.equal(1)
+        error msg(4).not.equal(2)
       end
     end
     assert_no_errors negated.match(4)

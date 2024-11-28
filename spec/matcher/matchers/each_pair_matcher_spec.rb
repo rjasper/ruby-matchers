@@ -17,7 +17,7 @@ describe Matcher::EachPairMatcher do
     end
 
     assert_errors matcher.match(nil),
-      "expected an object responding to `each_pair' but got nil"
+      msg(nil).not.responding_to(:each_pair)
     assert_no_errors matcher.~.match(nil)
   end
 

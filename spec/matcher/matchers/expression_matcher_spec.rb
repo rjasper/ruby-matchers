@@ -41,13 +41,13 @@ describe Matcher::ExpressionMatcher do
 
   it 'matches truthy and falsy' do
     assert_errors match(nil) { _ },
-      'expected a truthy value but got nil'
+      msg(nil).not.truthy
     assert_errors not_match(1) { _ },
-      'expected a falsy value but got 1'
+      msg(1).truthy
     assert_errors match(1) { !_ },
-      'expected a falsy value but got 1'
+      msg(1).truthy
     assert_errors not_match(nil) { !_ },
-      'expected a truthy value but got nil'
+      msg(nil).not.truthy
 
     assert_errors Matcher.build { vars[:foo] }.match(nil, foo: false),
       'expected foo to be truthy but got false'
@@ -57,9 +57,9 @@ describe Matcher::ExpressionMatcher do
 
   it 'matches same' do
     assert_errors match(1) { _.equal?(2) },
-      "expected same as 2 (id=#{2.object_id}) but got 1 (id=#{1.object_id})"
+      msg(1).not.same(2)
     assert_errors not_match(1) { _.equal?(1) },
-      "did not expect same as 1 (id=#{1.object_id})"
+      msg(1).same(1)
 
     assert_errors match(2) { (_ + 1).equal?(_ * 2) },
       "expected _ + 1 to be same as _ * 2 but got 3 (id=#{3.object_id}) and 4 (id=#{4.object_id}), where _ = 2"
@@ -69,14 +69,14 @@ describe Matcher::ExpressionMatcher do
 
   it 'matches equal' do
     assert_errors match(1) { _ == 0 },
-      'expected 0 but got 1'
+      msg(1).not.equal(0)
     assert_errors not_match(0) { _ == 0 },
-      'did not expect 0'
+      msg(0).equal(0)
 
     assert_errors match(0) { _ != 0 },
-      'did not expect 0'
+      msg(0).equal(0)
     assert_errors not_match(1) { _ != 0 },
-      'expected 0 but got 1'
+      msg(1).not.equal(0)
 
     assert_errors match(7) { _ % 3 == 0 },
       'expected _ % 3 == 0 but got 1 == 0, where _ = 7'
@@ -88,28 +88,28 @@ describe Matcher::ExpressionMatcher do
 
     # flip
     assert_errors match(1) { expr(0) == _ },
-      'expected 0 but got 1'
+      msg(1).not.equal(0)
     assert_errors match(0) { expr(0) != _ },
-      'did not expect 0'
+      msg(0).equal(0)
   end
 
   it 'matches comparisons' do
     assert_errors match(0) { _ < 0 },
-      'expected a value < 0 but got 0'
+      msg(0).not.lower_than(0)
     assert_errors not_match(-1) { _ < 0 },
-      'expected a value >= 0 but got -1'
+      msg(-1).not.greater_or_equal_than(0)
     assert_errors match(0) { _ > 0 },
-      'expected a value > 0 but got 0'
+      msg(0).not.greater_than(0)
     assert_errors not_match(1) { _ > 0 },
-      'expected a value <= 0 but got 1'
+      msg(1).not.lower_or_equal_than(0)
     assert_errors match(1) { _ <= 0 },
-      'expected a value <= 0 but got 1'
+      msg(1).not.lower_or_equal_than(0)
     assert_errors not_match(0) { _ <= 0 },
-      'expected a value > 0 but got 0'
+      msg(0).not.greater_than(0)
     assert_errors match(-1) { _ >= 0 },
-      'expected a value >= 0 but got -1'
+      msg(-1).not.greater_or_equal_than(0)
     assert_errors not_match(0) { _ >= 0 },
-      'expected a value < 0 but got 0'
+      msg(0).not.lower_than(0)
 
     assert_errors match(1) { _ * 2 < 0 },
       'expected _ * 2 < 0 but got 2 < 0, where _ = 1'
@@ -130,20 +130,20 @@ describe Matcher::ExpressionMatcher do
 
     # flip
     assert_errors match(-1) { expr(0) < _ },
-      'expected a value > 0 but got -1'
+      msg(-1).not.greater_than(0)
     assert_errors match(1) { expr(0) > _ },
-      'expected a value < 0 but got 1'
+      msg(1).not.lower_than(0)
     assert_errors match(-1) { expr(0) <= _ },
-      'expected a value >= 0 but got -1'
+      msg(-1).not.greater_or_equal_than(0)
     assert_errors match(1) { expr(0) >= _ },
-      'expected a value <= 0 but got 1'
+      msg(1).not.lower_or_equal_than(0)
   end
 
   it 'matches comparable to' do
     assert_errors match(Set[2]) { _ <=> Set[1] },
-      'expected a value comparable to #<Set: {1}> but got #<Set: {2}>'
+      msg(Set[2]).not.comparable_to(Set[1])
     assert_errors not_match(Set[1, 2]) { _ <=> Set[1] },
-      'did not expect a value comparable to #<Set: {1}> but got #<Set: {1, 2}>'
+      msg(Set[1, 2]).comparable_to(Set[1])
 
     assert_errors match([2]) { _.to_set <=> Set[1] },
       'expected _.to_set to be comparable to #<Set: {1}> but got #<Set: {2}>, where _ = [2]'
@@ -154,9 +154,9 @@ describe Matcher::ExpressionMatcher do
   it 'matches between expressions' do
     assert_no_errors match(5) { _.between?(0, 10) }
     assert_errors not_match(5) { _.between?(0, 10) },
-      'did not expect value to be between 0 and 10 but got 5'
+      msg(5).between(0, 10)
     assert_errors match(15) { _.between?(0, 10) },
-      'expected value to be between 0 and 10 but got 15'
+      msg(15).not.between(0, 10)
     assert_no_errors not_match(15) { _.between?(0, 10) }
 
     assert_errors match(15) { (_ * 2).between?(0, 10) },
@@ -170,16 +170,16 @@ describe Matcher::ExpressionMatcher do
     assert_no_errors not_match(15) { (_ * 2).between?(0, 20) }
 
     assert_errors match(15) { lo { (_ >= 0) & (_ <= 10) } },
-      'expected value to be between 0 and 10 but got 15'
+      msg(15).not.between(0, 10)
     assert_errors match(15) { lo { (_ * 2 >= 0) & (_ * 2 <= 10) } },
       'expected _ * 2 to be between 0 and 10 but got 30, where _ = 15'
   end
 
   it 'matches length expressions' do
     assert_errors match([1]) { _.length == 2 },
-      'expected length of 2 but was 1'
+      msg([1]).not.length_of(2, 1)
     assert_errors not_match([1]) { _.length == 1 },
-      'did not expect length of 1'
+      msg([1]).length_of(1, 1)
 
     assert_errors match([1, 2]) { (_ + [3]).length == 2 },
       'expected _ + [3] to have length of 2 but was 3, where _ = [1, 2]'
@@ -189,9 +189,9 @@ describe Matcher::ExpressionMatcher do
 
   it 'matches having key' do
     assert_errors match({}) { _.key?(:foo) },
-      'expected to include key :foo but got {}'
+      msg({}).not.having_key(:foo)
     assert_errors not_match({ foo: true }) { _.key?(:foo) },
-      'did not expect to include key :foo but got {:foo=>true}'
+      msg({ foo: true }).having_key(:foo)
 
     assert_errors match([]) { _.to_h.key?(:foo) },
       'expected _.to_h to include key :foo but got {}, where _ = []'
@@ -201,9 +201,9 @@ describe Matcher::ExpressionMatcher do
 
   it 'matches including' do
     assert_errors match([]) { _.include?(1) },
-      'expected 1 to be included but got []'
+      msg([]).not.including(1)
     assert_errors not_match([1]) { _.include?(1) },
-      'did not expect 1 to be included but got [1]'
+      msg([1]).including(1)
 
     assert_errors match([0, 1, 2]) { _[0..1].include?(4) },
       'expected _[0..1] to include 4 but got [0, 1], where _ = [0, 1, 2]'
@@ -216,9 +216,9 @@ describe Matcher::ExpressionMatcher do
     end
 
     assert_errors match([]) { expr(foo_in).in?(_) },
-      'expected "foo" to be included but got []'
+      msg([]).not.including("foo")
     assert_errors not_match(['foo']) { expr(foo_in).in?(_) },
-      'did not expect "foo" to be included but got ["foo"]'
+      msg(['foo']).including("foo")
   end
 
   it 'matches in' do
@@ -228,9 +228,9 @@ describe Matcher::ExpressionMatcher do
     end
 
     assert_errors match(foo_in) { _.in?(['bar']) },
-      'expected object to be included in ["bar"] but got "foo"'
+      msg('foo').not.in(['bar'])
     assert_errors not_match(foo_in) { _.in?(['foo']) },
-      'did not expect object to be included in ["foo"] but got "foo"'
+      msg('foo').in(['foo'])
 
     assert_errors match(foo_in) { _.itself.in?(['bar']) },
       'expected _.itself to be included in ["bar"] but got "foo", where _ = "foo"'
@@ -239,20 +239,20 @@ describe Matcher::ExpressionMatcher do
 
     # flip
     assert_errors match(foo_in) { expr(['bar']).include?(_) },
-      'expected object to be included in ["bar"] but got "foo"'
+      msg('foo').not.in(['bar'])
     assert_errors not_match(foo_in) { expr(['foo']).include?(_) },
-      'did not expect object to be included in ["foo"] but got "foo"'
+      msg('foo').in(['foo'])
   end
 
   it 'matches regexp' do
     assert_errors match('Hi!') { _ =~ /Hello/ },
-      'expected value to match /Hello/ but got "Hi!"'
+      msg('Hi!').not.matching(/Hello/)
     assert_errors not_match('Hello World!') { _ =~ /Hello/ },
-      'did not expect value to match /Hello/ but got "Hello World!"'
+      msg('Hello World!').matching(/Hello/)
     assert_errors match('Hello World!') { _ !~ /Hello/ },
-      'did not expect value to match /Hello/ but got "Hello World!"'
+      msg('Hello World!').matching(/Hello/)
     assert_errors not_match('Hi!') { _ !~ /Hello/ },
-      'expected value to match /Hello/ but got "Hi!"'
+      msg('Hi!').not.matching(/Hello/)
 
     assert_errors match('Hi!') { _.downcase =~ /hello/ },
       'expected _.downcase to match /hello/ but got "hi!", where _ = "Hi!"'
@@ -308,9 +308,9 @@ describe Matcher::ExpressionMatcher do
 
   it 'matches instance_of' do
     assert_errors match('string') { _.instance_of?(Integer) },
-      'expected an instance of Integer but got "string"'
+      msg('string').not.instance_of(Integer)
     assert_errors not_match(1) { _.instance_of?(Integer) },
-      'did not expect an instance of Integer but got 1'
+      msg(1).instance_of(Integer)
 
     assert_errors match(0.0) { (_ + 1).instance_of?(Integer) },
       'expected _ + 1 to be an instance of Integer but got 1.0, where _ = 0.0'
@@ -318,20 +318,20 @@ describe Matcher::ExpressionMatcher do
       'did not expect _ + 1 to be an instance of Integer but got 1, where _ = 0'
 
     assert_errors match('string') { _.class == Integer },
-      'expected an instance of Integer but got "string"'
+      msg('string').not.instance_of(Integer)
     assert_errors match('string') { expr(Integer) == _.class },
-      'expected an instance of Integer but got "string"'
+      msg('string').not.instance_of(Integer)
   end
 
   it 'matches kind_of' do
     assert_errors match('string') { _.kind_of?(Numeric) },
-      'expected a kind of Numeric but got "string"'
+      msg('string').not.kind_of(Numeric)
     assert_errors not_match(1) { _.kind_of?(Numeric) },
-      'did not expect a kind of Numeric but got 1'
+      msg(1).kind_of(Numeric)
     assert_errors match('string') { _.is_a?(Numeric) },
-      'expected a kind of Numeric but got "string"'
+      msg('string').not.kind_of(Numeric)
     assert_errors not_match(1) { _.is_a?(Numeric) },
-      'did not expect a kind of Numeric but got 1'
+      msg(1).kind_of(Numeric)
 
     assert_errors match(1.0) { (_ + 1).kind_of?(Integer) },
       'expected _ + 1 to be a kind of Integer but got 2.0, where _ = 1.0'
@@ -345,9 +345,9 @@ describe Matcher::ExpressionMatcher do
 
   it 'matches responding_to' do
     assert_errors match(nil) { _.respond_to?(:+) },
-      "expected an object responding to `+' but got nil"
+      msg(nil).not.responding_to(:+)
     assert_errors not_match(1) { _.respond_to?(:+) },
-      "did not expect an object responding to `+' but got 1"
+      msg(1).responding_to(:+)
 
     assert_errors match('a') { (_ * 2).respond_to?(:**) },
       "expected _ * 2 to respond to `**' but got \"aa\", where _ = \"a\""
@@ -357,9 +357,9 @@ describe Matcher::ExpressionMatcher do
 
   it 'matches predicate' do
     assert_errors match(1) { _.even? },
-      'expected value to be even but got 1'
+      msg(1).not.predicate(:even?)
     assert_errors not_match(2) { _.even? },
-      'did not expect value to be even but got 2'
+      msg(2).predicate(:even?)
 
     assert_errors match(6) { (_ / 2).even? },
       'expected _ / 2 to be even but got 3, where _ = 6'

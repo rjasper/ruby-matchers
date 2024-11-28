@@ -57,7 +57,7 @@ describe Matcher::SetVariablesMatcher do
     assert_errors negated.match(actual) do
       _or do
         error :depth, 'expected _ != depth but got 0 != 0'
-        error :value, 'did not expect 42'
+        error :value, msg(42).equal(42)
         error %i[child depth], 'expected _ != depth but got 1 != 1'
         error %i[child value], 'expected _ != parent_value / 2 + 2 but got 23 != 23, where parent_value = 42'
       end

@@ -12,7 +12,8 @@ describe Matcher::Iso8601Matcher do
   it 'expects a String' do
     matcher = Matcher.build { iso8601 }
 
-    assert_errors matcher.match(1), 'expected a kind of String but got 1'
+    assert_errors matcher.match(1),
+      msg(1).not.kind_of(String)
     assert_no_errors matcher.~.match(1)
   end
 

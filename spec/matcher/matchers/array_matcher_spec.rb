@@ -13,7 +13,7 @@ describe Matcher::ArrayMatcher do
     matcher = Matcher.build { [1, 2] }
 
     assert_errors matcher.match(nil),
-      'expected a kind of Array but got nil'
+      msg(nil).not.kind_of(Array)
     assert_no_errors matcher.~.match(nil)
   end
 
@@ -22,11 +22,11 @@ describe Matcher::ArrayMatcher do
     negated = ~matcher
 
     assert_errors matcher.match([1]),
-      'expected length of 2 but was 1'
+      msg([1]).not.length_of(2, 1)
     assert_no_errors negated.match([1])
 
     assert_errors matcher.match([1, 2, 3]),
-      'expected length of 2 but was 3'
+      msg([1, 2, 3]).not.length_of(2, 3)
     assert_no_errors negated.match([1, 2, 3])
   end
 
@@ -37,16 +37,16 @@ describe Matcher::ArrayMatcher do
     assert_no_errors matcher.match([1, 2, 3])
     assert_errors negated.match([1, 2, 3]) do
       _or do
-        error 0, 'did not expect 1'
-        error 1, 'did not expect 2'
-        error 2, 'did not expect 3'
+        error 0, msg(1).equal(1)
+        error 1, msg(2).equal(2)
+        error 2, msg(3).equal(3)
       end
     end
 
     assert_errors matcher.match([4, 5, 6]),
-      0 => 'expected 1 but got 4',
-      1 => 'expected 2 but got 5',
-      2 => 'expected 3 but got 6'
+      0 => msg(4).not.equal(1),
+      1 => msg(5).not.equal(2),
+      2 => msg(6).not.equal(3)
     assert_no_errors negated.match([4, 5, 6])
   end
 

@@ -59,16 +59,16 @@ describe Matcher::ReferenceMatcher do
     assert_no_errors matcher.match(valid_list)
     assert_errors negated.match(valid_list) do
       _or do
-        error :head, 'did not expect a kind of Integer but got 1'
-        error %i[tail head], 'did not expect a kind of Integer but got 2'
-        error %i[tail tail], 'did not expect nil'
+        error :head, msg(1).kind_of(Integer)
+        error %i[tail head], msg(2).kind_of(Integer)
+        error %i[tail tail], msg(nil).equal(nil)
       end
     end
 
     invalid_list = { head: 1, tail: { head: 2, tail: { head: 3 } } }
 
     assert_errors matcher.match(invalid_list),
-      tail: { tail: 'expected to include key :tail but got {:head=>3}' }
+      tail: { tail: msg({ head: 3 }).not.having_key(:tail) }
     assert_no_errors negated.match(invalid_list)
   end
 
@@ -84,13 +84,13 @@ describe Matcher::ReferenceMatcher do
     assert_no_errors matcher.match(['foo', 'foo'])
     assert_errors negated.match(['foo', 'foo']) do
       _or do
-        error 0, 'did not expect "foo"'
+        error 0, msg('foo').equal('foo')
         error 1, 'actual has already failed before'
       end
     end
 
     assert_errors matcher.match(['bar', 'bar']),
-      0 => 'expected "foo" but got "bar"',
+      0 => msg('bar').not.equal('foo'),
       1 => 'actual has already failed before'
     assert_no_errors negated.match(['bar', 'bar'])
   end
@@ -139,9 +139,9 @@ describe Matcher::ReferenceMatcher do
     assert_no_errors matcher.match(actual)
     assert_errors negated.match(actual) do
       _or do
-        error :head, 'did not expect a kind of Integer but got 1'
-        error %i[tail head], 'did not expect a kind of Integer but got 2'
-        error %i[tail tail], 'did not expect nil'
+        error :head, msg(1).kind_of(Integer)
+        error %i[tail head], msg(2).kind_of(Integer)
+        error %i[tail tail], msg(nil).equal(nil)
       end
     end
 
@@ -177,9 +177,9 @@ describe Matcher::ReferenceMatcher do
     assert_no_errors matcher.match(ring1)
     assert_errors negated.match(ring1) do
       _or do
-        error :value, 'did not expect a kind of Integer but got 1'
-        error %i[next value], 'did not expect a kind of Integer but got 2'
-        error %i[next next value], 'did not expect a kind of Integer but got 3'
+        error :value, msg(1).kind_of(Integer)
+        error %i[next value], msg(2).kind_of(Integer)
+        error %i[next next value], msg(3).kind_of(Integer)
         error %i[next next next], 'did not expect a cyclic structure but actual has already been visited'
       end
     end
@@ -187,7 +187,7 @@ describe Matcher::ReferenceMatcher do
     ring2 = ring_of[1, nil, 3]
 
     assert_errors matcher.match(ring2),
-      next: { value: 'expected a kind of Integer but got nil' }
+      next: { value: msg(nil).not.kind_of(Integer) }
     assert_no_errors negated.match(ring2)
   end
 
