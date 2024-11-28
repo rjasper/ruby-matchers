@@ -32,6 +32,16 @@ describe Matcher::ErrorCollector do
     assert_equal _and(a1, a2, b1, b2), collector.error
   end
 
+  it 'or + or' do
+    a1, a2, b1, b2 = %w[a1 a2 b1 b2].map { element(_1) }
+
+    collector.or!
+    collector << _or(a1, a2)
+    collector << _or(b1, b2)
+
+    assert_equal _or(a1, a2, b1, b2), collector.error
+  end
+
   it 'nested' do
     collector[:foo] << element('foo')
 
