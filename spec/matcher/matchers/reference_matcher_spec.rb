@@ -12,6 +12,35 @@ describe Matcher::ReferenceMatcher do
     assert_kind_of Matcher::ReferenceMatcher, matcher
   end
 
+  describe 'MatcherBuilding#refs' do
+    it 'returns target matcher if last line was refs[]=' do
+      ref_matcher = nil
+
+      matcher = Matcher.build do
+        ref_matcher = refs[:loop]
+        refs[:loop] = { next: refs[:loop] }
+      end
+
+      assert_same ref_matcher.send(:target), matcher
+    end
+
+    it 'checks for undefined refs' do
+      err = assert_raises StandardError do
+        Matcher.build { [refs[:foo]] }
+      end
+
+      assert_equal 'undefined ref: foo', err.message
+    end
+
+    it 'checks for unused refs' do
+      err = assert_raises StandardError do
+        Matcher.build { refs[:foo] = Integer }
+      end
+
+      assert_equal 'unused ref: foo', err.message
+    end
+  end
+
   it 'matches linked lists' do
     matcher = Matcher.build do
       refs[:list] = {
