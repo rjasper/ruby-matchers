@@ -31,5 +31,25 @@ module Matcher
     def hash
       @hash ||= [@key, @negated, @actual, @args, @kwargs].hash
     end
+
+    def to_s
+      if @key.is_a?(Array)
+        namespace, key = @key
+      else
+        key = @key
+      end
+
+      args_and_kwargs = @args.map(&:inspect) + @kwargs.map do |k, v|
+        k.is_a?(Symbol) ? "#{k}: #{v.inspect}" : "#{k.inspect} => #{v.inspect}"
+      end
+
+      string = String.new("report(#{@actual.inspect})")
+      string += ".namespace(#{namespace.inspect})" if namespace
+      string += '.not' if @negated
+      string += ".#{key}"
+      string += "(#{args_and_kwargs.join(', ')})" unless args_and_kwargs.empty?
+
+      string
+    end
   end
 end
