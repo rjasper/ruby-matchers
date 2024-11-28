@@ -22,6 +22,10 @@ module Matcher
       TEXT
     end
 
+    def msg(actual)
+      StandardMessageBuilder.new(false, actual)
+    end
+
     private
 
     def assert_errors_helper(actual, base, nested, block, phrasing: nil)

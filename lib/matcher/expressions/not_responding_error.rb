@@ -7,6 +7,7 @@ module Matcher
     def initialize(call, receiver, values)
       @call = call
       @receiver = receiver
+      @actual = values[:actual]
       @given = values.slice(*call.receiver.variables)
 
       super("#{call.receiver} does not respond to `#{call.method}'")
@@ -19,7 +20,7 @@ module Matcher
         Message.new(
           %i[expression responding_to],
           true,
-          nil,
+          @actual,
           @call.receiver,
           @receiver,
           @call.method,
