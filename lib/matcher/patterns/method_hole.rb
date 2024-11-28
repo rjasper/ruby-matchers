@@ -11,6 +11,8 @@ module Matcher
       @kwargs = kwargs
     end
 
+    attr_reader :receiver, :method, :args, :kwargs
+
     def match?(expression)
       return false if !expression.is_a?(Call) || !match_method?(expression.method)
 
@@ -18,6 +20,17 @@ module Matcher
 
       true
     end
+
+    def ==(other)
+      return true if other.equal?(self)
+
+      super &&
+        @receiver == other.receiver &&
+        @method == other.method &&
+        @args.eql?(other.receiver) &&
+        @kwargs.eql?(other.receiver)
+    end
+    alias eql? ==
 
     def to_s
       args = @args.map(&:inspect)

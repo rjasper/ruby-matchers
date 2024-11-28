@@ -8,11 +8,18 @@ module Matcher
       @pattern = pattern
     end
 
+    attr_reader :pattern
+
     def match?(_expression)
       yield @pattern
 
       true
     end
+
+    def ==(other)
+      super && @pattern == other.pattern
+    end
+    alias eql? ==
 
     def to_s
       "capture(#{@key.inspect}, #{@pattern})"

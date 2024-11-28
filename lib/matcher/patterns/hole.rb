@@ -12,6 +12,11 @@ module Matcher
       true
     end
 
+    def ==(other)
+      other.instance_of?(self.class) && key == other.key
+    end
+    alias eql? ==
+
     def to_s
       "hole(#{@key.inspect})"
     end
