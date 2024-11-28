@@ -43,7 +43,7 @@ module Matcher
         label = element_label_for(path, path_label, error)
         message = error.message
         message = @phrasing.call(path, message) if
-          @phrasing && message.is_a?(ErrorMessage)
+          @phrasing && message.is_a?(Message)
 
         leaves << Leaf.new(label, path, message)
 
@@ -56,7 +56,7 @@ module Matcher
     def element_label_for(path, path_label, element)
       message = element.message
       message = @phrasing.call(path, message) if
-        @phrasing && message.is_a?(ErrorMessage)
+        @phrasing && message.is_a?(Message)
 
       key = [path_label, message]
 

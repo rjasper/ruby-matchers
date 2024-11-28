@@ -13,7 +13,7 @@ module Matcher
     end
 
     def message_for_errors
-      ErrorMessage.new(%i[expression raising], false, nil, @call, @error, @given)
+      Message.new(%i[expression raising], false, nil, @call, @error, @given)
     end
   end
 end

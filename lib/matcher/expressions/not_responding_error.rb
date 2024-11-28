@@ -14,9 +14,9 @@ module Matcher
 
     def message_for_errors
       if @call.receiver == Variable.actual
-        ErrorMessage.new(:responding_to, true, @receiver, @call.method)
+        Message.new(:responding_to, true, @receiver, @call.method)
       else
-        ErrorMessage.new(
+        Message.new(
           %i[expression responding_to],
           true,
           nil,

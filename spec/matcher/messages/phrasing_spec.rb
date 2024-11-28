@@ -7,7 +7,7 @@ describe Matcher::Phrasing do
 
   it 'phrases a defined message' do
     klass.define(:hello) { |you| "Hello #{you}!" }
-    message = Matcher::ErrorMessage.new(:hello, false, nil, 'World')
+    message = Matcher::Message.new(:hello, false, nil, 'World')
     my_phrasing = klass.new(nil, message)
 
     assert_equal 'Hello World!', my_phrasing.apply
@@ -18,7 +18,7 @@ describe Matcher::Phrasing do
       klass.define(:greeting) { |you| "Welcome #{you}!" }
     end
 
-    message = Matcher::ErrorMessage.new(%i[polite greeting], false, nil, 'World')
+    message = Matcher::Message.new(%i[polite greeting], false, nil, 'World')
     my_phrasing = klass.new(nil, message)
 
     assert_equal 'Welcome World!', my_phrasing.apply
@@ -26,7 +26,7 @@ describe Matcher::Phrasing do
 
   it 'provides context (path, actual, negated)' do
     klass.define(:expected) { "#{path}: expected#{' not' if negated} #{actual}" }
-    message = Matcher::ErrorMessage.new(:expected, true, 42)
+    message = Matcher::Message.new(:expected, true, 42)
     path = expression { _.foo }
     my_phrasing = klass.new(path, message)
 
@@ -36,7 +36,7 @@ describe Matcher::Phrasing do
   it 'phrases other message' do
     klass.define(:hello) { |you| phrase(:welcome, you) }
     klass.define(:welcome) { |you| "Welcome #{you}!" }
-    message = Matcher::ErrorMessage.new(:hello, false, nil, 'World')
+    message = Matcher::Message.new(:hello, false, nil, 'World')
     my_phrasing = klass.new(nil, message)
 
     assert_equal 'Welcome World!', my_phrasing.apply
@@ -46,15 +46,15 @@ describe Matcher::Phrasing do
     klass.define(:yes) { negated ? 'No' : 'Yes' }
     klass.define(:negate) { phrase_negated(:yes) }
 
-    message1 = Matcher::ErrorMessage.new(:negate, false, nil)
-    message2 = Matcher::ErrorMessage.new(:negate, true, nil)
+    message1 = Matcher::Message.new(:negate, false, nil)
+    message2 = Matcher::Message.new(:negate, true, nil)
 
     assert_equal 'No', klass.new(nil, message1).apply
     assert_equal 'Yes', klass.new(nil, message2).apply
   end
 
   it 'phrases fallback message' do
-    message = Matcher::ErrorMessage.new(:got, true, 42)
+    message = Matcher::Message.new(:got, true, 42)
     my_phrasing = klass.new(nil, message)
 
     assert_equal 'got 42 but found no message for :got (negated)', my_phrasing.apply

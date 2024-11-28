@@ -18,7 +18,7 @@ module Matcher
     protected
 
     def message(key, *, **)
-      ErrorMessage.new(key, @negated, @actual, *, **)
+      Message.new(key, @negated, @actual, *, **)
     end
 
     private
