@@ -97,19 +97,19 @@ describe Matcher::ExpressionMatcher do
     assert_errors match(0) { _ < 0 },
       msg(0).not.lower_than(0)
     assert_errors not_match(-1) { _ < 0 },
-      msg(-1).not.greater_or_equal_than(0)
+      msg(-1).lower_than(0)
     assert_errors match(0) { _ > 0 },
       msg(0).not.greater_than(0)
     assert_errors not_match(1) { _ > 0 },
-      msg(1).not.lower_or_equal_than(0)
+      msg(1).greater_than(0)
     assert_errors match(1) { _ <= 0 },
       msg(1).not.lower_or_equal_than(0)
     assert_errors not_match(0) { _ <= 0 },
-      msg(0).not.greater_than(0)
+      msg(0).lower_or_equal_than(0)
     assert_errors match(-1) { _ >= 0 },
       msg(-1).not.greater_or_equal_than(0)
     assert_errors not_match(0) { _ >= 0 },
-      msg(0).not.lower_than(0)
+      msg(0).greater_or_equal_than(0)
 
     assert_errors match(1) { _ * 2 < 0 },
       'expected _ * 2 < 0 but got 2 < 0, where _ = 1'
