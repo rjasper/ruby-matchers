@@ -80,7 +80,7 @@ module Matcher
     alias dup clone
 
     def to_s
-      @children.map(&:to_s).join(' | ')
+      "(#{@children.map(&:to_s).join(' | ')})"
     end
   end
 end

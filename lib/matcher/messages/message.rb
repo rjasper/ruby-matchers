@@ -51,5 +51,6 @@ module Matcher
 
       string
     end
+    alias inspect to_s
   end
 end
