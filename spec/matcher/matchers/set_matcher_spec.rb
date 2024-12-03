@@ -40,11 +40,11 @@ describe Matcher::SetMatcher do
 
     assert_errors matcher.match([2, 1]),
       msg([2, 1]).not.length_of(3, 2),
-      msg([2, 1]).not.including(3)
+      'expected to include an element matching 3 but got [2, 1]'
     assert_no_errors negated.match([2, 1])
 
     assert_errors matcher.match([1, 2, 4]),
-      msg([1, 2, 4]).not.including(3),
+      'expected to include an element matching 3 but got [1, 2, 4]',
       2 => msg([1, 2, 4]).including(4)
     assert_no_errors negated.match([1, 2, 4])
   end
@@ -61,7 +61,7 @@ describe Matcher::SetMatcher do
       'did not expect object to be an equal set to [_ == parent] but got [[...]]'
 
     assert_errors matcher.match([1]),
-      'expected _ == parent to be included but got [1]',
+      'expected to include an element matching _ == parent but got [1]',
       0 => msg([1]).including(1)
     assert_no_errors negated.match([1])
   end

@@ -274,6 +274,10 @@ module Matcher
       define(:equal) do |set|
         "#{verb} object to be an equal set to #{set.inspect} but got #{actual.inspect}"
       end
+
+      define(:including_matchable_by) do |matcher|
+        "#{verb} to include an element matching #{matcher} but got #{actual.inspect}"
+      end
     end
 
     private

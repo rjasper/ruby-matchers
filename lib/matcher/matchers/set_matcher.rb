@@ -47,8 +47,13 @@ module Matcher
         # when negated then missing.empty? <=> extra.empty?
         errors << report.namespace(:set).equal(@array) if missing.empty?
       else
-        missing.each { errors << expected(actual).including(_1) }
-        extra.each { errors[_1] << report.including(actual[_1]) }
+        missing.each do |matcher|
+          errors << expected.namespace(:set).including_matchable_by(matcher)
+        end
+
+        extra.each do |i|
+          errors[i] << report.including(actual[i])
+        end
       end
     end
     protected :check
