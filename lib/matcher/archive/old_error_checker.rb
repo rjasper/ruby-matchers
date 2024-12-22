@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Matcher
-  class ErrorChecker
+  class OldErrorChecker
     def self.check(expected, actual, phrasing: nil)
       new(phrasing).check(expected, actual)
     end

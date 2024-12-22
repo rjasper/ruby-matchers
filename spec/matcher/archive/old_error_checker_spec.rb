@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 require 'test_helper'
-require 'matcher/archive/error_checker'
+require 'matcher/archive/old_error_checker'
 require 'matcher/archive/error_labeler'
 
-describe Matcher::ErrorChecker do
+describe Matcher::OldErrorChecker do
   let(:error_checker) do
-    Matcher::ErrorChecker.new
+    Matcher::OldErrorChecker.new
   end
 
   it 'compare trees' do

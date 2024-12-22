@@ -39,7 +39,7 @@ module Matcher
       end
 
       expected = AndError.from(expected_nodes)
-      message = ErrorChecker.check(expected, actual, phrasing:)
+      message = OldErrorChecker.check(expected, actual, phrasing:)
 
       return unless message
 
