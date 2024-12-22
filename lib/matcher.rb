@@ -96,8 +96,6 @@ require_relative 'matcher/rules/transform_mapping'
 require_relative 'matcher/rules/transform_rule'
 
 require_relative 'matcher/testing/error_builder'
-require_relative 'matcher/testing/error_checker'
-require_relative 'matcher/testing/error_labeler'
 require_relative 'matcher/testing/error_testing'
 require_relative 'matcher/testing/expression_labeler'
 require_relative 'matcher/testing/pattern_testing'

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'test_helper'
+require 'matcher/archive/error_labeler'
 
 describe Matcher::ErrorLabeler do
   include Matcher::ErrorTesting
