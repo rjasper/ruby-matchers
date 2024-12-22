@@ -28,7 +28,7 @@ module Matcher
 
     private
 
-    def assert_errors_helper(actual, base, nested, block, phrasing: nil)
+    def assert_errors_helper(actual, base, nested, block, phrasing: ExpectedPhrasing.phrasing)
       raise 'cannot pass expected errors directly if block given' if
         (!base.empty? || !nested.empty?) && block
 
@@ -39,11 +39,42 @@ module Matcher
       end
 
       expected = AndError.from(expected_nodes)
-      message = OldErrorChecker.check(expected, actual, phrasing:)
+      checker = ErrorChecker.new(phrasing)
+      result = checker.check(expected, actual)
 
-      return unless message
+      return if result
 
-      assert false, message
+      reporter = Reporter.new
+
+      io = StringIO.new
+
+      io.puts <<~TEXT
+        #{checker.reason}
+
+        expected:
+
+        #{reporter.report(expected).chomp}
+
+        but got:
+
+        #{reporter.report(actual).chomp}
+      TEXT
+
+      unless checker.missing_phrases.empty?
+        io.puts "\nmissing:"
+        checker.missing_phrases.each do |phrase, count|
+          io.puts "- #{phrase}#{"(#{count}x)" if count > 1}"
+        end
+      end
+
+      unless checker.extra_phrases.empty?
+        io.puts "\nextra:"
+        checker.extra_phrases.each do |phrase, count|
+          io.puts "- #{phrase}#{"(#{count}x)" if count > 1}"
+        end
+      end
+
+      assert false, io.string
     end
 
     def nested_from_hash(hash)
