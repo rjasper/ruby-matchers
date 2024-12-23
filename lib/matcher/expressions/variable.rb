@@ -41,6 +41,16 @@ module Matcher
       @symbol.hash
     end
 
+    def bind(values)
+      value = values[@symbol]
+
+      if !value.nil? || values.key?(@symbol)
+        BoundVariable.new(@symbol, value)
+      else
+        self
+      end
+    end
+
     def substitute(replacements)
       symbol = replacements[@symbol]
       symbol ? Variable.new(symbol) : self

@@ -28,6 +28,7 @@ require_relative 'matcher/errors/or_error'
 
 require_relative 'matcher/expressions/expression'
 require_relative 'matcher/expressions/block'
+require_relative 'matcher/expressions/bound_variable'
 require_relative 'matcher/expressions/call'
 require_relative 'matcher/expressions/call_error'
 require_relative 'matcher/expressions/constant'
