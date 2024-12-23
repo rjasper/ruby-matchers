@@ -65,7 +65,7 @@ describe Matcher::MapMatcher do
     errors = matcher.match([9, 8, 7])
 
     assert_kind_of Matcher::NestedError, errors
-    assert_equal '_.map { |e| _.length * 100 + i * 10 + e }', errors.key.to_s
+    assert_equal '_.map.with_index { |e, i| _.length * 100 + i * 10 + e }', errors.key.to_s
     assert_kind_of Matcher::ElementError, errors.child
     assert_equal msg([309, 318, 327]).not.equal([209, 218]),
       errors.child.message

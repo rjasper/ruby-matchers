@@ -45,49 +45,6 @@ module Matcher
       "map(#{@projection}, #{@matcher})"
     end
 
-    class MapContextFactory
-      attr_reader :index
-
-      def initialize(index)
-        @index = index
-      end
-
-      def create(block, values)
-        MapContext.new(block, values, @index)
-      end
-
-      def ==(other)
-        return true if equal?(other)
-
-        other.instance_of?(MapContextFactory) &&
-          @index.eql?(other.index)
-      end
-      alias eql? ==
-
-      def hash
-        @index.hash
-      end
-    end
-
-    class MapContext < Block::Context
-      attr_reader :index
-
-      def initialize(block, values, index)
-        super(block, values)
-
-        @index = index
-        @counter = 0
-      end
-
-      def evaluate(values)
-        values[@index] = @counter
-        result = super
-        @counter += 1
-
-        result
-      end
-    end
-
     module ErrorMapping
       private
 
@@ -124,27 +81,28 @@ module Matcher
       def nested_key
         proj = @projection
         actual_var = Variable.actual
-
         as_symbol_proc = proj.is_a?(Call) && proj.unary? && proj.receiver == actual_var
+        with_index = true if @index && proj.variables.include?(@index)
 
         block = if as_symbol_proc
           SymbolProc.new(proj.method)
         else
           symbol = find_free_symbol(proj)
           parameters = [[:opt, symbol]]
+          parameters << [:opt, @index] if with_index
           expression = proj.substitute(actual: symbol, @original => :actual)
           free_variables = expression.variables - [symbol]
-
-          context = if free_variables.include?(@index)
-            MapContextFactory.new(@index)
-          elsif !free_variables.empty?
-            Block::ContextFactory.instance
-          end
+          context = free_variables.empty? ? nil : Block::ContextFactory.instance
 
           Block.new(parameters, expression, context:)
         end
 
-        Call.new(actual_var, :map, [], {}, block)
+        if with_index
+          map = Call.new(actual_var, :map, [], {})
+          Call.new(map, :with_index, [], {}, block)
+        else
+          Call.new(actual_var, :map, [], {}, block)
+        end
       end
 
       def find_free_symbol(expression)
