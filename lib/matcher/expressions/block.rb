@@ -141,18 +141,19 @@ module Matcher
       if @parameters.empty?
         as_block ? "{ #{@expression} }" : "-> { #{@expression} }"
       else
-        as_block ? "{ |#{arg_list}| #{@expression} }" : "->(#{arg_list}) { #{@expression} }"
+        args = arg_list(substitutions: Expression.default_substitutions)
+        as_block ? "{ |#{args}| #{@expression} }" : "->(#{args}) { #{@expression} }"
       end
     end
     alias inspect to_s
 
     private
 
-    def arg_list
+    def arg_list(substitutions: nil)
       @parameters.map do |type, name|
         case type
         when :req, :opt
-          name
+          substitutions&.[](name) || name
         when :key, :keyreq
           "#{name}:"
         end
