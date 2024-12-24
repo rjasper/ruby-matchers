@@ -48,10 +48,15 @@ module Matcher
     def match(actual, values = nil)
       return isolate.match(actual, values) if @thread_safe
 
-      collector = ErrorCollector.new
-      (@stack ||= []) << StackData.new(actual, merge_values(values), collector)
+      collector = nil
 
       Matcher.with_session do
+        values = merge_values(values)
+        frame = StackData.new(actual, values)
+        (@stack ||= []) << frame
+        collector = new_collector
+        frame.errors = collector
+
         depth = Matcher.session[:depth]
 
         if depth == nil
@@ -93,6 +98,14 @@ module Matcher
 
     def errors
       @stack.last.errors
+    end
+
+    def new_collector
+      if Matcher.session.fetch(:bind_nested_values, false)
+        ErrorCollector.new({ actual:, **values })
+      else
+        ErrorCollector.new
+      end
     end
 
     def report(actual = self.actual)

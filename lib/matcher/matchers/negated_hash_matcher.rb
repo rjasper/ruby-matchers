@@ -25,7 +25,7 @@ module Matcher
       return unless actual.is_a?(Hash)
       return if !@partial && actual.keys.any? { !@hash.key?(_1) }
 
-      collector = ErrorCollector.new.or!
+      collector = new_collector.or!
 
       @neg_hash.each do |key, value|
         actual_value = actual[key]

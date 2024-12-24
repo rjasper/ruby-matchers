@@ -18,7 +18,7 @@ module Matcher
     def check(actual)
       return if !actual.is_a?(Array) || @array.length != actual.length
 
-      collector = ErrorCollector.new.or!
+      collector = new_collector.or!
 
       @array.length.times do |i|
         result = yield @neg_array[i], actual[i], @index => i, @parent => actual

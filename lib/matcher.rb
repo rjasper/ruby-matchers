@@ -181,11 +181,11 @@ module Matcher
     Thread.current[:matcher_session]
   end
 
-  def self.with_session
+  def self.with_session(initial = {})
     return yield if Thread.current[:matcher_session]
 
     begin
-      Thread.current[:matcher_session] = {}
+      Thread.current[:matcher_session] = initial
 
       yield
     ensure

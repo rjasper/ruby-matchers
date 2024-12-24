@@ -15,9 +15,10 @@ module Matcher
 
     attr_reader :error
 
-    def initialize
+    def initialize(values = nil)
       @error = EmptyError.instance
       @mode = :and
+      @values = values
     end
 
     def or!
@@ -39,24 +40,37 @@ module Matcher
     end
 
     class Brackets
-      def initialize(parent, key)
+      def initialize(parent, key, values)
         @parent = parent
         @key = key
+        @values = values
+      end
+
+      def error
+        @parent.error
       end
 
       def <<(error)
         error = ErrorCollector.error_from(error)
 
-        @parent << NestedError.from(@key, error)
+        return error if error.is_a?(EmptyError) || @key == Variable.actual
+
+        key = @key
+        key = Call.new(Variable.actual, :[], [Constant.new(key)]) unless key.is_a?(Expression)
+        key = key.bind(@values) if @values
+
+        @parent << NestedError.new(key, error)
+
+        @parent.error
       end
 
       def [](key)
-        Brackets.new(self, key)
+        Brackets.new(self, key, @values)
       end
     end
 
     def <<(error)
-      return if error.is_a?(EmptyError)
+      return @error if error.is_a?(EmptyError)
 
       error = ErrorCollector.error_from(error)
 
@@ -72,10 +86,12 @@ module Matcher
           @error |= error
         end
       end
+
+      @error
     end
 
     def [](key)
-      Brackets.new(self, key)
+      Brackets.new(self, key, @values)
     end
 
     def clear

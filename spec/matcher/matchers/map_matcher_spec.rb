@@ -62,7 +62,9 @@ describe Matcher::MapMatcher do
       map(original.length * 100 + index * 10 + _, equal([209, 218]))
     end
 
-    errors = matcher.match([9, 8, 7])
+    errors = Matcher.with_session(bind_nested_values: true) do
+      matcher.match([9, 8, 7])
+    end
 
     assert_kind_of Matcher::NestedError, errors
     assert_equal '_.map.with_index { |e, i| _.length * 100 + i * 10 + e }', errors.key.to_s

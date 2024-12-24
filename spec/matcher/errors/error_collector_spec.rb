@@ -5,7 +5,7 @@ require 'test_helper'
 describe Matcher::ErrorCollector do
   include Matcher::ErrorTesting
 
-  let(:collector) { Matcher::ErrorCollector.new }
+  let(:collector) { Matcher::ErrorCollector.new(nil) }
 
   it 'empty' do
     assert_equal empty, collector.error
@@ -65,6 +65,15 @@ describe Matcher::ErrorCollector do
     assert_equal nested(foo, element('foobar')), collector.error
   end
 
+  it 'binds nested values' do
+    collector = Matcher::ErrorCollector.new(foo: 1)
+    collector[expression { _ + vars[:foo] }] << 'something went wrong'
+
+    key = collector.error.key
+
+    assert_equal 3, key.evaluate(actual: 2)
+  end
+
   it '#<<: base error' do
     assert_equal empty, collector.error
 
@@ -77,6 +86,11 @@ describe Matcher::ErrorCollector do
     )
 
     assert_equal expected, collector.error
+  end
+
+  it '#<<: returns collector error' do
+    assert_equal element('something went wrong'),
+      collector << 'something went wrong'
   end
 
   it '#<<: field error' do

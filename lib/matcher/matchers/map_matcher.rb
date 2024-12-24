@@ -66,13 +66,12 @@ module Matcher
             operand.constant.is_a?(Integer)
 
           if is_index
-            nested_projection = NestedError.from(@projection, error.child)
-            NestedError.from(key, nested_projection)
+            new_collector[key][@projection] << error.child
           else
             error
           end
         when ElementError
-          NestedError.from(nested_key, error)
+          new_collector[nested_key] << error
         else
           raise "Unexpected error: #{error.inspect}"
         end

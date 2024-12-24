@@ -18,7 +18,7 @@ module Matcher
     def check(actual)
       return unless actual.respond_to?(:each)
 
-      collector = ErrorCollector.new.or!
+      collector = new_collector.or!
 
       actual.each.with_index do |item, i|
         result = yield @neg_matcher, item, @index => i, @parent => actual
