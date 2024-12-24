@@ -2,30 +2,22 @@
 
 module Matcher
   class Block
-    class ContextFactory
-      include Singleton
-
-      def create(block, values)
-        Context.new(block, values)
-      end
-    end
-
     class Context
       attr_reader :expression, :values
 
-      def initialize(block, values)
-        @expression = block.expression
-        @values = values.slice(*block.variables)
+      def initialize(expression, values)
+        @expression = expression
+        @values = values
       end
 
       def evaluate(values)
-        values.merge!(@values) { |_k, _l, r| r } if @values
+        values.merge!(@values) { |_k, _l, r| r }
 
         @expression.evaluate(values)
       end
     end
 
-    def self.build(context: ContextFactory.instance, &block)
+    def self.build(&block)
       return SymbolProc.new(block) if
         block.parameters == [[:req], [:rest]] &&
           /\(&:(\w+|".*")\)/.match?(block.to_s)
@@ -71,22 +63,18 @@ module Matcher
             parameter_names.include?(variable.symbol) &&
               !variable_object_ids.include?(variable.object_id)
         end
-
-        context = nil if expression.variables.to_set.subset?(parameter_names)
       else
         expression = Constant.new(result)
-        context = nil
       end
 
-      new(parameters, expression, context:)
+      new(parameters, expression)
     end
 
-    attr_reader :parameters, :expression, :context
+    attr_reader :parameters, :expression
 
-    def initialize(parameters, expression, context: ContextFactory.instance)
+    def initialize(parameters, expression)
       @parameters = parameters
       @expression = expression
-      @context = context
     end
 
     def ==(other)
@@ -94,13 +82,12 @@ module Matcher
 
       other.instance_of?(Block) &&
         @parameters.eql?(other.parameters) &&
-        @expression == other.expression &&
-        @context == other.context
+        @expression == other.expression
     end
     alias eql? ==
 
     def hash
-      [@parameters, @expression, @context].hash
+      [@parameters, @expression].hash
     end
 
     def variables
@@ -124,7 +111,7 @@ module Matcher
 
       expression = @expression.substitute(replacements)
 
-      Block.new(@parameters, expression, context:)
+      Block.new(@parameters, expression)
     end
 
     def to_proc(values: nil)
@@ -136,8 +123,12 @@ module Matcher
         RUBY
       end
 
-      if @context
-        context = @context.create(self, values)
+      if values && !variables.empty?
+        values = values.slice(*variables)
+
+        return @proc if values.empty?
+
+        context = Context.new(@expression, values)
 
         lambda do |*args, **kwargs|
           context.instance_exec(*args, **kwargs, &@proc)

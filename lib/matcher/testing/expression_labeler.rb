@@ -46,7 +46,6 @@ module Matcher
           Block,
           block.parameters,
           label(block.expression),
-          label_for(block.context),
         ])
       when SymbolProc
         label_for([SymbolProc, block.symbol])

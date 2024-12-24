@@ -90,10 +90,8 @@ module Matcher
           parameters = [[:opt, symbol]]
           parameters << [:opt, @index] if with_index
           expression = proj.substitute(actual: symbol, @original => :actual)
-          free_variables = expression.variables - [symbol]
-          context = free_variables.empty? ? nil : Block::ContextFactory.instance
 
-          Block.new(parameters, expression, context:)
+          Block.new(parameters, expression)
         end
 
         if with_index

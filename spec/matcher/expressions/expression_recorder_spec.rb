@@ -39,7 +39,7 @@ describe Matcher::ExpressionRecorder do
       recorder.foo(1, bar: 2) { |x| x },
     )
 
-    block = Matcher::Block.new([%i[opt x]], Matcher::Variable.new(:x), context: nil)
+    block = Matcher::Block.new([%i[opt x]], Matcher::Variable.new(:x))
     call = Matcher::Call.new(
       Matcher::Variable.actual,
       :foo,
