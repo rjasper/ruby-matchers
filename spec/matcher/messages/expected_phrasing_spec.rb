@@ -83,6 +83,13 @@ describe Matcher::ExpectedPhrasing do
         msg({ foo: true }).having_key(:foo)
     end
 
+    it 'existing_index' do
+      assert_phrase 'expected index to exist',
+        msg(nil).not.existing_index
+      assert_phrase 'did not expect index to exist but got 1',
+        msg(1).existing_index
+    end
+
     it 'in' do
       assert_phrase 'expected object to be included in ["bar"] but got "foo"',
         msg('foo').not.in(['bar'])

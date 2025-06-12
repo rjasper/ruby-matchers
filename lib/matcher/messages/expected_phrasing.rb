@@ -71,6 +71,10 @@ module Matcher
       "#{verb} to include key #{key.inspect} but got #{actual.inspect}"
     end
 
+    define(:existing_index) do
+      "#{verb} index to exist#{" but got #{actual.inspect}" unless negated}"
+    end
+
     define(:in) do |collection|
       "#{verb} object to be included in #{collection.inspect} but got #{actual.inspect}"
     end
