@@ -40,7 +40,14 @@ module Matcher
 
   module MatcherBuilding
     def any(*matchers)
-      AnyMatcher.new(matchers.map { Matcher.of(_1) })
+      case matchers.length
+      when 0
+        NeverMatcher.instance
+      when 1
+        Matcher.of(matchers[0])
+      else
+        AnyMatcher.new(matchers.map { Matcher.of(_1) })
+      end
     end
   end
 end

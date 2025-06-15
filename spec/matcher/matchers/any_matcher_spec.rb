@@ -4,7 +4,7 @@ require 'test_helper'
 
 describe Matcher::AnyMatcher do
   it 'is built by any' do
-    matcher = Matcher.build { any(1) }
+    matcher = Matcher.build { any(_.even?, _ % 3 == 0) }
 
     assert_kind_of Matcher::AnyMatcher, matcher
   end

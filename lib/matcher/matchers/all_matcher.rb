@@ -34,7 +34,14 @@ module Matcher
 
   module MatcherBuilding
     def all(*matchers)
-      AllMatcher.new(matchers.map { Matcher.of(_1) })
+      case matchers.length
+      when 0
+        AlwaysMatcher.instance
+      when 1
+        Matcher.of(matchers[0])
+      else
+        AllMatcher.new(matchers.map { Matcher.of(_1) })
+      end
     end
   end
 end

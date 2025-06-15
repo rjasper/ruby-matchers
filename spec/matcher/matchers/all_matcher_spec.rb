@@ -4,7 +4,7 @@ require 'test_helper'
 
 describe Matcher::AllMatcher do
   it 'is built by all' do
-    matcher = Matcher.build { all(1) }
+    matcher = Matcher.build { all(_ > 1, _ < 10) }
 
     assert_kind_of Matcher::AllMatcher, matcher
   end
