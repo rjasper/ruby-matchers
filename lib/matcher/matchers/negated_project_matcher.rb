@@ -26,7 +26,7 @@ module Matcher
     protected :check
 
     def to_s
-      "~project(#{@expression}, #{@matcher})"
+      "~project(#{@expression} => #{@matcher})"
     end
   end
 end

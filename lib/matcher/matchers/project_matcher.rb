@@ -26,18 +26,25 @@ module Matcher
     protected :check
 
     def to_s
-      "project(#{@expression}, #{@matcher})"
+      "project(#{@expression} => #{@matcher})"
     end
   end
 
   module MatcherBuilding
-    def project(recorder, matcher = NULL)
-      return Pipe.new { project(recorder, _1) } if Matcher.null?(matcher)
+    def project(recorder = NULL, **projections)
+      raise 'cannot mix project(expression) ^ matcher and project(expression => matcher)' if
+        !Matcher.null?(recorder) && !projections.empty?
 
-      expression = ExpressionRecorder.to_expression(recorder)
-      matcher = Matcher.of(matcher)
+      return Pipe.new { project(recorder => _1) } unless Matcher.null?(recorder)
 
-      ProjectMatcher.new(expression, matcher)
+      project_matchers = projections.map do |r, m|
+        expression = ExpressionRecorder.to_expression(r)
+        matcher = Matcher.of(m)
+
+        ProjectMatcher.new(expression, matcher)
+      end
+
+      all(*project_matchers)
     end
   end
 end
