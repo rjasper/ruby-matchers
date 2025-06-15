@@ -39,6 +39,10 @@ module Matcher
       end
 
       expected = AndError.from(expected_nodes)
+
+      assert false, 'expected an error but no error present' if
+        expected.valid? && actual.valid?
+
       checker = ErrorChecker.new(phrasing)
       result = checker.check(expected, actual)
 

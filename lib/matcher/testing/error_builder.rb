@@ -10,7 +10,7 @@ module Matcher
 
     def self.build_errors(&)
       builder = ErrorBuilder.new
-      builder.instance_exec(&)
+      builder.instance_exec(&) if block_given?
       builder.errors
     end
 

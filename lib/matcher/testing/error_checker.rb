@@ -107,7 +107,7 @@ module Matcher
     def analyze_helper(error, path, path_label, leaves)
       case error
       when EmptyError
-        Tree.new(0)
+        Leaf.new(0)
       when AndError, OrError
         children = error.children
           .map { analyze_helper(_1, path, path_label, leaves) }

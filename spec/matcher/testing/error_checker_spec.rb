@@ -21,6 +21,12 @@ describe Matcher::ErrorChecker do
     assert checker.check(expected, actual)
   end
 
+  it 'checks empty errors' do
+    empty = build_errors
+
+    assert checker.check(empty, empty)
+  end
+
   it 'detects unexpected structure' do
     expected = build_errors do
       error 'something went wrong'
