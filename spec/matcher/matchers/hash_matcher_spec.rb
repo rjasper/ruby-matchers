@@ -72,6 +72,15 @@ describe Matcher::HashMatcher do
     assert_no_errors negated.match({})
   end
 
+  it 'matches an empty hash' do
+    matcher = Matcher.build { {} }
+    negated = ~matcher
+
+    assert_no_errors matcher.match({})
+    assert_errors negated.match({}),
+      msg({}).predicate(:empty?)
+  end
+
   it 'matches a nested hashes' do
     matcher = Matcher.build { { foo: { bar: 'baz' } } }
     negated = ~matcher

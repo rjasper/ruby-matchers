@@ -21,6 +21,10 @@ module Matcher
       @values = values
     end
 
+    def empty?
+      @error.valid?
+    end
+
     def or!
       @mode = :or
       self

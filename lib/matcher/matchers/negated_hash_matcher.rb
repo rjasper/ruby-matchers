@@ -61,7 +61,11 @@ module Matcher
         collector[key] << result
       end
 
-      errors << collector.error
+      errors << if collector.empty?
+        report.predicate(:empty?)
+      else
+        collector.error
+      end
     end
     protected :check
 
