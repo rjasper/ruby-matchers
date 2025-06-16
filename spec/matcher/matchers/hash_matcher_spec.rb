@@ -123,6 +123,26 @@ describe Matcher::HashMatcher do
     assert_no_errors negated.match({ foo: 'foo', 'bar' => :bar, qux: 'qux' })
   end
 
+  it 'matches optional entries' do
+    matcher = Matcher.build do
+      { optional(:foo) => 'foo' }
+    end
+
+    negated = ~matcher
+
+    assert_no_errors matcher.match({ foo: 'foo' })
+    assert_errors negated.match({ foo: 'foo' }),
+      foo: msg('foo').equal('foo')
+
+    assert_no_errors matcher.match({})
+    assert_errors negated.match({}),
+      msg({}).predicate(:empty?)
+
+    assert_errors matcher.match({ foo: 'bar' }),
+      foo: msg('bar').not.equal('foo')
+    assert_no_errors negated.match({ foo: 'bar' })
+  end
+
   it 'passes key' do
     matcher = Matcher.build do
       { a: _ == key.to_s.upcase }

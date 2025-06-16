@@ -40,6 +40,7 @@ require_relative 'matcher/expressions/proc_expression'
 require_relative 'matcher/expressions/symbol_proc'
 require_relative 'matcher/expressions/variable'
 
+require_relative 'matcher/markers/optional'
 require_relative 'matcher/markers/others'
 
 require_relative 'matcher/matchers/all_matcher'

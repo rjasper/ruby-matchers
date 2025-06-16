@@ -35,7 +35,8 @@ module Matcher
         return
       end
 
-      extra_keys = actual.keys - @hash.keys
+      expected_keys = @hash.keys.map { _1.is_a?(Optional) ? _1.value : _1 }
+      extra_keys = actual.keys - expected_keys
 
       if !@partial && !@includes_others
         extra_keys.each do |key|
@@ -50,10 +51,12 @@ module Matcher
           next
         end
 
+        is_optional = key.is_a?(Optional)
+        key = key.value if is_optional
         actual_value = actual[key]
 
         if actual_value.nil? && !actual.key?(key)
-          errors << expected.having_key(key)
+          errors << expected.having_key(key) unless is_optional
         else
           errors[key] << yield(value, actual_value, @key => key, @parent => actual)
         end
