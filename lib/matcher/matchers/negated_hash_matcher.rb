@@ -10,6 +10,15 @@ module Matcher
       @key = key
       @parent = parent
       @partial = partial
+      @includes_others = hash.include?(Others.instance)
+
+      raise 'cannot use partial(others => ...)' if @partial && @includes_others
+    end
+
+    def others
+      return nil unless @includes_others
+
+      @others ||= Matcher.of(@neg_hash[Others.instance])
     end
 
     def ~
@@ -23,11 +32,24 @@ module Matcher
 
     def check(actual)
       return unless actual.is_a?(Hash)
-      return if !@partial && actual.keys.any? { !@hash.key?(_1) }
+
+      extra_keys = actual.keys - @hash.keys
+
+      return if !@partial && !@includes_others && !extra_keys.empty?
 
       collector = new_collector.or!
 
       @neg_hash.each do |key, value|
+        if key.is_a?(Others)
+          result = yield(others, actual.slice(*extra_keys))
+
+          return if result.valid?
+
+          collector << result
+
+          next
+        end
+
         actual_value = actual[key]
 
         return if actual_value.nil? && !actual.key?(key)

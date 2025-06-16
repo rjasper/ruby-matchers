@@ -89,6 +89,31 @@ describe Matcher::HashMatcher do
     assert_no_errors negated.match({ foo: 'foo' })
   end
 
+  it 'matches other entries' do
+    matcher = Matcher.build do
+      {
+        foo: String,
+        others => project(_.keys => each(Symbol)),
+      }
+    end
+
+    negated = ~matcher
+    t = self
+
+    assert_no_errors matcher.match({ foo: 'foo', bar: 'bar', qux: 'qux' })
+    assert_errors negated.match({ foo: 'foo', bar: 'bar', qux: 'qux' }) do
+      _or do
+        error :foo, msg('foo').kind_of(String)
+        error t.expression { _.keys[0] }, msg(:bar).kind_of(Symbol)
+        error t.expression { _.keys[1] }, msg(:qux).kind_of(Symbol)
+      end
+    end
+
+    assert_errors matcher.match({ foo: 'foo', 'bar' => :bar, qux: 'qux' }),
+      expression { _.keys[0] } => msg('bar').not.kind_of(Symbol)
+    assert_no_errors negated.match({ foo: 'foo', 'bar' => :bar, qux: 'qux' })
+  end
+
   it 'passes key' do
     matcher = Matcher.build do
       { a: _ == key.to_s.upcase }
