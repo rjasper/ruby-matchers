@@ -61,6 +61,7 @@ module Matcher
     Tree = Struct.new(
       :label,
       :children,
+      :operator,
       :hierarchy,
       :identity,
     ) do
@@ -109,13 +110,17 @@ module Matcher
       when EmptyError
         Leaf.new(0)
       when AndError, OrError
-        children = error.children
-          .map { analyze_helper(_1, path, path_label, leaves) }
+        operator = error.is_a?(AndError) ? 'and' : 'or'
 
+        left_children, right_children = error.children
+          .map { analyze_helper(_1, path, path_label, leaves) }
+          .partition { _1.leaf? || _1.operator != operator }
+
+        children = left_children + right_children.flat_map(&:children)
         group_key = [error.class, children.map(&:label).sort]
         label = @group_label_index[group_key]
 
-        Tree.new(label, children)
+        Tree.new(label, children, operator)
       when NestedError
         new_path_label = @expression_labeler.label(error.key, path_label)
 

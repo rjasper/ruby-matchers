@@ -21,6 +21,50 @@ describe Matcher::ErrorChecker do
     assert checker.check(expected, actual)
   end
 
+  it 'considers double "and" equivalent to single one' do
+    t = self
+
+    expected = build_errors do
+      error :foo, 'foo'
+      error t.expression { _.bar[1] }, 'bar1'
+      error t.expression { _.bar[2] }, 'bar2'
+    end
+
+    actual = build_errors do
+      error :foo, 'foo'
+      _and(t.expression { _.bar }) do
+        error 1, 'bar1'
+        error 2, 'bar2'
+      end
+    end
+
+    assert checker.check(expected, actual)
+  end
+
+  it 'considers double "or" equivalent to single one' do
+    t = self
+
+    expected = build_errors do
+      _or do
+        error :foo, 'foo'
+        error t.expression { _.bar[1] }, 'bar1'
+        error t.expression { _.bar[2] }, 'bar2'
+      end
+    end
+
+    actual = build_errors do
+      _or do
+        error :foo, 'foo'
+        _or(t.expression { _.bar }) do
+          error 1, 'bar1'
+          error 2, 'bar2'
+        end
+      end
+    end
+
+    assert checker.check(expected, actual)
+  end
+
   it 'checks empty errors' do
     empty = build_errors
 
