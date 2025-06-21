@@ -43,6 +43,30 @@ module Matcher
       AllMatcher.new(matchers)
     end
 
+    def |(matcher)
+      matcher = Matcher.of(matcher)
+
+      matchers = if matcher.is_a?(LazyAnyMatcher)
+        [self].concat(matcher.matchers)
+      else
+        [self, matcher]
+      end
+
+      LazyAnyMatcher.new(matchers)
+    end
+
+    def &(matcher)
+      matcher = Matcher.of(matcher)
+
+      matchers = if matcher.is_a?(LazyAllMatcher)
+        [self].concat(matcher.matchers)
+      else
+        [self, matcher]
+      end
+
+      LazyAllMatcher.new(matchers)
+    end
+
     StackData = Struct.new(:actual, :vals, :errors)
 
     def match(actual, values = nil)

@@ -37,9 +37,12 @@ describe Matcher::AnyMatcher do
   end
 
   it '#+' do
-    matcher = Matcher.build { any(1, 2) + 3 }
-
-    assert_equal 'any(1, 2, 3)', matcher.to_s
+    assert_equal 'any(1, 2, 3)',
+      Matcher.build { any(1, 2) + 3 }.to_s
+    assert_equal 'any(1, 2, 3)',
+      Matcher.build { of(1) + any(2, 3) }.to_s
+    assert_equal 'any(1, 2)',
+      Matcher.build { of(1) + 2 }.to_s
   end
 
   it '#to_s' do

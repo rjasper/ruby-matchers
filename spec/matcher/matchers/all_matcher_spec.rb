@@ -48,11 +48,12 @@ describe Matcher::AllMatcher do
   end
 
   it '#*' do
-    matcher = Matcher.build do
-      all(1, 2) * 3
-    end
-
-    assert_equal 'all(1, 2, 3)', matcher.to_s
+    assert_equal 'all(1, 2, 3)',
+      Matcher.build { all(1, 2) * 3 }.to_s
+    assert_equal 'all(1, 2, 3)',
+      Matcher.build { of(1) * all(2, 3) }.to_s
+    assert_equal 'all(1, 2)',
+      Matcher.build { of(1) * 2 }.to_s
   end
 
   it '#to_s' do

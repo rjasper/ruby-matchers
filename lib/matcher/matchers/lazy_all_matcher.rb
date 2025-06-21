@@ -1,0 +1,57 @@
+# frozen_string_literal: true
+
+module Matcher
+  class LazyAllMatcher < Base
+    def initialize(matchers)
+      super()
+
+      @matchers = matchers
+    end
+
+    attr_reader :matchers
+
+    def ~
+      LazyAnyMatcher.new(@matchers.map(&:~))
+    end
+
+    def &(matcher)
+      matcher = Matcher.of(matcher)
+
+      if matcher.is_a?(LazyAllMatcher)
+        LazyAllMatcher.new(@matchers + matcher.matchers)
+      else
+        LazyAllMatcher.new(@matchers + [matcher])
+      end
+    end
+
+    def check(_actual)
+      last_error = EmptyError.instance
+
+      @matchers.each do |matcher|
+        last_error = yield matcher
+
+        break unless last_error.valid?
+      end
+
+      errors << last_error
+    end
+    protected :check
+
+    def to_s
+      "lazy_all(#{@matchers.map(&:to_s).join(', ')})"
+    end
+  end
+
+  module MatcherBuilding
+    def lazy_all(*matchers)
+      case matchers.length
+      when 0
+        AlwaysMatcher.instance
+      when 1
+        Matcher.of(matchers[0])
+      else
+        LazyAllMatcher.new(matchers.map { Matcher.of(_1) })
+      end
+    end
+  end
+end
