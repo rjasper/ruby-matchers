@@ -10,10 +10,14 @@ module Matcher
 
     attr_reader :matchers
 
-    def |(matcher)
+    def +(matcher)
       matcher = Matcher.of(matcher)
 
-      AnyMatcher.new(@matchers + [matcher])
+      if matcher.is_a?(AnyMatcher)
+        AnyMatcher.new(@matchers + matcher.matchers)
+      else
+        AnyMatcher.new(@matchers + [matcher])
+      end
     end
 
     def ~

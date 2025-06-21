@@ -21,6 +21,6 @@ describe Matcher::Pipe do
   end
 
   def pipe(matcher)
-    Matcher::Pipe.new { |rhs| matcher & rhs }
+    Matcher::Pipe.new { |rhs| matcher * rhs }
   end
 end

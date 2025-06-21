@@ -36,8 +36,8 @@ describe Matcher::AnyMatcher do
     assert_equal 'all(neg(1), neg(2))', matcher.to_s
   end
 
-  it '#|' do
-    matcher = Matcher.build { any(1, 2) | 3 }
+  it '#+' do
+    matcher = Matcher.build { any(1, 2) + 3 }
 
     assert_equal 'any(1, 2, 3)', matcher.to_s
   end

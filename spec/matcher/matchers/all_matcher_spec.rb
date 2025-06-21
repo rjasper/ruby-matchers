@@ -47,9 +47,9 @@ describe Matcher::AllMatcher do
     assert_equal 'any(neg(1), neg(2))', matcher.to_s
   end
 
-  it '#&' do
+  it '#*' do
     matcher = Matcher.build do
-      all(1, 2) & 3
+      all(1, 2) * 3
     end
 
     assert_equal 'all(1, 2, 3)', matcher.to_s

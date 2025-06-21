@@ -11,9 +11,9 @@ describe 'examples' do
       refs[:node] = {
         key: all(Integer, lo { (_ > low) & (_ < high) }),
         left: setvar(high: ->(high:, parent:) { [parent[:key], high].min }) ^
-          (of(nil) | refs[:node]),
+          (of(nil) + refs[:node]),
         right: setvar(low: ->(low:, parent:) { [parent[:key], low].max }) ^
-          (of(nil) | refs[:node]),
+          (of(nil) + refs[:node]),
       }
 
       setvar(low: -inf, high: inf) ^ refs[:node]

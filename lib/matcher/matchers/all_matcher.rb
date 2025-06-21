@@ -10,17 +10,21 @@ module Matcher
 
     attr_reader :matchers
 
-    def &(matcher)
+    def *(matcher)
       matcher = Matcher.of(matcher)
 
-      AllMatcher.new(@matchers + [matcher])
+      if matcher.is_a?(AllMatcher)
+        AllMatcher.new(@matchers + matcher.matchers)
+      else
+        AllMatcher.new(@matchers + [matcher])
+      end
     end
 
     def ~
       AnyMatcher.new(@matchers.map(&:~))
     end
 
-    def check(actual)
+    def check(_actual)
       @matchers.each do |matcher|
         errors << yield(matcher)
       end

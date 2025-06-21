@@ -19,7 +19,7 @@ module Matcher
       NegatedMatcher.new(self)
     end
 
-    def |(matcher)
+    def +(matcher)
       matcher = Matcher.of(matcher)
 
       matchers = if matcher.is_a?(AnyMatcher)
@@ -31,7 +31,7 @@ module Matcher
       AnyMatcher.new(matchers)
     end
 
-    def &(matcher)
+    def *(matcher)
       matcher = Matcher.of(matcher)
 
       matchers = if matcher.is_a?(AllMatcher)
