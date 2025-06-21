@@ -247,13 +247,25 @@ module Matcher
       end
     end
 
-    namespace(:imply_one) do
-      define(:no_condition_satisfied) do |conditions|
-        "#{negated_verb} #{actual.inspect} to satisfy one of these conditions: #{join(conditions)}"
+    namespace(:imply_some) do
+      def x_conditions(count)
+        case count
+        when :any
+          'any condition'
+        when 1
+          'one condition'
+        else
+          "#{count} conditions"
+        end
+      end
+      private :x_conditions
+
+      define(:no_condition_satisfied) do |conditions, count|
+        "#{negated_verb} to satisfy #{x_conditions(count)} but got #{actual.inspect} and met none of these: #{join(conditions)}"
       end
 
-      define(:multiple_conditions_satisfied) do |conditions|
-        "#{negated_verb} #{actual.inspect} to satisfy only one condition, but met these: #{join(conditions)}"
+      define(:x_conditions_satisfied) do |conditions, count|
+        "#{negated_verb} to satisfy #{x_conditions(count)} but got #{actual.inspect} and met these: #{join(conditions)}"
       end
     end
 

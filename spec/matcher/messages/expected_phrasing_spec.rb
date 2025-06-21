@@ -330,13 +330,13 @@ describe Matcher::ExpectedPhrasing do
     let(:conditions) { [expression { _.even? }, expression { _ % 3 == 0 }] }
 
     it 'no_condition_satisfied' do
-      assert_phrase 'expected 5 to satisfy one of these conditions: _.even?, _ % 3 == 0',
-        msg(5).namespace(:imply_one).no_condition_satisfied(conditions)
+      assert_phrase 'expected to satisfy one condition but got 5 and met none of these: _.even?, _ % 3 == 0',
+        msg(5).namespace(:imply_some).no_condition_satisfied(conditions, 1)
     end
 
     it 'multiple_conditions_satisfied' do
-      assert_phrase 'expected 6 to satisfy only one condition, but met these: _.even?, _ % 3 == 0',
-        msg(6).namespace(:imply_one).multiple_conditions_satisfied(conditions)
+      assert_phrase 'expected to satisfy one condition but got 6 and met these: _.even?, _ % 3 == 0',
+        msg(6).namespace(:imply_some).x_conditions_satisfied(conditions, 1)
     end
   end
 
