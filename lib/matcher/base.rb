@@ -67,6 +67,10 @@ module Matcher
       LazyAllMatcher.new(matchers)
     end
 
+    def >>(matcher)
+      ImplyMatcher.new(self, Matcher.of(matcher))
+    end
+
     StackData = Struct.new(:actual, :vals, :errors)
 
     def match(actual, values = nil)

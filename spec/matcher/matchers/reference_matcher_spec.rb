@@ -46,7 +46,7 @@ describe Matcher::ReferenceMatcher do
       refs[:list] = {
         head: Integer,
         tail: imply_one(
-          imply(Hash, refs[:list]),
+          of(Hash) >> refs[:list],
           else: nil,
         ),
       }
@@ -124,7 +124,7 @@ describe Matcher::ReferenceMatcher do
       refs[:list] = {
         head: Integer,
         tail: imply_one(
-          imply(Hash, list),
+          of(Hash) >> list,
           else: nil,
         ),
       }

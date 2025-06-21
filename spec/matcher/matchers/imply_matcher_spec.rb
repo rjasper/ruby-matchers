@@ -26,6 +26,12 @@ describe Matcher::ImplyMatcher do
       msg(1).not.kind_of(String)
   end
 
+  it '#>>' do
+    matcher = Matcher.build { of(Integer) >> 1 }
+
+    assert_equal 'imply(Integer, 1)', matcher.to_s
+  end
+
   it '#to_s' do
     matcher = Matcher.build { imply(String, 'string') }
 

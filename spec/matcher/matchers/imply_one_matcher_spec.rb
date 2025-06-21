@@ -6,8 +6,8 @@ describe Matcher::ImplyOneMatcher do
   it 'is built by imply_one' do
     matcher = Matcher.build do
       imply_one(
-        imply(String, 'string'),
-        imply(Integer, 1),
+        of(String) >> 'string',
+        of(Integer) >> 1,
       )
     end
 
@@ -17,8 +17,8 @@ describe Matcher::ImplyOneMatcher do
   it 'matches none' do
     matcher = Matcher.build do
       imply_one(
-        imply(String, 'string'),
-        imply(Integer, 1),
+        of(String) >> 'string',
+        of(Integer) >> 1,
       )
     end
 
@@ -32,8 +32,8 @@ describe Matcher::ImplyOneMatcher do
   it 'matches one' do
     matcher = Matcher.build do
       imply_one(
-        imply(String, 'string'),
-        imply(Integer, 1),
+        of(String) >> 'string',
+        of(Integer) >> 1,
       )
     end
 
@@ -59,8 +59,8 @@ describe Matcher::ImplyOneMatcher do
   it 'matches multiple' do
     matcher = Matcher.build do
       imply_one(
-        imply(_[:foo] == true, partial({ data: 'foo' })),
-        imply(_[:bar] == true, partial({ data: 'bar' })),
+        of(_[:foo] == true) >> partial({ data: 'foo' }),
+        of(_[:bar] == true) >> partial({ data: 'bar' }),
       )
     end
 
@@ -75,7 +75,7 @@ describe Matcher::ImplyOneMatcher do
   it 'matches with else' do
     matcher = Matcher.build do
       imply_one(
-        imply(String, 'string'),
+        of(String) >> 'string',
         else: nil,
       )
     end
@@ -102,8 +102,8 @@ describe Matcher::ImplyOneMatcher do
   it '#to_s' do
     matcher = Matcher.build do
       imply_one(
-        imply(String, 'string'),
-        imply(Integer, 1),
+        of(String) >> 'string',
+        of(Integer) >> 1,
       )
     end
 
