@@ -49,12 +49,6 @@ module Matcher
         "imply_one(#{matchers})"
       end
     end
-
-    private
-
-    def list_conditions_of(matchers)
-      matchers.map { _1.condition.to_s }.join(', ')
-    end
   end
 
   module MatcherBuilding
