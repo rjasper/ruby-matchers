@@ -80,10 +80,17 @@ module Matcher
     end
 
     def partial_r(hash)
-      return of(hash) if ExpressionRecorder.recorder?(hash) || !hash.is_a?(Hash)
-
-      hash = hash.transform_values { partial_r(_1) }
+      hash = hash.transform_values { partial_r_helper(_1) }
       HashMatcher.new(hash, partial: true)
     end
+
+    def partial_r_helper(value)
+      if ExpressionRecorder.recorder?(value) || !value.is_a?(Hash)
+        of(value)
+      else
+        partial_r(value)
+      end
+    end
+    private :partial_r_helper
   end
 end
