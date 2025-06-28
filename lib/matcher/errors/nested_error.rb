@@ -19,7 +19,7 @@ module Matcher
         break if remaining < 0
       end
 
-      if remaining >= 0
+      if remaining >= 0 && key.variables.include?(:actual)
         key.to_s(substitutions: { actual: path })
       else
         "#{path} -> #{key}"
