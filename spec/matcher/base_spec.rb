@@ -18,9 +18,9 @@ describe Matcher::Base do
     matcher = Matcher.build do
       declare :foo
 
-      setvar(foo: 1) ^ [
+      let(foo: 1) ^ [
         _ == foo,
-        setvar(foo: 2) ^ (_ == foo),
+        let(foo: 2) ^ (_ == foo),
         _ == foo,
       ]
     end

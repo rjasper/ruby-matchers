@@ -2,17 +2,17 @@
 
 require 'test_helper'
 
-describe Matcher::SetVariablesMatcher do
-  it 'is build by setvar' do
-    kind = Matcher::SetVariablesMatcher
+describe Matcher::LetMatcher do
+  it 'is build by let' do
+    kind = Matcher::LetMatcher
 
-    assert_kind_of(kind, Matcher.build { setvar({ n: 1 }, _ == vars[:n]) })
-    assert_kind_of(kind, Matcher.build { setvar(n: 1) ^ (_ == vars[:n]) })
+    assert_kind_of(kind, Matcher.build { let({ n: 1 }, _ == vars[:n]) })
+    assert_kind_of(kind, Matcher.build { let(n: 1) ^ (_ == vars[:n]) })
   end
 
   it 'sets variable to value' do
     matcher = Matcher.build do
-      setvar(myvar: 'foo') ^
+      let(myvar: 'foo') ^
         (_ == vars[:myvar])
     end
 
@@ -29,13 +29,13 @@ describe Matcher::SetVariablesMatcher do
 
   it 'sets variables via block' do
     matcher = Matcher.build do
-      setvar(
+      let(
         depth: 0,
         parent_value: ->(_) { _[:value] },
       ) ^ {
         depth: _ == vars[:depth],
         value: 42,
-        child: setvar(depth: ->(depth:) { depth + 1 }) ^ {
+        child: let(depth: ->(depth:) { depth + 1 }) ^ {
           depth: _ == vars[:depth],
           value: _ == vars[:parent_value] / 2 + 2,
         },
@@ -83,7 +83,7 @@ describe Matcher::SetVariablesMatcher do
 
   it 'sets actual' do
     matcher = Matcher.build do
-      each_pair ^ setvar(actual: ->(key:, value:) { key + value }) ^ of(_.even?)
+      each_pair ^ let(actual: ->(key:, value:) { key + value }) ^ of(_.even?)
     end
 
     assert_no_errors matcher.match({2 => 4, 1 => 3})
@@ -99,18 +99,18 @@ describe Matcher::SetVariablesMatcher do
     Matcher.build do
       declare :a, :b
 
-      t.assert_equal 'setvar(a: 0, b: ->(_) { ... }) ^ (_ == a + b)',
-        (setvar(a: 0, b: ->(_) { 2 * _ }) ^ (_ == a + b)).to_s
-      t.assert_equal 'setvar(a: 0, b: ->(_) { ... }) ^ (a + b).even?',
-        (setvar(a: 0, b: ->(_) { 2 * _ }) ^ (a + b).even?).to_s
-      t.assert_equal 'setvar(a: 0, b: ->(_) { ... }) ^ [a, b]',
-        (setvar(a: 0, b: ->(_) { 2 * _ }) ^ [a, b]).to_s
-      t.assert_equal "setvar(a: 0, b: ->(_) { ... }) ^ -> { set_variables_matcher_spec.rb:#{__LINE__ + 1} }",
-        (setvar(a: 0, b: ->(_) { 2 * _ }) ^ -> { false }).to_s
-      t.assert_equal "setvar(a: 0, b: ->(_) { ... }) ^ partial({:foo=>42})",
-        (setvar(a: 0, b: ->(_) { 2 * _ }) ^ partial({ foo: 42 })).to_s
+      t.assert_equal 'let(a: 0, b: ->(_) { ... }) ^ (_ == a + b)',
+        (let(a: 0, b: ->(_) { 2 * _ }) ^ (_ == a + b)).to_s
+      t.assert_equal 'let(a: 0, b: ->(_) { ... }) ^ (a + b).even?',
+        (let(a: 0, b: ->(_) { 2 * _ }) ^ (a + b).even?).to_s
+      t.assert_equal 'let(a: 0, b: ->(_) { ... }) ^ [a, b]',
+        (let(a: 0, b: ->(_) { 2 * _ }) ^ [a, b]).to_s
+      t.assert_equal "let(a: 0, b: ->(_) { ... }) ^ -> { let_matcher_spec.rb:#{__LINE__ + 1} }",
+        (let(a: 0, b: ->(_) { 2 * _ }) ^ -> { false }).to_s
+      t.assert_equal "let(a: 0, b: ->(_) { ... }) ^ partial({:foo=>42})",
+        (let(a: 0, b: ->(_) { 2 * _ }) ^ partial({ foo: 42 })).to_s
 
-      t.assert_equal 'setvar(a: 0) ^ neg(_ > a)', neg(setvar(a: 0) ^ (_ > a)).to_s
+      t.assert_equal 'let(a: 0) ^ neg(_ > a)', neg(let(a: 0) ^ (_ > a)).to_s
 
       nil
     end

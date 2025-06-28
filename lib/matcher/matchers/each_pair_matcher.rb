@@ -63,7 +63,7 @@ module Matcher
       matcher = Matcher.of(matcher)
 
       EachPairMatcher.new(
-        SetVariablesMatcher.new(assigns, matcher),
+        LetMatcher.new(assigns, matcher),
       )
     end
   end

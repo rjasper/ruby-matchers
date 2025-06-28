@@ -10,13 +10,13 @@ describe 'examples' do
 
       refs[:node] = {
         key: all(Integer, lo { (_ > low) & (_ < high) }),
-        left: setvar(high: ->(high:, parent:) { [parent[:key], high].min }) ^
+        left: let(high: ->(high:, parent:) { [parent[:key], high].min }) ^
           (of(nil) + refs[:node]),
-        right: setvar(low: ->(low:, parent:) { [parent[:key], low].max }) ^
+        right: let(low: ->(low:, parent:) { [parent[:key], low].max }) ^
           (of(nil) + refs[:node]),
       }
 
-      setvar(low: -inf, high: inf) ^ refs[:node]
+      let(low: -inf, high: inf) ^ refs[:node]
     end
 
     tree = {
@@ -46,7 +46,7 @@ describe 'examples' do
 
   it 'cyclic graph' do
     matcher = Matcher.build do
-      refs[:vertex] = setvar(vertex: -> { _1 }) ^ {
+      refs[:vertex] = let(vertex: -> { _1 }) ^ {
         name: String,
         edges: each(refs[:edge, cyclic: true]),
       }
@@ -77,7 +77,7 @@ describe 'examples' do
 
   it 'pipe' do
     matcher = Matcher.build do
-      setvar(c: 1) ^ setvar(c: ->(c:) { c + 1 }) ^ {
+      let(c: 1) ^ let(c: ->(c:) { c + 1 }) ^ {
         value: _ == vars[:c],
       }
     end

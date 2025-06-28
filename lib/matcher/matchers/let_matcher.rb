@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Matcher
-  class SetVariablesMatcher < Base
+  class LetMatcher < Base
     def initialize(assigns, matcher)
       super()
 
@@ -10,7 +10,7 @@ module Matcher
     end
 
     def ~
-      SetVariablesMatcher.new(@assigns, ~@matcher)
+      LetMatcher.new(@assigns, ~@matcher)
     end
 
     def check(actual)
@@ -44,21 +44,21 @@ module Matcher
           matcher !~ /\A(~?\w+(\(.*\)|\[.*\])?|-> \{.*})\z/
         end
 
-      "setvar(#{assign_parts.join(', ')}) ^ #{matcher}"
+      "let(#{assign_parts.join(', ')}) ^ #{matcher}"
     end
   end
 
   module MatcherBuilding
-    def setvar(assigns = nil, matcher = NULL, **kwargs)
+    def let(assigns = nil, matcher = NULL, **kwargs)
       raise "Cannot set both assigns and kwargs" if assigns && !kwargs.empty?
 
       assigns = kwargs unless assigns
 
-      return Pipe.new { setvar(assigns, _1) } if Matcher.null?(matcher)
+      return Pipe.new { let(assigns, _1) } if Matcher.null?(matcher)
 
       matcher = Matcher.of(matcher)
 
-      SetVariablesMatcher.new(assigns, matcher)
+      LetMatcher.new(assigns, matcher)
     end
   end
 end
