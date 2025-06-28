@@ -81,6 +81,18 @@ describe Matcher::SetVariablesMatcher do
     assert_no_errors negated.match(actual)
   end
 
+  it 'sets actual' do
+    matcher = Matcher.build do
+      each_pair ^ setvar(actual: ->(key:, value:) { key + value }) ^ of(_.even?)
+    end
+
+    assert_no_errors matcher.match({2 => 4, 1 => 3})
+
+    assert_errors matcher.match({ 1 => 2, 4 => 3 }),
+      1 => msg(3).not.predicate(:even?),
+      4 => msg(7).not.predicate(:even?)
+  end
+
   it '#to_s' do
     t = self
 

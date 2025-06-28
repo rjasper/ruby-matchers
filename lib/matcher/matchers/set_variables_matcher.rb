@@ -19,7 +19,7 @@ module Matcher
         v.is_a?(Proc) ? Utils.call_block(v, block_values) : v
       end
 
-      errors << yield(@matcher, **assigns)
+      errors << yield(@matcher, assigns[:actual] || actual, **assigns)
     end
     protected :check
 
