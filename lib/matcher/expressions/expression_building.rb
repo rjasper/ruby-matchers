@@ -15,20 +15,16 @@ module Matcher
       end
     end
 
-    def expr(constant = NULL, to_s: false, &block)
+    def expr(constant = NULL, &block)
       raise "constant and block given" if !Matcher.null?(constant) && block_given?
 
       expression = if block_given?
-        ProcExpression.new(block, to_s:)
+        ProcExpression.new(block)
       else
         Constant.new(constant)
       end
 
       expression.to_recorder
-    end
-
-    def expr_s(constant = NULL, &)
-      expr(constant, to_s: true, &)
     end
 
     def actual

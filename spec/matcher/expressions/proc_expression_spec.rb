@@ -51,19 +51,11 @@ describe Matcher::ProcExpression do
     expr = build { |_, foo:| foo * Math.sqrt(_) }
 
     assert_equal 'expr { |_, foo:| ... }', expr.to_s
-
-    expr = build(to_s: true) { |_, foo:| [_, foo] }
-
-    assert_equal 'expr_s { |_, foo:| [_, foo] }', expr.to_s
-
-    expr = build(to_s: true) { [_1] }
-
-    assert_equal 'expr_s { [_1] }', expr.to_s
   end
 
   private
 
-  def build(to_s: false, &block)
-    Matcher::ProcExpression.new(block, to_s:)
+  def build(&block)
+    Matcher::ProcExpression.new(block)
   end
 end

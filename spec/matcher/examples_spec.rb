@@ -110,12 +110,12 @@ describe 'examples' do
 
   it 'expressions: block receiver' do
     matcher = Matcher.build do
-      expr_s { |_| [_, 10] }.sum >= 15
+      expr { |_| [_, 10] }.sum >= 15
     end
 
-    assert_equal 'expr_s { |_| [_, 10] }.sum >= 15', matcher.inspect
+    assert_equal 'expr { |_| ... }.sum >= 15', matcher.inspect
     assert_no_errors matcher.match(10)
     assert_errors matcher.match(2),
-      'expected expr_s { |_| [_, 10] }.sum >= 15 but got 12 >= 15, where _ = 2'
+      'expected expr { |_| ... }.sum >= 15 but got 12 >= 15, where _ = 2'
   end
 end

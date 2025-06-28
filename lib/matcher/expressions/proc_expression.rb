@@ -2,14 +2,13 @@
 
 module Matcher
   class ProcExpression < Expression
-    def initialize(block, substitution: nil, to_s: false)
+    def initialize(block, substitution: nil)
       super()
 
       check_parameters(block.parameters)
 
       @block = block
       @substitution = substitution
-      @to_s = to_s
     end
 
     attr_reader :block, :substitution
@@ -66,36 +65,16 @@ module Matcher
 
       replacements = substitute_hash(@substitution, replacements) if @substitution
 
-      ProcExpression.new(@block, substitution: replacements, to_s: @to_s)
+      ProcExpression.new(@block, substitution: replacements)
     end
 
     def to_s(substitutions: nil)
       args_and_kwargs = Utils.inspect_block_params(@block)
 
-      body = if @to_s
-        arg0_type, arg0_name = @block.parameters[0]
-        args = []
-        kwargs = variables.to_h { [_1, Variable.new(_1)] }
-        substitutions = variables.to_h { [_1, _1.to_s] }
-
-        if %i[req opt rest].include?(arg0_type)
-          args << kwargs.delete(:actual)
-          substitutions[:actual] = arg0_name.to_s
-        end
-
-        Expression.with_substitutions(**substitutions) do
-          @block.call(*args, **kwargs).inspect
-        end
-      else
-        '...'
-      end
-
-      expr = @to_s ? 'expr_s' : 'expr'
-
       if args_and_kwargs.empty?
-        "#{expr} { #{body} }"
+        'expr { ... }'
       else
-        "#{expr} { |#{args_and_kwargs}| #{body} }"
+        "expr { |#{args_and_kwargs}| ... }"
       end
     end
 
