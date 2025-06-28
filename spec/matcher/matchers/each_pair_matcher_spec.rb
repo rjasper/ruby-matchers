@@ -41,6 +41,24 @@ describe Matcher::EachPairMatcher do
     assert_no_errors negated.match({ '1' => 1, 'a' => :a, 0 => '0' })
   end
 
+  it 'matches each key' do
+    matcher = Matcher.build { each_key(Symbol) }
+
+    assert_no_errors matcher.match({ foo: 1, bar: 2 })
+
+    assert_errors matcher.match({ foo: 1, 'bar' => 2 }),
+      'bar' => { expression { key } => msg('bar').not.kind_of(Symbol) }
+  end
+
+  it 'matches each value' do
+    matcher = Matcher.build { each_value(Integer) }
+
+    assert_no_errors matcher.match({ foo: 1, bar: 2 })
+
+    assert_errors matcher.match({ foo: 1, bar: '2' }),
+      bar: msg('2').not.kind_of(Integer)
+  end
+
   it '#to_s' do
     matcher = Matcher.build { each_pair({ 'a' => 1 }) }
 
