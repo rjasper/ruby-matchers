@@ -15,15 +15,10 @@ module Matcher
       end
     end
 
-    def expr(constant = NULL, &block)
-      raise "constant and block given" if !Matcher.null?(constant) && block_given?
+    def expr(obj = NULL, &block)
+      raise 'obj and block given' if !Matcher.null?(obj) && block_given?
 
-      expression = if block_given?
-        ProcExpression.new(block)
-      else
-        Constant.new(constant)
-      end
-
+      expression = block_given? ? ProcExpression.new(block) : Expression.of(obj)
       expression.to_recorder
     end
 

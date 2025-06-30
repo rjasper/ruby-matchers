@@ -15,7 +15,18 @@ module Matcher
     end
 
     def self.of(obj)
-      ExpressionRecorder.recorder?(obj) ? ExpressionRecorder.to_expression(obj) : Constant.new(obj)
+      return ExpressionRecorder.to_expression(obj) if ExpressionRecorder.recorder?(obj)
+
+      case obj
+      when Expression
+        obj
+      when Array
+        items = obj.map { of(_1) }
+
+        ArrayExpression.new(items)
+      else
+        Constant.new(obj)
+      end
     end
 
     def self.negate(obj)
