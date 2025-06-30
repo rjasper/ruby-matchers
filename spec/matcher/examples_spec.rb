@@ -118,4 +118,10 @@ describe 'examples' do
     assert_errors matcher.match(2),
       'expected [_, 10].sum >= 15 but got 12 >= 15, where _ = 2'
   end
+
+  it 'expression: hash' do
+    expression = Matcher::Expression.build { expr(_ => 1) }
+
+    assert_equal({ 'foo' => 1 }, expression.evaluate(actual: 'foo'))
+  end
 end

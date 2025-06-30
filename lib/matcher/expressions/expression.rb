@@ -24,6 +24,12 @@ module Matcher
         items = obj.map { of(_1) }
 
         ArrayExpression.new(items)
+      when Hash
+        pairs = obj.map do |key, value|
+          [of(key), of(value)]
+        end
+
+        HashExpression.new(pairs)
       else
         Constant.new(obj)
       end
