@@ -75,7 +75,7 @@ module Matcher
     alias ptb pass_through_blocks
 
     def assign
-      value = ExpressionRecorder.transform(yield)
+      value = Expression.of(yield)
       call = Call.last_assign
 
       Call.reset_last_assign

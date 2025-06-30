@@ -15,13 +15,6 @@ describe Matcher::ExpressionRecorder do
       Matcher::ExpressionRecorder.to_expression(recorder)
   end
 
-  it '::transform' do
-    assert_equal Matcher::Variable.actual,
-      Matcher::ExpressionRecorder.transform(recorder)
-    assert_equal Matcher::Constant.new(1),
-      Matcher::ExpressionRecorder.transform(1)
-  end
-
   it 'works as Hash key' do
     hash = { recorder => 1 }
 

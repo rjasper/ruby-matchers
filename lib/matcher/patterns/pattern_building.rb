@@ -5,7 +5,7 @@ module Matcher
     include ExpressionBuilding
 
     def capture(key, pattern)
-      pattern = ExpressionRecorder.transform(pattern)
+      pattern = Expression.of(pattern)
 
       CaptureHole.new(key, pattern).to_recorder
     end
@@ -23,9 +23,10 @@ module Matcher
     end
 
     def method_hole(key, receiver, method, *args, **kwargs)
-      receiver = ExpressionRecorder.transform(receiver)
-      args = args&.map { ExpressionRecorder.transform(_1) }
-      kwargs = kwargs&.transform_values { ExpressionRecorder.transform(_1) }
+      of = Expression.method(:of)
+      receiver = Expression.of(receiver)
+      args = args&.map(&of)
+      kwargs = kwargs&.transform_values(&of)
 
       MethodHole.new(key, receiver, method, args, kwargs).to_recorder
     end

@@ -15,7 +15,7 @@ module Matcher
     end
 
     def self.of(recorder)
-      expression = ExpressionRecorder.transform(recorder)
+      expression = Expression.of(recorder)
 
       new(expression)
     end

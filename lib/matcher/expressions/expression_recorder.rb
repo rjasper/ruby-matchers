@@ -12,10 +12,6 @@ module Matcher
         .bind_call(recorder, :@expression)
     end
 
-    def self.transform(object)
-      recorder?(object) ? to_expression(object) : Constant.new(object)
-    end
-
     (instance_methods - %i[__id__ __send__ object_id])
       .each { undef_method _1 }
 
@@ -31,9 +27,9 @@ module Matcher
         args.empty? && kwargs.empty? && !block &&
         @expression.unary?
 
-      transform = ExpressionRecorder.method(:transform)
-      args = args.map(&transform)
-      kwargs = kwargs.transform_values(&transform)
+      of = Expression.method(:of)
+      args = args.map(&of)
+      kwargs = kwargs.transform_values(&of)
       block = Matcher::Block.build(&block) if block && !Matcher.settings[:pass_through_blocks]
 
       Call.new(@expression, method, args, kwargs, block).to_recorder

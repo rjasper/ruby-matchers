@@ -11,7 +11,11 @@ module Matcher
         ExpressionBuilder.new.instance_exec(&)
       end
 
-      ExpressionRecorder.transform(result)
+      of(result)
+    end
+
+    def self.of(obj)
+      ExpressionRecorder.recorder?(obj) ? ExpressionRecorder.to_expression(obj) : Constant.new(obj)
     end
 
     def self.negate(obj)
