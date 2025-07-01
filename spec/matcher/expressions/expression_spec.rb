@@ -11,4 +11,11 @@ describe Matcher::Expression do
     assert_equal Matcher::Constant.new(1),
       Matcher::Expression.of(1)
   end
+
+  it '::try_recorder' do
+    one = Matcher::Constant.new(1)
+
+    assert_equal one, Matcher::Expression.try_recorder(one)
+    assert_equal 1, Matcher::Expression.try_recorder(1)
+  end
 end

@@ -3,8 +3,18 @@
 require 'test_helper'
 
 describe Matcher::Optional do
-  it 'is built by optional' do
-    assert_kind_of(Matcher::Optional, Matcher.build { break optional(1) })
+  describe 'optional helper' do
+    it 'builds Optional' do
+      assert_kind_of(Matcher::Optional, Matcher.build { break optional(1) })
+    end
+
+    it 'converts recorder to expression' do
+      assert_equal(1, Matcher.build { break optional(1).value })
+
+      expected = Matcher::Variable.actual
+
+      assert_equal(expected, Matcher.build { break optional(_).value })
+    end
   end
 
   it '#==' do

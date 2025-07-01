@@ -35,6 +35,12 @@ module Matcher
       end
     end
 
+    def self.try_recorder(obj)
+      return obj unless ExpressionRecorder.recorder?(obj)
+
+      ExpressionRecorder.to_expression(obj)
+    end
+
     def self.negate(obj)
       if obj.is_a?(Expression)
         obj.negated

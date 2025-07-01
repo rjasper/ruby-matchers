@@ -27,6 +27,8 @@ module Matcher
 
   module MatcherBuilding
     def optional(value)
+      value = Expression.try_recorder(value)
+
       Optional.new(value)
     end
   end
