@@ -143,6 +143,28 @@ describe Matcher::HashMatcher do
     assert_no_errors negated.match({ foo: 'bar' })
   end
 
+  it 'matches key expressions' do
+    matcher = Matcher.build do
+      declare :meta
+
+      { meta[:key] => _ == meta[:value] }
+    end
+
+    negated = ~matcher
+    meta = { key: :foo, value: 42 }
+
+    assert_no_errors matcher.match({ foo: 42 }, meta:)
+    assert_errors negated.match({ foo: 42 }, meta:),
+      expression { _[vars[:meta][:key]] } =>
+        'expected _ != meta[:value] but got 42 != 42, where meta = {:key=>:foo, :value=>42}'
+
+    assert_errors matcher.match({ foo: 43, bar: 23 }, meta:),
+      bar: msg({ foo: 43, bar: 23 }).having_key(:bar),
+      expression { _[vars[:meta][:key]] } =>
+        'expected _ == meta[:value] but got 43 == 42, where meta = {:key=>:foo, :value=>42}'
+    assert_no_errors negated.match({ foo: 43, bar: 23 }, meta:)
+  end
+
   it 'passes key' do
     matcher = Matcher.build do
       { a: _ == key.to_s.upcase }

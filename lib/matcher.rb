@@ -161,7 +161,13 @@ module Matcher
     when Proc
       BlockMatcher.new(object)
     when Hash
-      HashMatcher.new(object.transform_values { of(_1) })
+      hash = object.to_h do |k, v|
+        k = Expression.try_recorder(k)
+
+        [k, of(v)]
+      end
+
+      HashMatcher.new(hash)
     when Array
       ArrayMatcher.new(object.map { of(_1) })
     when *CASE_EQUALITY_CLASSES
