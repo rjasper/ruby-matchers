@@ -25,6 +25,11 @@ module Matcher
     end
 
     def check(actual)
+      if @matchers.empty?
+        errors << report.existing_index
+        return
+      end
+
       sub_errors = @matchers.map do |matcher|
         sub_error = yield matcher
 

@@ -30,6 +30,14 @@ describe Matcher::AnyMatcher do
     assert_no_errors negated.match(4)
   end
 
+  it 'matches never empty any' do
+    matcher = Matcher::AnyMatcher.new([])
+    negated = ~matcher
+
+    assert_errors matcher.match(nil), msg(nil).existing_index
+    assert_no_errors negated.match(nil)
+  end
+
   it '#~' do
     matcher = Matcher.build { ~any(1, 2) }
 
