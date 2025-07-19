@@ -14,6 +14,10 @@ module Matcher
       assert_errors_helper(actual, base, nested, block, phrasing: ExpectedPhrasing.phrasing)
     end
 
+    def assert_or_errors(actual, *base, **nested, &block)
+      assert_errors_helper(actual, base, nested, block, phrasing: ExpectedPhrasing.phrasing, use_or: true)
+    end
+
     def assert_no_errors(actual)
       assert(false, <<~TEXT.chomp) unless actual.valid?
         The following conditions were not satisfied:
@@ -28,7 +32,7 @@ module Matcher
 
     private
 
-    def assert_errors_helper(actual, base, nested, block, phrasing: ExpectedPhrasing.phrasing)
+    def assert_errors_helper(actual, base, nested, block, phrasing: ExpectedPhrasing.phrasing, use_or: false)
       raise 'cannot pass expected errors directly if block given' if
         (!base.empty? || !nested.empty?) && block
 
@@ -38,7 +42,8 @@ module Matcher
         base.map { ElementError.new(_1) } + nested_from_hash(nested)
       end
 
-      expected = AndError.from(expected_nodes)
+      error_klass = use_or ? OrError : AndError
+      expected = error_klass.from(expected_nodes)
 
       assert false, 'expected an error but no error present' if
         expected.valid? && actual.valid?
