@@ -40,9 +40,7 @@ module Matcher
     end
 
     def block_location
-      file, line = @block.source_location
-
-      "#{File.basename(file)}:#{line}"
+      Utils.block_location(@block)
     end
   end
 

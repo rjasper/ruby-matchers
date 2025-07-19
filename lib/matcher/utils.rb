@@ -62,5 +62,11 @@ module Matcher
 
       (arg_parts + kwarg_parts).join(', ')
     end
+
+    def self.block_location(block)
+      file, line = block.source_location
+
+      "#{File.basename(file)}:#{line}"
+    end
   end
 end
