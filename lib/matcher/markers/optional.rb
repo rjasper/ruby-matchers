@@ -2,6 +2,10 @@
 
 module Matcher
   class Optional
+    def self.value_of(obj)
+      obj.is_a?(Optional) ? obj.value : obj
+    end
+
     def initialize(value)
       @value = value
     end
