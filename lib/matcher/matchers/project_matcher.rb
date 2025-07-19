@@ -17,6 +17,7 @@ module Matcher
       begin
         result = @expression.evaluate(values.merge(actual:))
       rescue CallError => e
+        # rescuing here instead of method so we won't catch from yield
         errors << e.message_for_errors
         return
       end
