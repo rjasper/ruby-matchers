@@ -35,6 +35,16 @@ module Matcher
     def check(actual)
       return unless actual.is_a?(Hash)
 
+      if @hash.empty?
+        if @partial
+          errors << report.kind_of(Hash)
+        elsif actual.empty?
+          errors << report.predicate(:empty?)
+        end
+
+        return
+      end
+
       if @includes_expressions
         values_with_actual = values.merge(actual:)
         expression_values = {}
