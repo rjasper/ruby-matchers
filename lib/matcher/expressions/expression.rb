@@ -21,15 +21,23 @@ module Matcher
       when Expression
         obj
       when Array
-        items = obj.map { of(_1) }
+        if obj.any? { _1.is_a?(Expression) }
+          items = obj.map { of(_1) }
 
-        ArrayExpression.new(items)
-      when Hash
-        pairs = obj.map do |key, value|
-          [of(key), of(value)]
+          ArrayExpression.new(items)
+        else
+          Constant.new(obj)
         end
+      when Hash
+        if obj.any? { |k, v| k.is_a?(Expression) || v.is_a?(Expression) }
+          pairs = obj.map do |key, value|
+            [of(key), of(value)]
+          end
 
-        HashExpression.new(pairs)
+          HashExpression.new(pairs)
+        else
+          Constant.new(obj)
+        end
       else
         Constant.new(obj)
       end
