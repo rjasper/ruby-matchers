@@ -55,6 +55,16 @@ describe Matcher::HashMatcher do
     assert_no_errors negated.match({})
   end
 
+  it 'matches multiple entries' do
+    matcher = Matcher.build { { foo: 'foo', bar: 'bar' } }
+    negated = ~matcher
+
+    assert_no_errors matcher.match({ foo: 'foo', bar: 'bar' })
+    assert_or_errors negated.match({ foo: 'foo', bar: 'bar' }),
+      foo: msg('foo').equal('foo'),
+      bar: msg('bar').equal('bar')
+  end
+
   it 'matches partial entries' do
     matcher = Matcher.build { partial({ foo: 'foo' }) }
     negated = ~matcher
@@ -79,6 +89,14 @@ describe Matcher::HashMatcher do
     assert_no_errors matcher.match({})
     assert_errors negated.match({}),
       msg({}).predicate(:empty?)
+  end
+
+  it 'matches partially all hashes with empty hash' do
+    matcher = Matcher::HashMatcher.new({}, partial: true)
+    negated = ~matcher
+
+    assert_no_errors matcher.match({})
+    assert_errors negated.match({}), msg({}).kind_of(Hash)
   end
 
   it 'matches a nested hashes' do
@@ -156,7 +174,7 @@ describe Matcher::HashMatcher do
     assert_no_errors matcher.match({ foo: 42 }, meta:)
     assert_errors negated.match({ foo: 42 }, meta:),
       expression { _[vars[:meta][:key]] } =>
-        'expected _ != meta[:value] but got 42 != 42, where meta = {:key=>:foo, :value=>42}'
+          'expected _ != meta[:value] but got 42 != 42, where meta = {:key=>:foo, :value=>42}'
 
     assert_errors matcher.match({ foo: 43, bar: 23 }, meta:),
       bar: msg({ foo: 43, bar: 23 }).having_key(:bar),
