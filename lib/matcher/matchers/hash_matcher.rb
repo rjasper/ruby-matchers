@@ -2,12 +2,10 @@
 
 module Matcher
   class HashMatcher < Base
-    def initialize(hash, key: :key, parent: :parent, partial: false)
+    def initialize(hash, partial: false)
       super()
 
       @hash = hash
-      @key = key
-      @parent = parent
       @partial = partial
       @includes_others = hash.include?(Others.instance)
       @includes_optionals = hash.each_key.any? { _1.is_a?(Optional) }
@@ -23,12 +21,7 @@ module Matcher
     end
 
     def ~
-      NegatedHashMatcher.new(
-        @hash,
-        key: @key,
-        parent: @parent,
-        partial: @partial,
-      )
+      NegatedHashMatcher.new(@hash, partial: @partial)
     end
 
     def check(actual)
@@ -81,7 +74,7 @@ module Matcher
         if actual_value.nil? && !actual.key?(key)
           errors << expected.having_key(key) unless is_optional
         else
-          error = yield(value, actual_value, @key => key, @parent => actual)
+          error = yield(value, actual_value, key:, parent: actual)
 
           next if error.valid?
 
