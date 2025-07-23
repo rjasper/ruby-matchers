@@ -9,7 +9,7 @@ describe Matcher::InlineMatcher do
 
   it 'matches inline implementation' do
     matcher = Matcher.build do
-      inline(negatable: true) do |actual|
+      inline(negatable: true) do
         errors << expected.not_if(negated).described_by('a number') if
           negated == actual.is_a?(Numeric)
       end
@@ -28,8 +28,8 @@ describe Matcher::InlineMatcher do
 
   it 'forwards to given matcher' do
     matcher = Matcher.build do
-      inline(_ > 0, negatable: true) do |_actual, y|
-        errors << y[self.matcher]
+      inline(_ > 0, negatable: true) do
+        errors << _yield(self.matcher)
       end
     end
 
@@ -46,7 +46,7 @@ describe Matcher::InlineMatcher do
 
   it 'falls back to negated behaviour' do
     matcher = Matcher.build do
-      inline { |actual| errors << 'falsy' unless actual }
+      inline { errors << 'falsy' unless actual }
     end
 
     negated = ~matcher

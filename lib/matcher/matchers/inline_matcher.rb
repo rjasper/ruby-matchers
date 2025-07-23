@@ -27,8 +27,28 @@ module Matcher
       @block.binding.receiver
     end
 
-    def check(state, &y)
-      instance_exec(state, y, &@block)
+    class InlineContext
+      extend Forwardable
+
+      def initialize(matcher, state, y)
+        @matcher = matcher
+        @state = state
+        @yield = y
+      end
+
+      attr_reader :state
+
+      def_delegators :@state, *State.public_instance_methods - Object.public_instance_methods - %i[result]
+      def_delegators :@matcher, *InlineMatcher.public_instance_methods  - Object.public_instance_methods - %i[match check]
+
+      def _yield(matcher, act = @state.actual, **values)
+        @yield.call(matcher, act, **values)
+      end
+    end
+
+    def check(state, &block)
+      context = InlineContext.new(self, state, block)
+      context.instance_exec(&@block)
     end
 
     def to_s
