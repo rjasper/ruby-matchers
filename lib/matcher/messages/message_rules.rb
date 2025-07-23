@@ -134,7 +134,7 @@ module Matcher
       ),
     ) do |v, e|
       expression, value, pattern =
-        decompose_pattern_matching(e[:lhs], e[:rhs], v[:lhs], v[:rhs])
+        MessageRules.decompose_pattern_matching(e[:lhs], e[:rhs], v[:lhs], v[:rhs])
 
       if expression
         expression_message.match_at(
@@ -190,7 +190,7 @@ module Matcher
     # match regexp
     message method_hole(:operator, hole(:lhs), %i[=~ !~], hole(:rhs)) do |v, e|
       expression, value, pattern =
-        decompose_pattern_matching(e[:lhs], e[:rhs], v[:lhs], v[:rhs])
+        MessageRules.decompose_pattern_matching(e[:lhs], e[:rhs], v[:lhs], v[:rhs])
 
       if expression
         negated = @negated ^ (e[:operator].method == :!~)
@@ -210,6 +210,16 @@ module Matcher
     # any expression
     message hole(:expression) do |v, e|
       expression_message.truthy(e[:expression], v[:expression], given)
+    end
+
+    def self.decompose_pattern_matching(e_lhs, e_rhs, v_lhs, v_rhs)
+      if v_lhs.is_a?(String) && v_rhs.is_a?(Regexp)
+        [e_lhs, v_lhs, v_rhs]
+      elsif v_lhs.is_a?(Regexp) && v_rhs.is_a?(String)
+        [e_rhs, v_rhs, v_lhs]
+      else
+        nil
+      end
     end
   end
 end

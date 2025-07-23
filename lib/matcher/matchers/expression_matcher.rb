@@ -70,15 +70,5 @@ module Matcher
 
       given
     end
-
-    def decompose_pattern_matching(e_lhs, e_rhs, v_lhs, v_rhs)
-      if v_lhs.is_a?(String) && v_rhs.is_a?(Regexp)
-        [e_lhs, v_lhs, v_rhs]
-      elsif v_lhs.is_a?(Regexp) && v_rhs.is_a?(String)
-        [e_rhs, v_rhs, v_lhs]
-      else
-        nil
-      end
-    end
   end
 end
