@@ -193,9 +193,7 @@ module Matcher
         MessageRules.decompose_pattern_matching(e[:lhs], e[:rhs], v[:lhs], v[:rhs])
 
       if expression
-        negated = @negated ^ (e[:operator].method == :!~)
-
-        expected.namespace(:expression).not_if(negated)
+        expression_message.not_if(e[:operator].method == :!~)
           .matching(expression, value, pattern, given)
       else
         expression_message.truthy(e[:operator], v[:operator], given)
