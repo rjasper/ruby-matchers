@@ -5,7 +5,7 @@ require 'test_helper'
 describe Matcher::ErrorCollector do
   include Matcher::ErrorTesting
 
-  let(:collector) { Matcher::ErrorCollector.new(nil) }
+  let(:collector) { Matcher::ErrorCollector.new({}) }
 
   it 'empty' do
     assert_equal empty, collector.error

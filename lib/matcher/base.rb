@@ -7,14 +7,6 @@ module Matcher
       @thread_safe = Matcher.build_session&.[](:thread_safe) == true
     end
 
-    def actual
-      @stack&.last&.actual
-    end
-
-    def values
-      @stack&.last&.vals
-    end
-
     def ~
       NegatedMatcher.new(self)
     end
@@ -73,43 +65,31 @@ module Matcher
 
     StackData = Struct.new(:actual, :vals, :errors)
 
-    def match(actual, values = nil)
-      return isolate.match(actual, values) if @thread_safe
+    def match(actual, **)
+      values_stack = ValuesStack.new
 
-      collector = nil
+      invoke = lambda do |matcher, act = NULL, **kwargs|
+        state = State.new(values_stack)
+        kwargs[:actual] = act unless Matcher.null?(act)
 
-      Matcher.with_session do
-        values = merge_values(values)
-        frame = StackData.new(actual, values)
-        (@stack ||= []) << frame
-        collector = new_collector
-        frame.errors = collector
-
-        depth = Matcher.session[:depth]
-
-        if depth == nil
-          Matcher.session[:depth] = 0
-        elsif depth > Matcher.max_depth
-          collector << "match level too deep: #{depth}"
-          return collector.error
+        if kwargs.empty?
+          matcher.check(state, &invoke)
         else
-          Matcher.session[:depth] += 1
+          values_stack.push(kwargs)
+          matcher.check(state, &invoke)
+          values_stack.pop(kwargs)
         end
 
-        check(actual) do |matcher, act = actual, **kwargs|
-          matcher.match(act, merge_values(kwargs))
-        end
-      ensure
-        if @stack.length > 1
-          @stack.pop
-        else
-          @stack = nil
-        end
-
-        Matcher.session[:depth] -= 1
+        state.result
       end
 
-      collector.error
+      Matcher.with_session do
+        invoke.call(self, actual:, **)
+      end
+    end
+
+    def check(actual)
+      raise NotImplementedError
     end
 
     def inspect
@@ -120,27 +100,11 @@ module Matcher
 
     attr_writer :session_key, :thread_safe
 
-    def check(actual)
-      raise NotImplementedError
-    end
-
-    def errors
-      @stack.last.errors
-    end
-
-    def new_collector
-      if Matcher.session.fetch(:bind_nested_values, false)
-        ErrorCollector.new({ actual:, **values })
-      else
-        ErrorCollector.new
-      end
-    end
-
-    def report(actual = self.actual)
+    def report(actual = NULL)
       StandardMessageBuilder.new(false, actual)
     end
 
-    def expected(actual = self.actual)
+    def expected(actual = NULL)
       StandardMessageBuilder.new(true, actual)
     end
 
@@ -164,20 +128,6 @@ module Matcher
       klone.thread_safe = false
 
       klone
-    end
-
-    def merge_values(values)
-      previous = @stack&.last&.vals
-
-      if !previous
-        values || {}
-      elsif previous.empty?
-        values || previous
-      elsif !values || values.empty?
-        previous
-      else
-        previous.merge(values)
-      end
     end
   end
 end

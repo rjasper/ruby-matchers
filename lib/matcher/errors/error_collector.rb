@@ -15,7 +15,7 @@ module Matcher
 
     attr_reader :error
 
-    def initialize(values = nil)
+    def initialize(values)
       @error = EmptyError.instance
       @mode = :and
       @values = values
