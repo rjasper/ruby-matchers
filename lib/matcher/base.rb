@@ -2,11 +2,6 @@
 
 module Matcher
   class Base
-    def initialize
-      @session_key = object_id
-      @thread_safe = Matcher.build_session&.[](:thread_safe) == true
-    end
-
     def ~
       NegatedMatcher.new(self)
     end
@@ -98,8 +93,6 @@ module Matcher
 
     protected
 
-    attr_writer :session_key, :thread_safe
-
     def report(actual = NULL)
       StandardMessageBuilder.new(false, actual)
     end
@@ -108,8 +101,8 @@ module Matcher
       StandardMessageBuilder.new(true, actual)
     end
 
-    def session(key = nil)
-      Matcher.session[key || @session_key] ||= {}
+    def session(key = object_id)
+      Matcher.session[key] ||= {}
     end
 
     def self.session
@@ -118,16 +111,6 @@ module Matcher
 
     def class_session
       self.class.session
-    end
-
-    private
-
-    def isolate
-      klone = clone
-      klone.session_key = @session_key
-      klone.thread_safe = false
-
-      klone
     end
   end
 end

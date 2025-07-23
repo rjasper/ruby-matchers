@@ -124,8 +124,8 @@ module Matcher
     NULL == object
   end
 
-  def self.build(thread_safe: false, &)
-    with_build_session(thread_safe:) do
+  def self.build(&)
+    with_build_session do
       builder = Builder.new
       object = builder.instance_exec(&)
 
