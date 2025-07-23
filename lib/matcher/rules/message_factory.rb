@@ -13,10 +13,10 @@ module Matcher
       @negate = !@negate
     end
 
-    def create(matcher, value_tree)
+    def create(context, value_tree)
       # Using reduce instead of dig so it will fail if an unexpected leaf is encountered.
       values = @value_paths.transform_values { _1.reduce(value_tree, :[]) }
-      message = matcher.instance_exec(values, @expressions, &@block)
+      message = context.instance_exec(values, @expressions, &@block)
       message.negate! if @negate
 
       message

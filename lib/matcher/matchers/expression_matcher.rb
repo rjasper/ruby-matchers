@@ -23,7 +23,10 @@ module Matcher
       value_tree = @expression.evaluate_tree(state.values)
       evaluation = value_tree[-1]
 
-      state.errors << message_factory.create(self, value_tree) if @negated != !evaluation
+      if @negated != !evaluation
+        rule_context = MessageRuleContext.new(self, state)
+        state.errors << message_factory.create(rule_context, value_tree)
+      end
     rescue CallError => e
       state.errors << e.message_for_errors unless @negated
     end
@@ -51,24 +54,6 @@ module Matcher
 
     def message_factory
       @message_factory ||= ExpressionMatcher.message_rules.apply(@expression)
-    end
-
-    def standard_message
-      expected.not_if(@negated)
-    end
-
-    def expression_message
-      expected.namespace(:expression).not_if(@negated)
-    end
-
-    def given
-      given = {}
-
-      @expression.variables.each do |symbol|
-        given[symbol] = symbol == :actual ? actual : values[symbol]
-      end
-
-      given
     end
   end
 end
