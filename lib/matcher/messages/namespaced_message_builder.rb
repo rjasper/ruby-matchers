@@ -8,10 +8,6 @@ module Matcher
       @namespace = namespace
     end
 
-    def not
-      NamespacedMessageBuilder.new(!@negated, @actual, @namespace)
-    end
-
     protected
 
     def message(key, *, **)

@@ -8,7 +8,8 @@ module Matcher
     end
 
     def not
-      self.class.new(!@negated, @actual)
+      @negated = !@negated
+      self
     end
 
     def not_if(condition)
