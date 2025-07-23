@@ -34,7 +34,8 @@ module Matcher
       NegatedImplySomeMatcher.new(@matchers, @else_matcher, @count)
     end
 
-    def check(actual)
+    def check(state)
+      errors = state.errors
       matchers = @matchers.filter { yield(_1.condition).valid? }
 
       if matchers.empty?
@@ -51,7 +52,6 @@ module Matcher
 
       matchers.each { errors << yield(_1.matcher) }
     end
-    protected :check
 
     def to_s
       args = @matchers.map(&:to_s)

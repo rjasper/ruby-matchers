@@ -26,21 +26,22 @@ module Matcher
       HashMatcher.new(@original_hash, partial: @partial, negated: !@negated)
     end
 
-    def check(actual, &)
-      return negated_check(actual, &) if @negated
+    def check(state, &)
+      return negated_check(state, &) if @negated
+
+      actual = state.actual
 
       unless actual.is_a?(Hash)
-        errors << expected.kind_of(Hash)
+        state.errors << expected.kind_of(Hash)
         return
       end
 
       if @includes_expressions
-        values_with_actual = values.merge(actual:)
         expression_values = {}
 
         @hash.each_key.with_index do |key, i|
           key = key.value if key.is_a?(Optional)
-          expression_values[i] = key.evaluate(values_with_actual) if key.is_a?(Expression)
+          expression_values[i] = key.evaluate(state.values) if key.is_a?(Expression)
         end
       end
 
@@ -58,13 +59,13 @@ module Matcher
 
       if !@partial && !@includes_others
         extra_keys.each do |key|
-          errors[key] << expected.not.having_key(key)
+          state.errors[key] << expected.not.having_key(key)
         end
       end
 
       @hash.each_with_index do |(key, value), i|
         if key.is_a?(Others)
-          errors << yield(others, actual.slice(*extra_keys))
+          state.errors << yield(others, actual.slice(*extra_keys))
 
           next
         end
@@ -76,7 +77,7 @@ module Matcher
         actual_value = actual[key]
 
         if actual_value.nil? && !actual.key?(key)
-          errors << expected.having_key(key) unless is_optional
+          state.errors << expected.having_key(key) unless is_optional
         else
           error = yield(value, actual_value, key:, parent: actual)
 
@@ -84,11 +85,10 @@ module Matcher
 
           error_key = key_call_for(error_key) if error_key.is_a?(Expression)
 
-          errors[error_key] << error
+          state.errors[error_key] << error
         end
       end
     end
-    protected :check
 
     def to_s
       if @negated
@@ -100,26 +100,27 @@ module Matcher
 
     private
 
-    def negated_check(actual)
+    def negated_check(state)
+      actual = state.actual
+
       return unless actual.is_a?(Hash)
 
       if @hash.empty?
         if @partial
-          errors << report.kind_of(Hash)
+          state.errors << report.kind_of(Hash)
         elsif actual.empty?
-          errors << report.predicate(:empty?)
+          state.errors << report.predicate(:empty?)
         end
 
         return
       end
 
       if @includes_expressions
-        values_with_actual = values.merge(actual:)
         expression_values = {}
 
         @hash.each_key.with_index do |key, i|
           key = key.value if key.is_a?(Optional)
-          expression_values[i] = key.evaluate(values_with_actual) if key.is_a?(Expression)
+          expression_values[i] = key.evaluate(state.values) if key.is_a?(Expression)
         end
       end
 
@@ -137,7 +138,7 @@ module Matcher
 
       return if !@partial && !@includes_others && !extra_keys.empty?
 
-      collector = new_collector.or!
+      collector = state.new_collector.or!
 
       @hash.each_with_index do |(key, value), i|
         if key.is_a?(Others)
@@ -171,7 +172,7 @@ module Matcher
         collector[error_key] << result
       end
 
-      errors << if collector.empty?
+      state.errors << if collector.empty?
         report.predicate(:empty?)
       else
         collector.error

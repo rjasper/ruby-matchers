@@ -13,11 +13,10 @@ module Matcher
       EqualMatcher.new(@value, negated: !@negated)
     end
 
-    def check(actual)
-      errors << expected.not_if(@negated).equal(@value) if
-        @negated ^ (actual != @value)
+    def check(state)
+      state.errors << expected.not_if(@negated).equal(@value) if
+        @negated ^ (state.actual != @value)
     end
-    protected :check
 
     def to_s
       case @value

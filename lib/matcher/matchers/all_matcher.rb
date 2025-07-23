@@ -24,12 +24,11 @@ module Matcher
       AnyMatcher.new(@matchers.map(&:~))
     end
 
-    def check(_actual)
+    def check(state)
       @matchers.each do |matcher|
-        errors << yield(matcher)
+        state.errors << yield(matcher)
       end
     end
-    protected :check
 
     def to_s
       "all(#{@matchers.map(&:to_s).join(', ')})"

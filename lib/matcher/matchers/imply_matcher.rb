@@ -15,12 +15,11 @@ module Matcher
       NegatedImplyMatcher.new(@condition, @matcher)
     end
 
-    def check(_actual)
+    def check(state)
       return unless yield(@condition).valid?
 
-      errors << yield(@matcher)
+      state.errors << yield(@matcher)
     end
-    protected :check
 
     def to_s
       "imply(#{@condition}, #{@matcher})"

@@ -24,7 +24,7 @@ module Matcher
       end
     end
 
-    def check(_actual)
+    def check(state)
       last_error = EmptyError.instance
 
       @matchers.each do |matcher|
@@ -33,9 +33,8 @@ module Matcher
         break unless last_error.valid?
       end
 
-      errors << last_error
+      state.errors << last_error
     end
-    protected :check
 
     def to_s
       "lazy_all(#{@matchers.map(&:to_s).join(', ')})"

@@ -27,10 +27,9 @@ module Matcher
       @block.binding.receiver
     end
 
-    def check(actual, &y)
-      instance_exec(actual, y, &@block)
+    def check(state, &y)
+      instance_exec(state, y, &@block)
     end
-    protected :check
 
     def to_s
       args = if @matcher

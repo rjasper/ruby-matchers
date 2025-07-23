@@ -18,7 +18,10 @@ module Matcher
       MapMatcher.new(@projection, @matcher, index: @index, original: @original)
     end
 
-    def check(actual)
+    def check(state)
+      actual = state.actual
+      values = state.values
+
       return unless actual.respond_to?(:map)
 
       mapped = []
@@ -33,9 +36,8 @@ module Matcher
 
       mapped_errors = yield @neg_matcher, mapped, @original => actual
 
-      errors << map_errors(mapped_errors)
+      state.errors << map_errors(mapped_errors, state)
     end
-    protected :check
 
     def to_s
       "~map(#{@projection}, #{@matcher})"

@@ -15,22 +15,21 @@ module Matcher
       EachMatcher.new(@matcher, index: @index, parent: @parent)
     end
 
-    def check(actual)
-      return unless actual.respond_to?(:each)
+    def check(state)
+      return unless state.actual.respond_to?(:each)
 
-      collector = new_collector.or!
+      collector = state.new_collector.or!
 
-      actual.each.with_index do |item, i|
-        result = yield @neg_matcher, item, @index => i, @parent => actual
+      state.actual.each.with_index do |item, i|
+        result = yield @neg_matcher, item, @index => i, @parent => state.actual
 
         return if result.valid?
 
         collector[i] << result
       end
 
-      errors << collector.error
+      state.errors << collector.error
     end
-    protected :check
 
     def to_s
       "~each(#{@matcher})"

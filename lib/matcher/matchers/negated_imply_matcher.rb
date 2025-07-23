@@ -16,16 +16,15 @@ module Matcher
       ImplyMatcher.new(@condition, @matcher)
     end
 
-    def check(_actual)
+    def check(state)
       condition_errors = yield @condition
 
-      errors << if condition_errors.valid?
+      state.errors << if condition_errors.valid?
         yield(@neg_matcher)
       else
         condition_errors
       end
     end
-    protected :check
 
     def to_s
       "~imply(#{@condition}, #{@matcher})"

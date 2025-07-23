@@ -13,15 +13,13 @@ module Matcher
       LetMatcher.new(@assigns, ~@matcher)
     end
 
-    def check(actual)
-      block_values = values.merge(actual:)
+    def check(state)
       assigns = @assigns.transform_values do |v|
-        v.is_a?(Proc) ? Utils.call_block(v, block_values) : v
+        v.is_a?(Proc) ? Utils.call_block(v, state.values) : v
       end
 
-      errors << yield(@matcher, assigns[:actual] || actual, **assigns)
+      state.errors << yield(@matcher, assigns[:actual] || state.actual, **assigns)
     end
-    protected :check
 
     def to_s
       assign_parts = @assigns.map do |key, value|

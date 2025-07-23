@@ -13,7 +13,7 @@ module Matcher
       OneMatcher.new(@matchers, negated: !@negated)
     end
 
-    def check(_actual)
+    def check(state)
       valid_matchers = []
       invalid_errors = []
 
@@ -28,19 +28,18 @@ module Matcher
       end
 
       if @negated
-        errors << yield(~valid_matchers[0]) if valid_matchers.length == 1
+        state.errors << yield(~valid_matchers[0]) if valid_matchers.length == 1
       else
         if valid_matchers.length == 0
-          errors << OrError.from(invalid_errors)
+          state.errors << OrError.from(invalid_errors)
         elsif valid_matchers.length > 1
           negated_matchers = valid_matchers.map(&:~)
           any_matcher = AnyMatcher.new(negated_matchers)
 
-          errors << yield(any_matcher)
+          state.errors << yield(any_matcher)
         end
       end
     end
-    protected :check
 
     def to_s
       "#{'~' if @negated}one(#{@matchers.map(&:to_s).join(', ')})"

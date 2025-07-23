@@ -14,7 +14,10 @@ module Matcher
       NegatedArrayMatcher.new(@array, index: @index, parent: @parent)
     end
 
-    def check(actual)
+    def check(state)
+      actual = state.actual
+      errors = state.errors
+
       unless actual.is_a?(Array)
         errors << expected.kind_of(Array)
         return
@@ -26,7 +29,6 @@ module Matcher
         errors[i] << yield(@array[i], actual[i], @index => i, @parent => actual)
       end
     end
-    protected :check
 
     def to_s
       @array.to_s

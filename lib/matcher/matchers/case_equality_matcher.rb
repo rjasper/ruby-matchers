@@ -13,10 +13,10 @@ module Matcher
       CaseEqualityMatcher.new(@object, negated: !@negated)
     end
 
-    def check(_actual)
-      errors << not_equal_message if !@negated ^ (@object === actual) # rubocop:disable Style/CaseEquality
+    def check(state)
+      state.errors << not_equal_message if
+        !@negated ^ (@object === state.actual) # rubocop:disable Style/CaseEquality
     end
-    protected :check
 
     def to_s
       if @negated

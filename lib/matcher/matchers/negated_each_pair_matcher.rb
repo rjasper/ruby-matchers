@@ -16,10 +16,12 @@ module Matcher
       EachPairMatcher.new(@matcher, key: @key, value: @value, parent: @parent)
     end
 
-    def check(actual)
+    def check(state)
+      actual = state.actual
+
       return unless actual.respond_to?(:each_pair)
 
-      collector = new_collector.or!
+      collector = state.new_collector.or!
 
       actual.each do |key, value|
         result = yield @neg_matcher, [key, value], @key => key, @value => value, @parent => actual
@@ -29,9 +31,8 @@ module Matcher
         collector[key] << result
       end
 
-      errors << collector.error
+      state.errors << collector.error
     end
-    protected :check
 
     def to_s
       "~each_pair(#{@matcher})"

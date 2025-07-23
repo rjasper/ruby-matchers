@@ -14,16 +14,18 @@ module Matcher
       SetMatcher.new(@array, parent: @parent, negated: !@negated)
     end
 
-    def check(actual)
+    def check(state)
+      actual = state.actual
+
       unless actual.is_a?(Array)
-        errors << expected.kind_of(Array) unless @negated
+        state.errors << expected.kind_of(Array) unless @negated
         return
       end
 
       if @array.length != actual.length
         return if @negated
 
-        errors << expected.length_of(@array.length, actual.length)
+        state.errors << expected.length_of(@array.length, actual.length)
       end
 
       missing = @array.clone
@@ -45,18 +47,17 @@ module Matcher
 
       if @negated
         # when negated then missing.empty? <=> extra.empty?
-        errors << report.namespace(:set).equal(@array) if missing.empty?
+        state.errors << report.namespace(:set).equal(@array) if missing.empty?
       else
         missing.each do |matcher|
-          errors << expected.namespace(:set).including_matchable_by(matcher)
+          state.errors << expected.namespace(:set).including_matchable_by(matcher)
         end
 
         extra.each do |i|
-          errors[i] << report.including(actual[i])
+          state.errors[i] << report.including(actual[i])
         end
       end
     end
-    protected :check
 
     def to_s
       "#{'~' if @negated}set(#{@array})"

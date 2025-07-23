@@ -18,27 +18,26 @@ module Matcher
       ImplySomeMatcher.new(@matchers, @else_matcher, @count)
     end
 
-    def check(_actual)
+    def check(state)
       matchers = @neg_matchers.filter { yield(_1.condition).valid? }
 
       if matchers.empty?
-        errors << yield(@neg_else_matcher) if @else_matcher
+        state.errors << yield(@neg_else_matcher) if @else_matcher
       elsif @count == :any || matchers.length == @count
-        errors.or!
+        state.errors.or!
 
         matchers.each do |matcher|
           error = yield(matcher)
 
           if error.valid?
-            errors.clear
+            state.errors.clear
             break
           end
 
-          errors << error
+          state.errors << error
         end
       end
     end
-    protected :check
 
     def to_s
       "~#{self.~}"

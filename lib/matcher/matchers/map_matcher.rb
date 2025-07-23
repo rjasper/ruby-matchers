@@ -15,9 +15,12 @@ module Matcher
       NegatedMapMatcher.new(@projection, @matcher, index: @index, original: @original)
     end
 
-    def check(actual)
+    def check(state)
+      actual = state.actual
+      values = state.values
+
       unless actual.respond_to?(:map)
-        errors << expected.responding_to(:map)
+        state.errors << expected.responding_to(:map)
         return
       end
 
@@ -29,7 +32,7 @@ module Matcher
           values.merge(actual: item, @index => i, @original => actual),
         )
       rescue CallError => e
-        errors[i] << e.message_for_errors
+        state.errors[i] << e.message_for_errors
         mapping_failed = true
       end
 
@@ -37,9 +40,8 @@ module Matcher
 
       mapped_errors = yield @matcher, mapped, @original => actual
 
-      errors << map_errors(mapped_errors)
+      state.errors << map_errors(mapped_errors, state)
     end
-    protected :check
 
     def to_s
       "map(#{@projection}, #{@matcher})"
@@ -48,12 +50,12 @@ module Matcher
     module ErrorMapping
       private
 
-      def map_errors(error)
+      def map_errors(error, state)
         case error
         when EmptyError
           error
         when AndError, OrError
-          children = error.children.map { map_errors(_1) }
+          children = error.children.map { map_errors(_1, state) }
           error.class.new(children)
         when NestedError
           key = error.key
@@ -66,12 +68,12 @@ module Matcher
             operand.constant.is_a?(Integer)
 
           if is_index
-            new_collector[key][@projection] << error.child
+            state.new_collector[key][@projection] << error.child
           else
             error
           end
         when ElementError
-          new_collector[nested_key] << error
+          state.new_collector[nested_key] << error
         else
           raise "Unexpected error: #{error.inspect}"
         end

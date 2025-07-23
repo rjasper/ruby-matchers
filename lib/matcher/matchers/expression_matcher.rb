@@ -19,16 +19,14 @@ module Matcher
       ExpressionMatcher.new(@expression, negated: !@negated)
     end
 
-    def check(actual)
-      expression_values = values.merge(actual:)
-      value_tree = @expression.evaluate_tree(expression_values)
+    def check(state)
+      value_tree = @expression.evaluate_tree(state.values)
       evaluation = value_tree[-1]
 
-      errors << message_factory.create(self, value_tree) if @negated != !evaluation
+      state.errors << message_factory.create(self, value_tree) if @negated != !evaluation
     rescue CallError => e
-      errors << e.message_for_errors unless @negated
+      state.errors << e.message_for_errors unless @negated
     end
-    protected :check
 
     def to_s
       if @negated

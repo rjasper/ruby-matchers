@@ -14,10 +14,11 @@ module Matcher
       BlockMatcher.new(@block, @description, negated: !@negated)
     end
 
-    def check(actual)
-      errors << build_message if @negated ^ !@block.call(actual, **values)
+    def check(state)
+      result = Utils.call_block(@block, state.values)
+
+      state.errors << build_message if @negated ^ !result
     end
-    protected :check
 
     def to_s
       string = @description || "-> { #{block_location} }"

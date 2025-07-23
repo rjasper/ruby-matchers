@@ -15,14 +15,16 @@ module Matcher
       NegatedEachPairMatcher.new(@matcher, key: @key, value: @value, parent: @parent)
     end
 
-    def check(actual)
+    def check(state)
+      actual = state.actual
+
       unless actual.respond_to?(:each_pair)
-        errors << expected.responding_to(:each_pair)
+        state.errors << expected.responding_to(:each_pair)
         return
       end
 
       actual.each_pair do |key, value|
-        errors[key] << yield(
+        state.errors[key] << yield(
           @matcher,
           [key, value],
           @key => key,
@@ -31,7 +33,6 @@ module Matcher
         )
       end
     end
-    protected :check
 
     def to_s
       "each_pair(#{@matcher})"

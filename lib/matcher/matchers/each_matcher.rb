@@ -14,19 +14,18 @@ module Matcher
       NegatedEachMatcher.new(@matcher, index: @index, parent: @parent)
     end
 
-    def check(actual)
-      unless actual.respond_to?(:each)
-        errors << expected.responding_to(:each)
+    def check(state)
+      unless state.actual.respond_to?(:each)
+        state.errors << expected.responding_to(:each)
         return
       end
 
       i = 0
-      actual.each do |item|
-        errors[i] << yield(@matcher, item, @index => i, @parent => actual)
+      state.actual.each do |item|
+        state.errors[i] << yield(@matcher, item, @index => i, @parent => state.actual)
         i += 1
       end
     end
-    protected :check
 
     def to_s
       "each(#{@matcher})"

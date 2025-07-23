@@ -21,15 +21,17 @@ module Matcher
       matcher
     end
 
-    def check(actual)
+    def check(state)
+      actual = state.actual
+
       unless visited.add?(actual.object_id)
-        errors << report.namespace(:reference).cyclic if @negated == @cyclic
+        state.errors << report.namespace(:reference).cyclic if @negated == @cyclic
 
         return
       end
 
       unless @options[@key][:cache]
-        errors << yield(target)
+        state.errors << yield(target)
         return
       end
 
@@ -41,12 +43,11 @@ module Matcher
 
         cache[cache_key] = target_errors.valid?
 
-        errors << target_errors
+        state.errors << target_errors
       elsif !cached_result
-        errors << report.namespace(:reference).failed_from_cache
+        state.errors << report.namespace(:reference).failed_from_cache
       end
     end
-    protected :check
 
     def to_s
       "#{'~' if @negated}refs[#{@key.inspect}]"

@@ -23,23 +23,22 @@ module Matcher
       Iso8601Matcher.new(@time, negated: !@negated)
     end
 
-    def check(actual)
-      unless actual.is_a?(String)
-        errors << expected.kind_of(String) unless @negated
+    def check(state)
+      unless state.actual.is_a?(String)
+        state.errors << expected.kind_of(String) unless @negated
         return
       end
 
-      time = Time.iso8601(actual)
+      time = Time.iso8601(state.actual)
 
       if @time
-        errors << expected.not_if(@negated).equal(@time) if @negated ^ (time != @time)
+        state.errors << expected.not_if(@negated).equal(@time) if @negated ^ (time != @time)
       elsif @negated
-        errors << expected.namespace(:iso8601).not.valid
+        state.errors << expected.namespace(:iso8601).not.valid
       end
     rescue ArgumentError
-      errors << expected.namespace(:iso8601).valid unless @negated
+      state.errors << expected.namespace(:iso8601).valid unless @negated
     end
-    protected :check
 
     def to_s
       "#{'~' if @negated}iso8601#{"(#{@time.iso8601.inspect})" if @time}"

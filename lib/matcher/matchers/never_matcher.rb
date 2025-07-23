@@ -16,10 +16,9 @@ module Matcher
       AlwaysMatcher.instance
     end
 
-    def check(_actual)
-      errors << report.existing_index
+    def check(state)
+      state.errors << report.existing_index
     end
-    protected :check
 
     def to_s
       'never'

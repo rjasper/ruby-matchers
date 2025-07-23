@@ -24,9 +24,9 @@ module Matcher
       AllMatcher.new(@matchers.map(&:~))
     end
 
-    def check(actual)
+    def check(state)
       if @matchers.empty?
-        errors << report.existing_index
+        state.errors << report.existing_index
         return
       end
 
@@ -38,9 +38,8 @@ module Matcher
         sub_error
       end
 
-      errors << OrError.from(sub_errors)
+      state.errors << OrError.from(sub_errors)
     end
-    protected :check
 
     def to_s
       "any(#{@matchers.map(&:to_s).join(', ')})"

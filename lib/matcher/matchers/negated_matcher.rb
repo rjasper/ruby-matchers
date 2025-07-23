@@ -12,10 +12,9 @@ module Matcher
       @matcher
     end
 
-    def check(actual)
-      errors << expected.namespace(:negated).not.valid(@matcher) if yield(@matcher).valid?
+    def check(state)
+      state.errors << expected.namespace(:negated).not.valid(@matcher) if yield(@matcher).valid?
     end
-    protected :check
 
     def to_s
       "neg(#{@matcher})"
