@@ -2,9 +2,13 @@
 
 module Matcher
   class ErrorCollector
-    def self.error_from(obj)
+    def self.error_from(obj, values)
       case obj
-      when String, Message
+      when String
+        ElementError.new(obj)
+      when Message
+        obj = obj.bind(values[:actual]) unless obj.bound?
+
         ElementError.new(obj)
       when Error
         obj
@@ -55,7 +59,7 @@ module Matcher
       end
 
       def <<(error)
-        error = ErrorCollector.error_from(error)
+        error = ErrorCollector.error_from(error, @values)
 
         return error if error.is_a?(EmptyError) || @key == Variable.actual
 
@@ -76,7 +80,7 @@ module Matcher
     def <<(error)
       return @error if error.is_a?(EmptyError)
 
-      error = ErrorCollector.error_from(error)
+      error = ErrorCollector.error_from(error, @values)
 
       case @error
       when EmptyError

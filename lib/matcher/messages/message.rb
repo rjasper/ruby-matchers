@@ -12,8 +12,16 @@ module Matcher
       @kwargs = kwargs
     end
 
+    def bound?
+      !Matcher.null?(@actual)
+    end
+
     def negate!
       @negated = !@negated
+    end
+
+    def bind(actual)
+      Message.new(@key, @negated, actual, *@args, **@kwargs)
     end
 
     def ==(other)
