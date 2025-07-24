@@ -4,18 +4,16 @@ module Matcher
   class NegatedMapMatcher < Base
     include MapMatcher::ErrorMapping
 
-    def initialize(projection, matcher, index: :index, original: :original)
+    def initialize(projection, matcher)
       super()
 
       @projection = projection
       @matcher = matcher
       @neg_matcher = ~matcher
-      @index = index
-      @original = original
     end
 
     def ~
-      MapMatcher.new(@projection, @matcher, index: @index, original: @original)
+      MapMatcher.new(@projection, @matcher)
     end
 
     def check(state)
@@ -28,13 +26,13 @@ module Matcher
 
       actual.map.with_index do |item, i|
         mapped << @projection.evaluate(
-          values.merge(actual: item, @index => i, @original => actual),
+          values.merge(actual: item, index: i, original: actual),
         )
       rescue CallError
         return if @negated
       end
 
-      mapped_errors = yield @neg_matcher, mapped, @original => actual
+      mapped_errors = yield @neg_matcher, mapped, original: actual
 
       state.errors << map_errors(mapped_errors, state)
     end

@@ -2,16 +2,14 @@
 
 module Matcher
   class EachMatcher < Base
-    def initialize(matcher, index: :index, parent: :parent)
+    def initialize(matcher)
       super()
 
       @matcher = matcher
-      @index = index
-      @parent = parent
     end
 
     def ~
-      NegatedEachMatcher.new(@matcher, index: @index, parent: @parent)
+      NegatedEachMatcher.new(@matcher)
     end
 
     def check(state)
@@ -22,7 +20,7 @@ module Matcher
 
       i = 0
       state.actual.each do |item|
-        state.errors[i] << yield(@matcher, item, @index => i, @parent => state.actual)
+        state.errors[i] << yield(@matcher, item, index: i, parent: state.actual)
         i += 1
       end
     end

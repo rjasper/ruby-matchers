@@ -2,16 +2,15 @@
 
 module Matcher
   class SetMatcher < Base
-    def initialize(array, parent: :parent, negated: false)
+    def initialize(array, negated: false)
       super()
 
       @array = array
-      @parent = parent
       @negated = negated
     end
 
     def ~
-      SetMatcher.new(@array, parent: @parent, negated: !@negated)
+      SetMatcher.new(@array, negated: !@negated)
     end
 
     def check(state)
@@ -35,7 +34,7 @@ module Matcher
         break if missing.empty?
 
         index = missing.find_index do |m|
-          yield(m, element, @parent => actual).valid?
+          yield(m, element, parent: actual).valid?
         end
 
         if index

@@ -2,17 +2,15 @@
 
 module Matcher
   class NegatedEachMatcher < Base
-    def initialize(matcher, index: :index, parent: :parent)
+    def initialize(matcher)
       super()
 
       @matcher = matcher
       @neg_matcher = ~matcher
-      @index = index
-      @parent = parent
     end
 
     def ~
-      EachMatcher.new(@matcher, index: @index, parent: @parent)
+      EachMatcher.new(@matcher)
     end
 
     def check(state)
@@ -21,7 +19,7 @@ module Matcher
       collector = state.new_collector.or!
 
       state.actual.each.with_index do |item, i|
-        result = yield @neg_matcher, item, @index => i, @parent => state.actual
+        result = yield @neg_matcher, item, index: i, parent: state.actual
 
         return if result.valid?
 

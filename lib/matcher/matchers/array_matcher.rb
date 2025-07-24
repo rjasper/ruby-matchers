@@ -2,16 +2,14 @@
 
 module Matcher
   class ArrayMatcher < Base
-    def initialize(array, index: :index, parent: :parent)
+    def initialize(array)
       super()
 
       @array = array
-      @index = index
-      @parent = parent
     end
 
     def ~
-      NegatedArrayMatcher.new(@array, index: @index, parent: @parent)
+      NegatedArrayMatcher.new(@array)
     end
 
     def check(state)
@@ -26,7 +24,7 @@ module Matcher
       errors << expected.length_of(@array.length, actual.length) if @array.length != actual.length
 
       [@array.length, actual.length].min.times do |i|
-        errors[i] << yield(@array[i], actual[i], @index => i, @parent => actual)
+        errors[i] << yield(@array[i], actual[i], index: i, parent: actual)
       end
     end
 

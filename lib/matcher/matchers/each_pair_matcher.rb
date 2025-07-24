@@ -2,17 +2,14 @@
 
 module Matcher
   class EachPairMatcher < Base
-    def initialize(matcher, key: :key, value: :value, parent: :parent)
+    def initialize(matcher)
       super()
 
       @matcher = matcher
-      @key = key
-      @value = value
-      @parent = parent
     end
 
     def ~
-      NegatedEachPairMatcher.new(@matcher, key: @key, value: @value, parent: @parent)
+      NegatedEachPairMatcher.new(@matcher)
     end
 
     def check(state)
@@ -27,8 +24,8 @@ module Matcher
         state.errors[key] << yield(
           @matcher,
           [key, value],
-          @key => key,
-          @value => value,
+          key: key,
+          value: value,
           @parent => actual
         )
       end

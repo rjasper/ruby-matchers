@@ -2,18 +2,15 @@
 
 module Matcher
   class NegatedEachPairMatcher < Base
-    def initialize(matcher, key: :key, value: :value, parent: :parent)
+    def initialize(matcher)
       super()
 
       @matcher = matcher
       @neg_matcher = ~matcher
-      @key = key
-      @value = value
-      @parent = parent
     end
 
     def ~
-      EachPairMatcher.new(@matcher, key: @key, value: @value, parent: @parent)
+      EachPairMatcher.new(@matcher)
     end
 
     def check(state)
@@ -24,7 +21,7 @@ module Matcher
       collector = state.new_collector.or!
 
       actual.each do |key, value|
-        result = yield @neg_matcher, [key, value], @key => key, @value => value, @parent => actual
+        result = yield(@neg_matcher, [key, value], key:, value:, parent: actual)
 
         return if result.valid?
 

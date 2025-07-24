@@ -2,17 +2,15 @@
 
 module Matcher
   class NegatedArrayMatcher < Base
-    def initialize(array, index: :index, parent: :parent)
+    def initialize(array)
       super()
 
       @array = array
       @neg_array = @array.map(&:~)
-      @index = index
-      @parent = parent
     end
 
     def ~
-      ArrayMatcher.new(@array, index: @index, parent: @parent)
+      ArrayMatcher.new(@array)
     end
 
     def check(state)
@@ -23,7 +21,7 @@ module Matcher
       collector = state.new_collector.or!
 
       @array.length.times do |i|
-        result = yield @neg_array[i], actual[i], @index => i, @parent => actual
+        result = yield @neg_array[i], actual[i], index: i, parent: actual
 
         return if result.valid?
 

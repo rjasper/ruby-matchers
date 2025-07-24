@@ -2,17 +2,15 @@
 
 module Matcher
   class MapMatcher < Base
-    def initialize(projection, matcher, index: :index, original: :original)
+    def initialize(projection, matcher)
       super()
 
       @projection = projection
       @matcher = matcher
-      @index = index
-      @original = original
     end
 
     def ~
-      NegatedMapMatcher.new(@projection, @matcher, index: @index, original: @original)
+      NegatedMapMatcher.new(@projection, @matcher)
     end
 
     def check(state)
@@ -29,7 +27,7 @@ module Matcher
 
       actual.map.with_index do |item, i|
         mapped << @projection.evaluate(
-          values.merge(actual: item, @index => i, @original => actual),
+          values.merge(actual: item, index: i, original: actual),
         )
       rescue CallError => e
         state.errors[i] << e.message_for_errors
@@ -38,7 +36,7 @@ module Matcher
 
       return if mapping_failed
 
-      mapped_errors = yield @matcher, mapped, @original => actual
+      mapped_errors = yield @matcher, mapped, original: actual
 
       state.errors << map_errors(mapped_errors, state)
     end
@@ -83,15 +81,15 @@ module Matcher
         proj = @projection
         actual_var = Variable.actual
         as_symbol_proc = proj.is_a?(Call) && proj.unary? && proj.receiver == actual_var
-        with_index = true if @index && proj.variables.include?(@index)
+        with_index = true if proj.variables.include?(:index)
 
         block = if as_symbol_proc
           SymbolProc.new(proj.method)
         else
           symbol = find_free_symbol(proj)
           parameters = [[:opt, symbol]]
-          parameters << [:opt, @index] if with_index
-          expression = proj.substitute(actual: symbol, @original => :actual)
+          parameters << [:opt, :index] if with_index
+          expression = proj.substitute(actual: symbol, original: :actual)
 
           Block.new(parameters, expression)
         end
