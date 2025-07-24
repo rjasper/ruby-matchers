@@ -40,8 +40,8 @@ module Matcher
         return
       end
 
-      cache_key = [@negated ? "~#{@key}" : @key, actual.object_id]
       cache = (sess[:cache] ||= {})
+      cache_key = [@key, actual.object_id]
       cached_result = cache[cache_key]
 
       if cached_result.nil?
@@ -49,11 +49,10 @@ module Matcher
         # previous values for cyclic reference matchers. #match will create a
         # new values stack.
         target_errors = @cyclic ? target.match(actual) : yield(target)
-
-        cache[cache_key] = target_errors.valid?
+        cache[cache_key] = @negated ^ target_errors.valid?
 
         state.errors << target_errors
-      elsif !cached_result
+      elsif @negated == cached_result
         state.errors << report.namespace(:reference).failed_from_cache
       end
     ensure
