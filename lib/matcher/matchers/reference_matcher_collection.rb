@@ -42,7 +42,7 @@ module Matcher
       @last_object_id = matcher.object_id
       matcher = Matcher.of(matcher)
       @last_matcher = matcher
-      @targets[key] = matcher
+      @targets[key] = [matcher, nil]
       @options[key] = options
     end
   end

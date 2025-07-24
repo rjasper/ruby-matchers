@@ -11,8 +11,6 @@ module Matcher
       @options = options
       @negated = negated
       @session_key = session_key
-
-      @targets["~#{key}"] ||= nil if negated # reserve entry for later use (thread-safety)
     end
 
     def ~
@@ -73,14 +71,14 @@ module Matcher
     end
 
     def target
-      target = @targets[@key]
+      pair = @targets[@key]
 
-      raise "No target for #{@key.inspect}" if target.nil? && !@targets.key?(@key)
+      raise "No target for #{@key.inspect}" unless pair
 
       if @negated
-        @targets["~#{@key}"] ||= ~target
+        pair[1] ||= ~pair[0]
       else
-        target
+        pair[0]
       end
     end
   end
