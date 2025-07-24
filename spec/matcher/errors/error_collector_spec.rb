@@ -65,15 +65,6 @@ describe Matcher::ErrorCollector do
     assert_equal nested(foo, element('foobar')), collector.error
   end
 
-  it 'binds nested values' do
-    collector = Matcher::ErrorCollector.new(foo: 1)
-    collector[expression { _ + vars[:foo] }] << 'something went wrong'
-
-    key = collector.error.key
-
-    assert_equal 3, key.evaluate(actual: 2)
-  end
-
   it '#<<: base error' do
     assert_equal empty, collector.error
 

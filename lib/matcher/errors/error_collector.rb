@@ -65,7 +65,6 @@ module Matcher
 
         key = @key
         key = Call.new(Variable.actual, :[], [Constant.new(key)]) unless key.is_a?(Expression)
-        key = key.bind(@values) if @values
 
         @parent << NestedError.new(key, error)
 
