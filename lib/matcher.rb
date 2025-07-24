@@ -140,12 +140,12 @@ module Matcher
 
   CASE_EQUALITY_CLASSES = [Module, Range, Regexp].freeze
 
-  def self.max_depth
-    @max_depth ||= 5000
+  def self.max_reference_depth
+    @max_reference_depth ||= 100
   end
 
-  def self.max_depth=(val)
-    @max_depth = val
+  def self.max_reference_depth=(value)
+    @max_reference_depth = value
   end
 
   def self.of(object)

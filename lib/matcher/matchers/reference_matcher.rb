@@ -21,6 +21,15 @@ module Matcher
 
     def check(state)
       actual = state.actual
+      sess = class_session
+      depth = sess[:depth]
+      depth = depth ? depth + 1 : 1
+      sess[:depth] = depth
+
+      if depth > Matcher.max_reference_depth
+        state.errors << "match level too deep: #{depth}"
+        return
+      end
 
       unless visited.add?(actual.object_id)
         state.errors << report.namespace(:reference).cyclic if @negated == @cyclic
@@ -34,9 +43,13 @@ module Matcher
       end
 
       cache_key = [@negated ? "~#{@key}" : @key, actual.object_id]
+      cache = (sess[:cache] ||= {})
       cached_result = cache[cache_key]
 
       if cached_result.nil?
+        # If @cyclic then call #match instead of yield. We disallow passing
+        # previous values for cyclic reference matchers. #match will create a
+        # new values stack.
         target_errors = @cyclic ? target.match(actual) : yield(target)
 
         cache[cache_key] = target_errors.valid?
@@ -45,6 +58,8 @@ module Matcher
       elsif !cached_result
         state.errors << report.namespace(:reference).failed_from_cache
       end
+    ensure
+      sess[:depth] = depth - 1
     end
 
     def to_s
@@ -55,10 +70,6 @@ module Matcher
 
     def visited
       session(@session_key)[:visited] ||= Set.new
-    end
-
-    def cache
-      class_session[:cache] ||= Hash.new
     end
 
     def target
