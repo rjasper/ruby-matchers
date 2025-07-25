@@ -27,8 +27,8 @@ module Matcher
   end
 
   module MatcherBuilding
-    def imply(condition, matcher = NULL)
-      return Pipe.new { imply(condition, _1) } if Matcher.null?(matcher)
+    def imply(condition, matcher = UNDEFINED)
+      return Pipe.new { imply(condition, _1) } if Matcher.undefined?(matcher)
 
       condition = Matcher.of(condition)
       matcher = Matcher.of(matcher)

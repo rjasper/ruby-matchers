@@ -22,8 +22,8 @@ module Matcher
   end
 
   module MatcherBuilding
-    def neg(matcher = NULL)
-      return Pipe.new { neg(_1) } if Matcher.null?(matcher)
+    def neg(matcher = UNDEFINED)
+      return Pipe.new { neg(_1) } if Matcher.undefined?(matcher)
 
       ~Matcher.of(matcher)
     end

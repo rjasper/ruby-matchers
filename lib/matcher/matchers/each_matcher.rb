@@ -31,8 +31,8 @@ module Matcher
   end
 
   module MatcherBuilding
-    def each(matcher = NULL)
-      return Pipe.new { each(_1) } if Matcher.null?(matcher)
+    def each(matcher = UNDEFINED)
+      return Pipe.new { each(_1) } if Matcher.undefined?(matcher)
 
       EachMatcher.new(Matcher.of(matcher))
     end

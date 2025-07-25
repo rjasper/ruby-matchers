@@ -13,7 +13,7 @@ module Matcher
     end
 
     def bound?
-      !Matcher.null?(@actual)
+      !Matcher.undefined?(@actual)
     end
 
     def negate!

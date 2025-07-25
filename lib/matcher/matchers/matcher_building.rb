@@ -6,8 +6,8 @@ module Matcher
       Matcher.of(matcher)
     end
 
-    def present(matcher = NULL)
-      return Pipe.new { present(_1) } if Matcher.null?(matcher)
+    def present(matcher = UNDEFINED)
+      return Pipe.new { present(_1) } if Matcher.undefined?(matcher)
 
       all(!_.nil?, matcher)
     end

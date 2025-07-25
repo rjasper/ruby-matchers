@@ -17,7 +17,7 @@ module Matcher
     def self.else_matcher(else:)
       els = { else: }[:else]
 
-      Matcher.null?(els) ? nil : Matcher.of(els)
+      Matcher.undefined?(els) ? nil : Matcher.of(els)
     end
 
     def initialize(matchers, else_matcher, count)
@@ -73,13 +73,13 @@ module Matcher
   end
 
   module MatcherBuilding
-    def imply_one(*matchers, else: NULL)
+    def imply_one(*matchers, else: UNDEFINED)
       else_matcher = ImplySomeMatcher.else_matcher(else:)
 
       ImplySomeMatcher.new(matchers, else_matcher, 1)
     end
 
-    def imply_any(*matchers, else: NULL)
+    def imply_any(*matchers, else: UNDEFINED)
       else_matcher = ImplySomeMatcher.else_matcher(else:)
 
       ImplySomeMatcher.new(matchers, else_matcher, :any)

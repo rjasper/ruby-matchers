@@ -63,9 +63,9 @@ module Matcher
     def match(actual, **)
       values_stack = ValuesStack.new
 
-      invoke = lambda do |matcher, act = NULL, **kwargs|
+      invoke = lambda do |matcher, act = UNDEFINED, **kwargs|
         state = State.new(values_stack)
-        kwargs[:actual] = act unless Matcher.null?(act)
+        kwargs[:actual] = act unless Matcher.undefined?(act)
 
         if kwargs.empty?
           matcher.check(state, &invoke)
@@ -93,11 +93,11 @@ module Matcher
 
     protected
 
-    def report(actual = NULL)
+    def report(actual = UNDEFINED)
       StandardMessageBuilder.new(false, actual)
     end
 
-    def expected(actual = NULL)
+    def expected(actual = UNDEFINED)
       StandardMessageBuilder.new(true, actual)
     end
 

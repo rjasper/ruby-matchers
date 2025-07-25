@@ -63,8 +63,8 @@ module Matcher
   end
 
   module MatcherBuilding
-    def inline(matcher = NULL, negatable: false, &)
-      matcher = Matcher.null?(matcher) ? nil : Matcher.of(matcher)
+    def inline(matcher = UNDEFINED, negatable: false, &)
+      matcher = Matcher.undefined?(matcher) ? nil : Matcher.of(matcher)
 
       InlineMatcher.new(matcher, negatable:, &)
     end

@@ -15,8 +15,8 @@ module Matcher
       end
     end
 
-    def expr(obj = NULL, &block)
-      raise 'obj and block given' if !Matcher.null?(obj) && block_given?
+    def expr(obj = UNDEFINED, &block)
+      raise 'obj and block given' if !Matcher.undefined?(obj) && block_given?
 
       expression = block_given? ? ProcExpression.new(block) : Expression.of(obj)
       expression.to_recorder
@@ -55,10 +55,10 @@ module Matcher
     end
     alias lo logical_operators
 
-    def pass_through_blocks(arg = NULL, &)
+    def pass_through_blocks(arg = UNDEFINED, &)
       # Note that arg might be a recorder where #nil? won't work.
 
-      if Matcher.null?(arg)
+      if Matcher.undefined?(arg)
         Matcher.with_settings(pass_through_blocks: true, &)
       else
         Matcher.with_settings(pass_through_blocks: true) do

@@ -29,10 +29,10 @@ module Matcher
 
     DEFAULT_OPTIONS = { cache: true }.freeze
 
-    def []=(key, matcher_or_options, matcher = NULL)
+    def []=(key, matcher_or_options, matcher = UNDEFINED)
       raise "Cannot reassign reference: #{key.inspect}" if @targets.key?(key)
 
-      if Matcher.null?(matcher)
+      if Matcher.undefined?(matcher)
         options = DEFAULT_OPTIONS
         matcher = matcher_or_options
       else

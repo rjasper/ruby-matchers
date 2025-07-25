@@ -47,12 +47,12 @@ module Matcher
   end
 
   module MatcherBuilding
-    def let(assigns = nil, matcher = NULL, **kwargs)
+    def let(assigns = nil, matcher = UNDEFINED, **kwargs)
       raise "Cannot set both assigns and kwargs" if assigns && !kwargs.empty?
 
       assigns = kwargs unless assigns
 
-      return Pipe.new { let(assigns, _1) } if Matcher.null?(matcher)
+      return Pipe.new { let(assigns, _1) } if Matcher.undefined?(matcher)
 
       matcher = Matcher.of(matcher)
 

@@ -117,11 +117,11 @@ require_relative 'matcher/testing/pattern_testing'
 require_relative 'matcher/testing/pattern_testing_scope'
 
 module Matcher
-  NULL = Object.new.freeze
+  UNDEFINED = Object.new.freeze
 
-  def self.null?(object)
-    # Note that for an ExpressionRecorder object == NULL won't work.
-    NULL == object
+  def self.undefined?(object)
+    # Note that for an ExpressionRecorder object == UNDEFINED won't work.
+    UNDEFINED == object
   end
 
   def self.build(&)
