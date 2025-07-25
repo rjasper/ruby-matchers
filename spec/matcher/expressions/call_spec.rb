@@ -192,28 +192,6 @@ describe Matcher::Call do
   end
   # rubocop:enable Style/CaseEquality, Layout/SpaceBeforeBrackets
 
-  it 'negated' do
-    examine = lambda do |expected, &block|
-      assert_equal expected, expression(&block).negated.to_s
-    end
-
-    examine['!_'] { _ }
-    examine['_'] { !_ }
-    examine['_ != 2'] { _ == 2 }
-    examine['_ == 2'] { _ != 2 }
-    examine['_ !~ 2'] { _ =~ 2 }
-    examine['_ =~ 2'] { _ !~ 2 }
-    examine['_ >= 2'] { _ < 2 }
-    examine['_ <= 2'] { _ > 2 }
-    examine['_ > 2'] { _ <= 2 }
-    examine['_ < 2'] { _ >= 2 }
-
-    Matcher.with_settings(logical_operators: true) do
-      examine['!_ || false'] { _ & 2 }
-      examine['!_ && false'] { _ | 2 }
-    end
-  end
-
   it 'logical operators' do
     call = Matcher.with_settings(logical_operators: true) do
       expression do

@@ -80,41 +80,6 @@ module Matcher
       @method.end_with?('=') && !%i[<= >= == === !=].include?(@method)
     end
 
-    def negated
-      @negated ||= begin
-        if unary? && @method == :!
-          @receiver
-        elsif binary? && %i[< > <= >= == != =~ !~ && ||].include?(@method)
-          case @method
-          when :<
-            Call.new(@receiver, :>=, @args)
-          when :>
-            Call.new(@receiver, :<=, @args)
-          when :<=
-            Call.new(@receiver, :>, @args)
-          when :>=
-            Call.new(@receiver, :<, @args)
-          when :==
-            Call.new(@receiver, :!=, @args)
-          when :!=
-            Call.new(@receiver, :==, @args)
-          when :=~
-            Call.new(@receiver, :!~, @args)
-          when :!~
-            Call.new(@receiver, :=~, @args)
-          when :'&&'
-            Call.new(@receiver.negated, :'||', [Expression.negate(@args[0])])
-          when :'||'
-            Call.new(@receiver.negated, :'&&', [Expression.negate(@args[0])])
-          else
-            raise "Unexpected method: #{method.inspect}"
-          end
-        else
-          super
-        end
-      end
-    end
-
     def precedence
       @precedence ||= begin
         has_precedence = (unary? && UNARY_OPERATORS.include?(@method)) ||

@@ -49,20 +49,8 @@ module Matcher
       ExpressionRecorder.to_expression(obj)
     end
 
-    def self.negate(obj)
-      if obj.is_a?(Expression)
-        obj.negated
-      else
-        !obj
-      end
-    end
-
     def initialize
       raise 'abstract class' if instance_of?(Expression)
-    end
-
-    def negated
-      Call.new(self, :!)
     end
 
     def evaluate_tree(values)
