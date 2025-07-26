@@ -2,6 +2,9 @@
 
 module Matcher
   class Pipe
+    include NoMatcher
+    include NoExpression
+
     def initialize(&block)
       @block = block
     end

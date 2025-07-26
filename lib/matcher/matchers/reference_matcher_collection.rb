@@ -2,6 +2,9 @@
 
 module Matcher
   class ReferenceMatcherCollection
+    include NoMatcher
+    include NoExpression
+
     attr_reader :last_object_id, :last_matcher
 
     def initialize

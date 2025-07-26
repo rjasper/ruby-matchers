@@ -13,6 +13,8 @@ module Matcher
           vars[symbol]
         end
       end
+
+      UNDEFINED
     end
 
     def expr(obj = UNDEFINED, &block)
@@ -65,7 +67,6 @@ module Matcher
           yield arg
         end
       end
-
     end
     alias ptb pass_through_blocks
 
@@ -95,6 +96,9 @@ module Matcher
     end
 
     class VariableFactory
+      include NoMatcher
+      include NoExpression
+
       def initialize
         @cache = {}
       end

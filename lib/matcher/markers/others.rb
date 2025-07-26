@@ -3,6 +3,8 @@
 module Matcher
   class Others
     include Singleton
+    include NoMatcher
+    include NoExpression
 
     def to_s
       'others'

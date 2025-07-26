@@ -2,6 +2,8 @@
 
 module Matcher
   class Base
+    include NoExpression
+
     def ~
       NegatedMatcher.new(self)
     end

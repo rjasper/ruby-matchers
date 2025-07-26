@@ -2,6 +2,9 @@
 
 module Matcher
   class Optional
+    include NoMatcher
+    include NoExpression
+
     def self.value_of(obj)
       obj.is_a?(Optional) ? obj.value : obj
     end

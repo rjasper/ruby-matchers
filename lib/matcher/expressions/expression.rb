@@ -18,6 +18,10 @@ module Matcher
       return ExpressionRecorder.to_expression(obj) if ExpressionRecorder.recorder?(obj)
 
       case obj
+      when Base
+        raise ArgumentError, 'Cannot use matcher as expression'
+      when NoExpression
+        raise ArgumentError, "Cannot use #{obj.class} as expression"
       when Expression
         obj
       when Array

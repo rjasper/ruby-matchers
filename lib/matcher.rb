@@ -5,6 +5,11 @@ require_relative "matcher/version"
 require 'singleton'
 require 'forwardable'
 
+module Matcher
+  module NoMatcher; end
+  module NoExpression; end
+end
+
 require_relative 'matcher/expressions/expression_building'
 require_relative 'matcher/matchers/matcher_building'
 require_relative 'matcher/patterns/pattern_building'
@@ -17,6 +22,7 @@ require_relative 'matcher/list'
 require_relative 'matcher/pipe'
 require_relative 'matcher/reporter'
 require_relative 'matcher/state'
+require_relative 'matcher/undefined'
 require_relative 'matcher/utils'
 require_relative 'matcher/values_stack'
 
@@ -117,7 +123,7 @@ require_relative 'matcher/testing/pattern_testing'
 require_relative 'matcher/testing/pattern_testing_scope'
 
 module Matcher
-  UNDEFINED = Object.new.freeze
+  UNDEFINED = Undefined.instance
 
   def self.undefined?(object)
     # Note that for an ExpressionRecorder object == UNDEFINED won't work.
@@ -155,8 +161,8 @@ module Matcher
     end
 
     case object
-    when Pipe
-      raise "Cannot build Matcher from Pipe"
+    when NoMatcher
+      raise ArgumentError, "Cannot use #{object.class} as matcher"
     when Base
       object
     when Expression
