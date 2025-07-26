@@ -87,7 +87,7 @@ module Matcher
     alias eql? ==
 
     def hash
-      [@parameters, @expression].hash
+      [self.class, @parameters, @expression].hash
     end
 
     def variables

@@ -73,7 +73,7 @@ module Matcher
     end
 
     def hash
-      @hash ||= [@head, @tail].hash
+      @hash ||= [self.class, @head, @tail].hash
     end
 
     def ==(other)

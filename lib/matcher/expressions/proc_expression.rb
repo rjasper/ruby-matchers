@@ -55,7 +55,7 @@ module Matcher
     alias eql? ==
 
     def hash
-      @block.hash
+      [self.class, @block].hash
     end
 
     def substitute(replacements)

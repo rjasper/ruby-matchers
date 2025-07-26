@@ -23,7 +23,7 @@ module Matcher
     alias eql? ==
 
     def hash
-      @symbol.hash
+      [self.class, @symbol].hash
     end
 
     def to_proc

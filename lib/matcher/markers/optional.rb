@@ -23,7 +23,7 @@ module Matcher
     alias eql? ==
 
     def hash
-      @hash ||= [Optional, @value].hash
+      [self.class, @value].hash
     end
 
     def to_s

@@ -152,7 +152,7 @@ module Matcher
     alias eql? ==
 
     def hash
-      @hash ||= [@receiver, @args, @method, @kwargs, @block].hash
+      @hash ||= [self.class, @receiver, @args, @method, @kwargs, @block].hash
     end
 
     def visit(&)

@@ -27,7 +27,7 @@ module Matcher
     alias eql? ==
 
     def hash
-      [@symbol, @value].hash
+      [self.class, @symbol, @value].hash
     end
 
     def bind(_values)
