@@ -179,7 +179,9 @@ module Matcher
 
       while cur.is_a?(Call)
         if cur.method == :[] && cur.binary?
-          e = !trace.empty? && trace.reduce(Variable.actual) { _2.new_root(_1) }
+          e = !trace.empty? && trace.reduce(Variable.actual) do |expr, cur|
+            Call.new(expr, cur.method, cur.args, cur.kwargs, cur.block)
+          end
 
           tail <<= e if e
           arg = cur.args[0]

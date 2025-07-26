@@ -68,10 +68,6 @@ module Matcher
       knary?(1)
     end
 
-    def ternary?
-      knary?(2)
-    end
-
     def knary?(arity)
       @args.length == arity && @kwargs.empty? && !@block
     end
@@ -133,10 +129,6 @@ module Matcher
 
         variables.uniq
       end
-    end
-
-    def new_root(receiver)
-      Call.new(receiver, @method, @args, @kwargs, @block)
     end
 
     def ==(other)
@@ -257,19 +249,6 @@ module Matcher
 
         string
       end
-    end
-
-    def given_values(values, substitutions: Expression.default_substitutions)
-      parts = variables.filter_map do |symbol|
-        value = values[symbol]
-        next if value.nil? && !values.key?(symbol)
-
-        substitution = substitutions&.[](symbol)
-
-        "#{substitution || symbol} = #{value.inspect}"
-      end
-
-      parts.join(', ')
     end
 
     private
