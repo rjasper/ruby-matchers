@@ -15,10 +15,21 @@ module Matcher
 
     def check(state)
       assigns = @assigns.transform_values do |v|
-        v.is_a?(Proc) ? Utils.call_block(v, state.values) : v
+        v = Expression.try_recorder(v)
+
+        case v
+        when Proc
+          Utils.call_block(v, state.values)
+        when Expression
+          v.evaluate(state.values)
+        else
+          v
+        end
       end
 
-      state.errors << yield(@matcher, assigns[:actual] || state.actual, **assigns)
+      actual = assigns.fetch(:actual, state.actual)
+
+      state.errors << yield(@matcher, actual, **assigns)
     end
 
     def to_s
@@ -50,7 +61,7 @@ module Matcher
     def let(assigns = nil, matcher = UNDEFINED, **kwargs)
       raise "Cannot set both assigns and kwargs" if assigns && !kwargs.empty?
 
-      assigns = kwargs unless assigns
+      assigns ||= kwargs
 
       return Pipe.new { let(assigns, _1) } if Matcher.undefined?(matcher)
 

@@ -81,6 +81,15 @@ describe Matcher::LetMatcher do
     assert_no_errors negated.match(actual)
   end
 
+  it 'sets variable to expression value' do
+    matcher = Matcher.build do
+      let(foo: _ * 2) ^ (vars[:foo] == 4)
+    end
+
+    assert_no_errors matcher.match(2)
+    assert_errors matcher.match(3), 'expected foo == 4 but got 6 == 4'
+  end
+
   it 'sets actual' do
     matcher = Matcher.build do
       each_pair ^ let(actual: ->(key:, value:) { key + value }) ^ of(_.even?)
