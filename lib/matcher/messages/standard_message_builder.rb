@@ -38,8 +38,8 @@ module Matcher
       message(:comparable_to, operand)
     end
 
-    def between(min, max, exclude_end = false)
-      message(:between, min, max, exclude_end)
+    def between(min, max, exclude_end: false)
+      message(:between, min, max, exclude_end:)
     end
 
     def length_of(exp, act)

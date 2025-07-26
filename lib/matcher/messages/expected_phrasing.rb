@@ -58,7 +58,7 @@ module Matcher
       "#{verb} a value comparable to #{operand.inspect} but got #{actual.inspect}"
     end
 
-    define(:between) do |min, max, exclude_end|
+    define(:between) do |min, max, exclude_end: false|
       "#{verb} value to be between #{min.inspect} and " \
         "#{max.inspect}#{' (exclusive)' if exclude_end} but got #{actual.inspect}"
     end
