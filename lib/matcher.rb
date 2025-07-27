@@ -46,6 +46,7 @@ require_relative 'matcher/expressions/expression_walker'
 require_relative 'matcher/expressions/hash_expression'
 require_relative 'matcher/expressions/not_responding_error'
 require_relative 'matcher/expressions/proc_expression'
+require_relative 'matcher/expressions/set_expression'
 require_relative 'matcher/expressions/symbol_proc'
 require_relative 'matcher/expressions/variable'
 

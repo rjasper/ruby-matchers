@@ -42,6 +42,14 @@ module Matcher
         else
           Constant.new(obj)
         end
+      when Set
+        if obj.any? { _1.is_a?(Expression) }
+          items = obj.map { of(_1) }
+
+          SetExpression.new(items)
+        else
+          Constant.new(obj)
+        end
       else
         Constant.new(obj)
       end
