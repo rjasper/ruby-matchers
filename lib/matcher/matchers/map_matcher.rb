@@ -2,18 +2,22 @@
 
 module Matcher
   class MapMatcher < Base
-    def initialize(projection, matcher)
+    def initialize(projection, matcher, negated: false)
       super()
 
       @projection = projection
-      @matcher = matcher
+      @matcher = negated ? ~matcher : matcher
+      @original_matcher = matcher
+      @negated = negated
     end
 
     def ~
-      NegatedMapMatcher.new(@projection, @matcher)
+      MapMatcher.new(@projection, @original_matcher, negated: !@negated)
     end
 
-    def check(state)
+    def check(state, &)
+      return negated_check(state, &) if @negated
+
       actual = state.actual
       values = state.values
 
@@ -42,87 +46,104 @@ module Matcher
     end
 
     def to_s
-      "map(#{@projection}, #{@matcher})"
+      "#{'~' if @negated}map(#{@projection}, #{@original_matcher})"
     end
 
-    module ErrorMapping
-      private
+    private
 
-      def map_errors(error, state)
-        case error
-        when EmptyError
+    def negated_check(state)
+      actual = state.actual
+      values = state.values
+
+      return unless actual.respond_to?(:map)
+
+      mapped = []
+
+      actual.map.with_index do |item, i|
+        mapped << @projection.evaluate(
+          values.merge(actual: item, index: i, original: actual),
+        )
+      rescue CallError
+        return if @negated
+      end
+
+      mapped_errors = yield @matcher, mapped, original: actual
+
+      state.errors << map_errors(mapped_errors, state)
+    end
+
+    def map_errors(error, state)
+      case error
+      when EmptyError
+        error
+      when AndError, OrError
+        children = error.children.map { map_errors(_1, state) }
+        error.class.new(children)
+      when NestedError
+        key = error.key
+
+        is_index = key.is_a?(Call) &&
+          key.binary? &&
+          key.receiver == Variable.actual &&
+          (operand = key.args[0]) &&
+          operand.is_a?(Constant) &&
+          operand.constant.is_a?(Integer)
+
+        if is_index
+          state.new_collector[key][@projection] << error.child
+        else
           error
-        when AndError, OrError
-          children = error.children.map { map_errors(_1, state) }
-          error.class.new(children)
-        when NestedError
-          key = error.key
-
-          is_index = key.is_a?(Call) &&
-            key.binary? &&
-            key.receiver == Variable.actual &&
-            (operand = key.args[0]) &&
-            operand.is_a?(Constant) &&
-            operand.constant.is_a?(Integer)
-
-          if is_index
-            state.new_collector[key][@projection] << error.child
-          else
-            error
-          end
-        when ElementError
-          state.new_collector[nested_key] << error
-        else
-          raise "Unexpected error: #{error.inspect}"
         end
-      end
-
-      def nested_key
-        proj = @projection
-        actual_var = Variable.actual
-        as_symbol_proc = proj.is_a?(Call) && proj.unary? && proj.receiver == actual_var
-        with_index = proj.variables.include?(:index)
-
-        block = if as_symbol_proc
-          SymbolProc.new(proj.method)
-        else
-          symbol = find_free_symbol(proj)
-          parameters = [[:opt, symbol]]
-          parameters << [:opt, :index] if with_index
-          expression = proj.substitute(actual: symbol, original: :actual)
-
-          Block.new(parameters, expression)
-        end
-
-        if with_index
-          map = Call.new(actual_var, :map, [], {})
-          Call.new(map, :with_index, [], {}, block)
-        else
-          Call.new(actual_var, :map, [], {}, block)
-        end
-      end
-
-      def find_free_symbol(expression)
-        parameters = ExpressionWalker.each_block(expression).flat_map do |block|
-          block.parameters.map { |_type, name| name }
-        end
-
-        identifiers = (expression.variables + parameters).to_set(&:to_s)
-
-        return :e unless identifiers.include?('e')
-
-        i = 2
-        loop do
-          name = "e#{i}"
-
-          return name.to_sym unless identifiers.include?(name)
-
-          i += 1
-        end
+      when ElementError
+        state.new_collector[nested_key] << error
+      else
+        raise "Unexpected error: #{error.inspect}"
       end
     end
 
-    include ErrorMapping
+    def nested_key
+      proj = @projection
+      actual_var = Variable.actual
+      as_symbol_proc = proj.is_a?(Call) && proj.unary? && proj.receiver == actual_var
+      with_index = proj.variables.include?(:index)
+
+      block = if as_symbol_proc
+        SymbolProc.new(proj.method)
+      else
+        symbol = find_free_symbol(proj)
+        parameters = [[:opt, symbol]]
+        parameters << [:opt, :index] if with_index
+        expression = proj.substitute(actual: symbol, original: :actual)
+
+        Block.new(parameters, expression)
+      end
+
+      if with_index
+        map = Call.new(actual_var, :map, [], {})
+        Call.new(map, :with_index, [], {}, block)
+      else
+        Call.new(actual_var, :map, [], {}, block)
+      end
+    end
+
+    def find_free_symbol(expression)
+      parameters = ExpressionWalker.each_block(expression).flat_map do |block|
+        block.parameters.map { |_type, name| name }
+      end
+
+      identifiers = (expression.variables + parameters).to_set(&:to_s)
+
+      return :e unless identifiers.include?('e')
+
+      i = 2
+      loop do
+        name = "e#{i}"
+
+        return name.to_sym unless identifiers.include?(name)
+
+        i += 1
+      end
+    end
   end
 
   module MatcherBuilding
