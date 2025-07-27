@@ -81,7 +81,7 @@ module Matcher
         proj = @projection
         actual_var = Variable.actual
         as_symbol_proc = proj.is_a?(Call) && proj.unary? && proj.receiver == actual_var
-        with_index = true if proj.variables.include?(:index)
+        with_index = proj.variables.include?(:index)
 
         block = if as_symbol_proc
           SymbolProc.new(proj.method)
