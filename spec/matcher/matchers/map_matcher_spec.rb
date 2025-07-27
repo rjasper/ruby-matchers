@@ -74,6 +74,16 @@ describe Matcher::MapMatcher do
     assert_equal [309, 318, 327], errors.key.evaluate({ actual: [9, 8, 7] })
   end
 
+  it 'maps projection with block' do
+    matcher = Matcher.build do
+      map(_.sum(&:to_i), [1, 2, 3])
+    end
+
+    assert_no_errors matcher.match([%w[0 1], %w[1 1], %w[1 2]])
+    assert_errors matcher.match([%w[0 1], %w[1 1], %w[1 3]]),
+      2 => { expression { _.sum(&:to_i) } => msg(4).not.equal(3) }
+  end
+
   it 'passes index' do
     matcher = Matcher.build { map(_[:a] + i, [10, 21, 32]) }
 
