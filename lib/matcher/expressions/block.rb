@@ -94,16 +94,6 @@ module Matcher
       @variables ||= @expression.variables - @parameters.map { _2 }
     end
 
-    def bind(values)
-      values = values.slice(*variables)
-
-      return self if values.empty?
-
-      expression = @expression.bind(values)
-
-      Block.new(@parameters, expression)
-    end
-
     def substitute(replacements)
       replacements = replacements.slice(*variables)
 

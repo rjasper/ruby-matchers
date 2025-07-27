@@ -157,22 +157,6 @@ module Matcher
       yield self
     end
 
-    def bind(values)
-      receiver = @receiver.bind(values)
-      args = @args.map { _1.bind(values) }
-      args = @args if args.lazy.zip(@args).all? { _1.equal?(_2) }
-      kwargs = @kwargs.transform_values { _1.bind(values) }
-      kwargs = @kwargs if kwargs.all? { @kwargs[_1].equal?(_2) }
-      block = @block.is_a?(Matcher::Block) ? @block.bind(values) : @block
-
-      return self if receiver.equal?(@receiver) &&
-        args.equal?(@args) &&
-        kwargs.equal?(@kwargs) &&
-        block.equal?(@block)
-
-      Call.new(receiver, @method, args, kwargs, block)
-    end
-
     def substitute(replacements)
       replacement_names = replacements.keys
 

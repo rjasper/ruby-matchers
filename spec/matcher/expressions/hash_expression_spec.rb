@@ -15,18 +15,6 @@ describe Matcher::HashExpression do
     assert_equal({ 1 => 2 }, expression.evaluate(foo: 1, bar: 2))
   end
 
-  it '#bind' do
-    expression = Matcher::Expression.build { { vars[:foo] => vars[:bar] } }
-    expected = Matcher::Expression.build do
-      {
-        Matcher::Variable.new(:foo).bind(foo: 1) =>
-          Matcher::Variable.new(:bar).bind(bar: 2),
-      }
-    end
-
-    assert_equal expected, expression.bind(foo: 1, bar: 2)
-  end
-
   it '#substitute' do
     expression = Matcher::Expression.build { { vars[:foo] => vars[:bar] } }
     expected = Matcher::Expression.build { { vars[:bar] => vars[:foo] } }

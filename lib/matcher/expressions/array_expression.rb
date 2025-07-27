@@ -30,14 +30,6 @@ module Matcher
       @items.map { _1.evaluate(values) }
     end
 
-    def bind(values)
-      return self unless values.keys.intersect?(variables)
-
-      bound_items = @items.map { _1.bind(values) }
-
-      ArrayExpression.new(bound_items)
-    end
-
     def substitute(replacements)
       return self unless replacements.keys.intersect?(variables)
 

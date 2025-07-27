@@ -34,10 +34,6 @@ module Matcher
       [self.class, @constant].hash
     end
 
-    def bind(_values)
-      self
-    end
-
     def substitute(_replacements)
       self
     end

@@ -32,16 +32,6 @@ module Matcher
       end
     end
 
-    def bind(values)
-      return self unless values.keys.intersect?(variables)
-
-      bound_pairs = @pairs.map do |k, v|
-        [k.bind(values), v.bind(values)]
-      end
-
-      HashExpression.new(bound_pairs)
-    end
-
     def substitute(replacements)
       return self unless replacements.keys.intersect?(variables)
 
