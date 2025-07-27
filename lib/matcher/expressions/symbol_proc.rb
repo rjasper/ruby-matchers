@@ -26,6 +26,10 @@ module Matcher
       [self.class, @symbol].hash
     end
 
+    def variables
+      []
+    end
+
     def to_proc
       @proc
     end
