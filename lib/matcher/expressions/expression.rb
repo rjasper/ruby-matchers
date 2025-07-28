@@ -25,7 +25,7 @@ module Matcher
       when Expression
         obj
       when Array
-        if obj.any? { _1.is_a?(Expression) }
+        if obj.any? { expression_or_recorder?(_1) }
           items = obj.map { of(_1) }
 
           ArrayExpression.new(items)
@@ -33,7 +33,7 @@ module Matcher
           Constant.new(obj)
         end
       when Hash
-        if obj.any? { |k, v| k.is_a?(Expression) || v.is_a?(Expression) }
+        if obj.any? { |k, v| expression_or_recorder?(k) || expression_or_recorder?(v) }
           pairs = obj.map do |key, value|
             [of(key), of(value)]
           end
@@ -43,7 +43,7 @@ module Matcher
           Constant.new(obj)
         end
       when Set
-        if obj.any? { _1.is_a?(Expression) }
+        if obj.any? { expression_or_recorder?(_1) }
           items = obj.map { of(_1) }
 
           SetExpression.new(items)
@@ -59,6 +59,10 @@ module Matcher
       return obj unless ExpressionRecorder.recorder?(obj)
 
       ExpressionRecorder.to_expression(obj)
+    end
+
+    def self.expression_or_recorder?(obj)
+      ExpressionRecorder.recorder?(obj) || obj.is_a?(Expression)
     end
 
     def initialize
