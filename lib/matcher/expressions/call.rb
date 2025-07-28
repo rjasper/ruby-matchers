@@ -117,13 +117,9 @@ module Matcher
 
     def variables
       @variables ||= begin
-        variables_from_arg = lambda do |arg|
-          arg.is_a?(Expression) ? arg.variables : []
-        end
-
         variables = @receiver.variables +
-          @args.flat_map(&variables_from_arg) +
-          @kwargs.each_value.flat_map(&variables_from_arg)
+          @args.flat_map(&:variables) +
+          @kwargs.each_value.flat_map(&:variables)
 
         variables.concat(@block.variables) if @block
 
@@ -151,8 +147,8 @@ module Matcher
       return to_enum(:visit) unless block_given?
 
       @receiver.visit(&)
-      @args.each { _1.visit(&) if _1.is_a?(Expression) }
-      @kwargs.each_value { _1.visit(&) if _1.is_a?(Expression) }
+      @args.each { _1.visit(&) }
+      @kwargs.each_value { _1.visit(&) }
 
       yield self
     end
@@ -166,14 +162,10 @@ module Matcher
 
       no_change = nil
       substitute = lambda do |expression|
-        if expression.is_a?(Expression)
-          result = expression.substitute(replacements)
-          no_change = false unless result.equal?(expression)
+        result = expression.substitute(replacements)
+        no_change = false unless result.equal?(expression)
 
-          result
-        else
-          expression
-        end
+        result
       end
 
       no_change = true
@@ -324,8 +316,6 @@ module Matcher
     end
 
     def parenthesize(operand, is_rhs, substitutions)
-      return operand.inspect unless operand.is_a?(Expression)
-
       operand_string = operand.to_s(substitutions:)
 
       return operand_string unless operand.instance_of?(Call)
