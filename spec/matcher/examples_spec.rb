@@ -5,18 +5,16 @@ require 'test_helper'
 describe 'examples' do
   it 'tree' do
     matcher = Matcher.build do
-      declare :low, :high
       inf = Float::INFINITY
+      declare low: -inf, high: inf
+
+      child = of(nil) + refs[:node]
 
       refs[:node] = {
-        key: all(Integer, lo { (_ > low) & (_ < high) }),
-        left: let(high: ->(high:, parent:) { [parent[:key], high].min }) ^
-          (of(nil) + refs[:node]),
-        right: let(low: ->(low:, parent:) { [parent[:key], low].max }) ^
-          (of(nil) + refs[:node]),
+        key: of(Integer) & lo { (_ > low) & (_ < high) },
+        left: let(high: expr([parent[:key], high]).min) ^ child,
+        right: let(low: expr([parent[:key], low]).max) ^ child,
       }
-
-      let(low: -inf, high: inf) ^ refs[:node]
     end
 
     tree = {
@@ -46,14 +44,14 @@ describe 'examples' do
 
   it 'cyclic graph' do
     matcher = Matcher.build do
-      refs[:vertex] = let(vertex: -> { _1 }) ^ {
+      refs[:vertex] = {
         name: String,
         edges: each(refs[:edge, cyclic: true]),
       }
 
       refs[:edge] = {
         weight: Integer,
-        destination: refs[:vertex, cyclic: true]
+        destination: refs[:vertex, cyclic: true],
       }
 
       # graph
@@ -77,7 +75,9 @@ describe 'examples' do
 
   it 'pipe' do
     matcher = Matcher.build do
-      let(c: 1) ^ let(c: ->(c:) { c + 1 }) ^ {
+      declare :c
+
+      let(c: 1) ^ let(c: c + 1) ^ {
         value: _ == vars[:c],
       }
     end
