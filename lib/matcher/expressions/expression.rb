@@ -42,6 +42,12 @@ module Matcher
         else
           Constant.new(obj)
         end
+      when Range
+        if expression_or_recorder?(obj.begin) || expression_or_recorder?(obj.end)
+          RangeExpression.new(of(obj.begin), of(obj.end), obj.exclude_end?)
+        else
+          Constant.new(obj)
+        end
       when Set
         if obj.any? { expression_or_recorder?(_1) }
           items = obj.map { of(_1) }
