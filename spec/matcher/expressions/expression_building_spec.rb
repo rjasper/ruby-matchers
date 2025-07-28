@@ -34,4 +34,14 @@ describe Matcher::ExpressionBuilding do
 
     assert_equal [2, 4, 6, 0], exp.evaluate(actual: [1, 2, 3, nil])
   end
+
+  it '#declare' do
+    matcher = Matcher.build do
+      declare foo: 42
+
+      _ + foo == 23
+    end
+
+    assert_no_errors matcher.match(-19)
+  end
 end

@@ -135,13 +135,19 @@ module Matcher
     with_build_session do
       builder = Builder.new
       object = builder.instance_exec(&)
-
       builder.refs.check
 
-      return builder.refs.last_matcher if
-        builder.refs? && builder.refs.last_object_id == object.object_id
+      matcher = if builder.refs? && builder.refs.last_object_id == object.object_id
+        builder.refs.last_matcher
+      else
+        of(object)
+      end
 
-      of(object)
+      if (assigns = builder.assigns)
+        LetMatcher.new(assigns, matcher)
+      else
+        matcher
+      end
     end
   end
 

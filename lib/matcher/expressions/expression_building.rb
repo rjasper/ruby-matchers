@@ -2,7 +2,10 @@
 
 module Matcher
   module ExpressionBuilding
-    def declare(*symbols)
+    attr_reader :assigns
+
+    def declare(*symbols, **assigns)
+      symbols.concat(assigns.keys - symbols)
       conflicts = symbols & methods
 
       raise "Cannot declare these variables: #{conflicts.join(', ')}" if conflicts.length > 1
@@ -11,6 +14,14 @@ module Matcher
       symbols.each do |symbol|
         define_singleton_method(symbol) do
           vars[symbol]
+        end
+      end
+
+      unless assigns.empty?
+        if @assigns
+          @assigns.merge!(assigns)
+        else
+          @assigns = assigns
         end
       end
 
