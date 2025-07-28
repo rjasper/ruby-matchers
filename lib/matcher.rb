@@ -48,6 +48,7 @@ require_relative 'matcher/expressions/not_responding_error'
 require_relative 'matcher/expressions/proc_expression'
 require_relative 'matcher/expressions/range_expression'
 require_relative 'matcher/expressions/set_expression'
+require_relative 'matcher/expressions/string_expression'
 require_relative 'matcher/expressions/symbol_proc'
 require_relative 'matcher/expressions/variable'
 

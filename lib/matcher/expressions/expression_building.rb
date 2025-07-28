@@ -24,6 +24,12 @@ module Matcher
       expression.to_recorder
     end
 
+    def concat(*parts)
+      parts = parts.map { Expression.of(_1) }
+
+      StringExpression.new(parts).to_recorder
+    end
+
     def actual
       vars[:actual]
     end
