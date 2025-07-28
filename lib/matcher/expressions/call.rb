@@ -298,10 +298,12 @@ module Matcher
     def args_and_kwargs_string(substitutions)
       args = @args.map { _1.to_s(substitutions:)}
       kwargs = @kwargs.map do |k, v|
+        v_to_s = v.to_s(substitutions:)
+
         if k.is_a?(Symbol)
-          "#{k}: #{v.inspect}"
+          "#{k}: #{v_to_s}"
         else
-          "#{k.inspect} => #{v.to_s(substitutions:)}"
+          "#{k.inspect} => #{v_to_s}"
         end
       end
 
