@@ -41,19 +41,7 @@ module Matcher
         end
       end
 
-      matcher = @matcher.to_s
-
-      matcher = "(#{matcher})" if
-        case @matcher
-        when ExpressionMatcher
-          !@matcher.negated && @matcher.expression.precedence > Call::OPERATOR_PRECEDENCE[:^]
-        when EqualMatcher, CaseEqualityMatcher, ArrayMatcher, HashMatcher
-          false
-        else
-          matcher !~ /\A(~?\w+(\(.*\)|\[.*\])?|-> \{.*})\z/
-        end
-
-      "let(#{assign_parts.join(', ')}) ^ #{matcher}"
+      "let(#{assign_parts.join(', ')}) ^ #{Matcher.parenthesize(@matcher)}"
     end
   end
 

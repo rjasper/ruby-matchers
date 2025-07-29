@@ -193,6 +193,22 @@ module Matcher
     end
   end
 
+  def self.parenthesize(matcher)
+    matcher_to_s = matcher.to_s
+
+    matcher_to_s = "(#{matcher_to_s})" if
+      case matcher
+      when ExpressionMatcher
+        !matcher.negated && matcher.expression.precedence > Call::OPERATOR_PRECEDENCE[:^]
+      when EqualMatcher, CaseEqualityMatcher, ArrayMatcher, HashMatcher
+        false
+      else
+        matcher_to_s !~ /\A(~?\w+(\(.*\)|\[.*\])?|-> \{.*})\z/
+      end
+
+    matcher_to_s
+  end
+
   def self.settings
     Thread.current[:matcher_settings_stack]&.last || {}
   end
