@@ -71,6 +71,10 @@ module Matcher
       "#{verb} to include key #{key.inspect} but got #{actual.inspect}"
     end
 
+    define(:having_index) do |index|
+      "#{verb} to have index #{index.inspect} but got #{actual.inspect}"
+    end
+
     define(:existing_index) do
       "#{verb} index to exist#{" but got #{actual.inspect}" unless negated}"
     end

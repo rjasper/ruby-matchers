@@ -76,6 +76,13 @@ describe Matcher::ExpectedPhrasing do
         msg([1]).length_of(1, 1)
     end
 
+    it 'having_index' do
+      assert_phrase 'expected to have index 0 but got []',
+        msg([]).not.having_index(0)
+      assert_phrase 'did not expect to have index 0 but got [1]',
+        msg([1]).having_index(0)
+    end
+
     it 'having_key' do
       assert_phrase 'expected to include key :foo but got {}',
         msg({}).not.having_key(:foo)

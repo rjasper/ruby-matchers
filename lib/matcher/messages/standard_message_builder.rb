@@ -50,6 +50,10 @@ module Matcher
       message(:having_key, key)
     end
 
+    def having_index(index)
+      message(:having_index, index)
+    end
+
     def existing_index
       message(:existing_index)
     end
