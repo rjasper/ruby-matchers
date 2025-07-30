@@ -27,9 +27,7 @@ module Matcher
         end
       end
 
-      actual = assigns.fetch(:actual, state.actual)
-
-      state.errors << yield(@matcher, actual, **assigns)
+      state.errors << yield(@matcher, **assigns)
     end
 
     def to_s
