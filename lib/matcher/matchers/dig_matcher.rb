@@ -1,0 +1,129 @@
+# frozen_string_literal: true
+
+module Matcher
+  class DigMatcher < Base
+    def initialize(keys, matcher, optional: false, negated: false)
+      super()
+
+      @keys = keys
+      @matcher = negated ? ~matcher : matcher
+      @original_matcher = matcher
+      @optional = optional
+      @negated = negated
+    end
+
+    def ~
+      DigMatcher.new(@keys, @original_matcher, optional: @optional, negated: !@negated)
+    end
+
+    def check(state, &)
+      return negated_check(state, &) if @negated
+
+      cur = state.actual
+      errors = state.errors
+
+      @keys.each do |key|
+        is_array = cur.is_a?(Array)
+
+        if is_array
+          unless key.is_a?(Integer)
+            errors << expected(cur).kind_of(Hash)
+            return nil
+          end
+        elsif !cur.is_a?(Hash)
+          or_error = state.new_collector.or!
+          or_error << expected(cur).kind_of(Hash)
+          or_error << expected(cur).kind_of(Array)
+          errors << or_error.error
+
+          return nil
+        end
+
+        prev = cur
+        cur = cur[key]
+
+        if cur.nil?
+          if @optional
+            return nil
+          elsif is_array
+            unless index?(prev, key)
+              errors << expected(prev).having_index(key)
+              return nil
+            end
+          else
+            unless prev.key?(key)
+              errors << expected(prev).having_key(key)
+              return nil
+            end
+          end
+        end
+
+        errors = errors[key]
+      end
+
+      errors << yield(@matcher, cur)
+    end
+
+    def to_s
+      helper = "#{'optional_' if @optional}dig"
+      keys = @keys.map(&:inspect).join(', ')
+      matcher = Matcher.parenthesize(@original_matcher)
+
+      "#{'~' if @negated}#{helper}(#{keys}) ^ #{matcher}"
+    end
+
+    private
+
+    def index?(array, index)
+      index.between?(-array.length, array.length - 1)
+    end
+
+    def negated_check(state)
+      cur = state.actual
+      errors = state.errors
+
+      @keys.each do |key|
+        is_array = cur.is_a?(Array)
+
+        return nil if is_array ? !key.is_a?(Integer) : !cur.is_a?(Hash)
+
+        prev = cur
+        cur = cur[key]
+
+        if cur.nil?
+          included = is_array ? index?(prev, key) : prev.key?(key)
+
+          if @optional
+            if included
+              errors[key] << expected(cur).not.equal(nil)
+            elsif is_array
+              errors << expected(prev).having_index(key)
+            else
+              errors << expected(prev).having_key(key)
+            end
+
+            return nil
+          elsif !included
+            return nil
+          end
+        end
+
+        errors = errors[key]
+      end
+
+      errors << yield(@matcher, cur)
+    end
+  end
+
+  module MatcherBuilding
+    def dig(*keys, optional: false)
+      Pipe.new do |matcher|
+        DigMatcher.new(keys, matcher, optional:)
+      end
+    end
+
+    def optional_dig(*)
+      dig(*, optional: true)
+    end
+  end
+end
