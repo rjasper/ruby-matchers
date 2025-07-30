@@ -5,8 +5,13 @@ module Matcher
     include NoMatcher
     include NoExpression
 
-    def initialize(&block)
+    def initialize(negated: false, &block)
       @block = block
+      @negated = negated
+    end
+
+    def ~
+      Pipe.new(negated: !@negated, &@block)
     end
 
     def ^(operand)
@@ -14,7 +19,9 @@ module Matcher
         Pipe.new { @block.call(operand ^ _1) }
       else
         matcher = Matcher.of(operand)
-        @block.call(matcher)
+        result = @block.call(matcher)
+        result = ~result if @negated
+        result
       end
     end
   end
