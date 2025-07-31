@@ -26,6 +26,19 @@ describe Matcher::ImplyMatcher do
       msg(1).not.kind_of(String)
   end
 
+  it 'evaluates expression condition' do
+    matcher = Matcher.build do
+      imply(_.even?, 42)
+    end
+
+    assert_no_errors matcher.match(42)
+    assert_no_errors matcher.match(3)
+    assert_no_errors matcher.match(nil)
+
+    assert_errors matcher.match(2),
+      msg(2).not.equal(42)
+  end
+
   it '#>>' do
     matcher = Matcher.build { of(Integer) >> 1 }
 

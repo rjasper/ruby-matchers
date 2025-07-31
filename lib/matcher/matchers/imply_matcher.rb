@@ -20,7 +20,16 @@ module Matcher
     def check(state, &)
       return negated_check(state, &) if @negated
 
-      return unless yield(@condition).valid?
+      if @condition.is_a?(ExpressionMatcher)
+        begin
+          # evaluate expression directly
+          return unless @condition.expression.evaluate(state.values)
+        rescue CallError
+          return
+        end
+      else
+        return unless yield(@condition).valid?
+      end
 
       state.errors << yield(@matcher)
     end
