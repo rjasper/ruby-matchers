@@ -15,7 +15,7 @@ module Matcher
 
       return if !force && DEBUGGERS.none? { main_caller.include?(_1) }
 
-      ExpressionRecorder.prepend(ExpressionRecorderDebug)
+      Recorder.prepend(ExpressionRecorderDebug)
       @initialized = true
     end
 

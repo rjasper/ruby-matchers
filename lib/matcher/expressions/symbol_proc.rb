@@ -43,9 +43,9 @@ module Matcher
 
     def get_symbol(proc)
       receiver = Variable.actual # could be any
-      recorder = ExpressionRecorder.new(receiver)
+      recorder = Recorder.new(receiver)
       result = proc.call(recorder)
-      expression = ExpressionRecorder.to_expression(result)
+      expression = Recorder.to_expression(result)
 
       expression.method
     end

@@ -41,12 +41,12 @@ require_relative 'matcher/expressions/call'
 require_relative 'matcher/expressions/call_error'
 require_relative 'matcher/expressions/constant'
 require_relative 'matcher/expressions/evaluation_error'
-require_relative 'matcher/expressions/expression_recorder'
 require_relative 'matcher/expressions/expression_walker'
 require_relative 'matcher/expressions/hash_expression'
 require_relative 'matcher/expressions/not_responding_error'
 require_relative 'matcher/expressions/proc_expression'
 require_relative 'matcher/expressions/range_expression'
+require_relative 'matcher/expressions/recorder'
 require_relative 'matcher/expressions/set_expression'
 require_relative 'matcher/expressions/string_expression'
 require_relative 'matcher/expressions/symbol_proc'
@@ -162,8 +162,8 @@ module Matcher
   end
 
   def self.of(object)
-    if ExpressionRecorder.recorder?(object)
-      expression = ExpressionRecorder.to_expression(object)
+    if Recorder.recorder?(object)
+      expression = Recorder.to_expression(object)
       return ExpressionMatcher.new(expression)
     end
 

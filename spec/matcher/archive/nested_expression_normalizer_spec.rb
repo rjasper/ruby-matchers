@@ -6,14 +6,14 @@ require 'matcher/archive/nested_expression_normalizer'
 describe Matcher::NestedExpressionNormalizer do
   def examine(keys, recorder)
     expected = keys.map do |obj|
-      if Matcher::ExpressionRecorder.recorder?(obj)
-        Matcher::ExpressionRecorder.to_expression(obj)
+      if Matcher::Recorder.recorder?(obj)
+        Matcher::Recorder.to_expression(obj)
       else
         obj
       end
     end
 
-    recorder = Matcher::ExpressionRecorder.to_expression(recorder)
+    recorder = Matcher::Recorder.to_expression(recorder)
     actual = Matcher::NestedExpressionNormalizer.normalize(recorder)
 
     assert_equal expected, actual

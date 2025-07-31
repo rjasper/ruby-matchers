@@ -3,7 +3,7 @@
 require 'test_helper'
 
 describe Matcher::Expression do
-  let(:recorder) { Matcher::ExpressionRecorder.new(Matcher::Variable.actual) }
+  let(:recorder) { Matcher::Recorder.new(Matcher::Variable.actual) }
 
   it '::of' do
     assert_equal Matcher::Variable.actual,

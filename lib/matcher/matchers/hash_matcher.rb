@@ -196,7 +196,7 @@ module Matcher
     end
 
     def partial_r_helper(value)
-      if ExpressionRecorder.recorder?(value) || !value.is_a?(Hash)
+      if Recorder.recorder?(value) || !value.is_a?(Hash)
         of(value)
       else
         partial_r(value)

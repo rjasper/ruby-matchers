@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 module Matcher
-  class ExpressionRecorder
+  class Recorder
     def self.recorder?(object)
       Object.instance_method(:kind_of?)
-        .bind_call(object, ExpressionRecorder)
+        .bind_call(object, Recorder)
     end
 
     def self.to_expression(recorder)

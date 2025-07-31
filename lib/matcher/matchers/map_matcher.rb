@@ -150,7 +150,7 @@ module Matcher
     def map(recorder, matcher = UNDEFINED)
       return Pipe.new { map(recorder, _1) } if Matcher.undefined?(matcher)
 
-      expression = ExpressionRecorder.to_expression(recorder)
+      expression = Recorder.to_expression(recorder)
       matcher = Matcher.of(matcher)
 
       MapMatcher.new(expression, matcher)

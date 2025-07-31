@@ -15,7 +15,7 @@ module Matcher
     end
 
     def ^(operand)
-      if !ExpressionRecorder.recorder?(operand) && operand.is_a?(Pipe)
+      if !Recorder.recorder?(operand) && operand.is_a?(Pipe)
         Pipe.new { @block.call(operand ^ _1) }
       else
         matcher = Matcher.of(operand)

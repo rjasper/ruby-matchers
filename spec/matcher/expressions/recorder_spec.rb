@@ -2,17 +2,17 @@
 
 require 'test_helper'
 
-describe Matcher::ExpressionRecorder do
-  let(:recorder) { Matcher::ExpressionRecorder.new(Matcher::Variable.actual) }
+describe Matcher::Recorder do
+  let(:recorder) { Matcher::Recorder.new(Matcher::Variable.actual) }
 
   it '::recorder?' do
-    assert Matcher::ExpressionRecorder.recorder?(recorder)
-    refute Matcher::ExpressionRecorder.recorder?(42)
+    assert Matcher::Recorder.recorder?(recorder)
+    refute Matcher::Recorder.recorder?(42)
   end
 
   it '::to_expression' do
     assert_equal Matcher::Variable.actual,
-      Matcher::ExpressionRecorder.to_expression(recorder)
+      Matcher::Recorder.to_expression(recorder)
   end
 
   it 'works as Hash key' do
@@ -28,7 +28,7 @@ describe Matcher::ExpressionRecorder do
   end
 
   it 'records an expression' do
-    exp = Matcher::ExpressionRecorder.to_expression(
+    exp = Matcher::Recorder.to_expression(
       recorder.foo(1, bar: 2) { |x| x },
     )
 

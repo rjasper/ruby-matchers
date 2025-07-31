@@ -15,7 +15,7 @@ module Matcher
     end
 
     def self.of(obj)
-      return ExpressionRecorder.to_expression(obj) if ExpressionRecorder.recorder?(obj)
+      return Recorder.to_expression(obj) if Recorder.recorder?(obj)
 
       case obj
       when Base
@@ -62,13 +62,13 @@ module Matcher
     end
 
     def self.try_recorder(obj)
-      return obj unless ExpressionRecorder.recorder?(obj)
+      return obj unless Recorder.recorder?(obj)
 
-      ExpressionRecorder.to_expression(obj)
+      Recorder.to_expression(obj)
     end
 
     def self.expression_or_recorder?(obj)
-      ExpressionRecorder.recorder?(obj) || obj.is_a?(Expression)
+      Recorder.recorder?(obj) || obj.is_a?(Expression)
     end
 
     def initialize
@@ -90,7 +90,7 @@ module Matcher
     end
 
     def to_recorder
-      ExpressionRecorder.new(self)
+      Recorder.new(self)
     end
 
     def self.with_substitutions(**substitutions)
