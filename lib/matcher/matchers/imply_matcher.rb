@@ -4,25 +4,41 @@ module Matcher
   class ImplyMatcher < Base
     attr_reader :condition, :matcher
 
-    def initialize(condition, matcher)
+    def initialize(condition, matcher, negated: false)
       super()
 
       @condition = condition
-      @matcher = matcher
+      @matcher = negated ? ~matcher : matcher
+      @original_matcher = matcher
+      @negated = negated
     end
 
     def ~
-      NegatedImplyMatcher.new(@condition, @matcher)
+      ImplyMatcher.new(@condition, @original_matcher, negated: !@negated)
     end
 
-    def check(state)
+    def check(state, &)
+      return negated_check(state, &) if @negated
+
       return unless yield(@condition).valid?
 
       state.errors << yield(@matcher)
     end
 
     def to_s
-      "imply(#{@condition}, #{@matcher})"
+      "#{'~' if @negated}imply(#{@condition}, #{@original_matcher})"
+    end
+
+    private
+
+    def negated_check(state)
+      condition_errors = yield @condition
+
+      state.errors << if condition_errors.valid?
+        yield(@matcher)
+      else
+        condition_errors
+      end
     end
   end
 
