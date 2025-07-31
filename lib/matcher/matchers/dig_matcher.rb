@@ -23,6 +23,7 @@ module Matcher
       errors = state.errors
 
       @keys.each do |key|
+        key = key.evaluate(state.values) if key.is_a?(Expression)
         is_array = cur.is_a?(Array)
 
         if is_array
@@ -83,6 +84,7 @@ module Matcher
       errors = state.errors
 
       @keys.each do |key|
+        key = key.evaluate(state.values) if key.is_a?(Expression)
         is_array = cur.is_a?(Array)
 
         return nil if is_array ? !key.is_a?(Integer) : !cur.is_a?(Hash)
@@ -117,6 +119,10 @@ module Matcher
 
   module MatcherBuilding
     def dig(*keys, optional: false)
+      keys.each_with_index do |key, i|
+        keys[i] = ExpressionRecorder.to_expression(key) if ExpressionRecorder.recorder?(key)
+      end
+
       Pipe.new do |matcher|
         DigMatcher.new(keys, matcher, optional:)
       end

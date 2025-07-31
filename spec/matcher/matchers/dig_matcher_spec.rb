@@ -93,6 +93,15 @@ describe Matcher::DigMatcher do
     assert_no_errors negated.match([])
   end
 
+  it 'evaluates expression keys' do
+    matcher = Matcher.build do
+      declare foo: 'foo'
+      dig(foo) ^ 42
+    end
+
+    assert_no_errors matcher.match({ 'foo' => 42 })
+  end
+
   it '#to_s' do
     assert_equal('dig(:foo, 0) ^ "foo"', Matcher.build { dig(:foo, 0) ^ 'foo' }.to_s)
     assert_equal('~dig(:foo, 0) ^ "foo"', Matcher.build { ~dig(:foo, 0) ^ 'foo' }.to_s)
