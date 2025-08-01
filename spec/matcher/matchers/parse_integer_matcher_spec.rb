@@ -1,0 +1,43 @@
+# frozen_string_literal: true
+
+require 'test_helper'
+
+describe Matcher::ParseIntegerMatcher do
+  it 'is built by parse_integer' do
+    matcher = Matcher.build { parse_integer(_.even?) }
+
+    assert_kind_of Matcher::ParseIntegerMatcher, matcher
+
+    matcher = Matcher.build { parse_integer ^ _.even? }
+
+    assert_kind_of Matcher::ParseIntegerMatcher, matcher
+  end
+
+  it 'matches integer from string' do
+    matcher = Matcher.build { parse_integer(_.even?) }
+    negated = ~matcher
+
+    integer_of = expression { kernel::Integer(_) }
+
+    assert_no_errors matcher.match('2')
+    assert_errors negated.match('2'),
+      integer_of => msg(2).predicate(:even?)
+
+    assert_errors matcher.match('foo'),
+      msg('foo').not.valid_format(:integer)
+    assert_no_errors negated.match('foo')
+
+    assert_errors matcher.match('3'),
+      integer_of => msg(3).not.predicate(:even?)
+    assert_no_errors negated.match('3')
+  end
+
+  it '#to_s' do
+    assert_equal 'parse_integer(_.even?)',
+      Matcher.build { parse_integer(_.even?) }.to_s
+    assert_equal '~parse_integer(_.even?)',
+      Matcher.build { ~parse_integer(_.even?) }.to_s
+    assert_equal 'parse_integer(_.even?, base: 2)',
+      Matcher.build { parse_integer(_.even?, base: 2) }.to_s
+  end
+end
