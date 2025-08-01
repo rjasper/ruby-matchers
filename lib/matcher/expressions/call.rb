@@ -218,8 +218,9 @@ module Matcher
       else
         # foo.bar OR foo.bar(arg1, arg2, ...)
 
+        is_kernel = @receiver.is_a?(Constant) && @receiver.constant == Kernel
         args_and_kwargs = args_and_kwargs_string(substitutions)
-        string = "#{receiver}.#{@method}"
+        string = is_kernel ? @method.to_s : "#{receiver}.#{@method}"
         string += "(#{args_and_kwargs})" unless args_and_kwargs.empty?
         string += block_string
 

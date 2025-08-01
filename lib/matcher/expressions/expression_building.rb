@@ -35,6 +35,10 @@ module Matcher
       expression.to_recorder
     end
 
+    def kernel
+      Constant.new(Kernel).to_recorder
+    end
+
     def concat(*parts)
       parts = parts.map { Expression.of(_1) }
 

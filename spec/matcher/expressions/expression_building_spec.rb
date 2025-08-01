@@ -44,4 +44,12 @@ describe Matcher::ExpressionBuilding do
 
     assert_no_errors matcher.match(-19)
   end
+
+  it '#kernel' do
+    integer_of = expression do
+      kernel::Integer(_)
+    end
+
+    assert_equal 42, integer_of.evaluate(actual: '42')
+  end
 end
