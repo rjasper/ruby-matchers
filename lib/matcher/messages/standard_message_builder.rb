@@ -70,6 +70,10 @@ module Matcher
       message(:matching, pattern)
     end
 
+    def valid_format(format)
+      message(:valid_format, format)
+    end
+
     def instance_of(klass)
       message(:instance_of, klass)
     end

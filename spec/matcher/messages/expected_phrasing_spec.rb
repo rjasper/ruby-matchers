@@ -118,6 +118,13 @@ describe Matcher::ExpectedPhrasing do
         msg('Hello World!').matching(/Hello/)
     end
 
+    it 'valid_format' do
+      assert_phrase 'expected a valid integer string but got "foo"',
+        msg('foo').not.valid_format(:integer)
+      assert_phrase 'did not expect a valid integer string but got "42"',
+        msg('42').valid_format(:integer)
+    end
+
     it 'instance_of' do
       assert_phrase 'expected an instance of Integer but got "string"',
         msg('string').not.instance_of(Integer)

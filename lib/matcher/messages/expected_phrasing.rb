@@ -91,6 +91,10 @@ module Matcher
       "#{verb} value to match #{pattern.inspect} but got #{actual.inspect}"
     end
 
+    define(:valid_format) do |format|
+      "#{verb} a valid #{format} string but got #{actual.inspect}"
+    end
+
     define(:instance_of) do |klass|
       "#{verb} an instance of #{klass} but got #{actual.inspect}"
     end
