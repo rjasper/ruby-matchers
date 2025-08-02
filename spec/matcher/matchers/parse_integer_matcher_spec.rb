@@ -32,6 +32,19 @@ describe Matcher::ParseIntegerMatcher do
     assert_no_errors negated.match('3')
   end
 
+  it 'matches integer format' do
+    matcher = Matcher.build { integer_format }
+    negated = ~matcher
+
+    assert_no_errors matcher.match('2')
+    assert_errors negated.match('2'),
+      msg('2').valid_format(:integer)
+
+    assert_errors matcher.match('foo'),
+      msg('foo').not.valid_format(:integer)
+    assert_no_errors negated.match('foo')
+  end
+
   it '#to_s' do
     assert_equal 'parse_integer(_.even?)',
       Matcher.build { parse_integer(_.even?) }.to_s
@@ -39,5 +52,12 @@ describe Matcher::ParseIntegerMatcher do
       Matcher.build { ~parse_integer(_.even?) }.to_s
     assert_equal 'parse_integer(_.even?, base: 2)',
       Matcher.build { parse_integer(_.even?, base: 2) }.to_s
+
+    assert_equal 'integer_format',
+      Matcher.build { integer_format }.to_s
+    assert_equal '~integer_format',
+      Matcher.build { ~integer_format }.to_s
+    assert_equal 'integer_format(base: 2)',
+      Matcher.build { integer_format(base: 2) }.to_s
   end
 end

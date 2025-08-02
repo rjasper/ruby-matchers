@@ -24,6 +24,12 @@ module Matcher
       end
 
       value = Integer(actual)
+
+      if @matcher.is_a?(NeverMatcher)
+        state.errors << expected.not.valid_format(:integer)
+        return
+      end
+
       result = yield(@matcher, value)
 
       return if result.valid?
@@ -35,6 +41,13 @@ module Matcher
     end
 
     def to_s
+      prefix = @negated ? '~' : ''
+
+      if @original_matcher.is_a?(AlwaysMatcher)
+        args = @base == 0 ? '' : "(base: #{@base})"
+        return "#{prefix}integer_format#{args}"
+      end
+
       base_arg = @base == 0 ? '' : ", base: #{@base}"
 
       "#{'~' if @negated}parse_integer(#{@original_matcher}#{base_arg})"
@@ -48,6 +61,14 @@ module Matcher
       matcher = Matcher.of(matcher)
 
       ParseIntegerMatcher.new(matcher, base:)
+    end
+
+    def integer_format(base: 0)
+      if base == 0
+        @integer_format ||= ParseIntegerMatcher.new(AlwaysMatcher.instance, base:)
+      else
+        ParseIntegerMatcher.new(AlwaysMatcher.instance, base:)
+      end
     end
   end
 end
