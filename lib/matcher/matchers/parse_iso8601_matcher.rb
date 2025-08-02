@@ -23,6 +23,12 @@ module Matcher
       end
 
       value = Time.iso8601(actual)
+
+      if @matcher.is_a?(NeverMatcher)
+        state.errors << expected.not.valid_format(:iso8601)
+        return
+      end
+
       result = yield(@matcher, value)
 
       return if result.valid?
@@ -34,7 +40,11 @@ module Matcher
     end
 
     def to_s
-      "#{'~' if @negated}parse_iso8601(#{@original_matcher})"
+      prefix = @negated ? '~' : ''
+
+      return "#{prefix}iso8601_format" if @original_matcher.is_a?(AlwaysMatcher)
+
+      "#{prefix}parse_iso8601(#{@original_matcher})"
     end
   end
 
@@ -45,6 +55,10 @@ module Matcher
       matcher = Matcher.of(matcher)
 
       ParseIso8601Matcher.new(matcher)
+    end
+
+    def iso8601_format
+      @iso8601_format ||= ParseIso8601Matcher.new(AlwaysMatcher.instance)
     end
   end
 end

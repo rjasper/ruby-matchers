@@ -38,6 +38,19 @@ describe Matcher::ParseIso8601Matcher do
     assert_no_errors negated.match('1990-01-01T00:00:00Z')
   end
 
+  it 'matches iso8601 format' do
+    matcher = Matcher.build { iso8601_format }
+    negated = ~matcher
+
+    assert_no_errors matcher.match('2024-01-01T00:00:00Z')
+    assert_errors negated.match('2024-01-01T00:00:00Z'),
+      msg('2024-01-01T00:00:00Z').valid_format(:iso8601)
+
+    assert_errors matcher.match('foo'),
+      msg('foo').not.valid_format(:iso8601)
+    assert_no_errors negated.match('foo')
+  end
+
   it '#to_s' do
     time = Time.utc(2023)
 
@@ -45,5 +58,10 @@ describe Matcher::ParseIso8601Matcher do
       Matcher.build { parse_iso8601(_ < time) }.to_s
     assert_equal '~parse_iso8601(_ < 2023-01-01 00:00:00 UTC)',
       Matcher.build { ~parse_iso8601(_ < time) }.to_s
+
+    assert_equal 'iso8601_format',
+      Matcher.build { iso8601_format }.to_s
+    assert_equal '~iso8601_format',
+      Matcher.build { ~iso8601_format }.to_s
   end
 end
