@@ -4,9 +4,10 @@ require 'test_helper'
 
 describe Matcher::EachMatcher do
   it 'is built by each' do
-    matcher = Matcher.build { each(Integer) }
-
-    assert_kind_of Matcher::EachMatcher, matcher
+    assert_kind_of Matcher::EachMatcher,
+      (Matcher.build { each(Integer) })
+    assert_kind_of Matcher::EachMatcher,
+      (Matcher.build { each ^ Integer })
   end
 
   it 'expects an object responding to :each' do

@@ -4,11 +4,24 @@ require 'test_helper'
 
 describe Matcher::EachPairMatcher do
   it 'is built by each_pair' do
-    matcher = Matcher.build do
-      each_pair(key == value.to_sym)
-    end
+    assert_kind_of Matcher::EachPairMatcher,
+      (Matcher.build { each_pair(key == value.to_sym) })
+    assert_kind_of Matcher::EachPairMatcher,
+      (Matcher.build { each_pair ^ (key == value.to_sym) })
+  end
 
-    assert_kind_of Matcher::EachPairMatcher, matcher
+  it 'is built by each_key' do
+    assert_kind_of Matcher::EachPairMatcher,
+      (Matcher.build { each_key(Symbol) })
+    assert_kind_of Matcher::EachPairMatcher,
+      (Matcher.build { each_key ^ Symbol })
+  end
+
+  it 'is built by each_value' do
+    assert_kind_of Matcher::EachPairMatcher,
+      (Matcher.build { each_value(String) })
+    assert_kind_of Matcher::EachPairMatcher,
+      (Matcher.build { each_value ^ String })
   end
 
   it 'expects an object responding to :each_pair' do
