@@ -32,8 +32,28 @@ describe Matcher::ParseFloatMatcher do
     assert_no_errors negated.match('-1.5')
   end
 
+  it 'matches float format' do
+    matcher = Matcher.build { float_format }
+    negated = ~matcher
+
+    assert_no_errors matcher.match('2.5')
+    assert_errors negated.match('2.5'),
+      msg('2.5').valid_format(:float)
+
+    assert_errors matcher.match('foo'),
+      msg('foo').not.valid_format(:float)
+    assert_no_errors negated.match('foo')
+  end
+
   it '#to_s' do
     assert_equal 'parse_float(_.positive?)',
       Matcher.build { parse_float(_.positive?) }.to_s
+    assert_equal '~parse_float(_.positive?)',
+      Matcher.build { ~parse_float(_.positive?) }.to_s
+
+    assert_equal 'float_format',
+      Matcher.build { float_format }.to_s
+    assert_equal '~float_format',
+      Matcher.build { ~float_format }.to_s
   end
 end

@@ -23,6 +23,12 @@ module Matcher
       end
 
       value = Float(actual)
+
+      if @matcher.is_a?(NeverMatcher)
+        state.errors << expected.not.valid_format(:float)
+        return
+      end
+
       result = yield(@matcher, value)
 
       return if result.valid?
@@ -34,7 +40,11 @@ module Matcher
     end
 
     def to_s
-      "#{'~' if @negated}parse_float(#{@original_matcher})"
+      prefix = @negated ? '~' : ''
+
+      return "#{prefix}float_format" if @original_matcher.is_a?(AlwaysMatcher)
+
+      "#{prefix}parse_float(#{@original_matcher})"
     end
   end
 
@@ -45,6 +55,10 @@ module Matcher
       matcher = Matcher.of(matcher)
 
       ParseFloatMatcher.new(matcher)
+    end
+
+    def float_format
+      @float_format ||= ParseFloatMatcher.new(AlwaysMatcher.instance)
     end
   end
 end
