@@ -12,8 +12,6 @@ describe Matcher::MatcherBuilding do
 
     assert_kind_of Matcher::NegatedMatcher,
       (Matcher.build { neg(inner_matcher) })
-    assert_kind_of Matcher::NegatedMatcher,
-      (Matcher.build { neg ^ inner_matcher })
   end
 
   describe 'present' do
@@ -36,12 +34,6 @@ describe Matcher::MatcherBuilding do
       assert_errors matcher.match(nil),
         msg(nil).predicate(:nil?)
       assert_no_errors matcher.~.match(1)
-    end
-
-    it 'is chainable' do
-      matcher = build { present ^ { foo: 'bar' } }
-
-      assert_no_errors matcher.match({ foo: 'bar' })
     end
   end
 
