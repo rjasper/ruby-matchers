@@ -21,7 +21,7 @@ describe Matcher::MatcherBuilding do
       assert_no_errors matcher.match(1)
       assert_errors matcher.~.match(1) do
         _or do
-          error msg(1).not.predicate(:nil?)
+          error msg(1).not.equal(nil)
           error msg(1).equal(1)
         end
       end
@@ -32,7 +32,7 @@ describe Matcher::MatcherBuilding do
       matcher = build { present(got_it_from_somewhere) }
 
       assert_errors matcher.match(nil),
-        msg(nil).predicate(:nil?)
+        msg(nil).equal(nil)
       assert_no_errors matcher.~.match(1)
     end
   end

@@ -11,7 +11,10 @@ module Matcher
     end
 
     def present(matcher)
-      all(!_.nil?, matcher)
+      AllMatcher.new([
+        EqualMatcher.new(nil, negated: true),
+        Matcher.of(matcher),
+      ])
     end
   end
 end
