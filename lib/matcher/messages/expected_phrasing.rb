@@ -277,12 +277,6 @@ module Matcher
       end
     end
 
-    namespace(:iso8601) do
-      define(:valid) do
-        "#{verb} an ISO 8601 string but got #{actual.inspect}"
-      end
-    end
-
     namespace(:reference) do
       define(:cyclic) do
         "#{verb} a cyclic structure" \

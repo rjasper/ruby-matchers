@@ -354,15 +354,6 @@ describe Matcher::ExpectedPhrasing do
     end
   end
 
-  describe 'iso8601' do
-    it 'valid' do
-      assert_phrase 'expected an ISO 8601 string but got "foobar"',
-        msg('foobar').namespace(:iso8601).not.valid
-      assert_phrase 'did not expect an ISO 8601 string but got "2024-07-04T14:09:39+02:00"',
-        msg('2024-07-04T14:09:39+02:00').namespace(:iso8601).valid
-    end
-  end
-
   describe 'reference' do
     it 'cyclic' do
       assert_phrase 'expected a cyclic structure',

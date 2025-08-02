@@ -4,6 +4,7 @@ require_relative "matcher/version"
 
 require 'singleton'
 require 'forwardable'
+require 'time'
 
 module Matcher
   module NoMatcher; end
@@ -70,7 +71,6 @@ require_relative 'matcher/matchers/hash_matcher'
 require_relative 'matcher/matchers/inline_matcher'
 require_relative 'matcher/matchers/imply_matcher'
 require_relative 'matcher/matchers/imply_some_matcher'
-require_relative 'matcher/matchers/iso8601_matcher'
 require_relative 'matcher/matchers/keys_matcher'
 require_relative 'matcher/matchers/lazy_all_matcher'
 require_relative 'matcher/matchers/lazy_any_matcher'
