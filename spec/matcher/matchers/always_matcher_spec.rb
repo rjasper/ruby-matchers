@@ -14,19 +14,19 @@ describe Matcher::AlwaysMatcher do
     negated = ~matcher
 
     assert_no_errors matcher.match(nil)
-    assert_errors negated.match(nil), msg(nil).existing_index
+    assert_errors negated.match(nil), msg(nil).exist
 
     assert_no_errors matcher.match(true)
-    assert_errors negated.match(true), msg(true).existing_index
+    assert_errors negated.match(true), msg(true).exist
 
     assert_no_errors matcher.match(1)
-    assert_errors negated.match(1), msg(1).existing_index
+    assert_errors negated.match(1), msg(1).exist
 
     assert_no_errors matcher.match({})
-    assert_errors negated.match({}), msg({}).existing_index
+    assert_errors negated.match({}), msg({}).exist
 
     assert_no_errors matcher.match([])
-    assert_errors negated.match([]), msg([]).existing_index
+    assert_errors negated.match([]), msg([]).exist
   end
 
   it '#~' do

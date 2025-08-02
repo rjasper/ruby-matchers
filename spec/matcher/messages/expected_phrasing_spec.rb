@@ -90,11 +90,11 @@ describe Matcher::ExpectedPhrasing do
         msg({ foo: true }).having_key(:foo)
     end
 
-    it 'existing_index' do
+    it 'exist' do
       assert_phrase 'expected index to exist',
-        msg(nil).not.existing_index
+        msg(nil).not.exist
       assert_phrase 'did not expect index to exist but got 1',
-        msg(1).existing_index
+        msg(1).exist
     end
 
     it 'in' do

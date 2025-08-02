@@ -13,19 +13,19 @@ describe Matcher::NeverMatcher do
     matcher = Matcher.build { never }
     negated = ~matcher
 
-    assert_errors matcher.match(nil), msg(nil).existing_index
+    assert_errors matcher.match(nil), msg(nil).exist
     assert_no_errors negated.match(nil)
 
-    assert_errors matcher.match(true), msg(true).existing_index
+    assert_errors matcher.match(true), msg(true).exist
     assert_no_errors negated.match(true)
 
-    assert_errors matcher.match(1), msg(1).existing_index
+    assert_errors matcher.match(1), msg(1).exist
     assert_no_errors negated.match(1)
 
-    assert_errors matcher.match({}), msg({}).existing_index
+    assert_errors matcher.match({}), msg({}).exist
     assert_no_errors negated.match({})
 
-    assert_errors matcher.match([]), msg([]).existing_index
+    assert_errors matcher.match([]), msg([]).exist
     assert_no_errors negated.match([])
   end
 

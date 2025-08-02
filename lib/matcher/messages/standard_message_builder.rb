@@ -54,8 +54,8 @@ module Matcher
       message(:having_index, index)
     end
 
-    def existing_index
-      message(:existing_index)
+    def exist
+      message(:exist)
     end
 
     def in(collection)

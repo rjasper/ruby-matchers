@@ -34,7 +34,7 @@ describe Matcher::AnyMatcher do
     matcher = Matcher::AnyMatcher.new([])
     negated = ~matcher
 
-    assert_errors matcher.match(nil), msg(nil).existing_index
+    assert_errors matcher.match(nil), msg(nil).exist
     assert_no_errors negated.match(nil)
   end
 
