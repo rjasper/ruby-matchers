@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Matcher
-  class ParseTimeMatcher < Base
+  class ParseIso8601Matcher < Base
     def initialize(matcher, negated: false)
       super()
 
@@ -11,7 +11,7 @@ module Matcher
     end
 
     def ~
-      ParseTimeMatcher.new(@original_matcher, negated: !@negated)
+      ParseIso8601Matcher.new(@original_matcher, negated: !@negated)
     end
 
     def check(state, &)
@@ -22,29 +22,29 @@ module Matcher
         return
       end
 
-      value = Time.parse(actual)
+      value = Time.iso8601(actual)
       result = yield(@matcher, value)
 
       return if result.valid?
 
-      time_of = Call.new(Constant.new(Time), :parse, [Variable.actual])
+      time_of = Call.new(Constant.new(Time), :iso8601, [Variable.actual])
       state.errors[time_of] << result
     rescue ArgumentError
-      state.errors << expected.valid_format(:time) unless @negated
+      state.errors << expected.valid_format(:iso8601) unless @negated
     end
 
     def to_s
-      "#{'~' if @negated}parse_time(#{@original_matcher})"
+      "#{'~' if @negated}parse_iso8601(#{@original_matcher})"
     end
   end
 
   module MatcherBuilding
-    def parse_time(matcher = UNDEFINED)
-      return Pipe.new { parse_time(_1) } if Matcher.undefined?(matcher)
+    def parse_iso8601(matcher = UNDEFINED)
+      return Pipe.new { parse_iso8601(_1) } if Matcher.undefined?(matcher)
 
       matcher = Matcher.of(matcher)
 
-      ParseTimeMatcher.new(matcher)
+      ParseIso8601Matcher.new(matcher)
     end
   end
 end
