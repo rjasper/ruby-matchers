@@ -7,6 +7,15 @@ describe Matcher::MatcherBuilding do
     assert_kind_of(Matcher::Base, build { of(1) })
   end
 
+  it '#neg' do
+    inner_matcher = Class.new(Matcher::Base).new
+
+    assert_kind_of Matcher::NegatedMatcher,
+      (Matcher.build { neg(inner_matcher) })
+    assert_kind_of Matcher::NegatedMatcher,
+      (Matcher.build { neg ^ inner_matcher })
+  end
+
   describe 'present' do
     it 'matches with given matcher if present' do
       matcher = build { present(1) }
