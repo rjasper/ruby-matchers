@@ -87,7 +87,7 @@ module Matcher
           key.receiver == Variable.actual &&
           (operand = key.args[0]) &&
           operand.is_a?(Constant) &&
-          operand.constant.is_a?(Integer)
+          operand.value.is_a?(Integer)
 
         if is_index
           state.new_collector[key][@projection] << error.child

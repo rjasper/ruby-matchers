@@ -12,7 +12,7 @@ module Matcher
     def label(expression, actual_label = ROOT)
       case expression
       when Constant
-        label_for([Constant, expression.constant])
+        label_for([Constant, expression.value])
       when Variable
         if expression.symbol == :actual
           actual_label

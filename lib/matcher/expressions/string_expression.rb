@@ -40,8 +40,8 @@ module Matcher
 
     def to_s(substitutions: Expression.default_substitutions)
       parts = @parts.map do |part|
-        if part.is_a?(Constant) && part.constant.is_a?(String)
-          part.constant
+        if part.is_a?(Constant) && part.value.is_a?(String)
+          part.value
         else
           "\#{#{part.to_s(substitutions:)}}"
         end

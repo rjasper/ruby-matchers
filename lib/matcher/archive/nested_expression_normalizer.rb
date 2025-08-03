@@ -185,7 +185,7 @@ module Matcher
 
           tail <<= e if e
           arg = cur.args[0]
-          arg = arg.constant if arg.is_a?(Constant)
+          arg = arg.value if arg.is_a?(Constant)
           tail <<= arg
 
           trace = List.empty

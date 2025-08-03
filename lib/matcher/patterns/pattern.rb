@@ -79,7 +79,7 @@ module Matcher
     def get_hole(expression)
       return unless expression.is_a?(Constant)
 
-      constant = expression.constant
+      constant = expression.value
       constant if constant.is_a?(Hole)
     end
 

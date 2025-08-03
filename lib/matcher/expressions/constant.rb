@@ -2,16 +2,16 @@
 
 module Matcher
   class Constant < Expression
-    attr_reader :constant
+    attr_reader :value
 
-    def initialize(constant)
+    def initialize(value)
       super()
 
-      @constant = constant
+      @value = value
     end
 
     def negated
-      Constant.new(!@constant)
+      Constant.new(!@value)
     end
 
     def variables
@@ -19,19 +19,19 @@ module Matcher
     end
 
     def evaluate(_values)
-      @constant
+      @value
     end
 
     def ==(other)
       return true if equal?(other)
 
       other.instance_of?(Constant) &&
-        @constant.eql?(other.constant)
+        @value.eql?(other.value)
     end
     alias eql? ==
 
     def hash
-      [self.class, @constant].hash
+      [self.class, @value].hash
     end
 
     def substitute(_replacements)
@@ -39,7 +39,7 @@ module Matcher
     end
 
     def to_s(substitutions: nil)
-      @constant.inspect
+      @value.inspect
     end
   end
 end

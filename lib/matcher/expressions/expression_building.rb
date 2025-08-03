@@ -101,7 +101,7 @@ module Matcher
         arg = call.args[0]
 
         if value.is_a?(Constant)
-          arg.is_a?(Constant) && value.constant.equal?(arg.constant)
+          arg.is_a?(Constant) && value.value.equal?(arg.value)
         else
           value.equal?(arg)
         end

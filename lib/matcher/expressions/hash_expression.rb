@@ -44,8 +44,8 @@ module Matcher
 
     def to_s(substitutions: Expression.default_substitutions)
       parts = @pairs.map do |k, v|
-        key_part = if k.is_a?(Constant) && k.constant.is_a?(Symbol)
-          "#{k.constant}:"
+        key_part = if k.is_a?(Constant) && k.value.is_a?(Symbol)
+          "#{k.value}:"
         else
           "#{k.to_s(substitutions:)} =>"
         end
