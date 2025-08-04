@@ -14,8 +14,10 @@ module Matcher
     end
 
     def check(state)
-      state.errors << expected.not_if(@negated).equal(@value) if
-        @negated ^ (state.actual != @value)
+      value = @value.is_a?(Expression) ? @value.evaluate(state.values) : @value
+
+      state.errors << expected.not_if(@negated).equal(value) if
+        @negated ^ (state.actual != value)
     end
 
     def to_s
@@ -30,6 +32,8 @@ module Matcher
 
   module MatcherBuilding
     def equal(value)
+      value = Expression.try_recorder(value)
+
       EqualMatcher.new(value)
     end
   end

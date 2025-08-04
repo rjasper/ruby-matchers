@@ -8,8 +8,24 @@ describe Matcher::EqualMatcher do
     assert_kind_of(Matcher::EqualMatcher, Matcher.build { 1 })
   end
 
-  it 'matches' do
+  it 'matches value' do
     matcher = Matcher.build { 42 }
+    negated = ~matcher
+
+    assert_no_errors matcher.match(42)
+    assert_errors negated.match(42),
+      msg(42).equal(42)
+
+    assert_errors matcher.match(23),
+      msg(23).not.equal(42)
+    assert_no_errors negated.match(23)
+  end
+
+  it 'matches expression' do
+    matcher = Matcher.build do
+      let(foo: 3) ^ equal(vars[:foo] * 14)
+    end
+
     negated = ~matcher
 
     assert_no_errors matcher.match(42)
