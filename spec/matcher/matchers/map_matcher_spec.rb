@@ -60,19 +60,16 @@ describe Matcher::MapMatcher do
 
   it 'maps functional error key' do
     matcher = Matcher.build do
-      map(original.length * 100 + index * 10 + _, equal([209, 218]))
+      map(_ + index * 10 + original.length * 100, [209, 218])
     end
 
-    errors = Matcher.with_session(bind_nested_values: true) do
-      matcher.match([9, 8, 7])
-    end
-
-    assert_kind_of Matcher::NestedError, errors
-    assert_equal '_.map.with_index { |e, i| _.length * 100 + i * 10 + e }', errors.key.to_s
-    assert_kind_of Matcher::ElementError, errors.child
-    assert_equal msg([309, 318, 327]).not.equal([209, 218]),
-      errors.child.message
-    assert_equal [309, 318, 327], errors.key.evaluate({ actual: [9, 8, 7] })
+    assert_errors matcher.match([9, 8, 7]),
+      expression { _.map.with_index { |e, index| e + index * 10 + _.length * 100 } } =>
+        msg([309, 318, 327]).not.length_of(2, 3),
+      expression { _[0] + index * 10 + original.length * 100 } =>
+        msg(309).not.equal(209),
+      expression { _[1] + index * 10 + original.length * 100 } =>
+        msg(318).not.equal(218)
   end
 
   it 'maps projection with block' do
