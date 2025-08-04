@@ -82,6 +82,25 @@ describe Matcher::EqualMatcher do
     assert_no_errors negated.match({ foo: 'foo', bar: 'baz' })
   end
 
+  it 'matches set' do
+    matcher = Matcher.build { Set[1, 2] }
+    negated = ~matcher
+
+    assert_no_errors matcher.match(Set[1, 2])
+    assert_or_errors negated.match(Set[1, 2]),
+      msg(Set[1, 2]).including(1),
+      msg(Set[1, 2]).including(2)
+
+    assert_errors matcher.match(1),
+      msg(1).not.kind_of(Set)
+    assert_no_errors negated.match(1)
+
+    assert_errors matcher.match(Set[1, 3]),
+      msg(Set[1, 3]).including(3),
+      msg(Set[1, 3]).not.including(2)
+    assert_no_errors negated.match(Set[1, 3])
+  end
+
   it '#to_s' do
     matcher = Matcher::EqualMatcher.new(1)
 

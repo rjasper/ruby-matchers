@@ -50,6 +50,8 @@ module Matcher
         check_array(errors, exp, act)
       when Hash
         check_hash(errors, exp, act)
+      when Set
+        check_set(errors, exp, act)
       else
         errors << expected(act).not_if(@negated).equal(exp) if
           @negated ^ (act != exp)
@@ -91,12 +93,29 @@ module Matcher
       end
     end
 
+    def check_set(errors, exp, act)
+      unless act.is_a?(Set)
+        errors << expected(act).kind_of(Set)
+        return
+      end
+
+      (exp - act).each do |item|
+        errors << expected(act).including(item)
+      end
+
+      (act - exp).each do |item|
+        errors << expected(act).not.including(item)
+      end
+    end
+
     def negated_check_helper(errors, exp, act)
       case exp
       when Array
         negated_check_array(errors, exp, act)
       when Hash
         negated_check_hash(errors, exp, act)
+      when Set
+        negated_check_set(errors, exp, act)
       else
         if act == exp
           errors << expected(act).not.equal(exp)
@@ -128,6 +147,14 @@ module Matcher
         else
           negated_check_helper(errors[key], exp_value, act_value)
         end
+      end
+    end
+
+    def negated_check_set(errors, exp, act)
+      throw(:valid) if !act.is_a?(Set) || act != exp
+
+      exp.each do |item|
+        errors << expected(act).not.including(item)
       end
     end
   end
