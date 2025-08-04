@@ -37,6 +37,51 @@ describe Matcher::EqualMatcher do
     assert_no_errors negated.match(23)
   end
 
+  it 'matches array' do
+    matcher = Matcher.build { let(foo: 3) ^ equal([1, 2, vars[:foo]]) }
+    negated = ~matcher
+
+    assert_no_errors matcher.match([1, 2, 3])
+    assert_or_errors negated.match([1, 2, 3]),
+      0 => msg(1).equal(1),
+      1 => msg(2).equal(2),
+      2 => msg(3).equal(3)
+
+    assert_errors matcher.match(1),
+      msg(1).not.kind_of(Array)
+    assert_no_errors negated.match(1)
+
+    assert_errors matcher.match([1, 2]),
+      msg([1, 2]).not.length_of(3, 2)
+    assert_no_errors negated.match([1, 2])
+
+    assert_errors matcher.match([1, 2, 4]),
+      2 => msg(4).not.equal(3)
+    assert_no_errors negated.match([1, 2, 4])
+  end
+
+  it 'matches hash' do
+    matcher = Matcher.build { let(foo: 'foo') ^ equal({ foo: vars[:foo], bar: 'bar' }) }
+    negated = ~matcher
+
+    assert_no_errors matcher.match({ foo: 'foo', bar: 'bar' })
+    assert_or_errors negated.match({ foo: 'foo', bar: 'bar' }),
+      foo: msg('foo').equal('foo'),
+      bar: msg('bar').equal('bar')
+
+    assert_errors matcher.match(1),
+      msg(1).not.kind_of(Hash)
+    assert_no_errors negated.match(1)
+
+    assert_errors matcher.match({ foo: 'foo' }),
+      msg({ foo: 'foo' }).not.having_key(:bar)
+    assert_no_errors negated.match({ foo: 'foo' })
+
+    assert_errors matcher.match({ foo: 'foo', bar: 'baz' }),
+      bar: msg('baz').not.equal('bar')
+    assert_no_errors negated.match({ foo: 'foo', bar: 'baz' })
+  end
+
   it '#to_s' do
     matcher = Matcher::EqualMatcher.new(1)
 
