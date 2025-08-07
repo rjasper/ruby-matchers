@@ -28,6 +28,21 @@ module Matcher
         label_for([Call, receiver_l, expression.method, args_l, kwargs_l, block_l])
       when ProcExpression
         label_for([ProcExpression, expression.block])
+      when ArrayExpression, SetExpression
+        items_l = expression.items.map { label(_1, actual_label) }
+
+        label_for([expression.class, items_l])
+      when HashExpression
+        pairs_l = expression.pairs.flat_map do |k, v|
+          [label(k, actual_label), label(v, actual_label)]
+        end
+
+        label_for([HashExpression, pairs_l])
+      when RangeExpression
+        begin_l = label(expression.begin, actual_label)
+        end_l = label(expression.end, actual_label)
+
+        label_for([RangeExpression, begin_l, end_l, expression.exclude_end?])
       else
         raise "unexpected expression: #{expression.inspect}"
       end

@@ -20,6 +20,19 @@ describe Matcher::ExpressionLabeler do
     refute_equal a, f
   end
 
+  it 'labels data structures' do
+    array_l = labeler.label(expression { [1, vars[:foo]] })
+    hash_l = labeler.label(expression { { foo: vars[:foo] } })
+    range_l = labeler.label(expression { (vars[:foo]..vars[:bar]) })
+
+    assert_equal array_l, labeler.label(expression { [1, vars[:foo]] })
+    refute_equal array_l, labeler.label(expression { [1, vars[:bar]] })
+    assert_equal hash_l, labeler.label(expression { { foo: vars[:foo] } })
+    refute_equal hash_l, labeler.label(expression { { foo: vars[:bar] } })
+    assert_equal range_l, labeler.label(expression { (vars[:foo]..vars[:bar]) })
+    refute_equal range_l, labeler.label(expression { (vars[:foo]..vars[:baz]) })
+  end
+
   it 'can substitute label for _' do
     a = labeler.label(expression { _.foo })
     b = labeler.label(expression { _.bar }, a)
