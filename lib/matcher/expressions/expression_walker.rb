@@ -45,6 +45,18 @@ module Matcher
         traverse_block(expression.block) if expression.block
       when ProcExpression
         @block_expression_visitor&.call(expression)
+      when ArrayExpression, SetExpression
+        expression.items.each { traverse(_1) }
+      when HashExpression
+        expression.pairs.each do |k, v|
+          traverse(k)
+          traverse(v)
+        end
+      when RangeExpression
+        traverse(expression.begin)
+        traverse(expression.end)
+      else
+        raise "unsupported expression type: #{expression.class}"
       end
     end
 
