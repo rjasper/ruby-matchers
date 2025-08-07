@@ -66,6 +66,10 @@ module Matcher
       message(:including, item)
     end
 
+    def duplicate_by(expression, value, original_index)
+      message(:duplicate_by, expression, value, original_index)
+    end
+
     def matching(pattern)
       message(:matching, pattern)
     end

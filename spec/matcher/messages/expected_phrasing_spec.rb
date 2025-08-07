@@ -111,6 +111,16 @@ describe Matcher::ExpectedPhrasing do
         msg([1]).including(1)
     end
 
+    it 'duplicate_by' do
+      actual = { id: 5 }
+      expr = expression { _[:id] }
+
+      assert_phrase "expected duplicate by _[:id]=5 originally at index 7 but got #{actual.inspect}",
+        msg(actual).not.duplicate_by(expr, 5, 7)
+      assert_phrase "did not expect duplicate by _[:id]=5 originally at index 7 but got #{actual.inspect}",
+        msg(actual).duplicate_by(expr, 5, 7)
+    end
+
     it 'matching' do
       assert_phrase 'expected value to match /Hello/ but got "Hi!"',
         msg('Hi!').not.matching(/Hello/)
