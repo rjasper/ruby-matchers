@@ -85,6 +85,25 @@ module Matcher
       yield self
     end
 
+    def free_symbol(symbol)
+      parameters = ExpressionWalker.each_block(self).flat_map do |block|
+        block.parameters.map { |_type, name| name }
+      end
+
+      identifiers = (variables + parameters).to_set
+
+      return symbol unless identifiers.include?(symbol)
+
+      i = 2
+      loop do
+        symbol_i = :"#{symbol}#{i}"
+
+        return symbol_i unless identifiers.include?(symbol_i)
+
+        i += 1
+      end
+    end
+
     def inspect
       to_s
     end

@@ -110,7 +110,7 @@ module Matcher
       block = if as_symbol_proc
         SymbolProc.new(proj.method)
       else
-        symbol = find_free_symbol(proj)
+        symbol = proj.free_symbol(:e)
         parameters = [[:opt, symbol]]
         parameters << [:opt, :index] if with_index
         expression = proj.substitute(actual: symbol, original: :actual)
@@ -123,25 +123,6 @@ module Matcher
         Call.new(map, :with_index, [], {}, block)
       else
         Call.new(actual_var, :map, [], {}, block)
-      end
-    end
-
-    def find_free_symbol(expression)
-      parameters = ExpressionWalker.each_block(expression).flat_map do |block|
-        block.parameters.map { |_type, name| name }
-      end
-
-      identifiers = (expression.variables + parameters).to_set(&:to_s)
-
-      return :e unless identifiers.include?('e')
-
-      i = 2
-      loop do
-        name = "e#{i}"
-
-        return name.to_sym unless identifiers.include?(name)
-
-        i += 1
       end
     end
   end

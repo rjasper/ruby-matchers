@@ -18,4 +18,14 @@ describe Matcher::Expression do
     assert_equal one, Matcher::Expression.try_recorder(one)
     assert_equal 1, Matcher::Expression.try_recorder(1)
   end
+
+  it '#free_symbol' do
+    expr = expression do
+      vars[:foo].map { |bar| bar * 2 }
+    end
+
+    assert_equal :foo2, expr.free_symbol(:foo)
+    assert_equal :bar2, expr.free_symbol(:bar)
+    assert_equal :qux, expr.free_symbol(:qux)
+  end
 end
