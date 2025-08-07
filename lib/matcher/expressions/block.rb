@@ -48,23 +48,18 @@ module Matcher
       end
 
       result = block.call(*args, **kwargs)
+      expression = Expression.of(result)
 
-      if Recorder.recorder?(result)
-        expression = Recorder.to_expression(result)
-
-        return SymbolProc.new(expression.method) if
-          args.length == 1 &&
+      return SymbolProc.new(expression.method) if
+        args.length == 1 &&
           expression.is_a?(Call) &&
           expression.unary? &&
           expression.receiver == Recorder.to_expression(args[0])
 
-        ExpressionWalker.each_variable(expression) do |variable|
-          raise "parameter `#{variable.symbol}' shadows an outer variable" if
-            parameter_names.include?(variable.symbol) &&
-              !variable_object_ids.include?(variable.object_id)
-        end
-      else
-        expression = Constant.new(result)
+      ExpressionWalker.each_variable(expression) do |variable|
+        raise "parameter `#{variable.symbol}' shadows an outer variable" if
+          parameter_names.include?(variable.symbol) &&
+            !variable_object_ids.include?(variable.object_id)
       end
 
       new(parameters, expression)
