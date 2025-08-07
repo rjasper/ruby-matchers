@@ -2,7 +2,7 @@
 
 module Matcher
   class ExpressionWalker
-    attr_accessor :constant_visitor, :variable_visitor, :call_visitor, :block_visitor, :block_expression_visitor
+    attr_accessor :constant_visitor, :variable_visitor, :call_visitor, :block_visitor, :proc_expression_visitor
 
     def self.each_variable(expression, &block)
       return to_enum(:each_variable, expression) unless block_given?
@@ -44,7 +44,7 @@ module Matcher
         expression.kwargs.each { traverse(_2) }
         traverse_block(expression.block) if expression.block
       when ProcExpression
-        @block_expression_visitor&.call(expression)
+        @proc_expression_visitor&.call(expression)
       when ArrayExpression, SetExpression
         expression.items.each { traverse(_1) }
       when HashExpression
@@ -61,7 +61,7 @@ module Matcher
     end
 
     def traverse_block(block)
-      @block_expression_visitor&.call(block)
+      @block_visitor&.call(block)
 
       return unless block.is_a?(Block)
 
