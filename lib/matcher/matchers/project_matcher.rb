@@ -31,17 +31,17 @@ module Matcher
   end
 
   module MatcherBuilding
-    def project(recorder = UNDEFINED, **projections)
+    def project(expression = UNDEFINED, **projections)
       raise 'cannot mix project(expression) ^ matcher and project(expression => matcher)' if
-        !Matcher.undefined?(recorder) && !projections.empty?
+        !Matcher.undefined?(expression) && !projections.empty?
 
-      return Pipe.new { project(recorder => _1) } unless Matcher.undefined?(recorder)
+      return Pipe.new { project(expression => _1) } unless Matcher.undefined?(expression)
 
-      project_matchers = projections.map do |r, m|
-        expression = Recorder.to_expression(r)
-        matcher = Matcher.of(m)
+      project_matchers = projections.map do |e, m|
+        e = Expression.of(e)
+        m = Matcher.of(m)
 
-        ProjectMatcher.new(expression, matcher)
+        ProjectMatcher.new(e, m)
       end
 
       all(*project_matchers)

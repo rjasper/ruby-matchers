@@ -128,10 +128,10 @@ module Matcher
   end
 
   module MatcherBuilding
-    def map(recorder, matcher = UNDEFINED)
-      return Pipe.new { map(recorder, _1) } if Matcher.undefined?(matcher)
+    def map(expression, matcher = UNDEFINED)
+      return Pipe.new { map(expression, _1) } if Matcher.undefined?(matcher)
 
-      expression = Recorder.to_expression(recorder)
+      expression = Expression.of(expression)
       matcher = Matcher.of(matcher)
 
       MapMatcher.new(expression, matcher)
