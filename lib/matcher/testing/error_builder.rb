@@ -2,10 +2,14 @@
 
 module Matcher
   class ErrorBuilder
-    def self.build(&)
+    def self.build(use_or: false, &)
       errors = build_errors(&)
 
-      AndError.from(errors)
+      if use_or
+        OrError.from(errors)
+      else
+        AndError.from(errors)
+      end
     end
 
     def self.build_errors(&)

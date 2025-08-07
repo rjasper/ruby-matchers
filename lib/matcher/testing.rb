@@ -39,7 +39,7 @@ module Matcher
       expected_nodes = if block
         ErrorBuilder.build_errors(&block)
       else
-        base.map { ElementError.new(_1) } + nested_from_hash(nested)
+        base.map { ElementError.new(_1) } + nested_from_hash(nested, use_or:)
       end
 
       error_klass = use_or ? OrError : AndError
@@ -86,10 +86,11 @@ module Matcher
       assert false, io.string
     end
 
-    def nested_from_hash(hash)
+    def nested_from_hash(hash, use_or: false)
       hash.map do |key, value|
         node = if value.is_a?(Hash)
-          AndError.from(nested_from_hash(value))
+          klass = use_or ? OrError : AndError
+          klass.from(nested_from_hash(value, use_or:))
         else
           ElementError.new(value)
         end
