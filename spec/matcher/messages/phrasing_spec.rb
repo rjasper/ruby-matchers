@@ -57,6 +57,6 @@ describe Matcher::Phrasing do
     message = Matcher::Message.new(:got, true, 42)
     my_phrasing = klass.new(nil, message)
 
-    assert_equal 'got 42 but found no message for :got (negated)', my_phrasing.apply
+    assert_equal 'got 42 but found no message for *NOT* :got', my_phrasing.apply
   end
 end
