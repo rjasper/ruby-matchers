@@ -87,6 +87,10 @@ module Matcher
       "#{verb} #{item.inspect} to be included but got #{actual.inspect}"
     end
 
+    define(:duplicate) do |original_index|
+      "#{verb} duplicate originally at index #{original_index} but got #{actual.inspect}"
+    end
+
     define(:duplicate_by) do |expression, value, original_index|
       "#{verb} duplicate by #{expression.inspect}=#{value.inspect} originally at index #{original_index} but got #{actual.inspect}"
     end
