@@ -2,12 +2,18 @@
 
 module Matcher
   class ParseIso8601Matcher < Base
+    extend OnceBefore
+
     def initialize(matcher, negated: false)
       super()
 
       @matcher = negated ? ~matcher : matcher
       @original_matcher = matcher
       @negated = negated
+    end
+
+    once_before :initialize do
+      require 'time'
     end
 
     def ~

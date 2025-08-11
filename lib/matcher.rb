@@ -4,7 +4,6 @@ require_relative "matcher/version"
 
 require 'singleton'
 require 'forwardable'
-require 'time'
 
 module Matcher
   module NoMatcher; end
