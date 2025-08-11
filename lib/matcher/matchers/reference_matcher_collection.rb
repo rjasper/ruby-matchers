@@ -4,6 +4,7 @@ module Matcher
   class ReferenceMatcherCollection
     include NoMatcher
     include NoExpression
+    include NoKey
 
     attr_reader :last_object_id, :last_matcher
 

@@ -5,5 +5,6 @@ module Matcher
     include Singleton
     include NoMatcher
     include NoExpression
+    include NoKey
   end
 end

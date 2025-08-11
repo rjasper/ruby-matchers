@@ -8,6 +8,7 @@ require 'forwardable'
 module Matcher
   module NoMatcher; end
   module NoExpression; end
+  module NoKey; end
 end
 
 require_relative 'matcher/once_before'

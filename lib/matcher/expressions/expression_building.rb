@@ -119,6 +119,7 @@ module Matcher
     class VariableFactory
       include NoMatcher
       include NoExpression
+      include NoKey
 
       def initialize
         @cache = {}

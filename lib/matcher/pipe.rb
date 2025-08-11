@@ -4,6 +4,7 @@ module Matcher
   class Pipe
     include NoMatcher
     include NoExpression
+    include NoKey
 
     def initialize(negated: false, &block)
       @block = block

@@ -11,6 +11,44 @@ describe Matcher::HashMatcher do
     assert_kind_of(kind, Matcher.build { partial_r({ foo: 'bar' }) })
   end
 
+  describe 'raises on illegal keys' do
+    it 'raises on matcher key' do
+      e = assert_raises StandardError do
+        Matcher.build { { of('foo') => 'bar' } }
+      end
+
+      assert_equal 'Cannot use matcher as key for hash matcher', e.message
+    end
+
+    it 'raises on pipe key' do
+      e = assert_raises StandardError do
+        Matcher.build { { dig(:foo, :bar) => 'foobar' } }
+      end
+
+      assert_equal 'Cannot use Matcher::Pipe as key for hash matcher', e.message
+    end
+
+    it 'raises on vars key' do
+      e = assert_raises StandardError do
+        Matcher.build { { vars => 'foobar' } }
+      end
+
+      expected = 'Cannot use Matcher::ExpressionBuilding::VariableFactory as key for hash matcher'
+
+      assert_equal expected, e.message
+    end
+
+    it 'raises on refs key' do
+      e = assert_raises StandardError do
+        Matcher.build { { refs => 'foobar' } }
+      end
+
+      expected = 'Cannot use Matcher::ReferenceMatcherCollection as key for hash matcher'
+
+      assert_equal expected, e.message
+    end
+  end
+
   it 'builds partial hash matcher recursively with partial_r' do
     matcher = Matcher.build do
       partial_r({ a: { a1: 'a1' } })
