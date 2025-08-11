@@ -2,7 +2,6 @@
 
 module Matcher
   class Optional
-    include NoMatcher
     include NoExpression
 
     def self.value_of(obj)
@@ -14,6 +13,12 @@ module Matcher
     end
 
     attr_reader :value
+
+    def ~
+      matcher = Matcher.of(@value)
+
+      OptionalMatcher.new(matcher, negated: true)
+    end
 
     def ==(other)
       return true if equal?(other)
@@ -33,7 +38,9 @@ module Matcher
   end
 
   module MatcherBuilding
-    def optional(value)
+    def optional(value = UNDEFINED)
+      return Pipe.new { optional(_1) } if Matcher.undefined?(value)
+
       value = Expression.try_recorder(value)
 
       Optional.new(value)

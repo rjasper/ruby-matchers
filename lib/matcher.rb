@@ -87,6 +87,7 @@ require_relative 'matcher/matchers/negated_matcher'
 require_relative 'matcher/matchers/negated_project_matcher'
 require_relative 'matcher/matchers/never_matcher'
 require_relative 'matcher/matchers/one_matcher'
+require_relative 'matcher/matchers/optional_matcher'
 require_relative 'matcher/matchers/parse_float_matcher'
 require_relative 'matcher/matchers/parse_integer_matcher'
 require_relative 'matcher/matchers/parse_iso8601_matcher'
@@ -194,6 +195,8 @@ module Matcher
       ArrayMatcher.new(object.map { of(_1) })
     when *CASE_EQUALITY_CLASSES
       CaseEqualityMatcher.new(object)
+    when Optional
+      OptionalMatcher.new(of(object.value))
     else
       EqualMatcher.new(object)
     end
