@@ -18,12 +18,6 @@ module Matcher
       raise 'cannot use partial(others => ...)' if @partial && @includes_others
     end
 
-    def others
-      return nil unless @includes_others
-
-      @others ||= Matcher.of(@hash[Others.instance])
-    end
-
     def ~
       HashMatcher.new(@original_hash, partial: @partial, negated: !@negated)
     end
@@ -67,7 +61,7 @@ module Matcher
 
       @hash.each_with_index do |(key, value), i|
         if key.is_a?(Others)
-          state.errors << yield(others, actual.slice(*extra_keys))
+          state.errors << yield(value, actual.slice(*extra_keys))
 
           next
         end
@@ -157,7 +151,7 @@ module Matcher
 
       @hash.each_with_index do |(key, value), i|
         if key.is_a?(Others)
-          result = yield(others, actual.slice(*extra_keys))
+          result = yield(value, actual.slice(*extra_keys))
 
           return if result.valid?
 
