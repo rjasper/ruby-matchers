@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'test_helper'
+require 'matcher/archive/set_matcher'
 
 describe Matcher::SetMatcher do
   it 'is build by set' do

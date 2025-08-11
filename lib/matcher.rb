@@ -92,7 +92,6 @@ require_relative 'matcher/matchers/parse_iso8601_matcher'
 require_relative 'matcher/matchers/project_matcher'
 require_relative 'matcher/matchers/reference_matcher'
 require_relative 'matcher/matchers/reference_matcher_collection'
-require_relative 'matcher/matchers/set_matcher'
 
 require_relative 'matcher/messages/phrasing'
 require_relative 'matcher/messages/message_builder'

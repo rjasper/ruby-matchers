@@ -68,4 +68,12 @@ module Matcher
       SetMatcher.new(array.map { Matcher.of(_1) })
     end
   end
+
+  Matcher::ExpectedPhrasing.instance_exec do
+    namespace(:set) do
+      define(:including_matchable_by) do |matcher|
+        "#{verb} to include an element matching #{matcher} but got #{actual.inspect}"
+      end
+    end
+  end
 end
