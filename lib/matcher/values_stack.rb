@@ -40,6 +40,11 @@ module Matcher
       end
     end
 
+    def merge(hash)
+      hash.default_proc = ->(h, k) { h[k] = self[k] }
+      hash
+    end
+
     def to_h
       @stacks.transform_values(&:last)
     end
