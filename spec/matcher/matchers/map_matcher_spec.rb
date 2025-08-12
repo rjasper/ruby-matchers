@@ -10,11 +10,11 @@ describe Matcher::MapMatcher do
       (Matcher.build { map(_.length) ^ [1, 2] })
   end
 
-  it 'expects actual to respond to :map' do
+  it 'expects actual to respond to :each' do
     matcher = Matcher.build { map(_.length, [1, 2]) }
 
     assert_errors matcher.match(nil),
-      msg(nil).not.responding_to(:map)
+      msg(nil).not.responding_to(:each)
     assert_no_errors matcher.~.match(nil)
   end
 

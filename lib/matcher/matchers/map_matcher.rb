@@ -21,21 +21,24 @@ module Matcher
       actual = state.actual
       values = state.values
 
-      unless actual.respond_to?(:map)
-        state.errors << expected.responding_to(:map)
+      unless actual.respond_to?(:each)
+        state.errors << expected.responding_to(:each)
         return
       end
 
+      i = 0
       mapped = []
       mapping_failed = false
 
-      actual.map.with_index do |item, i|
+      actual.each do |act|
         mapped << @projection.evaluate(
-          values.merge(actual: item, index: i, original: actual),
+          values.merge(actual: act, index: i, original: actual),
         )
       rescue CallError => e
         state.errors[i] << e.message_for_errors
         mapping_failed = true
+      ensure
+        i += 1
       end
 
       return if mapping_failed
