@@ -129,20 +129,13 @@ module Matcher
     def nested_key
       proj = @projection
       actual_var = Variable.actual
-      as_symbol_proc = proj.is_a?(Call) && proj.unary? && proj.receiver == actual_var
       with_index = proj.variables.include?(:index)
-
-      block = if as_symbol_proc
-        SymbolProc.new(proj.method)
-      else
-        symbol = proj.free_symbol(:e)
-        parameters = [[:opt, symbol]]
-        parameters << %i[opt index] if with_index
-        substitution = proj.substitute(actual: symbol, original: :actual)
-        pair = ArrayExpression.new([substitution, Variable.new(symbol)])
-
-        Block.new(parameters, pair)
-      end
+      symbol = proj.free_symbol(:e)
+      parameters = [[:opt, symbol]]
+      parameters << %i[opt index] if with_index
+      substitution = proj.substitute(actual: symbol, original: :actual)
+      pair = ArrayExpression.new([substitution, Variable.new(symbol)])
+      block = Block.new(parameters, pair)
 
       map = if with_index
         enum_for_map = Call.new(actual_var, :map)
