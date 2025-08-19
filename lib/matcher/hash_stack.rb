@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Matcher
-  class ValuesStack
+  class HashStack
     extend Forwardable
 
     def initialize

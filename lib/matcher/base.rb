@@ -63,18 +63,18 @@ module Matcher
     StackData = Struct.new(:actual, :vals, :errors)
 
     def match(actual, **)
-      values_stack = ValuesStack.new
+      hash_stack = HashStack.new
 
       invoke = lambda do |matcher, act = UNDEFINED, **kwargs|
-        state = State.new(values_stack)
+        state = State.new(hash_stack)
         kwargs[:actual] = act unless Matcher.undefined?(act)
 
         if kwargs.empty?
           matcher.check(state, &invoke)
         else
-          values_stack.push(kwargs)
+          hash_stack.push(kwargs)
           matcher.check(state, &invoke)
-          values_stack.pop(kwargs)
+          hash_stack.pop(kwargs)
         end
 
         state.result
