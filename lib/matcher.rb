@@ -15,6 +15,7 @@ require_relative 'matcher/once_before'
 require_relative 'matcher/expressions/expression_building'
 require_relative 'matcher/matchers/matcher_building'
 require_relative 'matcher/patterns/pattern_building'
+require_relative 'matcher/utils/mapping_utils'
 
 require_relative 'matcher/assertions'
 require_relative 'matcher/base'

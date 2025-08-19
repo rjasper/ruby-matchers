@@ -2,6 +2,8 @@
 
 module Matcher
   class FilterMatcher < Base
+    include MappingUtils
+
     def initialize(filter, matcher, negated: false)
       super()
 
@@ -50,7 +52,15 @@ module Matcher
 
       errors = yield(@matcher, items, original: actual)
 
-      state.errors << map_errors(errors, state, mapping)
+      state.errors << map_errors(errors) do |nested_error|
+        key = nested_error.key
+
+        next unless index_call?(key)
+
+        original_index = mapping[operand_of(key)]
+
+        NestedError.new(index_call_to(original_index), nested_error.child) if original_index
+      end
     end
 
     def to_s
@@ -59,58 +69,8 @@ module Matcher
 
     private
 
-    def map_errors(error, state, mapping)
-      case error
-      when EmptyError
-        error
-      when AndError, OrError
-        children = error.children.map { map_errors(_1, state, mapping) }
-        error.class.new(children)
-      when NestedError
-        key = error.key
-
-        mapped_index = key.is_a?(Call) &&
-          key.binary? &&
-          key.receiver == Variable.actual &&
-          (operand = key.args[0]) &&
-          operand.is_a?(Constant) &&
-          operand.value
-
-        if mapped_index.is_a?(Integer) && (original_index = mapping[mapped_index])
-          state.new_collector[original_index] << error.child
-        else
-          error
-        end
-      when ElementError
-        state.new_collector[nested_key] << error
-      else
-        raise "Unexpected error: #{error.inspect}"
-      end
-    end
-
-    def nested_key
-      proj = @filter
-      actual_var = Variable.actual
-      as_symbol_proc = proj.is_a?(Call) && proj.unary? && proj.receiver == actual_var
-      with_index = proj.variables.include?(:index)
-
-      block = if as_symbol_proc
-        SymbolProc.new(proj.method)
-      else
-        symbol = proj.free_symbol(:e)
-        parameters = [[:opt, symbol]]
-        parameters << [:opt, :index] if with_index
-        expression = proj.substitute(actual: symbol, original: :actual)
-
-        Block.new(parameters, expression)
-      end
-
-      if with_index
-        filter = Call.new(actual_var, :filter, [], {})
-        Call.new(filter, :with_index, [], {}, block)
-      else
-        Call.new(actual_var, :filter, [], {}, block)
-      end
+    def mapped_base
+      @mapped_base ||= map_base(:filter, @filter)
     end
   end
 

@@ -2,6 +2,8 @@
 
 module Matcher
   class IndexByMatcher < Base
+    include MappingUtils
+
     def initialize(projection, matcher, negated: false)
       super()
 
@@ -59,7 +61,7 @@ module Matcher
 
       errors = yield(@matcher, index, original: actual)
 
-      state.errors << map_errors(errors, state, mapping)
+      state.errors << map_errors2(errors, mapping)
     end
 
     def to_s
@@ -94,57 +96,41 @@ module Matcher
 
       errors = yield(@matcher, index, original: actual)
 
-      state.errors << map_errors(errors, state, mapping)
+      state.errors << map_errors2(errors, mapping)
     end
 
-    def map_errors(error, state, mapping)
-      case error
-      when EmptyError
-        error
-      when AndError, OrError
-        children = error.children.map { map_errors(_1, state, mapping) }
-        error.class.new(children)
-      when NestedError
-        key = error.key
+    def map_errors2(error, mapping)
+      map_errors(error) do |nested_error|
+        key = nested_error.key
 
-        index = key.is_a?(Call) &&
-          key.binary? &&
-          key.receiver == Variable.actual &&
-          (operand = key.args[0]) &&
-          operand.is_a?(Constant) &&
-          mapping[operand.value]
+        next unless index_call?(key)
 
-        if index
-          state.new_collector[index] << error.child
-        else
-          error
-        end
-      when ElementError
-        state.new_collector[nested_key] << error
-      else
-        raise "Unexpected error: #{error.inspect}"
+        index = mapping[operand_of(key)]
+
+        NestedError.new(index_call_to(index), nested_error.child) if index
       end
     end
 
-    def nested_key
-      proj = @projection
-      actual_var = Variable.actual
-      with_index = proj.variables.include?(:index)
-      symbol = proj.free_symbol(:e)
-      parameters = [[:opt, symbol]]
+    def mapped_base
+      return @mapped_base if @mapped_base
+
+      expression = @projection
+      with_index = expression.variables.include?(:index)
+      element = expression.free_symbol(:e)
+      parameters = [[:opt, element]]
       parameters << %i[opt index] if with_index
-      substitution = proj.substitute(actual: symbol, original: :actual)
-      pair = ArrayExpression.new([substitution, Variable.new(symbol)])
+      substituted = expression.substitute(actual: element, original: :actual)
+      pair = ArrayExpression.new([substituted, Variable.new(element)])
       block = Block.new(parameters, pair)
 
       map = if with_index
-        enum_for_map = Call.new(actual_var, :map)
+        enum_for_map = Call.new(Variable.actual, :map)
         Call.new(enum_for_map, :with_index, [], {}, block)
       else
-        Call.new(actual_var, :map, [], {}, block)
+        Call.new(Variable.actual, :map, [], {}, block)
       end
 
-      Call.new(map, :to_h)
+      @mapped_base = Call.new(map, :to_h)
     end
   end
 
