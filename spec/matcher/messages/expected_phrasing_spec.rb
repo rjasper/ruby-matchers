@@ -27,11 +27,11 @@ describe Matcher::ExpectedPhrasing do
         msg(0).equal(0)
     end
 
-    it 'lower_than' do
+    it 'less_than' do
       assert_phrase 'expected a value < 0 but got 0',
-        msg(0).not.lower_than(0)
+        msg(0).not.less_than(0)
       assert_phrase 'expected a value >= 0 but got -1',
-        msg(-1).lower_than(0)
+        msg(-1).less_than(0)
     end
 
     it 'greater_than' do
@@ -41,11 +41,11 @@ describe Matcher::ExpectedPhrasing do
         msg(1).greater_than(0)
     end
 
-    it 'lower_or_equal_than' do
+    it 'less_or_equal_than' do
       assert_phrase 'expected a value <= 0 but got 1',
-        msg(1).not.lower_or_equal_than(0)
+        msg(1).not.less_or_equal_than(0)
       assert_phrase 'expected a value > 0 but got 0',
-        msg(0).lower_or_equal_than(0)
+        msg(0).less_or_equal_than(0)
     end
 
     it 'greater_or_equal_than' do

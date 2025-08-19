@@ -18,16 +18,16 @@ module Matcher
       message(:equal, value)
     end
 
-    def lower_than(operand)
-      message(:lower_than, operand)
+    def less_than(operand)
+      message(:less_than, operand)
     end
 
     def greater_than(operand)
       message(:greater_than, operand)
     end
 
-    def lower_or_equal_than(operand)
-      message(:lower_or_equal_than, operand)
+    def less_or_equal_than(operand)
+      message(:less_or_equal_than, operand)
     end
 
     def greater_or_equal_than(operand)

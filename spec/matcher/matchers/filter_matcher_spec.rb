@@ -16,11 +16,11 @@ describe Matcher::FilterMatcher do
 
     assert_no_errors matcher.match([7, 8, 9, 10])
     assert_or_errors negated.match([7, 8, 9, 10]),
-      0 => msg(7).lower_than(10),
-      2 => msg(9).lower_than(10)
+      0 => msg(7).less_than(10),
+      2 => msg(9).less_than(10)
 
     assert_errors matcher.match([7, 8, 9, 11]),
-      3 => msg(11).not.lower_than(10)
+      3 => msg(11).not.less_than(10)
     assert_no_errors negated.match([7, 8, 9, 11])
 
     assert_errors matcher.match(nil),

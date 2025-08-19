@@ -95,17 +95,17 @@ describe Matcher::ExpressionMatcher do
 
   it 'matches comparisons' do
     assert_errors match(0) { _ < 0 },
-      msg(0).not.lower_than(0)
+      msg(0).not.less_than(0)
     assert_errors not_match(-1) { _ < 0 },
-      msg(-1).lower_than(0)
+      msg(-1).less_than(0)
     assert_errors match(0) { _ > 0 },
       msg(0).not.greater_than(0)
     assert_errors not_match(1) { _ > 0 },
       msg(1).greater_than(0)
     assert_errors match(1) { _ <= 0 },
-      msg(1).not.lower_or_equal_than(0)
+      msg(1).not.less_or_equal_than(0)
     assert_errors not_match(0) { _ <= 0 },
-      msg(0).lower_or_equal_than(0)
+      msg(0).less_or_equal_than(0)
     assert_errors match(-1) { _ >= 0 },
       msg(-1).not.greater_or_equal_than(0)
     assert_errors not_match(0) { _ >= 0 },
@@ -132,11 +132,11 @@ describe Matcher::ExpressionMatcher do
     assert_errors match(-1) { expr(0) < _ },
       msg(-1).not.greater_than(0)
     assert_errors match(1) { expr(0) > _ },
-      msg(1).not.lower_than(0)
+      msg(1).not.less_than(0)
     assert_errors match(-1) { expr(0) <= _ },
       msg(-1).not.greater_or_equal_than(0)
     assert_errors match(1) { expr(0) >= _ },
-      msg(1).not.lower_or_equal_than(0)
+      msg(1).not.less_or_equal_than(0)
   end
 
   it 'matches comparable to' do

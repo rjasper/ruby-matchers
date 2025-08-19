@@ -167,11 +167,11 @@ describe Matcher::ErrorChecker do
     end
 
     it 'detects unexpected leaf' do
-      # NOTE: msg(1).lower_than(2) and msg(1).not.greater_or_equal_than(2)
+      # NOTE: msg(1).less_than(2) and msg(1).not.greater_or_equal_than(2)
       # produce the same expected phrasing.
 
       expected = build_errors do
-        error msg(1).lower_than(2)
+        error msg(1).less_than(2)
 
         _or do
           error msg(1).not.greater_or_equal_than(2)
@@ -183,7 +183,7 @@ describe Matcher::ErrorChecker do
         error msg(1).not.greater_or_equal_than(2)
 
         _or do
-          error msg(1).lower_than(2)
+          error msg(1).less_than(2)
           error 'b'
         end
       end

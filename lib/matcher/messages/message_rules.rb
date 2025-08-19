@@ -9,11 +9,11 @@ module Matcher
     message method_hole(:call, _, standard_ops, const(:operand)) do |v, e|
       case e[:call].method
       when :<
-        standard_message.lower_than(v[:operand])
+        standard_message.less_than(v[:operand])
       when :>
         standard_message.greater_than(v[:operand])
       when :<=
-        standard_message.lower_or_equal_than(v[:operand])
+        standard_message.less_or_equal_than(v[:operand])
       when :>=
         standard_message.greater_or_equal_than(v[:operand])
       when :<=>
