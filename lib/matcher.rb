@@ -222,17 +222,17 @@ module Matcher
   end
 
   def self.settings
-    Thread.current[:matcher_settings_stack]&.last || {}
+    Thread.current[:matcher_settings_stack] || {}
   end
 
   def self.with_settings(**settings)
-    stack = (Thread.current[:matcher_settings_stack] ||= [])
-    stack << (stack.last || {}).merge(settings)
+    stack = (Thread.current[:matcher_settings_stack] ||= HashStack.new)
+    stack.push(settings)
 
     begin
       yield
     ensure
-      stack.pop
+      stack.pop(settings)
       Thread.current[:matcher_settings_stack] = nil if stack.empty?
     end
   end
