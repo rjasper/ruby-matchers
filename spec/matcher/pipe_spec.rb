@@ -31,6 +31,30 @@ describe Matcher::Pipe do
     end
   end
 
+  describe '#optional' do
+    it 'can optionally fall back to value' do
+      matcher = Matcher.of(pipe(divisible_by(2)) ^ pipe(divisible_by(3)).optional)
+
+      assert_no_errors matcher.match(6)
+
+      assert_errors matcher.match(7),
+        'expected _ % 2 == 0 but got 1 == 0, where _ = 7',
+        'expected _ % 3 == 0 but got 1 == 0, where _ = 7'
+    end
+
+    it 'can optionally negate itself' do
+      matcher = Matcher.of(~pipe(divisible_by(3)).optional)
+
+      assert_no_errors matcher.match(4)
+
+      # "did not expect to exist" is a strange error message, but is actually
+      # what we expect in this case. I just didn't come up with a better example.
+      assert_or_errors matcher.match(6),
+        'expected _ % 3 != 0 but got 0 != 0, where _ = 6',
+        msg(6).exist
+    end
+  end
+
   private
 
   def divisible_by(n)

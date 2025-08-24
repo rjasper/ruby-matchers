@@ -25,5 +25,9 @@ module Matcher
         result
       end
     end
+
+    def optional(fallback = AlwaysMatcher.instance)
+      OptionalPipe.new(self, fallback)
+    end
   end
 end

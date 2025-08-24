@@ -23,6 +23,7 @@ require_relative 'matcher/builder'
 require_relative 'matcher/debug'
 require_relative 'matcher/hash_stack'
 require_relative 'matcher/list'
+require_relative 'matcher/optional_pipe'
 require_relative 'matcher/pipe'
 require_relative 'matcher/reporter'
 require_relative 'matcher/state'
@@ -180,6 +181,8 @@ module Matcher
     case object
     when NoMatcher
       raise ArgumentError, "Cannot use #{object.class} as matcher"
+    when OptionalPipe
+      object.fallback
     when Base
       object
     when Expression
