@@ -100,6 +100,7 @@ require_relative 'matcher/matchers/raises_matcher'
 require_relative 'matcher/matchers/range_matcher'
 require_relative 'matcher/matchers/reference_matcher'
 require_relative 'matcher/matchers/reference_matcher_collection'
+require_relative 'matcher/matchers/regexp_matcher'
 
 require_relative 'matcher/messages/phrasing'
 require_relative 'matcher/messages/message_builder'
@@ -195,6 +196,8 @@ module Matcher
       BlockMatcher.new(object)
     when Range
       RangeMatcher.new(object)
+    when Regexp
+      RegexpMatcher.new(object)
     when Hash
       hash = object.to_h do |k, v|
         k = Expression.try_recorder(k)
