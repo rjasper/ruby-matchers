@@ -142,10 +142,10 @@ module Matcher
     UNDEFINED == object
   end
 
-  def self.build(&)
+  def self.build(&block)
     with_build_session do
-      builder = Builder.new
-      object = builder.instance_exec(&)
+      builder = Builder.new(block.binding.receiver)
+      object = builder.instance_exec(&block)
       builder.refs.check
 
       matcher = if builder.refs? && builder.refs.last_object_id == object.object_id
