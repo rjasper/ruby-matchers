@@ -94,6 +94,7 @@ require_relative 'matcher/matchers/parse_integer_matcher'
 require_relative 'matcher/matchers/parse_iso8601_matcher'
 require_relative 'matcher/matchers/parse_json_matcher'
 require_relative 'matcher/matchers/project_matcher'
+require_relative 'matcher/matchers/raises_matcher'
 require_relative 'matcher/matchers/reference_matcher'
 require_relative 'matcher/matchers/reference_matcher_collection'
 
