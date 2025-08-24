@@ -37,7 +37,7 @@ module Matcher
           values.merge(actual: act, index: i, original: actual),
         )
       rescue CallError => e
-        state.errors[i] << e.message_for_errors
+        state.errors[i] << e.message_for_errors(act)
         mapping_failed = true
       ensure
         i += 1

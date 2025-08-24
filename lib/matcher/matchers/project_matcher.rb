@@ -18,7 +18,7 @@ module Matcher
         result = @expression.evaluate(state.values)
       rescue CallError => e
         # rescuing here instead of method so we won't catch from yield
-        state.errors << e.message_for_errors
+        state.errors << e.message_for_errors(state.actual)
         return
       end
 

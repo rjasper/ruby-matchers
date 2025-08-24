@@ -239,16 +239,16 @@ module Matcher
     end
 
     def invoke(values, receiver, args, kwargs)
-      raise NotRespondingError.new(self, receiver, values) unless
-        receiver.respond_to?(@method)
+      block = @block.is_a?(Matcher::Block) ? @block&.to_proc(values:) : @block
 
       begin
-        block = @block.is_a?(Matcher::Block) ? @block&.to_proc(values:) : @block
         result = receiver.send(@method, *args, **kwargs, &block)
-
         assignment? ? args.last : result
-      rescue StandardError => e
-        raise EvaluationError.new(e, self, values)
+      rescue => e
+        message = "#{self} raised #{e.class}: #{e.message}"
+        given = given_for(values)
+
+        raise CallError.new(message, self, given)
       end
     end
 

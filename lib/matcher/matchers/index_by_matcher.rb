@@ -49,7 +49,7 @@ module Matcher
 
         key
       rescue CallError => e
-        state.errors[i] << e.message_for_errors
+        state.errors[i] << e.message_for_errors(item)
         failed = true
       end
 

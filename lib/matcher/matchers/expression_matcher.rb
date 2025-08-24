@@ -28,7 +28,7 @@ module Matcher
         state.errors << message_factory.create(rule_context, value_tree)
       end
     rescue CallError => e
-      state.errors << e.message_for_errors unless @negated
+      state.errors << e.message_for_errors(state.actual) unless @negated
     end
 
     def to_s

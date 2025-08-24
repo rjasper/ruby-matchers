@@ -42,16 +42,14 @@ describe Matcher::Call do
       assert_equal 2, struct.foo
     end
 
-    it 'raises NotRespondingError' do
-      err = assert_raises Matcher::NotRespondingError do
+    it 'raises CallError' do
+      err = assert_raises Matcher::CallError do
         expression { _.foo }.evaluate(actual: nil)
       end
 
-      assert_equal "_ does not respond to `foo'", err.message
-    end
+      assert_equal "_.foo raised NoMethodError: undefined method `foo' for nil", err.message
 
-    it 'raises EvaluationError' do
-      err = assert_raises Matcher::EvaluationError do
+      err = assert_raises Matcher::CallError do
         expression { (_ - 1) / 0 }.evaluate(actual: 1)
       end
 
