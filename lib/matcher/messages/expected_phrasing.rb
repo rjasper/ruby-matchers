@@ -246,8 +246,13 @@ module Matcher
       end
 
       define(:raising) do |expression, error, given|
-        "#{verb} #{expression} to raise #{error.class}" \
-          "#{where_text(given, expression)}: #{error.message}"
+        error_class = error.is_a?(Class) ? error : error.class
+        where = where_text(given, expression)
+
+        text = "#{verb} #{expression} to raise #{error_class}#{where}"
+        text += ": #{error.message}" if error.is_a?(Exception)
+
+        text
       end
     end
 
