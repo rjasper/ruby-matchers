@@ -47,7 +47,12 @@ module Matcher
   end
 
   module MatcherBuilding
-    def raises(expression_or_matcher = UNDEFINED, matcher = UNDEFINED, &block)
+    def raises(
+      expression_or_matcher = UNDEFINED,
+      matcher = UNDEFINED,
+      message: UNDEFINED,
+      &block
+    )
       no_arg1 = Matcher.undefined?(expression_or_matcher)
       no_arg2 = Matcher.undefined?(matcher)
 
@@ -64,10 +69,17 @@ module Matcher
         expression = Expression.of(expression_or_matcher)
       end
 
-      return Pipe.new { raises(expression, _1) } if
+      return Pipe.new { raises(expression, _1, message:) }.optional if
         Matcher.undefined?(matcher)
 
       matcher = Matcher.of(matcher)
+
+      unless Matcher.undefined?(message)
+        message_call = Call.new(Variable.actual, :message)
+        message_matcher = Matcher.of(message)
+
+        matcher &= ProjectMatcher.new(message_call, message_matcher)
+      end
 
       RaisesMatcher.new(expression, matcher)
     end
