@@ -19,6 +19,15 @@ describe Matcher::Expression do
     assert_equal 1, Matcher::Expression.try_recorder(1)
   end
 
+  it '#given_for' do
+    expr = expression { vars[:foo] + vars[:bar] }
+
+    assert_equal(
+      { foo: 1, bar: 2 },
+      expr.given_for(foo: 1, bar: 2, qux: 3),
+    )
+  end
+
   it '#free_symbol' do
     expr = expression do
       vars[:foo].map { |bar| bar * 2 }

@@ -79,6 +79,12 @@ module Matcher
       [evaluate(values)]
     end
 
+    def given_for(values)
+      variables.each_with_object({}) do |symbol, given|
+        given[symbol] = values[symbol]
+      end
+    end
+
     def visit
       return to_enum(:visit) unless block_given?
 

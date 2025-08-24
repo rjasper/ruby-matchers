@@ -18,11 +18,7 @@ module Matcher
     end
 
     def given
-      state_values = @state.values
-
-      @matcher.expression.variables.each_with_object({}) do |symbol, given|
-        given[symbol] = state_values[symbol]
-      end
+      @matcher.expression.given_for(@state.values)
     end
   end
 end
