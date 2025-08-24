@@ -63,7 +63,6 @@ require_relative 'matcher/matchers/always_matcher'
 require_relative 'matcher/matchers/any_matcher'
 require_relative 'matcher/matchers/array_matcher'
 require_relative 'matcher/matchers/block_matcher'
-require_relative 'matcher/matchers/case_equality_matcher'
 require_relative 'matcher/matchers/dig_matcher'
 require_relative 'matcher/matchers/each_matcher'
 require_relative 'matcher/matchers/each_pair_matcher'
@@ -165,8 +164,6 @@ module Matcher
     end
   end
 
-  CASE_EQUALITY_CLASSES = [Module, Range, Regexp].freeze
-
   def self.max_reference_depth
     @max_reference_depth ||= 100
   end
@@ -208,8 +205,6 @@ module Matcher
       HashMatcher.new(hash)
     when Array
       ArrayMatcher.new(object.map { of(_1) })
-    when *CASE_EQUALITY_CLASSES
-      CaseEqualityMatcher.new(object)
     when Optional
       OptionalMatcher.new(of(object.value))
     else
@@ -224,7 +219,7 @@ module Matcher
       case matcher
       when ExpressionMatcher
         !matcher.negated && matcher.expression.precedence > Call::OPERATOR_PRECEDENCE[:^]
-      when EqualMatcher, CaseEqualityMatcher, ArrayMatcher, HashMatcher
+      when EqualMatcher, KindOfMatcher, RangeMatcher, RegexpMatcher, ArrayMatcher, HashMatcher
         false
       else
         matcher_to_s !~ /\A(~?\w+(\(.*\)|\[.*\])?|-> \{.*})\z/

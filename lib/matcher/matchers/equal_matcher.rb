@@ -33,9 +33,10 @@ module Matcher
       end
     end
 
+    IMPLICIT_MATCHER_CLASSES = [Module, Range, Regexp, Hash, Array].freeze
+
     def to_s
-      case @value
-      when *CASE_EQUALITY_CLASSES
+      if IMPLICIT_MATCHER_CLASSES.any? { @value.is_a?(_1) }
         "#{'~' if @negated}equal(#{@value.inspect})"
       else
         @negated ? "neg(#{@value.inspect})" : @value.inspect
