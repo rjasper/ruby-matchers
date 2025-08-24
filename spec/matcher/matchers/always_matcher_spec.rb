@@ -44,7 +44,7 @@ describe Matcher::AlwaysMatcher do
   it '#|' do
     matcher = Matcher.build { always | equal(1) }
 
-    assert_kind_of Matcher::EqualMatcher, matcher
+    assert_kind_of Matcher::AlwaysMatcher, matcher
   end
 
   it '#to_s' do
