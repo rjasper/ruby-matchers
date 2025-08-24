@@ -22,6 +22,8 @@ module Matcher
         raise ArgumentError, 'Cannot use matcher as expression'
       when NoExpression
         raise ArgumentError, "Cannot use #{obj.class} as expression"
+      when Proc
+        raise ArgumentError, "Cannot use Proc as expression. Use `expr { ... }' instead"
       when Expression
         obj
       when Array
