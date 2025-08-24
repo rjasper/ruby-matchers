@@ -97,6 +97,7 @@ require_relative 'matcher/matchers/parse_iso8601_matcher'
 require_relative 'matcher/matchers/parse_json_matcher'
 require_relative 'matcher/matchers/project_matcher'
 require_relative 'matcher/matchers/raises_matcher'
+require_relative 'matcher/matchers/range_matcher'
 require_relative 'matcher/matchers/reference_matcher'
 require_relative 'matcher/matchers/reference_matcher_collection'
 
@@ -192,6 +193,8 @@ module Matcher
       ExpressionMatcher.new(object)
     when Proc
       BlockMatcher.new(object)
+    when Range
+      RangeMatcher.new(object)
     when Hash
       hash = object.to_h do |k, v|
         k = Expression.try_recorder(k)
