@@ -10,18 +10,24 @@ describe Matcher::MessageFactory do
   let(:factory) do
     pattern = Matcher::Pattern.build { hole(:a) + hole(:b) }
     match = pattern.match(exp)
-    block = proc { |v, e| report.test(v[:a], v[:b], e[:a], e[:b]) }
+    block = proc { |v, e| standard_message.test(v[:a], v[:b], e[:a], e[:b]) }
 
     Matcher::MessageFactory
       .new(match.value_paths, match.expressions, block)
   end
 
-  let(:matcher) { Matcher::Base.new }
+  let(:context) do
+    matcher = Matcher::ExpressionMatcher.new(Matcher::Variable.actual)
+    values = Matcher::HashStack.new
+    state = Matcher::State.new(values)
+
+    Matcher::MessageRuleContext.new(matcher, state)
+  end
 
   it 'passes values and expressions to block' do
     value_tree = exp.evaluate_tree(actual: 1, foo: 2)
 
-    message = factory.create(matcher, value_tree)
+    message = factory.create(context, value_tree)
 
     actual = expression { _ }
     foo_times_two = expression { vars[:foo] * 2 }
@@ -32,10 +38,11 @@ describe Matcher::MessageFactory do
   it 'negates messages' do
     value_tree = exp.evaluate_tree(actual: 4, foo: 2)
 
-    refute factory.create(matcher, value_tree).negated
+    # standard_message is negated by default
+    assert factory.create(context, value_tree).negated
 
     factory.negate!
 
-    assert factory.create(matcher, value_tree).negated
+    refute factory.create(context, value_tree).negated
   end
 end

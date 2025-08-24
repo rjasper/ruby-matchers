@@ -3,7 +3,13 @@
 require 'test_helper'
 
 describe Matcher::RuleSet do
-  let(:matcher) { Matcher::Base.new }
+  let(:context) do
+    matcher = Matcher::ExpressionMatcher.new(Matcher::Variable.actual)
+    values = Matcher::HashStack.new
+    state = Matcher::State.new(values)
+
+    Matcher::MessageRuleContext.new(matcher, state)
+  end
 
   let(:rule_set) { Matcher::RuleSet.new }
 
@@ -47,7 +53,7 @@ describe Matcher::RuleSet do
       end
 
       message hole(:any) do |v|
-        expected.not_if(v[:any]).truthy
+        standard_message.not_if(v[:any]).truthy
       end
     end
 
@@ -66,6 +72,6 @@ describe Matcher::RuleSet do
 
     assert_kind_of Matcher::MessageFactory, result
 
-    result.create(matcher, value_tree)
+    result.create(context, value_tree)
   end
 end
