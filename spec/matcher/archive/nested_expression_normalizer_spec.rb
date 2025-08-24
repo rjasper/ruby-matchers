@@ -22,7 +22,7 @@ describe Matcher::NestedExpressionNormalizer do
   it 'normalizes nested expressions' do
     t = self
 
-    Matcher::Builder.new.instance_exec do
+    Matcher::Builder.new(nil).instance_exec do
       t.examine [], _
       t.examine [:a], _[:a]
       t.examine [_.a], _.a

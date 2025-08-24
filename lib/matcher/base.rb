@@ -95,14 +95,6 @@ module Matcher
 
     protected
 
-    def report(actual = UNDEFINED)
-      StandardMessageBuilder.new(false, actual)
-    end
-
-    def expected(actual = UNDEFINED)
-      StandardMessageBuilder.new(true, actual)
-    end
-
     def session(key = object_id)
       Matcher.session[key] ||= {}
     end

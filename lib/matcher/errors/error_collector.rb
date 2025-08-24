@@ -2,13 +2,11 @@
 
 module Matcher
   class ErrorCollector
-    def self.error_from(obj, values)
+    def self.error_from(obj)
       case obj
       when String
         ElementError.new(obj)
       when Message
-        obj = obj.bind(values[:actual]) unless obj.bound?
-
         ElementError.new(obj)
       when Error
         obj
@@ -19,10 +17,9 @@ module Matcher
 
     attr_reader :error
 
-    def initialize(values)
+    def initialize
       @error = EmptyError.instance
       @mode = :and
-      @values = values
     end
 
     def empty?
@@ -48,10 +45,9 @@ module Matcher
     end
 
     class Brackets
-      def initialize(parent, key, values)
+      def initialize(parent, key)
         @parent = parent
         @key = key
-        @values = values
       end
 
       def error
@@ -59,7 +55,7 @@ module Matcher
       end
 
       def <<(error)
-        error = ErrorCollector.error_from(error, @values)
+        error = ErrorCollector.error_from(error)
 
         return error if error.is_a?(EmptyError) || @key == Variable.actual
 
@@ -72,14 +68,14 @@ module Matcher
       end
 
       def [](key)
-        Brackets.new(self, key, @values)
+        Brackets.new(self, key)
       end
     end
 
     def <<(error)
       return @error if error.is_a?(EmptyError)
 
-      error = ErrorCollector.error_from(error, @values)
+      error = ErrorCollector.error_from(error)
 
       case @error
       when EmptyError
@@ -98,7 +94,7 @@ module Matcher
     end
 
     def [](key)
-      Brackets.new(self, key, @values)
+      Brackets.new(self, key)
     end
 
     def clear
