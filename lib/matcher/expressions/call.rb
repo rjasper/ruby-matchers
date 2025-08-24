@@ -319,6 +319,7 @@ module Matcher
     def parenthesize(operand, is_rhs, substitutions)
       operand_string = operand.to_s(substitutions:)
 
+      return "(#{operand_string})" if operand.is_a?(RescueLastErrorExpression)
       return operand_string unless operand.instance_of?(Call)
 
       # parenthesize if operand's precedence is lower (higher index) than ours

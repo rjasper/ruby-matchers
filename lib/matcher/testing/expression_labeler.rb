@@ -43,6 +43,10 @@ module Matcher
         end_l = label(expression.end, actual_label)
 
         label_for([RangeExpression, begin_l, end_l, expression.exclude_end?])
+      when RescueLastErrorExpression
+        expression_l = label(expression.expression, actual_label)
+
+        label_for([RescueLastErrorExpression, expression_l])
       else
         raise "unexpected expression: #{expression.inspect}"
       end

@@ -35,6 +35,12 @@ module Matcher
       expression.to_recorder
     end
 
+    def rescue_exception(expression)
+      expression = Expression.of(expression)
+
+      RescueLastErrorExpression.new(expression).to_recorder
+    end
+
     def kernel
       Constant.new(Kernel).to_recorder
     end

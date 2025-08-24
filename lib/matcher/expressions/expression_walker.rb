@@ -55,6 +55,8 @@ module Matcher
       when RangeExpression
         traverse(expression.begin)
         traverse(expression.end)
+      when RescueLastErrorExpression
+        traverse(expression.expression)
       else
         raise "unsupported expression type: #{expression.class}"
       end
