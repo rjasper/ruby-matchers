@@ -77,6 +77,7 @@ require_relative 'matcher/matchers/inline_matcher'
 require_relative 'matcher/matchers/imply_matcher'
 require_relative 'matcher/matchers/imply_some_matcher'
 require_relative 'matcher/matchers/keys_matcher'
+require_relative 'matcher/matchers/kind_of_matcher'
 require_relative 'matcher/matchers/lazy_all_matcher'
 require_relative 'matcher/matchers/lazy_any_matcher'
 require_relative 'matcher/matchers/let_matcher'
@@ -181,6 +182,8 @@ module Matcher
     case object
     when NoMatcher
       raise ArgumentError, "Cannot use #{object.class} as matcher"
+    when Module
+      KindOfMatcher.new(object)
     when OptionalPipe
       object.fallback
     when Base
