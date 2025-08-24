@@ -16,7 +16,7 @@ module Matcher
 
     def check(state)
       if state.actual.nil?
-        state.errors << expected.not.equal(nil) if @negated
+        state.errors << state.expected.not.equal(nil) if @negated
       else
         state.errors << yield(@matcher)
       end

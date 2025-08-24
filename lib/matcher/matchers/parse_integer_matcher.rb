@@ -19,14 +19,14 @@ module Matcher
       actual = state.actual
 
       unless actual.is_a?(String)
-        state.errors << expected.kind_of(String) unless @negated
+        state.errors << state.expected.kind_of(String) unless @negated
         return
       end
 
       value = Integer(actual)
 
       if @matcher.is_a?(NeverMatcher)
-        state.errors << expected.not.valid_format(:integer)
+        state.errors << state.expected.not.valid_format(:integer)
         return
       end
 
@@ -37,7 +37,7 @@ module Matcher
       integer_of = Call.new(Constant.new(Kernel), :Integer, [Variable.actual])
       state.errors[integer_of] << result
     rescue ArgumentError
-      state.errors << expected.valid_format(:integer) unless @negated
+      state.errors << state.expected.valid_format(:integer) unless @negated
     end
 
     def to_s

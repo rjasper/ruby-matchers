@@ -15,8 +15,6 @@ module Matcher
 
     attr_reader :matcher, :negated
 
-    public :expected, :report
-
     def ~
       return super unless @negatable
 

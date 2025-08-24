@@ -25,14 +25,14 @@ module Matcher
       actual = state.actual
 
       unless actual.is_a?(String)
-        state.errors << expected.kind_of(String) unless @negated
+        state.errors << state.expected.kind_of(String) unless @negated
         return
       end
 
       value = JSON.parse(actual, **@json_options)
 
       if @matcher.is_a?(NeverMatcher)
-        state.errors << expected.not.valid_format(:json)
+        state.errors << state.expected.not.valid_format(:json)
         return
       end
 
@@ -43,7 +43,7 @@ module Matcher
       parse_json = Call.new(Constant.new(JSON), :parse, [Variable.actual])
       state.errors[parse_json] << result
     rescue JSON::ParserError
-      state.errors << expected.valid_format(:json) unless @negated
+      state.errors << state.expected.valid_format(:json) unless @negated
     end
 
     def to_s

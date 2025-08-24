@@ -17,7 +17,7 @@ module Matcher
     end
 
     def check(state)
-      state.errors << report.exist
+      state.errors << state.report.exist
     end
 
     def to_s

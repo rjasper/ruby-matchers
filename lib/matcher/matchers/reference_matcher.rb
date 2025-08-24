@@ -30,7 +30,7 @@ module Matcher
       end
 
       unless visited.add?(actual.object_id)
-        state.errors << report.namespace(:reference).cyclic if @negated == @cyclic
+        state.errors << state.report.namespace(:reference).cyclic if @negated == @cyclic
 
         return
       end
@@ -53,7 +53,7 @@ module Matcher
 
         state.errors << target_errors
       elsif @negated == cached_result
-        state.errors << report.namespace(:reference).failed_from_cache
+        state.errors << state.report.namespace(:reference).failed_from_cache
       end
     ensure
       sess[:depth] = depth - 1

@@ -17,11 +17,19 @@ module Matcher
     end
 
     def new_collector
-      ErrorCollector.new(@values)
+      ErrorCollector.new
     end
 
     def result
       @error_collector&.error || EmptyError.instance
+    end
+
+    def report(actual = self.actual)
+      StandardMessageBuilder.new(false, actual)
+    end
+
+    def expected(actual = self.actual)
+      StandardMessageBuilder.new(true, actual)
     end
   end
 end

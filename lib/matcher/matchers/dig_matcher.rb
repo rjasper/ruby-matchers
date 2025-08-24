@@ -28,13 +28,13 @@ module Matcher
 
         if is_array
           unless key.is_a?(Integer)
-            errors << expected(cur).kind_of(Hash)
+            errors << state.expected(cur).kind_of(Hash)
             return nil
           end
         elsif !cur.is_a?(Hash)
           or_error = state.new_collector.or!
-          or_error << expected(cur).kind_of(Hash)
-          or_error << expected(cur).kind_of(Array)
+          or_error << state.expected(cur).kind_of(Hash)
+          or_error << state.expected(cur).kind_of(Array)
           errors << or_error.error
 
           return nil
@@ -48,12 +48,12 @@ module Matcher
             return nil
           elsif is_array
             unless index?(prev, key)
-              errors << expected(prev).having_index(key)
+              errors << state.expected(prev).having_index(key)
               return nil
             end
           else
             unless prev.key?(key)
-              errors << expected(prev).having_key(key)
+              errors << state.expected(prev).having_key(key)
               return nil
             end
           end
@@ -97,11 +97,11 @@ module Matcher
 
           if @optional
             if included
-              errors[key] << expected(cur).not.equal(nil)
+              errors[key] << state.expected(cur).not.equal(nil)
             elsif is_array
-              errors << expected(prev).having_index(key)
+              errors << state.expected(prev).having_index(key)
             else
-              errors << expected(prev).having_key(key)
+              errors << state.expected(prev).having_key(key)
             end
 
             return nil

@@ -14,7 +14,7 @@ module Matcher
     end
 
     def check(state)
-      state.errors << not_equal_message if
+      state.errors << not_equal_message(state) if
         !@negated ^ (@object === state.actual) # rubocop:disable Style/CaseEquality
     end
 
@@ -28,19 +28,19 @@ module Matcher
 
     private
 
-    def not_equal_message
+    def not_equal_message(state)
       case @object
       when Module
-        expected.not_if(@negated).kind_of(@object)
+        state.expected.not_if(@negated).kind_of(@object)
       when Range
-        expected.not_if(@negated)
+        state.expected.not_if(@negated)
           .between(@object.begin, @object.end, exclude_end: @object.exclude_end?)
       when Regexp
-        expected.not_if(@negated).matching(@object)
+        state.expected.not_if(@negated).matching(@object)
       when Set
-        expected.not_if(@negated).in(@object)
+        state.expected.not_if(@negated).in(@object)
       else
-        expected.not_if(@negated).equal(@object)
+        state.expected.not_if(@negated).equal(@object)
       end
     end
   end

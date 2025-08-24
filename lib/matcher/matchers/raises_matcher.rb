@@ -21,7 +21,7 @@ module Matcher
       return if @negated
 
       given = @expression.given_for(state.values)
-      state.errors << expected.namespace(:expression).raising(@expression, StandardError, given)
+      state.errors << state.expected.namespace(:expression).raising(@expression, StandardError, given)
     rescue StandardError => e
       state.errors[rescue_last_error] << yield(@matcher, unwrap_exception(e))
     end

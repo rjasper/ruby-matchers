@@ -26,7 +26,7 @@ module Matcher
 
     def check(state)
       if @matchers.empty?
-        state.errors << report.exist
+        state.errors << state.report.exist
         return
       end
 

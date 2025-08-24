@@ -42,12 +42,12 @@ module Matcher
         errors << if @else_matcher
           yield @else_matcher
         else
-          report.namespace(:imply_some).no_condition_satisfied(@matchers.map(&:condition), @count)
+          state.report.namespace(:imply_some).no_condition_satisfied(@matchers.map(&:condition), @count)
         end
 
         return
       elsif @count != :any && matchers.length != @count
-        errors << report.namespace(:imply_some).x_conditions_satisfied(matchers.map(&:condition), @count)
+        errors << state.report.namespace(:imply_some).x_conditions_satisfied(matchers.map(&:condition), @count)
       end
 
       matchers.each { errors << yield(_1.matcher) }

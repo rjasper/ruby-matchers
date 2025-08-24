@@ -16,7 +16,7 @@ module Matcher
       actual = state.actual
 
       unless actual.respond_to?(:each_pair)
-        state.errors << expected.responding_to(:each_pair)
+        state.errors << state.expected.responding_to(:each_pair)
         return
       end
 

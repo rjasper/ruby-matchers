@@ -13,7 +13,7 @@ module Matcher
     end
 
     def check(state)
-      state.errors << expected.namespace(:negated).not.valid(@matcher) if yield(@matcher).valid?
+      state.errors << state.expected.namespace(:negated).not.valid(@matcher) if yield(@matcher).valid?
     end
 
     def to_s

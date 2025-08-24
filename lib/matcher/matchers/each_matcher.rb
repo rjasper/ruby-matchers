@@ -14,7 +14,7 @@ module Matcher
 
     def check(state)
       unless state.actual.respond_to?(:each)
-        state.errors << expected.responding_to(:each)
+        state.errors << state.expected.responding_to(:each)
         return
       end
 

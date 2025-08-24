@@ -17,14 +17,14 @@ module Matcher
       actual = state.actual
 
       unless actual.is_a?(Array)
-        state.errors << expected.kind_of(Array) unless @negated
+        state.errors << state.expected.kind_of(Array) unless @negated
         return
       end
 
       if @array.length != actual.length
         return if @negated
 
-        state.errors << expected.length_of(@array.length, actual.length)
+        state.errors << state.expected.length_of(@array.length, actual.length)
       end
 
       missing = @array.clone
@@ -46,14 +46,14 @@ module Matcher
 
       if @negated
         # when negated then missing.empty? <=> extra.empty?
-        state.errors << report.namespace(:set).equal(@array) if missing.empty?
+        state.errors << state.report.namespace(:set).equal(@array) if missing.empty?
       else
         missing.each do |matcher|
-          state.errors << expected.namespace(:set).including_matchable_by(matcher)
+          state.errors << state.expected.namespace(:set).including_matchable_by(matcher)
         end
 
         extra.each do |i|
-          state.errors[i] << report.including(actual[i])
+          state.errors[i] << state.report.including(actual[i])
         end
       end
     end

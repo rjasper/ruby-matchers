@@ -20,7 +20,7 @@ module Matcher
         errors = state.errors.or!
 
         catch(:valid) do
-          negated_check_helper(errors, value, state.actual)
+          negated_check_helper(state, errors, value, state.actual)
 
           # prevent clearing errors
           return
@@ -29,7 +29,7 @@ module Matcher
         # caught :valid
         errors.clear
       else
-        check_helper(state.errors, value, state.actual)
+        check_helper(state, state.errors, value, state.actual)
       end
     end
 
@@ -44,96 +44,96 @@ module Matcher
 
     private
 
-    def check_helper(errors, exp, act)
+    def check_helper(state, errors, exp, act)
       case exp
       when Array
-        check_array(errors, exp, act)
+        check_array(state, errors, exp, act)
       when Hash
-        check_hash(errors, exp, act)
+        check_hash(state, errors, exp, act)
       when Set
-        check_set(errors, exp, act)
+        check_set(state, errors, exp, act)
       else
-        errors << expected(act).not_if(@negated).equal(exp) if
+        errors << state.expected(act).not_if(@negated).equal(exp) if
           @negated ^ (act != exp)
       end
     end
 
-    def check_array(errors, exp, act)
+    def check_array(state, errors, exp, act)
       unless act.is_a?(Array)
-        errors << expected(act).kind_of(Array)
+        errors << state.expected(act).kind_of(Array)
         return
       end
 
-      errors << expected(act).length_of(exp.length, act.length) if
+      errors << state.expected(act).length_of(exp.length, act.length) if
         exp.length != act.length
 
       [exp.length, act.length].min.times do |i|
-        check_helper(errors[i], exp[i], act[i])
+        check_helper(state, errors[i], exp[i], act[i])
       end
     end
 
-    def check_hash(errors, exp, act)
+    def check_hash(state, errors, exp, act)
       unless act.is_a?(Hash)
-        errors << expected(act).kind_of(Hash)
+        errors << state.expected(act).kind_of(Hash)
         return
       end
 
       (act.keys - exp.keys).each do |key|
-        errors[key] << expected(act).not.having_key(key)
+        errors[key] << state.expected(act).not.having_key(key)
       end
 
       exp.each do |key, exp_value|
         act_value = act[key]
 
         if act_value.nil? && !act.key?(key)
-          errors << expected(act).having_key(key)
+          errors << state.expected(act).having_key(key)
         else
-          check_helper(errors[key], exp_value, act_value)
+          check_helper(state, errors[key], exp_value, act_value)
         end
       end
     end
 
-    def check_set(errors, exp, act)
+    def check_set(state, errors, exp, act)
       unless act.is_a?(Set)
-        errors << expected(act).kind_of(Set)
+        errors << state.expected(act).kind_of(Set)
         return
       end
 
       (exp - act).each do |item|
-        errors << expected(act).including(item)
+        errors << state.expected(act).including(item)
       end
 
       (act - exp).each do |item|
-        errors << expected(act).not.including(item)
+        errors << state.expected(act).not.including(item)
       end
     end
 
-    def negated_check_helper(errors, exp, act)
+    def negated_check_helper(state, errors, exp, act)
       case exp
       when Array
-        negated_check_array(errors, exp, act)
+        negated_check_array(state, errors, exp, act)
       when Hash
-        negated_check_hash(errors, exp, act)
+        negated_check_hash(state, errors, exp, act)
       when Set
-        negated_check_set(errors, exp, act)
+        negated_check_set(state, errors, exp, act)
       else
         if act == exp
-          errors << expected(act).not.equal(exp)
+          errors << state.expected(act).not.equal(exp)
         else
           throw(:valid)
         end
       end
     end
 
-    def negated_check_array(errors, exp, act)
+    def negated_check_array(state, errors, exp, act)
       throw(:valid) if !act.is_a?(Array) || exp.length != act.length
 
       exp.length.times do |i|
-        negated_check_helper(errors[i], exp[i], act[i])
+        negated_check_helper(state, errors[i], exp[i], act[i])
       end
     end
 
-    def negated_check_hash(errors, exp, act)
+    def negated_check_hash(state, errors, exp, act)
       throw(:valid) unless act.is_a?(Hash)
 
       exp_keys_set = Set.new(exp.keys)
@@ -145,16 +145,16 @@ module Matcher
         if act_value.nil? && !act.key?(key)
           throw(:valid)
         else
-          negated_check_helper(errors[key], exp_value, act_value)
+          negated_check_helper(state, errors[key], exp_value, act_value)
         end
       end
     end
 
-    def negated_check_set(errors, exp, act)
+    def negated_check_set(state, errors, exp, act)
       throw(:valid) if !act.is_a?(Set) || act != exp
 
       exp.each do |item|
-        errors << expected(act).not.including(item)
+        errors << state.expected(act).not.including(item)
       end
     end
   end

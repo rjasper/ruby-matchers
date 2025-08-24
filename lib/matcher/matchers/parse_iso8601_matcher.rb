@@ -24,14 +24,14 @@ module Matcher
       actual = state.actual
 
       unless actual.is_a?(String)
-        state.errors << expected.kind_of(String) unless @negated
+        state.errors << state.expected.kind_of(String) unless @negated
         return
       end
 
       value = Time.iso8601(actual)
 
       if @matcher.is_a?(NeverMatcher)
-        state.errors << expected.not.valid_format(:iso8601)
+        state.errors << state.expected.not.valid_format(:iso8601)
         return
       end
 
@@ -42,7 +42,7 @@ module Matcher
       time_of = Call.new(Constant.new(Time), :iso8601, [Variable.actual])
       state.errors[time_of] << result
     rescue ArgumentError
-      state.errors << expected.valid_format(:iso8601) unless @negated
+      state.errors << state.expected.valid_format(:iso8601) unless @negated
     end
 
     def to_s

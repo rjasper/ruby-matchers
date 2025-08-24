@@ -23,7 +23,7 @@ module Matcher
       actual = state.actual
 
       unless actual.respond_to?(:each)
-        state.errors << expected.responding_to(:each)
+        state.errors << state.expected.responding_to(:each)
         return
       end
 
@@ -54,7 +54,7 @@ module Matcher
       end
 
       duplicates.each do |key, i, j|
-        state.errors[i] << expected(actual[i]).not.duplicate_by(@projection, key, j)
+        state.errors[i] << state.expected(actual[i]).not.duplicate_by(@projection, key, j)
       end
 
       return if failed

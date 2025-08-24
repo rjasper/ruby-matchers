@@ -17,11 +17,11 @@ module Matcher
       errors = state.errors
 
       unless actual.is_a?(Array)
-        errors << expected.kind_of(Array)
+        errors << state.expected.kind_of(Array)
         return
       end
 
-      errors << expected.length_of(@array.length, actual.length) if @array.length != actual.length
+      errors << state.expected.length_of(@array.length, actual.length) if @array.length != actual.length
 
       [@array.length, actual.length].min.times do |i|
         errors[i] << yield(@array[i], actual[i], index: i, parent: actual)

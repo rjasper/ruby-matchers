@@ -21,7 +21,7 @@ module Matcher
       actual = state.actual
 
       unless actual.is_a?(Hash)
-        state.errors << expected.kind_of(Hash)
+        state.errors << state.expected.kind_of(Hash)
         return
       end
 
@@ -34,13 +34,13 @@ module Matcher
       end
 
       (expected_keys - actual_keys).each do |key|
-        state.errors << expected.having_key(key)
+        state.errors << state.expected.having_key(key)
       end
 
       return if @partial
 
       (actual_keys - expected_keys).each do |key|
-        state.errors << expected.not.having_key(key)
+        state.errors << state.expected.not.having_key(key)
       end
     end
 
@@ -72,7 +72,7 @@ module Matcher
         state.errors.or!
 
         (actual_keys & expected_keys).each do |key|
-          state.errors << expected.not.having_key(key)
+          state.errors << state.expected.not.having_key(key)
         end
       else
         return if actual_keys != expected_keys
@@ -80,7 +80,7 @@ module Matcher
         state.errors.or!
 
         actual_keys.each do |key|
-          state.errors << expected.not.having_key(key)
+          state.errors << state.expected.not.having_key(key)
         end
       end
     end

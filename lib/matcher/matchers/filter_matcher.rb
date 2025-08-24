@@ -21,7 +21,7 @@ module Matcher
       actual = state.actual
 
       unless actual.respond_to?(:each)
-        state.errors << expected.responding_to(:each) unless @negated
+        state.errors << state.expected.responding_to(:each) unless @negated
         return
       end
 

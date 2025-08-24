@@ -24,7 +24,7 @@ module Matcher
       values = state.values
 
       unless actual.respond_to?(:each)
-        state.errors << expected.responding_to(:each)
+        state.errors << state.expected.responding_to(:each)
         return
       end
 

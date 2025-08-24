@@ -17,7 +17,7 @@ module Matcher
     def check(state)
       result = Utils.call_block(@block, state.values)
 
-      state.errors << build_message if @negated ^ !result
+      state.errors << build_message(state) if @negated ^ !result
     end
 
     def to_s
@@ -32,11 +32,11 @@ module Matcher
 
     private
 
-    def build_message
+    def build_message(state)
       if @description
-        expected.not_if(@negated).described_by(@description)
+        state.expected.not_if(@negated).described_by(@description)
       else
-        expected.namespace(:block).not_if(@negated).satisfied(block_location)
+        state.expected.namespace(:block).not_if(@negated).satisfied(block_location)
       end
     end
 

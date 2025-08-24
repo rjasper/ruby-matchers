@@ -28,7 +28,7 @@ module Matcher
       actual = state.actual
 
       unless actual.is_a?(Hash)
-        state.errors << expected.kind_of(Hash)
+        state.errors << state.expected.kind_of(Hash)
         return
       end
 
@@ -55,7 +55,7 @@ module Matcher
 
       if !@partial && !@includes_others
         extra_keys.each do |key|
-          state.errors[key] << expected.not.having_key(key)
+          state.errors[key] << state.expected.not.having_key(key)
         end
       end
 
@@ -73,7 +73,7 @@ module Matcher
         actual_value = actual[key]
 
         if actual_value.nil? && !actual.key?(key)
-          state.errors << expected.having_key(key) unless is_optional
+          state.errors << state.expected.having_key(key) unless is_optional
         else
           error = yield(value, actual_value, key:, parent: actual)
 
@@ -116,9 +116,9 @@ module Matcher
 
       if @hash.empty?
         if @partial
-          state.errors << report.kind_of(Hash)
+          state.errors << state.report.kind_of(Hash)
         elsif actual.empty?
-          state.errors << report.predicate(:empty?)
+          state.errors << state.report.predicate(:empty?)
         end
 
         return
@@ -182,7 +182,7 @@ module Matcher
       end
 
       state.errors << if collector.empty?
-        report.predicate(:empty?)
+        state.report.predicate(:empty?)
       else
         collector.error
       end

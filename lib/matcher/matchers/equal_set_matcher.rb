@@ -30,7 +30,7 @@ module Matcher
       actual = state.actual
 
       unless actual.respond_to?(:each)
-        state.errors << expected.responding_to(:each)
+        state.errors << state.expected.responding_to(:each)
         return
       end
 
@@ -41,15 +41,15 @@ module Matcher
         if expected_set.include?(act)
           unless missing.delete?(act)
             original_index = index_of(actual, act)
-            state.errors[i] << expected(act).not.duplicate(original_index)
+            state.errors[i] << state.expected(act).not.duplicate(original_index)
           end
         else
-          state.errors[i] << expected(act).not.in(state.actual)
+          state.errors[i] << state.expected(act).not.in(state.actual)
         end
       end
 
       missing.each do |m|
-        state.errors << expected.including(m)
+        state.errors << state.expected.including(m)
       end
     end
 
@@ -71,7 +71,7 @@ module Matcher
         return nil if !expected_set.include?(act) || !missing.delete?(act)
       end
 
-      state.errors << expected.namespace(:set).not.equal(@items) if missing.empty?
+      state.errors << state.expected.namespace(:set).not.equal(@items) if missing.empty?
     end
 
     def index_of(collection, item)
