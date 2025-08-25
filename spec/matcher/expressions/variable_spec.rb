@@ -3,6 +3,26 @@
 require 'test_helper'
 
 describe Matcher::Variable do
+  describe '::cache' do
+    it 'returns cached actual' do
+      assert_kind_of Matcher::Variable, Matcher::Variable.cache(:actual)
+      assert_same Matcher::Variable.actual, Matcher::Variable.cache(:actual)
+    end
+
+    it 'caches with build session' do
+      Matcher.with_build_session do
+        foo = Matcher::Variable.cache(:foo)
+
+        assert_kind_of Matcher::Variable, foo
+        assert_same foo, Matcher::Variable.cache(:foo)
+      end
+    end
+
+    it 'falls back to new without build session' do
+      assert_kind_of Matcher::Variable, Matcher::Variable.cache(:foo)
+    end
+  end
+
   it '#variables' do
     assert_equal [:foo], Matcher::Variable.new(:foo).variables
   end

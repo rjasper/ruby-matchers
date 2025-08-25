@@ -12,6 +12,18 @@ module Matcher
       RUBY
     end
 
+    def self.cache(value)
+      return send(value) if WELL_KNOWN.include?(value)
+
+      build_session = Matcher.build_session
+
+      return new(value) unless build_session
+
+      cache = (build_session[:_variable_cache] ||= ObjectSpace::WeakMap.new)
+
+      cache[value] ||= new(value)
+    end
+
     attr_reader :symbol
 
     def initialize(symbol)

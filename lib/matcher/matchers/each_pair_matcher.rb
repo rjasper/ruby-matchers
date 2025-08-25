@@ -46,11 +46,10 @@ module Matcher
     def each_key(matcher = UNDEFINED)
       return Pipe.new { each_key(_1) } if Matcher.undefined?(matcher)
 
-      key = Variable.new(:key)
       matcher = Matcher.of(matcher)
 
       EachPairMatcher.new(
-        ProjectMatcher.new(key, matcher),
+        ProjectMatcher.new(Variable.key, matcher),
       )
     end
 

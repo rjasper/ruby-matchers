@@ -30,7 +30,7 @@ module Matcher
 
       parameters.each do |type, name|
         parameter_names << name
-        variable = Variable.new(name)
+        variable = Variable.cache(name)
         variable_object_ids << variable.object_id
 
         case type

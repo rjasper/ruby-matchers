@@ -127,18 +127,8 @@ module Matcher
       include NoExpression
       include NoKey
 
-      def initialize
-        @cache = {}
-      end
-
       def [](symbol)
-        variable = if Variable::WELL_KNOWN.include?(symbol)
-          Variable.send(symbol)
-        else
-          @cache[symbol] ||= Variable.new(symbol)
-        end
-
-        variable.to_recorder
+        Variable.cache(symbol).to_recorder
       end
     end
   end
