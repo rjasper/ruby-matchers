@@ -35,18 +35,6 @@ describe Matcher::NeverMatcher do
     assert_kind_of Matcher::AlwaysMatcher, ~matcher
   end
 
-  it '#&' do
-    matcher = Matcher.build { never & equal(1) }
-
-    assert_kind_of Matcher::NeverMatcher, matcher
-  end
-
-  it '#|' do
-    matcher = Matcher.build { never | equal(1) }
-
-    assert_kind_of Matcher::EqualMatcher, matcher
-  end
-
   it '#to_s' do
     matcher = Matcher.build { never }
 

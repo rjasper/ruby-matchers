@@ -4,14 +4,6 @@ module Matcher
   class NeverMatcher < Base
     include Singleton
 
-    def &(matcher)
-      self
-    end
-
-    def |(matcher)
-      matcher
-    end
-
     def ~
       AlwaysMatcher.instance
     end
