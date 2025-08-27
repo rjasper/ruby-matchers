@@ -76,7 +76,7 @@ module Matcher
     end
 
     define(:exist) do
-      "#{verb} index to exist#{" but got #{actual.inspect}" unless negated}"
+      "#{verb} to exist#{" but got #{actual.inspect}" unless negated}"
     end
 
     define(:in) do |collection|

@@ -91,9 +91,9 @@ describe Matcher::ExpectedPhrasing do
     end
 
     it 'exist' do
-      assert_phrase 'expected index to exist',
+      assert_phrase 'expected to exist',
         msg(nil).not.exist
-      assert_phrase 'did not expect index to exist but got 1',
+      assert_phrase 'did not expect to exist but got 1',
         msg(1).exist
     end
 
