@@ -66,7 +66,7 @@ module Matcher
         expression = ProcExpression.new(block)
         matcher = expression_or_matcher
       else
-        expression = Expression.of(expression_or_matcher)
+        expression = expression_of(expression_or_matcher)
       end
 
       return Pipe.new { raises(expression, _1, message:) }.optional if
@@ -75,10 +75,10 @@ module Matcher
       matcher = Matcher.of(matcher)
 
       unless Matcher.undefined?(message)
-        message_call = Call.new(Variable.actual, :message)
+        @raises_message_call ||= expression_of(Call.new(Variable.actual, :message))
         message_matcher = Matcher.of(message)
 
-        matcher &= ProjectMatcher.new(message_call, message_matcher)
+        matcher &= ProjectMatcher.new(@raises_message_call, message_matcher)
       end
 
       RaisesMatcher.new(expression, matcher)

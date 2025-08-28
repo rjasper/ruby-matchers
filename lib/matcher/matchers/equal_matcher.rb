@@ -162,7 +162,7 @@ module Matcher
 
   module MatcherBuilding
     def equal(value)
-      value = Expression.of(value)
+      value = expression_of(value)
       value = value.value if value.is_a?(Constant)
 
       EqualMatcher.new(value)

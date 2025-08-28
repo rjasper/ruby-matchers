@@ -99,7 +99,7 @@ module Matcher
     def map(expression, matcher = UNDEFINED)
       return Pipe.new { map(expression, _1) } if Matcher.undefined?(matcher)
 
-      expression = Expression.of(expression)
+      expression = expression_of(expression)
       matcher = Matcher.of(matcher)
 
       MapMatcher.new(expression, matcher)

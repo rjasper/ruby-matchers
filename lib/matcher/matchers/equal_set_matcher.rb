@@ -85,7 +85,7 @@ module Matcher
   module MatcherBuilding
     def equal_set(*items)
       items.map! do |item|
-        expr = Expression.of(item)
+        expr = expression_of(item)
         expr.is_a?(Constant) ? expr.value : expr
       end
 

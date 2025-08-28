@@ -138,7 +138,7 @@ module Matcher
     def index_by(expression, matcher = UNDEFINED)
       return Pipe.new { index_by(expression, _1) } if Matcher.undefined?(matcher)
 
-      expression = Expression.of(expression)
+      expression = expression_of(expression)
       matcher = Matcher.of(matcher)
 
       IndexByMatcher.new(expression, matcher)

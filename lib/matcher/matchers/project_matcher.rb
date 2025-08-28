@@ -38,7 +38,7 @@ module Matcher
       return Pipe.new { project(expression => _1) } unless Matcher.undefined?(expression)
 
       project_matchers = projections.map do |e, m|
-        e = Expression.of(e)
+        e = expression_of(e)
         m = Matcher.of(m)
 
         ProjectMatcher.new(e, m)

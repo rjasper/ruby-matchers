@@ -17,7 +17,7 @@ module Matcher
       end
     end
 
-    def self.build(&block)
+    def self.build(expression_cache: nil, &block)
       return SymbolProc.new(block) if
         block.parameters == [[:req], [:rest]] &&
           /\(&:(\w+[!?]?|".*")\)/.match?(block.to_s)
@@ -48,7 +48,7 @@ module Matcher
       end
 
       result = block.call(*args, **kwargs)
-      expression = Expression.of(result)
+      expression = Expression.of(result, expression_cache:)
 
       return SymbolProc.new(expression.method) if
         args.length == 1 &&

@@ -7,17 +7,17 @@ module Matcher
     end
 
     def self.build(&)
-      result = Matcher.with_build_session do
-        ExpressionBuilder.new.instance_exec(&)
+      Matcher.with_build_session do
+        builder = ExpressionBuilder.new
+        result = builder.instance_exec(&)
+        builder.expression_of(result)
       end
-
-      of(result)
     end
 
-    def self.of(obj)
-      return Recorder.to_expression(obj) if Recorder.recorder?(obj)
-
-      case obj
+    def self.of(obj, expression_cache: nil)
+      expression = case obj
+      when -> { Recorder.recorder?(_1) }
+        Recorder.to_expression(obj)
       when Base
         raise ArgumentError, 'Cannot use matcher as expression'
       when NoExpression
@@ -28,7 +28,7 @@ module Matcher
         obj
       when Array
         if obj.any? { expression_or_recorder?(_1) }
-          items = obj.map { of(_1) }
+          items = obj.map { of(_1, expression_cache:) }
 
           ArrayExpression.new(items)
         else
@@ -37,7 +37,7 @@ module Matcher
       when Hash
         if obj.any? { |k, v| expression_or_recorder?(k) || expression_or_recorder?(v) }
           pairs = obj.map do |key, value|
-            [of(key), of(value)]
+            [of(key, expression_cache:), of(value, expression_cache:)]
           end
 
           HashExpression.new(pairs)
@@ -46,13 +46,16 @@ module Matcher
         end
       when Range
         if expression_or_recorder?(obj.begin) || expression_or_recorder?(obj.end)
-          RangeExpression.new(of(obj.begin), of(obj.end), obj.exclude_end?)
+          begin_expr = of(obj.begin, expression_cache:)
+          end_expr = of(obj.end, expression_cache:)
+
+          RangeExpression.new(begin_expr, end_expr, obj.exclude_end?)
         else
           Constant.new(obj)
         end
       when Set
         if obj.any? { expression_or_recorder?(_1) }
-          items = obj.map { of(_1) }
+          items = obj.map { of(_1, expression_cache:) }
 
           SetExpression.new(items)
         else
@@ -61,6 +64,16 @@ module Matcher
       else
         Constant.new(obj)
       end
+
+      expression_cache ? expression_cache[expression] : expression
+    end
+
+    def self.current_cache
+      build_session = Matcher.build_session
+
+      return nil unless build_session
+
+      build_session[:_expression_cache] ||= ExpressionCache.new
     end
 
     def self.try_recorder(obj)

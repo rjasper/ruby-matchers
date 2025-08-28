@@ -79,7 +79,7 @@ module Matcher
       return Pipe.new { filter(expression, _1) } if
         Matcher.undefined?(matcher)
 
-      expression = Expression.of(expression)
+      expression = expression_of(expression)
       matcher = Matcher.of(matcher)
 
       FilterMatcher.new(expression, matcher)

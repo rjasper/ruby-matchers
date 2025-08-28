@@ -27,12 +27,15 @@ module Matcher
         args.empty? && kwargs.empty? && !block &&
         @expression.unary?
 
-      of = Expression.method(:of)
-      args = args.map(&of)
-      kwargs = kwargs.transform_values(&of)
-      block = Matcher::Block.build(&block) if block && !Matcher.settings[:pass_through_blocks]
+      expression_cache = Expression.current_cache
+      args = args.map { Expression.of(_1, expression_cache:) }
+      kwargs = kwargs.transform_values { Expression.of(_1, expression_cache:) }
+      block = Matcher::Block.build(expression_cache:, &block) if
+        block && !Matcher.settings[:pass_through_blocks]
 
-      Call.new(@expression, method, args, kwargs, block).to_recorder
+      expression = Call.new(@expression, method, args, kwargs, block)
+      expression = expression_cache[expression] if expression_cache
+      expression.to_recorder
     end
 
     def respond_to_missing?(_method, _include_private = false)

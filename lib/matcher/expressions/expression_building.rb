@@ -4,6 +4,16 @@ module Matcher
   module ExpressionBuilding
     attr_reader :assigns
 
+    def expression_cache
+      return @expression_cache if defined? @expression_cache
+
+      @expression_cache = Expression.current_cache
+    end
+
+    def expression_of(value)
+      Expression.of(value, expression_cache:)
+    end
+
     def declare(*symbols, **assigns)
       symbols.concat(assigns.keys - symbols)
       conflicts = symbols & methods
@@ -31,24 +41,26 @@ module Matcher
     def expr(obj = UNDEFINED, &block)
       raise 'obj and block given' if !Matcher.undefined?(obj) && block_given?
 
-      expression = block_given? ? ProcExpression.new(block) : Expression.of(obj)
+      expression = block_given? ? ProcExpression.new(block) : expression_of(obj)
       expression.to_recorder
     end
 
     def rescue_exception(expression)
-      expression = Expression.of(expression)
+      expression = expression_of(expression)
+      rescue_last_error = RescueLastErrorExpression.new(expression)
 
-      RescueLastErrorExpression.new(expression).to_recorder
+      expression_of(rescue_last_error).to_recorder
     end
 
     def kernel
-      Constant.new(Kernel).to_recorder
+      expr(Kernel)
     end
 
     def concat(*parts)
-      parts = parts.map { Expression.of(_1) }
+      parts = parts.map { expression_of(_1) }
+      string_expression = StringExpression.new(parts)
 
-      StringExpression.new(parts).to_recorder
+      expression_of(string_expression).to_recorder
     end
 
     def actual
@@ -98,7 +110,7 @@ module Matcher
     alias ptb pass_through_blocks
 
     def assign
-      value = Expression.of(yield)
+      value = expression_of(yield)
       call = Call.last_assign
 
       Call.reset_last_assign
