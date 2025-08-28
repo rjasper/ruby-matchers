@@ -24,6 +24,7 @@ describe Matcher::ExpressionLabeler do
     array_l = labeler.label(expression { [1, vars[:foo]] })
     hash_l = labeler.label(expression { { foo: vars[:foo] } })
     range_l = labeler.label(expression { (vars[:foo]..vars[:bar]) })
+    string_l = labeler.label(expression { concat(vars[:foo], 'bar') })
 
     assert_equal array_l, labeler.label(expression { [1, vars[:foo]] })
     refute_equal array_l, labeler.label(expression { [1, vars[:bar]] })
@@ -31,6 +32,8 @@ describe Matcher::ExpressionLabeler do
     refute_equal hash_l, labeler.label(expression { { foo: vars[:bar] } })
     assert_equal range_l, labeler.label(expression { (vars[:foo]..vars[:bar]) })
     refute_equal range_l, labeler.label(expression { (vars[:foo]..vars[:baz]) })
+    assert_equal string_l, labeler.label(expression { concat(vars[:foo], 'bar') })
+    refute_equal string_l, labeler.label(expression { concat(vars[:foo], 'baz') })
   end
 
   it 'can substitute label for _' do

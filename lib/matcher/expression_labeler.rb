@@ -43,6 +43,10 @@ module Matcher
         end_l = label(expression.end, actual_label)
 
         label_for([RangeExpression, begin_l, end_l, expression.exclude_end?])
+      when StringExpression
+        parts_l = expression.parts.map { label(_1, actual_label) }
+
+        label_for([expression.class, parts_l])
       when RescueLastErrorExpression
         expression_l = label(expression.expression, actual_label)
 
