@@ -38,7 +38,7 @@ module Matcher
       expression.to_recorder
     end
 
-    def respond_to_missing?(_method, _include_private = false)
+    def respond_to_missing?(...)
       true
     end
   end
