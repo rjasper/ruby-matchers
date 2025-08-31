@@ -4,11 +4,15 @@ module Matcher
   class Expression
     class ExpressionBuilder
       include ExpressionBuilding
+
+      def initialize(build_session: Matcher.build_session)
+        ExpressionBuilding.init(self, build_session)
+      end
     end
 
     def self.build(&)
-      Matcher.with_build_session do
-        builder = ExpressionBuilder.new
+      Matcher.with_build_session do |build_session|
+        builder = ExpressionBuilder.new(build_session:)
         result = builder.instance_exec(&)
         builder.expression_of(result)
       end
@@ -68,12 +72,8 @@ module Matcher
       expression_cache ? expression_cache[expression] : expression
     end
 
-    def self.current_cache
-      build_session = Matcher.build_session
-
-      return nil unless build_session
-
-      build_session[:_expression_cache] ||= ExpressionCache.new
+    def self.current_cache(build_session = Matcher.build_session)
+      build_session[:_expression_cache] ||= ExpressionCache.new if build_session
     end
 
     def self.try_recorder(obj)

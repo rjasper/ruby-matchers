@@ -7,7 +7,9 @@ module Matcher
     include ExpressionBuilding
     include MatcherBuilding
 
-    def initialize(outside)
+    def initialize(outside, build_session: Matcher.build_session)
+      ExpressionBuilding.init(self, build_session)
+
       @outside = outside
     end
 

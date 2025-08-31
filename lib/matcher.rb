@@ -146,8 +146,8 @@ module Matcher
   end
 
   def self.build(&block)
-    with_build_session do
-      builder = Builder.new(block.binding.receiver)
+    with_build_session do |build_session|
+      builder = Builder.new(block.binding.receiver, build_session:)
       object = builder.instance_exec(&block)
       builder.refs.check
 
@@ -266,12 +266,14 @@ module Matcher
   end
 
   def self.with_build_session(initial = {})
-    return yield if Thread.current[:matcher_build_session]
+    build_session = Thread.current[:matcher_build_session]
+
+    return yield build_session if build_session
 
     begin
       Thread.current[:matcher_build_session] = initial
 
-      yield
+      yield initial
     ensure
       Thread.current[:matcher_build_session] = nil
     end

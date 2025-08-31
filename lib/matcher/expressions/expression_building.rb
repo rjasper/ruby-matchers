@@ -4,14 +4,14 @@ module Matcher
   module ExpressionBuilding
     attr_reader :assigns
 
-    def expression_cache
-      return @expression_cache if defined? @expression_cache
-
-      @expression_cache = Expression.current_cache
+    def self.init(builder, build_session)
+      builder.instance_exec do
+        @expression_cache = Expression.current_cache(build_session)
+      end
     end
 
     def expression_of(value)
-      Expression.of(value, expression_cache:)
+      Expression.of(value, expression_cache: @expression_cache)
     end
 
     def declare(*symbols, **assigns)
