@@ -3,7 +3,7 @@
 module Matcher
   class ExpressionMatcher < Base
     def self.message_rules
-      @message_rules ||= RuleSet.new(MessageRules.rules)
+      @message_rules ||= RuleSet.new
     end
 
     attr_reader :expression, :negated

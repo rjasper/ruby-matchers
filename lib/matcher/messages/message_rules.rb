@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Matcher
-  module MessageRules
-    include RuleDefinition
-
+  ExpressionMatcher.message_rules.configure do
     # binary standard expression
     standard_ops = %i[== != < > <= >= <=> =~ !~ equal? is_a? kind_of? instance_of? respond_to? key? include? in?]
     message method_hole(:call, _, standard_ops, const(:operand)) do |v, e|
@@ -209,7 +207,9 @@ module Matcher
     message hole(:expression) do |v, e|
       expression_message.truthy(e[:expression], v[:expression], given)
     end
+  end
 
+  module MessageRules
     def self.decompose_pattern_matching(e_lhs, e_rhs, v_lhs, v_rhs)
       if v_lhs.is_a?(String) && v_rhs.is_a?(Regexp)
         [e_lhs, v_lhs, v_rhs]
