@@ -21,6 +21,10 @@ module Matcher
     end
     alias eql? ==
 
+    def hash
+      @hash ||= [self.class, @key, @pattern].hash
+    end
+
     def to_s
       "capture(#{@key.inspect}, #{@pattern})"
     end

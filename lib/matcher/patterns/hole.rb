@@ -17,6 +17,10 @@ module Matcher
     end
     alias eql? ==
 
+    def hash
+      [self.class, @key].hash
+    end
+
     def to_s
       "hole(#{@key.inspect})"
     end

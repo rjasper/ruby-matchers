@@ -32,6 +32,10 @@ module Matcher
     end
     alias eql? ==
 
+    def hash
+      @hash ||= [self.class, @key, @receiver, @method, @args, @kwargs].hash
+    end
+
     def to_s
       args = @args.map(&:inspect)
       kwargs = @kwargs.map { "#{_1}: #{_2.inspect}" }
