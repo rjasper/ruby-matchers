@@ -4,20 +4,18 @@ module Matcher
   class Pattern
     class PatternBuilder
       include PatternBuilding
+
+      def initialize(build_session: Matcher.build_session)
+        ExpressionBuilding.init(self, build_session)
+      end
     end
 
     def self.build(&)
-      result = Matcher.with_build_session do
-        PatternBuilder.new.instance_exec(&)
+      Matcher.with_build_session do |build_session|
+        builder = PatternBuilder.new(build_session:)
+        result = builder.instance_exec(&)
+        builder.pattern_of(result)
       end
-
-      of(result)
-    end
-
-    def self.of(recorder)
-      expression = Expression.of(recorder)
-
-      new(expression)
     end
 
     extend Forwardable

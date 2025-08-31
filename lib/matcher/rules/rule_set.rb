@@ -9,8 +9,10 @@ module Matcher
     end
 
     def configure(&)
-      builder = RuleBuilder.new(@rules)
-      builder.instance_exec(&)
+      Matcher.with_build_session do |build_session|
+        builder = RuleBuilder.new(@rules, build_session:)
+        builder.instance_exec(&)
+      end
 
       self
     end

@@ -12,18 +12,4 @@ describe Matcher::Pattern do
 
     assert_equal expected, pattern.expression
   end
-
-  it '::of' do
-    hole = Matcher::Hole.new(:foo)
-    recorder = Matcher::Constant.new(hole).to_recorder > 1
-
-    pattern = Matcher::Pattern.of(recorder)
-
-    expected = Matcher::Expression.build do
-      expr(hole) > 1
-    end
-
-    assert_kind_of Matcher::Pattern, pattern
-    assert_equal expected, pattern.expression
-  end
 end
