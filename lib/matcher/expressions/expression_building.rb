@@ -131,7 +131,7 @@ module Matcher
     end
 
     def vars
-      @vars ||= VariableFactory.new
+      @vars ||= VariableFactory.new(@expression_cache)
     end
 
     class VariableFactory
@@ -139,8 +139,12 @@ module Matcher
       include NoExpression
       include NoKey
 
+      def initialize(expression_cache)
+        @expression_cache = expression_cache
+      end
+
       def [](symbol)
-        Variable.cache(symbol).to_recorder
+        Variable.cache(symbol, expression_cache: @expression_cache).to_recorder
       end
     end
   end

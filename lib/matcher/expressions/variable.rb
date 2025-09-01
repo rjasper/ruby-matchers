@@ -12,16 +12,20 @@ module Matcher
       RUBY
     end
 
-    def self.cache(value)
-      return send(value) if WELL_KNOWN.include?(value)
+    def self.well_known?(symbol)
+      WELL_KNOWN.include?(symbol)
+    end
 
-      build_session = Matcher.build_session
+    def self.cache(symbol, expression_cache: true)
+      return send(symbol) if well_known?(symbol)
 
-      return new(value) unless build_session
+      expression_cache = Expression.current_cache if expression_cache == true
 
-      cache = (build_session[:_variable_cache] ||= ObjectSpace::WeakMap.new)
-
-      cache[value] ||= new(value)
+      if expression_cache
+        expression_cache.less_known_variable_for(symbol)
+      else
+        new(symbol)
+      end
     end
 
     attr_reader :symbol

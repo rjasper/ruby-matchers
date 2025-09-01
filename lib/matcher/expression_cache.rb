@@ -22,14 +22,27 @@ module Matcher
       label = super
 
       if label > count
-        expression = Variable.cache(expression.symbol) if
-          expression.is_a?(Variable)
+        if expression.is_a?(Variable)
+          symbol = expression.symbol
+          expression = Variable.send(symbol) if Variable.well_known?(symbol)
+        end
 
         @cache[expression] = label
         @index[label] = expression
       end
 
       label
+    end
+
+    def variable_for(symbol)
+      return Variable.send(symbol) if Variable.well_known?(symbol)
+
+      less_known_variable_for(symbol)
+    end
+
+    def less_known_variable_for(symbol)
+      label = label_for([Variable, symbol])
+      @index[label] ||= Variable.new(symbol)
     end
   end
 end
