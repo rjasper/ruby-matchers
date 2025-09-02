@@ -15,7 +15,7 @@ module Matcher
     end
 
     def |(matcher)
-      matcher = Matcher.of(matcher)
+      matcher = Matcher.cache(matcher)
 
       if matcher.is_a?(LazyAnyMatcher)
         LazyAnyMatcher.new(@matchers + matcher.matchers)

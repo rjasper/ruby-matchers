@@ -9,7 +9,7 @@ module Matcher
     end
 
     def +(matcher)
-      matcher = Matcher.of(matcher)
+      matcher = Matcher.cache(matcher)
 
       matchers = if matcher.is_a?(AnyMatcher)
         [self].concat(matcher.matchers)
@@ -21,7 +21,7 @@ module Matcher
     end
 
     def *(matcher)
-      matcher = Matcher.of(matcher)
+      matcher = Matcher.cache(matcher)
 
       matchers = if matcher.is_a?(AllMatcher)
         [self].concat(matcher.matchers)
@@ -33,7 +33,7 @@ module Matcher
     end
 
     def |(matcher)
-      matcher = Matcher.of(matcher)
+      matcher = Matcher.cache(matcher)
 
       matchers = if matcher.is_a?(LazyAnyMatcher)
         [self].concat(matcher.matchers)
@@ -45,7 +45,7 @@ module Matcher
     end
 
     def &(matcher)
-      matcher = Matcher.of(matcher)
+      matcher = Matcher.cache(matcher)
 
       matchers = if matcher.is_a?(LazyAllMatcher)
         [self].concat(matcher.matchers)
@@ -57,7 +57,7 @@ module Matcher
     end
 
     def >>(matcher)
-      ImplyMatcher.new(self, Matcher.of(matcher))
+      ImplyMatcher.new(self, Matcher.cache(matcher))
     end
 
     StackData = Struct.new(:actual, :vals, :errors)

@@ -19,7 +19,7 @@ module Matcher
       if !Recorder.recorder?(operand) && operand.is_a?(Pipe)
         Pipe.new { @block.call(operand ^ _1) }
       else
-        matcher = Matcher.of(operand)
+        matcher = Matcher.cache(operand)
         result = @block.call(matcher)
         result = ~result if @negated
         result

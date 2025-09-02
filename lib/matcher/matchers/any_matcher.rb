@@ -11,7 +11,7 @@ module Matcher
     attr_reader :matchers
 
     def +(matcher)
-      matcher = Matcher.of(matcher)
+      matcher = Matcher.cache(matcher)
 
       if matcher.is_a?(AnyMatcher)
         AnyMatcher.new(@matchers + matcher.matchers)

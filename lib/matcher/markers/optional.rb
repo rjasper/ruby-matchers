@@ -36,9 +36,7 @@ module Matcher
     attr_reader :value
 
     def ~
-      matcher = Matcher.of(@value)
-
-      OptionalMatcher.new(matcher, negated: true)
+      ~Matcher.cache(self)
     end
 
     def ==(other)
