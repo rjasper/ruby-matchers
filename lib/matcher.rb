@@ -25,6 +25,7 @@ require_relative 'matcher/expression_labeler'
 require_relative 'matcher/expression_cache'
 require_relative 'matcher/hash_stack'
 require_relative 'matcher/list'
+require_relative 'matcher/matcher_cache'
 require_relative 'matcher/optional_pipe'
 require_relative 'matcher/pipe'
 require_relative 'matcher/reporter'
@@ -171,44 +172,57 @@ module Matcher
     @max_reference_depth = value
   end
 
-  def self.of(object)
-    if Recorder.recorder?(object)
-      expression = Recorder.to_expression(object)
-      return ExpressionMatcher.new(expression)
-    end
+  def self.of(object, matcher_cache: nil, expression_cache: nil)
+    object = Recorder.to_expression(object) if Recorder.recorder?(object)
 
     case object
     when NoMatcher
       raise ArgumentError, "Cannot use #{object.class} as matcher"
     when Module
-      KindOfMatcher.new(object)
+      KindOfMatcher.cache(object, matcher_cache)
     when OptionalPipe
       object.fallback
     when Base
       object
     when Expression
-      ExpressionMatcher.new(object)
+      ExpressionMatcher.cache(object, matcher_cache, expression_cache)
     when Proc
       BlockMatcher.new(object)
     when Range
-      RangeMatcher.new(object)
+      RangeMatcher.cache(object, matcher_cache)
     when Regexp
-      RegexpMatcher.new(object)
+      RegexpMatcher.cache(object, matcher_cache)
     when Hash
       hash = object.to_h do |k, v|
         k = Expression.try_recorder(k)
 
-        [k, of(v)]
+        if Recorder.recorder?(k)
+          k = Recorder.to_expression(k)
+        elsif k.is_a?(Optional)
+          k = Optional.cache(k.value, matcher_cache)
+        end
+
+        [k, of(v, matcher_cache:, expression_cache:)]
       end
 
       HashMatcher.new(hash)
     when Array
-      ArrayMatcher.new(object.map { of(_1) })
+      ArrayMatcher.new(object.map { of(_1, matcher_cache:, expression_cache:) })
     when Optional
-      OptionalMatcher.new(of(object.value))
+      matcher = of(object.value, matcher_cache:, expression_cache:)
+
+      OptionalMatcher.cache(matcher, matcher_cache)
     else
-      EqualMatcher.new(object)
+      EqualMatcher.cache(object, matcher_cache)
     end
+  end
+
+  def self.cache(object)
+    build_session = Matcher.build_session
+    matcher_cache = MatcherCache.current(build_session)
+    expression_cache = Expression.current_cache(build_session)
+
+    of(object, matcher_cache:, expression_cache:)
   end
 
   def self.parenthesize(matcher)

@@ -4,6 +4,27 @@ module Matcher
   class Optional
     include NoExpression
 
+    CACHEABLE_CLASSES = [
+      NilClass,
+      FalseClass,
+      TrueClass,
+      Integer,
+      Float,
+      Symbol,
+      String,
+      Regexp,
+      Module,
+      Base,
+    ].freeze
+
+    def self.cache(value, matcher_cache = MatcherCache.current)
+      return new(value) if !matcher_cache ||
+        !CACHEABLE_CLASSES.include?(value.class) ||
+        value.is_a?(String) && !value.frozen?
+
+      (matcher_cache.optionals ||= {})[value] ||= new(value)
+    end
+
     def self.value_of(obj)
       obj.is_a?(Optional) ? obj.value : obj
     end

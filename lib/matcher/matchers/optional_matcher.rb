@@ -2,6 +2,13 @@
 
 module Matcher
   class OptionalMatcher < Base
+    def self.cache(matcher, matcher_cache = MatcherCache.current)
+      return new(matcher) unless matcher_cache
+
+      cache = (matcher_cache.optional_matchers ||= {}.compare_by_identity)
+      cache[matcher] ||= new(matcher)
+    end
+
     def initialize(matcher, negated: false)
       super()
 

@@ -2,6 +2,15 @@
 
 module Matcher
   class ExpressionMatcher < Base
+    def self.cache(value, matcher_cache = MatcherCache.current, expression_cache = Expression.current_cache)
+      return new(value) unless matcher_cache
+
+      cache = (matcher_cache.expression_matchers ||= {})
+      label = expression_cache.label(value)
+
+      cache[label] ||= new(value)
+    end
+
     def self.message_rules
       @message_rules ||= RuleSet.new
     end

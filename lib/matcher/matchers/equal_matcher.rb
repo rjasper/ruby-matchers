@@ -2,6 +2,26 @@
 
 module Matcher
   class EqualMatcher < Base
+    CACHEABLE_CLASSES = [
+      NilClass,
+      FalseClass,
+      TrueClass,
+      Integer,
+      Float,
+      Symbol,
+      String,
+      Regexp,
+      Module,
+    ].freeze
+
+    def self.cache(value, matcher_cache = MatcherCache.current)
+      return new(value) if !matcher_cache ||
+        !CACHEABLE_CLASSES.include?(value) ||
+        value.is_a?(String) && !value.frozen?
+
+      (matcher_cache.equal_matchers ||= {})[value] ||= new(value)
+    end
+
     def initialize(value, negated: false)
       super()
 
@@ -165,7 +185,7 @@ module Matcher
       value = expression_of(value)
       value = value.value if value.is_a?(Constant)
 
-      EqualMatcher.new(value)
+      EqualMatcher.cache(value, @matcher_cache)
     end
   end
 end

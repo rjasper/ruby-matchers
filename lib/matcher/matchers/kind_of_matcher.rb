@@ -2,6 +2,12 @@
 
 module Matcher
   class KindOfMatcher < Base
+    def self.cache(kind, matcher_cache = MatcherCache.current)
+      return new(kind) unless matcher_cache
+
+      (matcher_cache.kind_of_matchers ||= {})[kind] ||= new(kind)
+    end
+
     def initialize(kind, negated: false)
       super()
 

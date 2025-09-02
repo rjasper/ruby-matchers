@@ -11,7 +11,17 @@ module Matcher
       ExpressionBuilding.init(self, build_session)
 
       @outside = outside
+      @matcher_cache = MatcherCache.current(build_session)
     end
+
+    def matcher_of(value)
+      Matcher.of(
+        value,
+        matcher_cache: @matcher_cache,
+        expression_cache: @expression_cache,
+      )
+    end
+    alias of matcher_of
 
     def outside(&)
       if block_given?

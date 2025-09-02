@@ -2,10 +2,6 @@
 
 module Matcher
   module MatcherBuilding
-    def of(matcher)
-      Matcher.of(matcher)
-    end
-
     def neg(matcher)
       ~Matcher.of(matcher)
     end

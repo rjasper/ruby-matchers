@@ -2,6 +2,12 @@
 
 module Matcher
   class RegexpMatcher < Base
+    def self.cache(pattern, matcher_cache = MatcherCache.current)
+      return new(pattern) unless matcher_cache
+
+      (matcher_cache.regexp_matchers ||= {})[pattern] ||= new(pattern)
+    end
+
     def initialize(pattern, negated: false)
       super()
 

@@ -2,6 +2,12 @@
 
 module Matcher
   class RangeMatcher < Base
+    def self.cache(range, matcher_cache = MatcherCache.current)
+      return new(range) unless matcher_cache
+
+      (matcher_cache.range_matchers ||= {})[range] ||= new(range)
+    end
+
     def initialize(range, negated: false)
       super()
 
