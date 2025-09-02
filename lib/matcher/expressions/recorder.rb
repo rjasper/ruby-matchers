@@ -47,7 +47,7 @@ module Matcher
         end
       end
 
-      expression_cache = Expression.current_cache
+      expression_cache = ExpressionCache.current
       args = args.map { Expression.of(_1, expression_cache:) }
       kwargs = kwargs.transform_values { Expression.of(_1, expression_cache:) }
       block = Matcher::Block.build(expression_cache:, &block) if

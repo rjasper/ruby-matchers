@@ -72,10 +72,6 @@ module Matcher
       expression_cache ? expression_cache[expression] : expression
     end
 
-    def self.current_cache(build_session = Matcher.build_session)
-      build_session[:_expression_cache] ||= ExpressionCache.new if build_session
-    end
-
     def self.try_recorder(obj)
       return obj unless Recorder.recorder?(obj)
 

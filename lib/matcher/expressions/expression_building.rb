@@ -6,7 +6,7 @@ module Matcher
 
     def self.init(builder, build_session)
       builder.instance_exec do
-        @expression_cache = Expression.current_cache(build_session)
+        @expression_cache = ExpressionCache.current(build_session)
       end
     end
 

@@ -220,7 +220,7 @@ module Matcher
   def self.cache(object)
     build_session = Matcher.build_session
     matcher_cache = MatcherCache.current(build_session)
-    expression_cache = Expression.current_cache(build_session)
+    expression_cache = ExpressionCache.current(build_session)
 
     of(object, matcher_cache:, expression_cache:)
   end

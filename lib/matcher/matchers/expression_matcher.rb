@@ -2,7 +2,7 @@
 
 module Matcher
   class ExpressionMatcher < Base
-    def self.cache(value, matcher_cache = MatcherCache.current, expression_cache = Expression.current_cache)
+    def self.cache(value, matcher_cache = MatcherCache.current, expression_cache = ExpressionCache.current)
       return new(value) unless matcher_cache
 
       cache = (matcher_cache.expression_matchers ||= {})

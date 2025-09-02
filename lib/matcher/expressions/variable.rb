@@ -19,7 +19,7 @@ module Matcher
     def self.cache(symbol, expression_cache: true)
       return send(symbol) if well_known?(symbol)
 
-      expression_cache = Expression.current_cache if expression_cache == true
+      expression_cache = ExpressionCache.current if expression_cache == true
 
       if expression_cache
         expression_cache.less_known_variable_for(symbol)

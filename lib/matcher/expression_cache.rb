@@ -2,6 +2,10 @@
 
 module Matcher
   class ExpressionCache < ExpressionLabeler
+    def self.current(build_session = Matcher.build_session)
+      build_session[:_expression_cache] ||= new if build_session
+    end
+
     def initialize
       super
 
