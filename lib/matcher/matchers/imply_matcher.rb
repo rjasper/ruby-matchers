@@ -55,8 +55,8 @@ module Matcher
     def imply(condition, matcher = UNDEFINED)
       return Pipe.new { imply(condition, _1) } if Matcher.undefined?(matcher)
 
-      condition = Matcher.of(condition)
-      matcher = Matcher.of(matcher)
+      condition = matcher_of(condition)
+      matcher = matcher_of(matcher)
 
       ImplyMatcher.new(condition, matcher)
     end

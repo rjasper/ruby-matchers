@@ -53,7 +53,7 @@ module Matcher
       return Pipe.new { parse_float(_1) }.optional if
         Matcher.undefined?(matcher)
 
-      matcher = Matcher.of(matcher)
+      matcher = matcher_of(matcher)
 
       ParseFloatMatcher.new(matcher)
     end

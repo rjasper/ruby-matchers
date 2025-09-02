@@ -47,9 +47,9 @@ module Matcher
       when 0
         AlwaysMatcher.instance
       when 1
-        Matcher.of(matchers[0])
+        matcher_of(matchers[0])
       else
-        LazyAnyMatcher.new(matchers.map { Matcher.of(_1) })
+        LazyAnyMatcher.new(matchers.map { matcher_of(_1) })
       end
     end
   end

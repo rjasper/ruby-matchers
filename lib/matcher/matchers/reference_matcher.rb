@@ -88,7 +88,7 @@ module Matcher
     end
 
     def refs
-      @refs ||= ReferenceMatcherCollection.new
+      @refs ||= ReferenceMatcherCollection.new(self)
     end
   end
 end

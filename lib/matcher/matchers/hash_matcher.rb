@@ -195,7 +195,7 @@ module Matcher
 
   module MatcherBuilding
     def partial(hash)
-      hash = hash.transform_values { of(_1) }
+      hash = hash.transform_values { matcher_of(_1) }
       HashMatcher.new(hash, partial: true)
     end
 
@@ -206,7 +206,7 @@ module Matcher
 
     def partial_r_helper(value)
       if Recorder.recorder?(value) || !value.is_a?(Hash)
-        of(value)
+        matcher_of(value)
       else
         partial_r(value)
       end

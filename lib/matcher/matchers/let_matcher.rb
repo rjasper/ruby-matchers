@@ -51,7 +51,7 @@ module Matcher
 
       return Pipe.new { let(assigns, _1) } if Matcher.undefined?(matcher)
 
-      matcher = Matcher.of(matcher)
+      matcher = matcher_of(matcher)
 
       LetMatcher.new(assigns, matcher)
     end

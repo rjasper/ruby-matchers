@@ -39,7 +39,7 @@ module Matcher
 
       project_matchers = projections.map do |e, m|
         e = expression_of(e)
-        m = Matcher.of(m)
+        m = matcher_of(m)
 
         ProjectMatcher.new(e, m)
       end

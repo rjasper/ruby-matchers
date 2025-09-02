@@ -40,13 +40,13 @@ module Matcher
     def each_pair(matcher = UNDEFINED)
       return Pipe.new { each_pair(_1) } if Matcher.undefined?(matcher)
 
-      EachPairMatcher.new(Matcher.of(matcher))
+      EachPairMatcher.new(matcher_of(matcher))
     end
 
     def each_key(matcher = UNDEFINED)
       return Pipe.new { each_key(_1) } if Matcher.undefined?(matcher)
 
-      matcher = Matcher.of(matcher)
+      matcher = matcher_of(matcher)
 
       EachPairMatcher.new(
         ProjectMatcher.new(Variable.key, matcher),
@@ -57,7 +57,7 @@ module Matcher
       return Pipe.new { each_value(_1) } if Matcher.undefined?(matcher)
 
       assigns = { actual: ->(value:) { value } }
-      matcher = Matcher.of(matcher)
+      matcher = matcher_of(matcher)
 
       EachPairMatcher.new(
         LetMatcher.new(assigns, matcher),

@@ -59,7 +59,7 @@ module Matcher
       return Pipe.new { parse_integer(_1, base:) }.optional if
         Matcher.undefined?(matcher)
 
-      matcher = Matcher.of(matcher)
+      matcher = matcher_of(matcher)
 
       ParseIntegerMatcher.new(matcher, base:)
     end

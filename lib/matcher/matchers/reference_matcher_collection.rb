@@ -8,12 +8,13 @@ module Matcher
 
     attr_reader :last_object_id, :last_matcher
 
-    def initialize
+    def initialize(builder)
       @targets = {}
       @options = {}
       @last_object_id = nil
       @last_matcher = nil
       @used = Set.new
+      @builder = builder
     end
 
     def check
@@ -44,7 +45,7 @@ module Matcher
       end
 
       @last_object_id = matcher.object_id
-      matcher = Matcher.of(matcher)
+      matcher = @builder.matcher_of(matcher)
       @last_matcher = matcher
       @targets[key] = [matcher, nil]
       @options[key] = options

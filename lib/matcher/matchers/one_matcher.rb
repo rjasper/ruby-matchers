@@ -48,7 +48,7 @@ module Matcher
 
   module MatcherBuilding
     def one(*matchers)
-      matchers = matchers.map { of(_1) }
+      matchers = matchers.map { matcher_of(_1) }
 
       case matchers.count
       when 0

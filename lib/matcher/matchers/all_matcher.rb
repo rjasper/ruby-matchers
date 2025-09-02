@@ -41,9 +41,9 @@ module Matcher
       when 0
         AlwaysMatcher.instance
       when 1
-        Matcher.of(matchers[0])
+        matcher_of(matchers[0])
       else
-        AllMatcher.new(matchers.map { Matcher.of(_1) })
+        AllMatcher.new(matchers.map { matcher_of(_1) })
       end
     end
   end

@@ -52,9 +52,9 @@ module Matcher
       when 0
         NeverMatcher.instance
       when 1
-        Matcher.of(matchers[0])
+        matcher_of(matchers[0])
       else
-        AnyMatcher.new(matchers.map { Matcher.of(_1) })
+        AnyMatcher.new(matchers.map { matcher_of(_1) })
       end
     end
   end

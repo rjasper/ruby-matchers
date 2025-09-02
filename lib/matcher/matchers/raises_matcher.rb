@@ -72,11 +72,11 @@ module Matcher
       return Pipe.new { raises(expression, _1, message:) }.optional if
         Matcher.undefined?(matcher)
 
-      matcher = Matcher.of(matcher)
+      matcher = matcher_of(matcher)
 
       unless Matcher.undefined?(message)
         @raises_message_call ||= expression_of(Call.new(Variable.actual, :message))
-        message_matcher = Matcher.of(message)
+        message_matcher = matcher_of(message)
 
         matcher &= ProjectMatcher.new(@raises_message_call, message_matcher)
       end

@@ -14,12 +14,6 @@ module Matcher
       raise "Not an ImplyMatcher: #{invalid_matcher.inspect}" if invalid_matcher
     end
 
-    def self.else_matcher(else:)
-      els = { else: }[:else]
-
-      Matcher.undefined?(els) ? nil : Matcher.of(els)
-    end
-
     def initialize(matchers, else_matcher, count)
       ImplySomeMatcher.check(matchers, else_matcher, count)
 
@@ -74,13 +68,15 @@ module Matcher
 
   module MatcherBuilding
     def imply_one(*matchers, else: UNDEFINED)
-      else_matcher = ImplySomeMatcher.else_matcher(else:)
+      els = { else: }[:else]
+      else_matcher = Matcher.undefined?(els) ? nil : matcher_of(els)
 
       ImplySomeMatcher.new(matchers, else_matcher, 1)
     end
 
     def imply_any(*matchers, else: UNDEFINED)
-      else_matcher = ImplySomeMatcher.else_matcher(else:)
+      els = { else: }[:else]
+      else_matcher = Matcher.undefined?(els) ? nil : matcher_of(els)
 
       ImplySomeMatcher.new(matchers, else_matcher, :any)
     end

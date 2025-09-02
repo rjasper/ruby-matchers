@@ -65,7 +65,7 @@ module Matcher
 
   module MatcherBuilding
     def set(array)
-      SetMatcher.new(array.map { Matcher.of(_1) })
+      SetMatcher.new(array.map { matcher_of(_1) })
     end
   end
 

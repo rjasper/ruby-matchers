@@ -34,7 +34,7 @@ module Matcher
     def each(matcher = UNDEFINED)
       return Pipe.new { each(_1) } if Matcher.undefined?(matcher)
 
-      EachMatcher.new(Matcher.of(matcher))
+      EachMatcher.new(matcher_of(matcher))
     end
   end
 end

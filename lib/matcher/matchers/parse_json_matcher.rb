@@ -60,7 +60,7 @@ module Matcher
       return Pipe.new { parse_json(_1, **) }.optional if
         Matcher.undefined?(matcher)
 
-      matcher = Matcher.of(matcher)
+      matcher = matcher_of(matcher)
       json_options = {}.merge(**)
       json_options = nil if json_options.empty?
 

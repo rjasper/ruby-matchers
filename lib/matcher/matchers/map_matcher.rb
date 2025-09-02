@@ -100,7 +100,7 @@ module Matcher
       return Pipe.new { map(expression, _1) } if Matcher.undefined?(matcher)
 
       expression = expression_of(expression)
-      matcher = Matcher.of(matcher)
+      matcher = matcher_of(matcher)
 
       MapMatcher.new(expression, matcher)
     end

@@ -80,7 +80,7 @@ module Matcher
         Matcher.undefined?(matcher)
 
       expression = expression_of(expression)
-      matcher = Matcher.of(matcher)
+      matcher = matcher_of(matcher)
 
       FilterMatcher.new(expression, matcher)
     end

@@ -3,13 +3,13 @@
 module Matcher
   module MatcherBuilding
     def neg(matcher)
-      ~Matcher.of(matcher)
+      ~matcher_of(matcher)
     end
 
     def present(matcher)
       AllMatcher.new([
         EqualMatcher.new(nil, negated: true),
-        Matcher.of(matcher),
+        matcher_of(matcher),
       ])
     end
   end

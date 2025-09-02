@@ -153,7 +153,7 @@ module Matcher
       matcher = if builder.refs? && builder.refs.last_object_id == object.object_id
         builder.refs.last_matcher
       else
-        of(object)
+        builder.matcher_of(object)
       end
 
       if (assigns = builder.assigns)

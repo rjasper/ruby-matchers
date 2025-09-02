@@ -59,7 +59,7 @@ module Matcher
       return Pipe.new { parse_iso8601(_1) }.optional if
         Matcher.undefined?(matcher)
 
-      matcher = Matcher.of(matcher)
+      matcher = matcher_of(matcher)
 
       ParseIso8601Matcher.new(matcher)
     end
