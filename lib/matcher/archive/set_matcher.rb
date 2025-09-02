@@ -69,7 +69,7 @@ module Matcher
     end
   end
 
-  Matcher::ExpectedPhrasing.instance_exec do
+  ExpectedPhrasing.instance_exec do
     namespace(:set) do
       define(:including_matchable_by) do |matcher|
         "#{verb} to include an element matching #{matcher} but got #{actual.inspect}"

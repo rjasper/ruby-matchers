@@ -100,7 +100,7 @@ module Matcher
       case key
       when Optional
         check_key(key.value)
-      when Matcher::Base
+      when Base
         raise 'Cannot use matcher as key for hash matcher'
       when NoKey
         raise "Cannot use #{key.class} as key for hash matcher"

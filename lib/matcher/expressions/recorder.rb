@@ -50,7 +50,7 @@ module Matcher
       expression_cache = ExpressionCache.current
       args = args.map { Expression.of(_1, expression_cache:) }
       kwargs = kwargs.transform_values { Expression.of(_1, expression_cache:) }
-      block = Matcher::Block.build(expression_cache:, &block) if
+      block = Block.build(expression_cache:, &block) if
         block && !Matcher.settings[:pass_through_blocks]
 
       expression = Call.new(@expression, method, args, kwargs, block)

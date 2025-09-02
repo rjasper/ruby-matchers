@@ -176,7 +176,7 @@ module Matcher
       kwargs = @kwargs.transform_values(&substitute)
       kwargs = @kwargs if no_change
 
-      block = block.is_a?(Matcher::Block) ? @block.substitute(replacements) : @block
+      block = block.is_a?(Block) ? @block.substitute(replacements) : @block
 
       Call.new(receiver, @method, args, kwargs, block)
     end
@@ -239,7 +239,7 @@ module Matcher
     end
 
     def invoke(values, receiver, args, kwargs)
-      block = @block.is_a?(Matcher::Block) ? @block&.to_proc(values:) : @block
+      block = @block.is_a?(Block) ? @block&.to_proc(values:) : @block
 
       begin
         result = receiver.send(@method, *args, **kwargs, &block)

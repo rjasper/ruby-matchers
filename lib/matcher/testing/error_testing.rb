@@ -31,7 +31,7 @@ module Matcher
     end
 
     def assert_phrase(expected, message)
-      assert_equal expected, Matcher::ExpectedPhrasing.new(nil, message).apply
+      assert_equal expected, ExpectedPhrasing.new(nil, message).apply
     end
   end
 end

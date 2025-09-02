@@ -3,7 +3,7 @@
 module Matcher
   module PatternTesting
     def with_pattern(pattern, &)
-      pattern = Matcher::Pattern.build(&pattern)
+      pattern = Pattern.build(&pattern)
 
       PatternTestingScope.new(pattern, self).instance_exec(&)
     end

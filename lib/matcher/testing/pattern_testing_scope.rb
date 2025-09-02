@@ -11,10 +11,10 @@ module Matcher
 
     def assert_pattern_match(test_expression, **expected)
       expected = expected.transform_values do |v|
-        Matcher::Expression.of(v)
+        Expression.of(v)
       end
 
-      test_expression = Matcher::Expression.of(test_expression)
+      test_expression = Expression.of(test_expression)
 
       result = @pattern.match(test_expression)
 
@@ -26,7 +26,7 @@ module Matcher
     end
 
     def assert_no_pattern_match(test_expression)
-      test_expression = Matcher::Expression.of(test_expression)
+      test_expression = Expression.of(test_expression)
 
       @test.assert_nil(@pattern.match(test_expression))
     end
