@@ -8,7 +8,7 @@ module Matcher
       NeverMatcher.instance
     end
 
-    def check(_state); end
+    def check(_state) end
 
     def to_s
       'always'
