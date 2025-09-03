@@ -12,4 +12,14 @@ describe Matcher::Pattern do
 
     assert_equal expected, pattern.expression
   end
+
+  it '::build: caches expressions' do
+    pattern = Matcher::Pattern.build do
+      [const(:foo), const(:foo)]
+    end
+
+    foo1, foo2 = pattern.expression.items
+
+    assert_same foo1, foo2
+  end
 end
