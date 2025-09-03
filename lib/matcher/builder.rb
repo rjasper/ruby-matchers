@@ -28,5 +28,16 @@ module Matcher
         @outside
       end
     end
+
+    def neg(matcher)
+      ~matcher_of(matcher)
+    end
+
+    def present(matcher)
+      AllMatcher.new([
+        EqualMatcher.new(nil, negated: true),
+        matcher_of(matcher),
+      ])
+    end
   end
 end
