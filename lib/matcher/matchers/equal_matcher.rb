@@ -29,7 +29,7 @@ module Matcher
       @negated = negated
     end
 
-    def ~
+    def negate
       EqualMatcher.new(@value, negated: !@negated)
     end
 

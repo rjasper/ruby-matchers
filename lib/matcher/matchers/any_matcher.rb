@@ -20,7 +20,7 @@ module Matcher
       end
     end
 
-    def ~
+    def negate
       AllMatcher.new(@matchers.map(&:~))
     end
 

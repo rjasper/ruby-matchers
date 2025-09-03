@@ -17,7 +17,7 @@ module Matcher
       require 'json'
     end
 
-    def ~
+    def negate
       ParseJsonMatcher.new(@original_matcher, json_options: @json_options, negated: !@negated)
     end
 

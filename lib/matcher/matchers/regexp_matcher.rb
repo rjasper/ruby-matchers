@@ -15,7 +15,7 @@ module Matcher
       @negated = negated
     end
 
-    def ~
+    def negate
       RegexpMatcher.new(@pattern, negated: !@negated)
     end
 

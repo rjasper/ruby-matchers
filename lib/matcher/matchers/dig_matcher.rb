@@ -12,7 +12,7 @@ module Matcher
       @negated = negated
     end
 
-    def ~
+    def negate
       DigMatcher.new(@keys, @original_matcher, optional: @optional, negated: !@negated)
     end
 

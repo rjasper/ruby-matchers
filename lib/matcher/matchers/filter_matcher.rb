@@ -13,7 +13,7 @@ module Matcher
       @negated = negated
     end
 
-    def ~
+    def negate
       FilterMatcher.new(@filter, @original_matcher, negated: !@negated)
     end
 

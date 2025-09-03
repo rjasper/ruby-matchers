@@ -9,7 +9,7 @@ module Matcher
       @negated = negated
     end
 
-    def ~
+    def negate
       OneMatcher.new(@matchers, negated: !@negated)
     end
 

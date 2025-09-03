@@ -9,7 +9,7 @@ module Matcher
       @neg_matcher = ~matcher
     end
 
-    def ~
+    def negate
       EachMatcher.new(@matcher)
     end
 

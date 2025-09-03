@@ -10,7 +10,7 @@ module Matcher
       @includes_expressions = items.any? { _1.is_a?(Expression) }
     end
 
-    def ~
+    def negate
       EqualSetMatcher.new(@items, negated: !@negated)
     end
 

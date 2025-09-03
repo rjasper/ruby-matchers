@@ -16,7 +16,7 @@ module Matcher
       require 'time'
     end
 
-    def ~
+    def negate
       ParseIso8601Matcher.new(@original_matcher, negated: !@negated)
     end
 

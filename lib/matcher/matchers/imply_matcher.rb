@@ -13,7 +13,7 @@ module Matcher
       @negated = negated
     end
 
-    def ~
+    def negate
       ImplyMatcher.new(@condition, @original_matcher, negated: !@negated)
     end
 

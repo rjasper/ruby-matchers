@@ -10,7 +10,7 @@ module Matcher
       @negated = negated
     end
 
-    def ~
+    def negate
       BlockMatcher.new(@block, @description, negated: !@negated)
     end
 

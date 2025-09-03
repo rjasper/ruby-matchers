@@ -5,6 +5,23 @@ module Matcher
     include NoExpression
 
     def ~
+      matcher_cache = MatcherCache.current
+
+      return negate unless matcher_cache
+
+      cache = (matcher_cache.negated_matchers ||= {}.compare_by_identity)
+      negated = cache[self]
+
+      unless negated
+        negated = negate
+        cache[self] = negated
+        cache[negated] = self
+      end
+
+      negated
+    end
+
+    def negate
       NegatedMatcher.new(self)
     end
 

@@ -15,7 +15,7 @@ module Matcher
       @negated = negated
     end
 
-    def ~
+    def negate
       RangeMatcher.new(@range, negated: !@negated)
     end
 

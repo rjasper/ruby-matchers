@@ -14,7 +14,7 @@ module Matcher
       @neg_else_matcher = @else_matcher&.~
     end
 
-    def ~
+    def negate
       ImplySomeMatcher.new(@matchers, @else_matcher, @count)
     end
 

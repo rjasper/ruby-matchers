@@ -9,7 +9,7 @@ module Matcher
       @neg_array = @array.map(&:~)
     end
 
-    def ~
+    def negate
       ArrayMatcher.new(@array)
     end
 

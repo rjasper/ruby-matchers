@@ -35,7 +35,7 @@ module Matcher
 
     def present(matcher)
       AllMatcher.new([
-        EqualMatcher.new(nil, negated: true),
+        ~equal(nil),
         matcher_of(matcher),
       ])
     end

@@ -8,7 +8,7 @@ module Matcher
       @matcher = matcher
     end
 
-    def ~
+    def negate
       NegatedEachPairMatcher.new(@matcher)
     end
 

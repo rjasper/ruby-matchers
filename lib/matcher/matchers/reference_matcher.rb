@@ -13,7 +13,7 @@ module Matcher
       @session_key = session_key
     end
 
-    def ~
+    def negate
       ReferenceMatcher.new(@key, @targets, @options, cyclic: @cyclic, negated: !@negated, session_key: @session_key)
     end
 

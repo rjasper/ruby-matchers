@@ -18,7 +18,7 @@ module Matcher
       raise 'cannot use partial(others => ...)' if @partial && @includes_others
     end
 
-    def ~
+    def negate
       HashMatcher.new(@original_hash, partial: @partial, negated: !@negated)
     end
 

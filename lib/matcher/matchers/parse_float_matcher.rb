@@ -10,7 +10,7 @@ module Matcher
       @negated = negated
     end
 
-    def ~
+    def negate
       ParseFloatMatcher.new(@original_matcher, negated: !@negated)
     end
 

@@ -24,7 +24,7 @@ module Matcher
       @count = count
     end
 
-    def ~
+    def negate
       NegatedImplySomeMatcher.new(@matchers, @else_matcher, @count)
     end
 

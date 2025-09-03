@@ -13,7 +13,7 @@ module Matcher
       @negated = negated
     end
 
-    def ~
+    def negate
       IndexByMatcher.new(@projection, @original_matcher, negated: !@negated)
     end
 

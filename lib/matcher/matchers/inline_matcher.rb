@@ -15,7 +15,7 @@ module Matcher
 
     attr_reader :matcher, :negated
 
-    def ~
+    def negate
       return super unless @negatable
 
       InlineMatcher.new(@matcher&.~, negatable: @negatable, negated: !@negated, &@block)

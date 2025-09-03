@@ -27,4 +27,14 @@ describe Matcher::Base do
 
     assert_no_errors matcher.match([1, 2, 1])
   end
+
+  it '#~: caches negated matchers' do
+    Matcher.with_build_session do
+      matcher = Matcher.build { 'foo' }
+      negated = ~matcher
+
+      assert_same negated, ~matcher
+      assert_same matcher, ~negated
+    end
+  end
 end

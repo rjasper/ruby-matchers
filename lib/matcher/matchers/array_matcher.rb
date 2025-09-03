@@ -8,7 +8,7 @@ module Matcher
       @array = array
     end
 
-    def ~
+    def negate
       NegatedArrayMatcher.new(@array)
     end
 

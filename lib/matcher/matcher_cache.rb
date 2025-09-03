@@ -2,6 +2,7 @@
 
 module Matcher
   MatcherCache = Struct.new(
+    :negated_matchers,
     :equal_matchers,
     :expression_matchers,
     :kind_of_matchers,

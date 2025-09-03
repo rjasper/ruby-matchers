@@ -10,7 +10,7 @@ module Matcher
 
     attr_reader :matchers
 
-    def ~
+    def negate
       LazyAnyMatcher.new(@matchers.map(&:~))
     end
 

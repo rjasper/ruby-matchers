@@ -9,7 +9,7 @@ module Matcher
       @matcher = matcher
     end
 
-    def ~
+    def negate
       LetMatcher.new(@assigns, ~@matcher)
     end
 

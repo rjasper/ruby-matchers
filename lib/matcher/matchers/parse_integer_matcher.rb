@@ -11,7 +11,7 @@ module Matcher
       @negated = negated
     end
 
-    def ~
+    def negate
       ParseIntegerMatcher.new(@original_matcher, base: @base, negated: !@negated)
     end
 

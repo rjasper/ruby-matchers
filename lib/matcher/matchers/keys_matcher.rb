@@ -11,7 +11,7 @@ module Matcher
       @includes_expressions = keys.any? { _1.is_a?(Expression) }
     end
 
-    def ~
+    def negate
       KeysMatcher.new(@keys, partial: @partial, negated: !@negated)
     end
 
