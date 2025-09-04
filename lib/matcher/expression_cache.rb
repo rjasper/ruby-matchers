@@ -45,7 +45,7 @@ module Matcher
     end
 
     def less_known_variable_for(symbol)
-      label = label_for([Variable, symbol])
+      label = label_for(@variable_labels, symbol)
       @index[label] ||= Variable.new(symbol)
     end
   end
