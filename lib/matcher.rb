@@ -150,7 +150,7 @@ module Matcher
       object = builder.instance_exec(&block)
       builder.refs.check
 
-      matcher = if builder.refs? && builder.refs.last_object_id == object.object_id
+      matcher = if builder.refs? && builder.refs.last_object_id == object.__id__
         builder.refs.last_matcher
       else
         builder.matcher_of(object)

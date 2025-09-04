@@ -44,7 +44,7 @@ module Matcher
         options = matcher_or_options.merge(cache: true) { |_k, l, r| l }
       end
 
-      @last_object_id = matcher.object_id
+      @last_object_id = matcher.__id__
       matcher = @builder.matcher_of(matcher)
       @last_matcher = matcher
       @targets[key] = [matcher, nil]

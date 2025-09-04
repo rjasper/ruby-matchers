@@ -43,4 +43,11 @@ describe Matcher::Recorder do
 
     assert_equal call, exp
   end
+
+  it 'records object_id call' do
+    call = Matcher::Expression.build { _.object_id }
+
+    assert_kind_of Matcher::Call, call
+    assert_equal :object_id, call.method
+  end
 end
