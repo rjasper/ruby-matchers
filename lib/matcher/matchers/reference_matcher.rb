@@ -2,19 +2,20 @@
 
 module Matcher
   class ReferenceMatcher < Base
-    def initialize(key, targets, options, cyclic: nil, negated: false, session_key: object_id)
+    Settings = Struct.new(:target, :cache)
+
+    def initialize(key, settings, cyclic: nil, negated: false, session_key: object_id)
       super()
 
-      @targets = targets
       @key = key
+      @settings = settings
       @cyclic = cyclic
-      @options = options
       @negated = negated
       @session_key = session_key
     end
 
     def negate
-      ReferenceMatcher.new(@key, @targets, @options, cyclic: @cyclic, negated: !@negated, session_key: @session_key)
+      ReferenceMatcher.new(@key, @settings, cyclic: @cyclic, negated: !@negated, session_key: @session_key)
     end
 
     def check(state)
@@ -35,7 +36,7 @@ module Matcher
         return
       end
 
-      unless @options[@key][:cache]
+      unless cache?
         state.errors << yield(target)
         return
       end
@@ -65,16 +66,24 @@ module Matcher
 
     private
 
+    def cache?
+      return @cache if defined? @cache
+
+      @cache = @settings[@key].cache
+    end
+
     def visited
       session(@session_key)[:visited] ||= Set.new
     end
 
     def target
-      pair = @targets[@key]
+      return @target if defined? @target
+
+      pair = @settings[@key].target
 
       raise "No target for #{@key.inspect}" unless pair
 
-      if @negated
+      @target = if @negated
         pair[1] ||= ~pair[0]
       else
         pair[0]

@@ -9,8 +9,7 @@ module Matcher
     attr_reader :last_object_id, :last_matcher
 
     def initialize(builder)
-      @targets = {}
-      @options = {}
+      @settings = {}
       @last_object_id = nil
       @last_matcher = nil
       @used = Set.new
@@ -18,25 +17,26 @@ module Matcher
     end
 
     def finalize
-      @targets.freeze
-      target_set = @targets.each_key.to_set
-      missing_targets = @used - target_set
-      unused_refs = target_set - @used
+      @settings.freeze
 
-      raise "undefined ref: #{missing_targets.join(', ')}" unless missing_targets.empty?
-      raise "unused ref: #{unused_refs.join(', ')}" unless unused_refs.empty?
+      assigned = @settings.each_key.to_set
+      missing = @used - assigned
+      unused = assigned - @used
+
+      raise "undefined ref: #{missing.join(', ')}" unless missing.empty?
+      raise "unused ref: #{unused.join(', ')}" unless unused.empty?
     end
 
     def [](key, cyclic: false)
       @used << key
 
-      ReferenceMatcher.new(key, @targets, @options, cyclic:)
+      ReferenceMatcher.new(key, @settings, cyclic:)
     end
 
     DEFAULT_OPTIONS = { cache: true }.freeze
 
     def []=(key, matcher_or_options, matcher = UNDEFINED)
-      raise "Cannot reassign reference: #{key.inspect}" if @targets.key?(key)
+      raise "Cannot reassign reference: #{key.inspect}" if @settings.key?(key)
 
       if Matcher.undefined?(matcher)
         options = DEFAULT_OPTIONS
@@ -48,8 +48,10 @@ module Matcher
       @last_object_id = matcher.__id__
       matcher = @builder.matcher_of(matcher)
       @last_matcher = matcher
-      @targets[key] = [matcher, nil]
-      @options[key] = options
+
+      settings = (@settings[key] ||= ReferenceMatcher::Settings.new)
+      settings.target = [matcher, nil]
+      settings.cache = options[:cache]
     end
   end
 end
