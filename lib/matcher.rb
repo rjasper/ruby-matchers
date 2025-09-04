@@ -148,7 +148,7 @@ module Matcher
     with_build_session do |build_session|
       builder = Builder.new(block.binding.receiver, build_session:)
       object = builder.instance_exec(&block)
-      builder.refs.check
+      builder.refs.finalize
 
       matcher = if builder.refs? && builder.refs.last_object_id == object.__id__
         builder.refs.last_matcher

@@ -17,8 +17,9 @@ module Matcher
       @builder = builder
     end
 
-    def check
-      target_set = @targets.keys.reject { _1.start_with?('~') }.to_set
+    def finalize
+      @targets.freeze
+      target_set = @targets.each_key.to_set
       missing_targets = @used - target_set
       unused_refs = target_set - @used
 
