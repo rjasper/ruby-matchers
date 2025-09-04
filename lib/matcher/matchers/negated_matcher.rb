@@ -12,7 +12,7 @@ module Matcher
       @matcher
     end
 
-    def check(state)
+    def validate(state)
       state.errors << state.expected.namespace(:negated).not.valid(@matcher) if yield(@matcher).valid?
     end
 

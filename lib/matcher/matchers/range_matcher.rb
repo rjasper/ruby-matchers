@@ -19,7 +19,7 @@ module Matcher
       RangeMatcher.new(@range, negated: !@negated)
     end
 
-    def check(state)
+    def validate(state)
       limit = @range.begin || @range.end
 
       if (limit <=> state.actual).nil?

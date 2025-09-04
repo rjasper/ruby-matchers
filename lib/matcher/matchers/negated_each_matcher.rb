@@ -13,7 +13,7 @@ module Matcher
       EachMatcher.new(@matcher)
     end
 
-    def check(state)
+    def validate(state)
       return unless state.actual.respond_to?(:each)
 
       collector = state.new_collector.or!

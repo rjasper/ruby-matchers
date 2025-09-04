@@ -44,7 +44,7 @@ module Matcher
       end
     end
 
-    def check(state, &block)
+    def validate(state, &block)
       context = InlineContext.new(self, state, block)
       context.instance_exec(&@block)
     end

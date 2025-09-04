@@ -13,7 +13,7 @@ module Matcher
       EachPairMatcher.new(@matcher)
     end
 
-    def check(state)
+    def validate(state)
       actual = state.actual
 
       return unless actual.respond_to?(:each_pair)

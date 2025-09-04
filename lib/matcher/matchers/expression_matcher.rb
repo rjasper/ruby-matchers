@@ -28,7 +28,7 @@ module Matcher
       ExpressionMatcher.new(@expression, negated: !@negated)
     end
 
-    def check(state)
+    def validate(state)
       value_tree = @expression.evaluate_tree(state.values)
       evaluation = value_tree[-1]
 

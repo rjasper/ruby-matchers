@@ -28,7 +28,7 @@ module Matcher
       NegatedImplySomeMatcher.new(@matchers, @else_matcher, @count)
     end
 
-    def check(state)
+    def validate(state)
       errors = state.errors
       matchers = @matchers.filter { yield(_1.condition).valid? }
 

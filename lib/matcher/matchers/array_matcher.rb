@@ -12,7 +12,7 @@ module Matcher
       NegatedArrayMatcher.new(@array)
     end
 
-    def check(state)
+    def validate(state)
       actual = state.actual
       errors = state.errors
 

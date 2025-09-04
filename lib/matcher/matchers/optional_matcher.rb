@@ -21,7 +21,7 @@ module Matcher
       OptionalMatcher.new(@original_matcher, negated: !@negated)
     end
 
-    def check(state)
+    def validate(state)
       if state.actual.nil?
         state.errors << state.expected.not.equal(nil) if @negated
       else

@@ -24,7 +24,7 @@ module Matcher
       AnyMatcher.new(@matchers.map(&:~))
     end
 
-    def check(state)
+    def validate(state)
       @matchers.each do |matcher|
         state.errors << yield(matcher)
       end

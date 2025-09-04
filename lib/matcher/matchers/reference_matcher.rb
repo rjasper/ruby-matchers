@@ -18,7 +18,7 @@ module Matcher
       ReferenceMatcher.new(@key, @settings, cyclic: @cyclic, negated: !@negated, session_key: @session_key)
     end
 
-    def check(state)
+    def validate(state)
       actual = state.actual
       sess = class_session
       depth = sess[:depth]

@@ -13,7 +13,7 @@ module Matcher
       OneMatcher.new(@matchers, negated: !@negated)
     end
 
-    def check(state)
+    def validate(state)
       valid_matchers = []
       invalid_errors = []
 

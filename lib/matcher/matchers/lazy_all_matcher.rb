@@ -24,7 +24,7 @@ module Matcher
       end
     end
 
-    def check(state)
+    def validate(state)
       last_error = EmptyError.instance
 
       @matchers.each do |matcher|

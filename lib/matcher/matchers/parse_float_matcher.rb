@@ -14,7 +14,7 @@ module Matcher
       ParseFloatMatcher.new(@original_matcher, negated: !@negated)
     end
 
-    def check(state, &)
+    def validate(state, &)
       actual = state.actual
 
       unless actual.is_a?(String)

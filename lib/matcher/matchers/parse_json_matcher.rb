@@ -21,7 +21,7 @@ module Matcher
       ParseJsonMatcher.new(@original_matcher, json_options: @json_options, negated: !@negated)
     end
 
-    def check(state)
+    def validate(state)
       actual = state.actual
 
       unless actual.is_a?(String)

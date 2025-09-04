@@ -13,7 +13,7 @@ module Matcher
       ArrayMatcher.new(@array)
     end
 
-    def check(state)
+    def validate(state)
       actual = state.actual
 
       return if !actual.is_a?(Array) || @array.length != actual.length

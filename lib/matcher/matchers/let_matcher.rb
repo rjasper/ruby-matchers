@@ -13,7 +13,7 @@ module Matcher
       LetMatcher.new(@assigns, ~@matcher)
     end
 
-    def check(state)
+    def validate(state)
       assigns = @assigns.transform_values do |v|
         v = Expression.try_recorder(v)
 

@@ -19,7 +19,7 @@ module Matcher
       KindOfMatcher.new(@kind, negated: !@negated)
     end
 
-    def check(state)
+    def validate(state)
       state.errors << state.expected.not_if(@negated).kind_of(@kind) if
         state.actual.is_a?(@kind) == @negated
     end

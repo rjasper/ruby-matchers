@@ -33,7 +33,7 @@ module Matcher
       EqualMatcher.new(@value, negated: !@negated)
     end
 
-    def check(state)
+    def validate(state)
       value = @value.is_a?(Expression) ? @value.evaluate(state.values) : @value
 
       if @negated

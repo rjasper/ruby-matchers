@@ -8,7 +8,7 @@ module Matcher
       AlwaysMatcher.instance
     end
 
-    def check(state)
+    def validate(state)
       state.errors << state.report.exist
     end
 

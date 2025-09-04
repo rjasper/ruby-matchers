@@ -15,7 +15,7 @@ module Matcher
       ParseIntegerMatcher.new(@original_matcher, base: @base, negated: !@negated)
     end
 
-    def check(state, &)
+    def validate(state, &)
       actual = state.actual
 
       unless actual.is_a?(String)

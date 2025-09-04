@@ -12,7 +12,7 @@ module Matcher
       NegatedEachMatcher.new(@matcher)
     end
 
-    def check(state)
+    def validate(state)
       unless state.actual.respond_to?(:each)
         state.errors << state.expected.responding_to(:each)
         return

@@ -15,7 +15,7 @@ module Matcher
       RaisesMatcher.new(@expression, @original_matcher, negated: !@negated)
     end
 
-    def check(state)
+    def validate(state)
       @expression.evaluate(state.values)
 
       return if @negated

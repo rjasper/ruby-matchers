@@ -19,7 +19,7 @@ module Matcher
       RegexpMatcher.new(@pattern, negated: !@negated)
     end
 
-    def check(state)
+    def validate(state)
       unless state.actual.is_a?(String)
         state.errors << state.expected.kind_of(String) unless @negated
         return

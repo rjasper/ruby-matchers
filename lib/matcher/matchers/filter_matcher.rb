@@ -17,7 +17,7 @@ module Matcher
       FilterMatcher.new(@filter, @original_matcher, negated: !@negated)
     end
 
-    def check(state)
+    def validate(state)
       actual = state.actual
 
       unless actual.respond_to?(:each)

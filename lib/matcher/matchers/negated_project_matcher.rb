@@ -14,7 +14,7 @@ module Matcher
       ProjectMatcher.new(@expression, @matcher)
     end
 
-    def check(state)
+    def validate(state)
       begin
         result = @expression.evaluate(state.values)
       rescue CallError

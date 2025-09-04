@@ -87,10 +87,10 @@ module Matcher
         kwargs[:actual] = act unless Matcher.undefined?(act)
 
         if kwargs.empty?
-          matcher.check(state, &invoke)
+          matcher.validate(state, &invoke)
         else
           hash_stack.push(kwargs)
-          matcher.check(state, &invoke)
+          matcher.validate(state, &invoke)
           hash_stack.pop(kwargs)
         end
 
@@ -102,7 +102,7 @@ module Matcher
       end
     end
 
-    def check(actual)
+    def validate(state)
       raise NotImplementedError
     end
 

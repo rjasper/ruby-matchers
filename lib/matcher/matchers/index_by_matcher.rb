@@ -17,7 +17,7 @@ module Matcher
       IndexByMatcher.new(@projection, @original_matcher, negated: !@negated)
     end
 
-    def check(state, &)
+    def validate(state, &)
       return negated_check(state, &) if @negated
 
       actual = state.actual

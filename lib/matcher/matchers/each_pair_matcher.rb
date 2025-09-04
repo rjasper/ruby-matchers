@@ -12,7 +12,7 @@ module Matcher
       NegatedEachPairMatcher.new(@matcher)
     end
 
-    def check(state)
+    def validate(state)
       actual = state.actual
 
       unless actual.respond_to?(:each_pair)

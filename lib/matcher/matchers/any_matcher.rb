@@ -24,7 +24,7 @@ module Matcher
       AllMatcher.new(@matchers.map(&:~))
     end
 
-    def check(state)
+    def validate(state)
       if @matchers.empty?
         state.errors << state.report.exist
         return

@@ -18,7 +18,7 @@ module Matcher
       ImplySomeMatcher.new(@matchers, @else_matcher, @count)
     end
 
-    def check(state)
+    def validate(state)
       matchers = @neg_matchers.filter { yield(_1.condition).valid? }
 
       if matchers.empty?

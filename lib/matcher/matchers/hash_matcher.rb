@@ -22,7 +22,7 @@ module Matcher
       HashMatcher.new(@original_hash, partial: @partial, negated: !@negated)
     end
 
-    def check(state, &)
+    def validate(state, &)
       return negated_check(state, &) if @negated
 
       actual = state.actual

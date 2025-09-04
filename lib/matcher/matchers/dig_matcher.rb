@@ -16,7 +16,7 @@ module Matcher
       DigMatcher.new(@keys, @original_matcher, optional: @optional, negated: !@negated)
     end
 
-    def check(state, &)
+    def validate(state, &)
       return negated_check(state, &) if @negated
 
       cur = state.actual
