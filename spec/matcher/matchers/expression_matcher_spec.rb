@@ -49,9 +49,9 @@ describe Matcher::ExpressionMatcher do
     assert_errors not_match(nil) { !_ },
       msg(nil).not.truthy
 
-    assert_errors Matcher.build { vars[:foo] }.match(nil, foo: false),
+    assert_errors match(nil, foo: false) { vars[:foo] },
       'expected foo to be truthy but got false'
-    assert_errors Matcher.build { !vars[:foo] }.match(nil, foo: true),
+    assert_errors match(nil, foo: true) { !vars[:foo] },
       'expected foo to be falsy but got true'
   end
 
@@ -390,8 +390,8 @@ describe Matcher::ExpressionMatcher do
 
   private
 
-  def match(actual, &)
-    Matcher.build(&).match(actual)
+  def match(actual, **, &)
+    Matcher.build(&).match(actual, **)
   end
 
   def not_match(actual, &)
