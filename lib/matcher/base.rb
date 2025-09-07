@@ -79,28 +79,38 @@ module Matcher
 
     StackData = Struct.new(:actual, :vals, :errors)
 
+    def match?(actual, **)
+      match_helper(true, actual:, **).valid?
+    end
+    alias === match?
+
     def match(actual, **)
+      match_helper(false, actual:, **)
+    end
+
+    def match_helper(boolean, **)
       hash_stack = HashStack.new
 
       invoke = lambda do |matcher, act = UNDEFINED, **kwargs|
-        state = State.new(hash_stack)
+        state = State.new(hash_stack, boolean:)
         kwargs[:actual] = act unless Matcher.undefined?(act)
 
-        if kwargs.empty?
+        hash_stack.push(kwargs)
+
+        catch(:mismatch) do
           matcher.validate(state, &invoke)
-        else
-          hash_stack.push(kwargs)
-          matcher.validate(state, &invoke)
-          hash_stack.pop(kwargs)
         end
+
+        hash_stack.pop(kwargs)
 
         state.result
       end
 
       Matcher.with_session do
-        invoke.call(self, actual:, **)
+        invoke.call(self, **)
       end
     end
+    private :match_helper
 
     def validate(state)
       raise NotImplementedError

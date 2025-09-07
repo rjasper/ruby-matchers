@@ -2,11 +2,16 @@
 
 module Matcher
   class State
-    def initialize(values)
+    def initialize(values, boolean: false)
       @values = values
+      @boolean = boolean
     end
 
     attr_reader :values
+
+    def boolean?
+      @boolean
+    end
 
     def actual
       @values[:actual]
@@ -17,7 +22,7 @@ module Matcher
     end
 
     def new_collector
-      ErrorCollector.new
+      @boolean ? BooleanCollector.new : ErrorCollector.new
     end
 
     def result
