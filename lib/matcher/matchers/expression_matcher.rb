@@ -29,6 +29,11 @@ module Matcher
     end
 
     def validate(state)
+      if state.boolean?
+        state.errors << 'invalid' if @negated != !@expression.evaluate(state.values)
+        return
+      end
+
       value_tree = @expression.evaluate_tree(state.values)
       evaluation = value_tree[-1]
 
