@@ -52,15 +52,19 @@ module Matcher
 
       errors = yield(@matcher, items, original: actual)
 
-      state.errors << map_errors(errors) do |nested_error|
-        key = nested_error.key
+      unless state.boolean?
+        errors = map_errors(errors) do |nested_error|
+          key = nested_error.key
 
-        next unless index_call?(key)
+          next unless index_call?(key)
 
-        original_index = mapping[operand_of(key)]
+          original_index = mapping[operand_of(key)]
 
-        NestedError.new(index_call_to(original_index), nested_error.child) if original_index
+          NestedError.new(index_call_to(original_index), nested_error.child) if original_index
+        end
       end
+
+      state.errors << errors
     end
 
     def to_s

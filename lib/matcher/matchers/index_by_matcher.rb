@@ -60,8 +60,9 @@ module Matcher
       return if failed
 
       errors = yield(@matcher, index, original: actual)
+      errors = map_errors2(errors, mapping) unless state.boolean?
 
-      state.errors << map_errors2(errors, mapping)
+      state.errors << errors
     end
 
     def to_s
