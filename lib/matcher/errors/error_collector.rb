@@ -31,11 +31,6 @@ module Matcher
       self
     end
 
-    def and!
-      @mode = :and
-      self
-    end
-
     def or?
       @mode == :or
     end
