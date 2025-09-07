@@ -56,7 +56,9 @@ describe Matcher::ReferenceMatcher do
 
     valid_list = { head: 1, tail: { head: 2, tail: nil } }
 
+    assert matcher.match?(valid_list)
     assert_no_errors matcher.match(valid_list)
+    refute negated.match?(valid_list)
     assert_errors negated.match(valid_list) do
       _or do
         error :head, msg(1).kind_of(Integer)
@@ -67,8 +69,10 @@ describe Matcher::ReferenceMatcher do
 
     invalid_list = { head: 1, tail: { head: 2, tail: { head: 3 } } }
 
+    refute matcher.match?(invalid_list)
     assert_errors matcher.match(invalid_list),
       tail: { tail: msg({ head: 3 }).not.having_key(:tail) }
+    assert negated.match?(invalid_list)
     assert_no_errors negated.match(invalid_list)
   end
 
@@ -81,7 +85,9 @@ describe Matcher::ReferenceMatcher do
 
     negated = ~matcher
 
+    assert matcher.match?(['foo', 'foo'])
     assert_no_errors matcher.match(['foo', 'foo'])
+    refute negated.match?(['foo', 'foo'])
     assert_errors negated.match(['foo', 'foo']) do
       _or do
         error 0, msg('foo').equal('foo')
@@ -89,9 +95,11 @@ describe Matcher::ReferenceMatcher do
       end
     end
 
+    refute matcher.match?(['bar', 'bar'])
     assert_errors matcher.match(['bar', 'bar']),
       0 => msg('bar').not.equal('foo'),
       1 => 'actual has already failed before'
+    assert negated.match?(['bar', 'bar'])
     assert_no_errors negated.match(['bar', 'bar'])
   end
 
@@ -104,7 +112,9 @@ describe Matcher::ReferenceMatcher do
 
     negated = ~matcher
 
+    assert matcher.match?([0, 1])
     assert_no_errors matcher.match([0, 1])
+    refute negated.match?([0, 1])
     assert_errors negated.match([0, 1]) do
       _or do
         error 0, 'expected _ != i but got 0 != 0'
@@ -112,8 +122,10 @@ describe Matcher::ReferenceMatcher do
       end
     end
 
+    refute matcher.match?([0, 0])
     assert_errors matcher.match([0, 0]),
       1 => 'expected _ == i but got 0 == 1'
+    assert negated.match?([0, 0])
     assert_no_errors negated.match([0, 0])
   end
 
@@ -136,7 +148,9 @@ describe Matcher::ReferenceMatcher do
 
     actual = { head: 1, tail: { head: 2, tail: nil } }
 
+    assert matcher.match?(actual)
     assert_no_errors matcher.match(actual)
+    refute negated.match?(actual)
     assert_errors negated.match(actual) do
       _or do
         error :head, msg(1).kind_of(Integer)
@@ -147,9 +161,11 @@ describe Matcher::ReferenceMatcher do
 
     actual[:tail][:tail] = actual
 
+    refute matcher.match?(actual)
     assert_errors matcher.match(actual) do
       error %i[tail tail], 'did not expect a cyclic structure but actual has already been visited'
     end
+    assert negated.match?(actual)
     assert_no_errors negated.match(actual)
   end
 
@@ -174,7 +190,9 @@ describe Matcher::ReferenceMatcher do
 
     ring1 = ring_of[1, 2, 3]
 
+    assert matcher.match?(ring1)
     assert_no_errors matcher.match(ring1)
+    refute negated.match?(ring1)
     assert_errors negated.match(ring1) do
       _or do
         error :value, msg(1).kind_of(Integer)
@@ -186,8 +204,10 @@ describe Matcher::ReferenceMatcher do
 
     ring2 = ring_of[1, nil, 3]
 
+    refute matcher.match?(ring2)
     assert_errors matcher.match(ring2),
       next: { value: msg(nil).not.kind_of(Integer) }
+    assert negated.match?(ring2)
     assert_no_errors negated.match(ring2)
   end
 

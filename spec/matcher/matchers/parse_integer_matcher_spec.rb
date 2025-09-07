@@ -19,16 +19,22 @@ describe Matcher::ParseIntegerMatcher do
 
     integer_of = expression { kernel::Integer(_) }
 
+    assert matcher.match?('2')
     assert_no_errors matcher.match('2')
+    refute negated.match?('2')
     assert_errors negated.match('2'),
       integer_of => msg(2).predicate(:even?)
 
+    refute matcher.match?('foo')
     assert_errors matcher.match('foo'),
       msg('foo').not.valid_format(:integer)
+    assert negated.match?('foo')
     assert_no_errors negated.match('foo')
 
+    refute matcher.match?('3')
     assert_errors matcher.match('3'),
       integer_of => msg(3).not.predicate(:even?)
+    assert negated.match?('3')
     assert_no_errors negated.match('3')
   end
 
@@ -36,12 +42,16 @@ describe Matcher::ParseIntegerMatcher do
     matcher = Matcher.build { integer_format }
     negated = ~matcher
 
+    assert matcher.match?('2')
     assert_no_errors matcher.match('2')
+    refute negated.match?('2')
     assert_errors negated.match('2'),
       msg('2').valid_format(:integer)
 
+    refute matcher.match?('foo')
     assert_errors matcher.match('foo'),
       msg('foo').not.valid_format(:integer)
+    assert negated.match?('foo')
     assert_no_errors negated.match('foo')
   end
 

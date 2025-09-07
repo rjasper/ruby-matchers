@@ -10,6 +10,17 @@ describe Matcher::LetMatcher do
     assert_kind_of(kind, Matcher.build { let(n: 1) ^ (_ == vars[:n]) })
   end
 
+  it '#match?' do
+    matcher = Matcher.build { let(n: 1) ^ (_ == vars[:n]) }
+    negated = ~matcher
+
+    assert matcher.match?(1)
+    refute negated.match?(1)
+
+    refute matcher.match?(4)
+    assert negated.match?(4)
+  end
+
   it 'sets variable to value' do
     matcher = Matcher.build do
       let(myvar: 'foo') ^

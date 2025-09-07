@@ -13,20 +13,26 @@ describe Matcher::AnyMatcher do
     matcher = Matcher.build { any(1, 2) }
     negated = ~matcher
 
+    assert matcher.match?(1)
     assert_no_errors matcher.match(1)
+    refute negated.match?(1)
     assert_errors negated.match(1),
       msg(1).equal(1)
 
+    assert matcher.match?(2)
     assert_no_errors matcher.match(2)
+    refute negated.match?(2)
     assert_errors negated.match(2),
       msg(2).equal(2)
 
+    refute matcher.match?(4)
     assert_errors matcher.match(4) do
       _or do
         error msg(4).not.equal(1)
         error msg(4).not.equal(2)
       end
     end
+    assert negated.match?(4)
     assert_no_errors negated.match(4)
   end
 
@@ -34,7 +40,9 @@ describe Matcher::AnyMatcher do
     matcher = Matcher::AnyMatcher.new([])
     negated = ~matcher
 
+    refute matcher.match?(nil)
     assert_errors matcher.match(nil), msg(nil).exist
+    assert negated.match?(nil)
     assert_no_errors negated.match(nil)
   end
 

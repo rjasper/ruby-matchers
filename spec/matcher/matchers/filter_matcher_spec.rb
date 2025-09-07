@@ -14,17 +14,23 @@ describe Matcher::FilterMatcher do
     matcher = Matcher.build { filter(_.odd?) ^ each(_ < 10) }
     negated = ~matcher
 
+    assert matcher.match?([7, 8, 9, 10])
     assert_no_errors matcher.match([7, 8, 9, 10])
+    refute negated.match?([7, 8, 9, 10])
     assert_or_errors negated.match([7, 8, 9, 10]),
       0 => msg(7).less_than(10),
       2 => msg(9).less_than(10)
 
+    refute matcher.match?([7, 8, 9, 11])
     assert_errors matcher.match([7, 8, 9, 11]),
       3 => msg(11).not.less_than(10)
+    assert negated.match?([7, 8, 9, 11])
     assert_no_errors negated.match([7, 8, 9, 11])
 
+    refute matcher.match?(nil)
     assert_errors matcher.match(nil),
       msg(nil).not.responding_to(:each)
+    assert negated.match?(nil)
     assert_no_errors negated.match(nil)
   end
 
@@ -32,10 +38,13 @@ describe Matcher::FilterMatcher do
     matcher = Matcher.build { filter(expr(10) / _) ^ each(Integer) }
     negated = ~matcher
 
+    assert matcher.match?([1, 2, 3])
     assert_no_errors matcher.match([1, 2, 3])
 
+    refute matcher.match?([0, 1, 2])
     assert_errors matcher.match([0, 1, 2]),
       0 => 'did not expect 10 / _ to raise ZeroDivisionError, where _ = 0: divided by 0'
+    assert negated.match?([0, 1, 2])
     assert_no_errors negated.match([0, 1, 2])
   end
 

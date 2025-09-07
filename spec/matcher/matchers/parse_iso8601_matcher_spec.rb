@@ -25,16 +25,22 @@ describe Matcher::ParseIso8601Matcher do
 
     time_of = expression { expr(Time).iso8601(_) }
 
+    assert matcher.match?('2024-01-01T00:00:00Z')
     assert_no_errors matcher.match('2024-01-01T00:00:00Z')
+    refute negated.match?('2024-01-01T00:00:00Z')
     assert_errors negated.match('2024-01-01T00:00:00Z'),
       time_of => msg(year2024).greater_than(year2000)
 
+    refute matcher.match?('foo')
     assert_errors matcher.match('foo'),
       msg('foo').not.valid_format(:iso8601)
+    assert negated.match?('foo')
     assert_no_errors negated.match('foo')
 
+    refute matcher.match?('1990-01-01T00:00:00Z')
     assert_errors matcher.match('1990-01-01T00:00:00Z'),
       time_of => msg(year1990).not.greater_than(year2000)
+    assert negated.match?('1990-01-01T00:00:00Z')
     assert_no_errors negated.match('1990-01-01T00:00:00Z')
   end
 
@@ -42,12 +48,16 @@ describe Matcher::ParseIso8601Matcher do
     matcher = Matcher.build { iso8601_format }
     negated = ~matcher
 
+    assert matcher.match?('2024-01-01T00:00:00Z')
     assert_no_errors matcher.match('2024-01-01T00:00:00Z')
+    refute negated.match?('2024-01-01T00:00:00Z')
     assert_errors negated.match('2024-01-01T00:00:00Z'),
       msg('2024-01-01T00:00:00Z').valid_format(:iso8601)
 
+    refute matcher.match?('foo')
     assert_errors matcher.match('foo'),
       msg('foo').not.valid_format(:iso8601)
+    assert negated.match?('foo')
     assert_no_errors negated.match('foo')
   end
 

@@ -12,12 +12,16 @@ describe Matcher::EqualMatcher do
     matcher = Matcher.build { 42 }
     negated = ~matcher
 
+    assert matcher.match?(42)
     assert_no_errors matcher.match(42)
+    refute negated.match?(42)
     assert_errors negated.match(42),
       msg(42).equal(42)
 
+    refute matcher.match?(23)
     assert_errors matcher.match(23),
       msg(23).not.equal(42)
+    assert negated.match?(23)
     assert_no_errors negated.match(23)
   end
 
@@ -28,12 +32,16 @@ describe Matcher::EqualMatcher do
 
     negated = ~matcher
 
+    assert matcher.match?(42)
     assert_no_errors matcher.match(42)
+    refute negated.match?(42)
     assert_errors negated.match(42),
       msg(42).equal(42)
 
+    refute matcher.match?(23)
     assert_errors matcher.match(23),
       msg(23).not.equal(42)
+    assert negated.match?(23)
     assert_no_errors negated.match(23)
   end
 
@@ -41,22 +49,30 @@ describe Matcher::EqualMatcher do
     matcher = Matcher.build { let(foo: 3) ^ equal([1, 2, vars[:foo]]) }
     negated = ~matcher
 
+    assert matcher.match?([1, 2, 3])
     assert_no_errors matcher.match([1, 2, 3])
+    refute negated.match?([1, 2, 3])
     assert_or_errors negated.match([1, 2, 3]),
       0 => msg(1).equal(1),
       1 => msg(2).equal(2),
       2 => msg(3).equal(3)
 
+    refute matcher.match?(1)
     assert_errors matcher.match(1),
       msg(1).not.kind_of(Array)
+    assert negated.match?(1)
     assert_no_errors negated.match(1)
 
+    refute matcher.match?([1, 2])
     assert_errors matcher.match([1, 2]),
       msg([1, 2]).not.length_of(3, 2)
+    assert negated.match?([1, 2])
     assert_no_errors negated.match([1, 2])
 
+    refute matcher.match?([1, 2, 4])
     assert_errors matcher.match([1, 2, 4]),
       2 => msg(4).not.equal(3)
+    assert negated.match?([1, 2, 4])
     assert_no_errors negated.match([1, 2, 4])
   end
 
@@ -64,21 +80,29 @@ describe Matcher::EqualMatcher do
     matcher = Matcher.build { let(foo: 'foo') ^ equal({ foo: vars[:foo], bar: 'bar' }) }
     negated = ~matcher
 
+    assert matcher.match?({ foo: 'foo', bar: 'bar' })
     assert_no_errors matcher.match({ foo: 'foo', bar: 'bar' })
+    refute negated.match?({ foo: 'foo', bar: 'bar' })
     assert_or_errors negated.match({ foo: 'foo', bar: 'bar' }),
       foo: msg('foo').equal('foo'),
       bar: msg('bar').equal('bar')
 
+    refute matcher.match?(1)
     assert_errors matcher.match(1),
       msg(1).not.kind_of(Hash)
+    assert negated.match?(1)
     assert_no_errors negated.match(1)
 
+    refute matcher.match?({ foo: 'foo' })
     assert_errors matcher.match({ foo: 'foo' }),
       msg({ foo: 'foo' }).not.having_key(:bar)
+    assert negated.match?({ foo: 'foo' })
     assert_no_errors negated.match({ foo: 'foo' })
 
+    refute matcher.match?({ foo: 'foo', bar: 'baz' })
     assert_errors matcher.match({ foo: 'foo', bar: 'baz' }),
       bar: msg('baz').not.equal('bar')
+    assert negated.match?({ foo: 'foo', bar: 'baz' })
     assert_no_errors negated.match({ foo: 'foo', bar: 'baz' })
   end
 
@@ -86,18 +110,24 @@ describe Matcher::EqualMatcher do
     matcher = Matcher.build { Set[1, 2] }
     negated = ~matcher
 
+    assert matcher.match?(Set[1, 2])
     assert_no_errors matcher.match(Set[1, 2])
+    refute negated.match?(Set[1, 2])
     assert_or_errors negated.match(Set[1, 2]),
       msg(Set[1, 2]).including(1),
       msg(Set[1, 2]).including(2)
 
+    refute matcher.match?(1)
     assert_errors matcher.match(1),
       msg(1).not.kind_of(Set)
+    assert negated.match?(1)
     assert_no_errors negated.match(1)
 
+    refute matcher.match?(Set[1, 3])
     assert_errors matcher.match(Set[1, 3]),
       msg(Set[1, 3]).including(3),
       msg(Set[1, 3]).not.including(2)
+    assert negated.match?(Set[1, 3])
     assert_no_errors negated.match(Set[1, 3])
   end
 

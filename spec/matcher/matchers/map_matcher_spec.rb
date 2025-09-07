@@ -13,16 +13,20 @@ describe Matcher::MapMatcher do
   it 'expects actual to respond to :each' do
     matcher = Matcher.build { map(_.length, [1, 2]) }
 
+    refute matcher.match?(nil)
     assert_errors matcher.match(nil),
       msg(nil).not.responding_to(:each)
+    assert matcher.~.match?(nil)
     assert_no_errors matcher.~.match(nil)
   end
 
   it 'rescues from call errors' do
     matcher = Matcher.build { map(_.length, [1]) }
 
+    refute matcher.match?([nil])
     assert_errors matcher.match([nil]),
       0 => msg(nil).not.responding_to(:length)
+    assert matcher.~.match?([nil])
     assert_no_errors matcher.~.match([nil])
   end
 
@@ -31,7 +35,9 @@ describe Matcher::MapMatcher do
     negated = ~matcher
     t = self
 
+    assert matcher.match?([[1], [1, 2]])
     assert_no_errors matcher.match([[1], [1, 2]])
+    refute negated.match?([[1], [1, 2]])
     assert_errors negated.match([[1], [1, 2]]) do
       _or do
         error t.expression { _[0].length }, msg(1).equal(1)
@@ -39,8 +45,10 @@ describe Matcher::MapMatcher do
       end
     end
 
+    refute matcher.match?([[1], [1, 2, 3]])
     assert_errors matcher.match([[1], [1, 2, 3]]),
       expression { _[1].length } => msg(3).not.equal(2)
+    assert negated.match?([[1], [1, 2, 3]])
     assert_no_errors negated.match([[1], [1, 2, 3]])
   end
 

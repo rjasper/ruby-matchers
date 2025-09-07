@@ -50,20 +50,25 @@ describe Matcher::HashMatcher do
   end
 
   it 'builds partial hash matcher recursively with partial_r' do
-    matcher = Matcher.build do
-      partial_r({ a: { a1: 'a1' } })
-    end
+    matcher = Matcher.build { partial_r({ a: { a1: 'a1' } }) }
+    negated = ~matcher
 
+    assert matcher.match?({ a: { a1: 'a1', a2: 'a2' }, b: 'b' })
     assert_no_errors matcher.match({ a: { a1: 'a1', a2: 'a2' }, b: 'b' })
-    assert_errors matcher.~.match({ a: { a1: 'a1', a2: 'a2' }, b: 'b' }),
+
+    refute negated.match?({ a: { a1: 'a1', a2: 'a2' }, b: 'b' })
+    assert_errors negated.match({ a: { a1: 'a1', a2: 'a2' }, b: 'b' }),
       a: { a1: msg('a1').equal('a1') }
   end
 
   it 'expects a Hash' do
     matcher = Matcher.build { {} }
 
+    refute matcher.match?(1)
     assert_errors matcher.match(1),
       msg(1).not.kind_of(Hash)
+
+    assert matcher.~.match?(1)
     assert_no_errors matcher.~.match(1)
   end
 
@@ -71,8 +76,11 @@ describe Matcher::HashMatcher do
     matcher = Matcher.build { { foo: 'foo' } }
     negated = ~matcher
 
+    refute matcher.match?({})
     assert_errors matcher.match({}),
       msg({}).not.having_key(:foo)
+
+    assert negated.match?({})
     assert_no_errors negated.match({})
   end
 
@@ -80,16 +88,25 @@ describe Matcher::HashMatcher do
     matcher = Matcher.build { { foo: 'foo' } }
     negated = ~matcher
 
+    assert matcher.match?({ foo: 'foo' })
     assert_no_errors matcher.match({ foo: 'foo' })
+
+    refute negated.match?({ foo: 'foo' })
     assert_errors negated.match({ foo: 'foo' }),
       foo: msg('foo').equal('foo')
 
+    refute matcher.match?({ foo: 'foo', bar: 'bar' })
     assert_errors matcher.match({ foo: 'foo', bar: 'bar' }),
       bar: msg({ foo: 'foo', bar: 'bar' }).having_key(:bar)
+
+    assert negated.match?({ foo: 'foo', bar: 'bar' })
     assert_no_errors negated.match({ foo: 'foo', bar: 'bar' })
 
+    refute matcher.match?({})
     assert_errors matcher.match({}),
       msg({}).not.having_key(:foo)
+
+    assert negated.match?({})
     assert_no_errors negated.match({})
   end
 
@@ -97,7 +114,10 @@ describe Matcher::HashMatcher do
     matcher = Matcher.build { { foo: 'foo', bar: 'bar' } }
     negated = ~matcher
 
+    assert matcher.match?({ foo: 'foo', bar: 'bar' })
     assert_no_errors matcher.match({ foo: 'foo', bar: 'bar' })
+
+    refute negated.match?({ foo: 'foo', bar: 'bar' })
     assert_or_errors negated.match({ foo: 'foo', bar: 'bar' }),
       foo: msg('foo').equal('foo'),
       bar: msg('bar').equal('bar')
@@ -107,16 +127,25 @@ describe Matcher::HashMatcher do
     matcher = Matcher.build { partial({ foo: 'foo' }) }
     negated = ~matcher
 
+    assert matcher.match?({ foo: 'foo' })
     assert_no_errors matcher.match({ foo: 'foo' })
+
+    refute negated.match?({ foo: 'foo' })
     assert_errors negated.match({ foo: 'foo' }),
       foo: msg('foo').equal('foo')
 
+    assert matcher.match?({ foo: 'foo', bar: 'bar' })
     assert_no_errors matcher.match({ foo: 'foo', bar: 'bar' })
+
+    refute negated.match?({ foo: 'foo', bar: 'bar' })
     assert_errors negated.match({ foo: 'foo', bar: 'bar' }),
       foo: msg('foo').equal('foo')
 
+    refute matcher.match?({})
     assert_errors matcher.match({}),
       msg({}).not.having_key(:foo)
+
+    assert negated.match?({})
     assert_no_errors negated.match({})
   end
 
@@ -124,7 +153,10 @@ describe Matcher::HashMatcher do
     matcher = Matcher.build { {} }
     negated = ~matcher
 
+    assert matcher.match?({})
     assert_no_errors matcher.match({})
+
+    refute negated.match?({})
     assert_errors negated.match({}),
       msg({}).predicate(:empty?)
   end
@@ -133,7 +165,10 @@ describe Matcher::HashMatcher do
     matcher = Matcher::HashMatcher.new({}, partial: true)
     negated = ~matcher
 
+    assert matcher.match?({})
     assert_no_errors matcher.match({})
+
+    refute negated.match?({})
     assert_errors negated.match({}), msg({}).kind_of(Hash)
   end
 
@@ -141,16 +176,25 @@ describe Matcher::HashMatcher do
     matcher = Matcher.build { { foo: { bar: 'baz' } } }
     negated = ~matcher
 
+    assert matcher.match?({ foo: { bar: 'baz' } })
     assert_no_errors matcher.match({ foo: { bar: 'baz' } })
+
+    refute negated.match?({ foo: { bar: 'baz' } })
     assert_errors negated.match({ foo: { bar: 'baz' } }),
       foo: { bar: msg('baz').equal('baz') }
 
+    refute matcher.match?({ foo: { bar: 'buzz' } })
     assert_errors matcher.match({ foo: { bar: 'buzz' } }),
       foo: { bar: msg('buzz').not.equal('baz') }
+
+    assert negated.match?({ foo: { bar: 'buzz' } })
     assert_no_errors negated.match({ foo: { bar: 'buzz' } })
 
+    refute matcher.match?({ foo: 'foo' })
     assert_errors matcher.match({ foo: 'foo' }),
       foo: msg('foo').not.kind_of(Hash)
+
+    assert negated.match?({ foo: 'foo' })
     assert_no_errors negated.match({ foo: 'foo' })
   end
 
@@ -165,7 +209,10 @@ describe Matcher::HashMatcher do
     negated = ~matcher
     t = self
 
+    assert matcher.match?({ foo: 'foo', bar: 'bar', qux: 'qux' })
     assert_no_errors matcher.match({ foo: 'foo', bar: 'bar', qux: 'qux' })
+
+    refute negated.match?({ foo: 'foo', bar: 'bar', qux: 'qux' })
     assert_errors negated.match({ foo: 'foo', bar: 'bar', qux: 'qux' }) do
       _or do
         error :foo, msg('foo').kind_of(String)
@@ -174,8 +221,11 @@ describe Matcher::HashMatcher do
       end
     end
 
+    refute matcher.match?({ foo: 'foo', 'bar' => :bar, qux: 'qux' })
     assert_errors matcher.match({ foo: 'foo', 'bar' => :bar, qux: 'qux' }),
       expression { _.keys[0] } => msg('bar').not.kind_of(Symbol)
+
+    assert negated.match?({ foo: 'foo', 'bar' => :bar, qux: 'qux' })
     assert_no_errors negated.match({ foo: 'foo', 'bar' => :bar, qux: 'qux' })
   end
 
@@ -186,16 +236,25 @@ describe Matcher::HashMatcher do
 
     negated = ~matcher
 
+    assert matcher.match?({ foo: 'foo' })
     assert_no_errors matcher.match({ foo: 'foo' })
+
+    refute negated.match?({ foo: 'foo' })
     assert_errors negated.match({ foo: 'foo' }),
       foo: msg('foo').equal('foo')
 
+    assert matcher.match?({})
     assert_no_errors matcher.match({})
+
+    refute negated.match?({})
     assert_errors negated.match({}),
       msg({}).predicate(:empty?)
 
+    refute matcher.match?({ foo: 'bar' })
     assert_errors matcher.match({ foo: 'bar' }),
       foo: msg('bar').not.equal('foo')
+
+    assert negated.match?({ foo: 'bar' })
     assert_no_errors negated.match({ foo: 'bar' })
   end
 
@@ -209,15 +268,21 @@ describe Matcher::HashMatcher do
     negated = ~matcher
     meta = { key: :foo, value: 42 }
 
+    assert matcher.match?({ foo: 42 }, meta:)
     assert_no_errors matcher.match({ foo: 42 }, meta:)
+
+    refute negated.match?({ foo: 42 }, meta:)
     assert_errors negated.match({ foo: 42 }, meta:),
       expression { _[vars[:meta][:key]] } =>
           'expected _ != meta[:value] but got 42 != 42, where meta = {:key=>:foo, :value=>42}'
 
+    refute matcher.match?({ foo: 43, bar: 23 }, meta:)
     assert_errors matcher.match({ foo: 43, bar: 23 }, meta:),
       bar: msg({ foo: 43, bar: 23 }).having_key(:bar),
       expression { _[vars[:meta][:key]] } =>
         'expected _ == meta[:value] but got 43 == 42, where meta = {:key=>:foo, :value=>42}'
+
+    assert negated.match?({ foo: 43, bar: 23 }, meta:)
     assert_no_errors negated.match({ foo: 43, bar: 23 }, meta:)
   end
 

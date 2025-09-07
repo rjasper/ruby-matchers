@@ -13,8 +13,10 @@ describe Matcher::EachMatcher do
   it 'expects an object responding to :each' do
     matcher = Matcher.build { each(Integer) }
 
+    refute matcher.match?(nil)
     assert_errors matcher.match(nil),
       msg(nil).not.responding_to(:each)
+    assert matcher.~.match?(nil)
     assert_no_errors matcher.~.match(nil)
   end
 
@@ -22,7 +24,9 @@ describe Matcher::EachMatcher do
     matcher = Matcher.build { each(1) }
     negated = ~matcher
 
+    assert matcher.match?([1, 1])
     assert_no_errors matcher.match([1, 1])
+    refute negated.match?([1, 1])
     assert_errors negated.match([1, 1]) do
       _or do
         error 0, msg(1).equal(1)
@@ -30,9 +34,11 @@ describe Matcher::EachMatcher do
       end
     end
 
+    refute matcher.match?([1, 2, 3])
     assert_errors matcher.match([1, 2, 3]),
       1 => msg(2).not.equal(1),
       2 => msg(3).not.equal(1)
+    assert negated.match?([1, 2, 3])
     assert_no_errors negated.match([1, 2, 3])
   end
 

@@ -11,12 +11,16 @@ describe Matcher::RegexpMatcher do
     matcher = Matcher.build { /f/ }
     negated = ~matcher
 
+    assert matcher.match?('foo')
     assert_no_errors matcher.match('foo')
+    refute negated.match?('foo')
     assert_errors negated.match('foo'),
       msg('foo').matching(/f/)
 
+    refute matcher.match?('bar')
     assert_errors matcher.match('bar'),
       msg('bar').not.matching(/f/)
+    assert negated.match?('bar')
     assert_no_errors negated.match('bar')
   end
 

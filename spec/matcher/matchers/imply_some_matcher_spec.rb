@@ -24,8 +24,10 @@ describe Matcher::ImplySomeMatcher do
 
     negated = ~matcher
 
+    refute matcher.match?(:a)
     assert_errors matcher.match(:a),
       'expected to satisfy one condition but got :a and met none of these: String, Integer'
+    assert negated.match?(:a)
     assert_no_errors negated.match(:a)
   end
 
@@ -39,20 +41,28 @@ describe Matcher::ImplySomeMatcher do
 
     negated = ~matcher
 
+    assert matcher.match?('string')
     assert_no_errors matcher.match('string')
+    refute negated.match?('string')
     assert_errors negated.match('string'),
       msg('string').equal('string')
 
+    assert matcher.match?(1)
     assert_no_errors matcher.match(1)
+    refute negated.match?(1)
     assert_errors negated.match(1),
       msg(1).equal(1)
 
+    refute matcher.match?('text')
     assert_errors matcher.match('text'),
       msg('text').not.equal('string')
+    assert negated.match?('text')
     assert_no_errors negated.match('text')
 
+    refute matcher.match?(2)
     assert_errors matcher.match(2),
       msg(2).not.equal(1)
+    assert negated.match?(2)
     assert_no_errors negated.match(2)
   end
 
@@ -66,20 +76,28 @@ describe Matcher::ImplySomeMatcher do
 
     negated = ~matcher
 
+    assert matcher.match?({ divisible_by: 3, value: 6 })
     assert_no_errors matcher.match({ divisible_by: 3, value: 6 })
+    refute negated.match?({ divisible_by: 3, value: 6 })
     assert_errors negated.match({ divisible_by: 3, value: 6 }),
       value: 'expected _ % parent[:divisible_by] != 0 but got 0 != 0, where _ = 6, parent = {:divisible_by=>3, :value=>6}'
 
+    refute matcher.match?({ divisible_by: 3, odd: true, value: 6 })
     assert_errors matcher.match({ divisible_by: 3, odd: true, value: 6 }),
       value: 'expected value to be odd but got 6'
+    assert negated.match?({ divisible_by: 3, odd: true, value: 6 })
     assert_no_errors negated.match({ divisible_by: 3, odd: true, value: 6 })
 
+    refute matcher.match?({ divisible_by: 3, odd: true, value: 5 })
     assert_errors matcher.match({ divisible_by: 3, odd: true, value: 5 }),
       value: 'expected _ % parent[:divisible_by] == 0 but got 2 == 0, where _ = 5, parent = {:divisible_by=>3, :odd=>true, :value=>5}'
+    assert negated.match?({ divisible_by: 3, odd: true, value: 5 })
     assert_no_errors negated.match({ divisible_by: 3, odd: true, value: 5 })
 
+    refute matcher.match?({})
     assert_errors matcher.match({}),
       'expected to satisfy any condition but got {} and met none of these: partial({:divisible_by=>Integer}), partial({:odd=>true})'
+    assert negated.match?({})
     assert_no_errors negated.match({})
   end
 
@@ -93,9 +111,11 @@ describe Matcher::ImplySomeMatcher do
 
     negated = ~matcher
 
+    refute matcher.match?({ foo: true, bar: true, data: 'bar' })
     assert_errors matcher.match({ foo: true, bar: true, data: 'bar' }),
       'expected to satisfy one condition but got {:foo=>true, :bar=>true, :data=>"bar"} and met these: _[:foo] == true, _[:bar] == true',
       data: msg('bar').not.equal('foo')
+    assert negated.match?({ foo: true, bar: true, data: 'bar' })
     assert_no_errors negated.match({ foo: true, bar: true, data: 'bar' })
   end
 
@@ -109,20 +129,28 @@ describe Matcher::ImplySomeMatcher do
 
     negated = ~matcher
 
+    assert matcher.match?('string')
     assert_no_errors matcher.match('string')
+    refute negated.match?('string')
     assert_errors negated.match('string'),
       msg('string').equal('string')
 
+    assert matcher.match?(nil)
     assert_no_errors matcher.match(nil)
+    refute negated.match?(nil)
     assert_errors negated.match(nil),
       msg(nil).equal(nil)
 
+    refute matcher.match?('foo')
     assert_errors matcher.match('foo'),
       msg('foo').not.equal('string')
+    assert negated.match?('foo')
     assert_no_errors negated.match('foo')
 
+    refute matcher.match?(1)
     assert_errors matcher.match(1),
       msg(1).not.equal(nil)
+    assert negated.match?(1)
     assert_no_errors negated.match(1)
   end
 

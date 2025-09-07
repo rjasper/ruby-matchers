@@ -29,8 +29,10 @@ describe Matcher::EachPairMatcher do
       each_pair([:key, 'value'])
     end
 
+    refute matcher.match?(nil)
     assert_errors matcher.match(nil),
       msg(nil).not.responding_to(:each_pair)
+    assert matcher.~.match?(nil)
     assert_no_errors matcher.~.match(nil)
   end
 
@@ -41,7 +43,9 @@ describe Matcher::EachPairMatcher do
 
     negated = ~matcher
 
+    assert matcher.match?({ '1' => 1, 'a' => :a })
     assert_no_errors matcher.match({ '1' => 1, 'a' => :a })
+    refute negated.match?({ '1' => 1, 'a' => :a })
     assert_errors negated.match({ '1' => 1, 'a' => :a }) do
       _or do
         error '1', 'expected k != v.to_s but got "1" != "1", where v = 1'
@@ -49,16 +53,20 @@ describe Matcher::EachPairMatcher do
       end
     end
 
+    refute matcher.match?({ '1' => 1, 'a' => :a, 0 => '0' })
     assert_errors matcher.match({ '1' => 1, 'a' => :a, 0 => '0' }),
       0 => 'expected k == v.to_s but got 0 == "0", where v = "0"'
+    assert negated.match?({ '1' => 1, 'a' => :a, 0 => '0' })
     assert_no_errors negated.match({ '1' => 1, 'a' => :a, 0 => '0' })
   end
 
   it 'matches each key' do
     matcher = Matcher.build { each_key(Symbol) }
 
+    assert matcher.match?({ foo: 1, bar: 2 })
     assert_no_errors matcher.match({ foo: 1, bar: 2 })
 
+    refute matcher.match?({ foo: 1, 'bar' => 2 })
     assert_errors matcher.match({ foo: 1, 'bar' => 2 }),
       'bar' => { expression { key } => msg('bar').not.kind_of(Symbol) }
   end
@@ -66,8 +74,10 @@ describe Matcher::EachPairMatcher do
   it 'matches each value' do
     matcher = Matcher.build { each_value(Integer) }
 
+    assert matcher.match?({ foo: 1, bar: 2 })
     assert_no_errors matcher.match({ foo: 1, bar: 2 })
 
+    refute matcher.match?({ foo: 1, bar: '2' })
     assert_errors matcher.match({ foo: 1, bar: '2' }),
       bar: msg('2').not.kind_of(Integer)
   end

@@ -16,12 +16,18 @@ describe Matcher::BlockMatcher do
 
     negated = ~matcher
 
+    assert matcher.match?(4)
     assert_no_errors matcher.match(4)
+
+    refute negated.match?(4)
     assert_errors negated.match(4),
       "did not expect to satisfy condition block_matcher_spec.rb:#{lineno} but got 4"
 
+    refute matcher.match?(0)
     assert_errors matcher.match(0),
       "expected to satisfy condition block_matcher_spec.rb:#{lineno} but got 0"
+
+    assert negated.match?(0)
     assert_no_errors negated.match(0)
   end
 

@@ -18,7 +18,9 @@ describe Matcher::MatcherBuilding do
     it 'matches with given matcher if present' do
       matcher = build { present(1) }
 
+      assert matcher.match?(1)
       assert_no_errors matcher.match(1)
+      refute matcher.~.match?(1)
       assert_errors matcher.~.match(1) do
         _or do
           error msg(1).not.equal(nil)
@@ -31,8 +33,10 @@ describe Matcher::MatcherBuilding do
       got_it_from_somewhere = nil
       matcher = build { present(got_it_from_somewhere) }
 
+      refute matcher.match?(nil)
       assert_errors matcher.match(nil),
         msg(nil).equal(nil)
+      assert matcher.~.match?(1)
       assert_no_errors matcher.~.match(1)
     end
   end

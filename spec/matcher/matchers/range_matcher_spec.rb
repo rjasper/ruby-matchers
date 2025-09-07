@@ -11,12 +11,16 @@ describe Matcher::RangeMatcher do
     matcher = Matcher.build { 1..3 }
     negated = ~matcher
 
+    assert matcher.match?(2)
     assert_no_errors matcher.match(2)
+    refute negated.match?(2)
     assert_errors negated.match(2),
       msg(2).between(1, 3)
 
+    refute matcher.match?(4)
     assert_errors matcher.match(4),
       msg(4).not.between(1, 3)
+    assert negated.match?(4)
     assert_no_errors negated.match(4)
   end
 
@@ -24,8 +28,10 @@ describe Matcher::RangeMatcher do
     matcher = Matcher.build { 1..3 }
     negated = ~matcher
 
+    refute matcher.match?('a')
     assert_errors matcher.match('a'),
       msg('a').not.comparable_to(1)
+    assert negated.match?('a')
     assert_no_errors negated.match('a')
   end
 

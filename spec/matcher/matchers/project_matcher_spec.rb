@@ -13,8 +13,10 @@ describe Matcher::ProjectMatcher do
   it 'expects no call errors' do
     matcher = Matcher.build { project(_.sum => 4) }
 
+    refute matcher.match?(nil)
     assert_errors matcher.match(nil),
       msg(nil).not.responding_to(:sum)
+    assert matcher.~.match?(nil)
     assert_no_errors matcher.~.match(nil)
   end
 
@@ -22,12 +24,16 @@ describe Matcher::ProjectMatcher do
     matcher = Matcher.build { project(_.sum => 4) }
     negated = ~matcher
 
+    assert matcher.match?([2, 2])
     assert_no_errors matcher.match([2, 2])
+    refute negated.match?([2, 2])
     assert_errors negated.match([2, 2]),
       expression { _.sum } => msg(4).equal(4)
 
+    refute matcher.match?([2, 3])
     assert_errors matcher.match([2, 3]),
       expression { _.sum } => msg(5).not.equal(4)
+    assert negated.match?([2, 3])
     assert_no_errors negated.match([2, 3])
   end
 
@@ -36,7 +42,9 @@ describe Matcher::ProjectMatcher do
     negated = ~matcher
     t = self
 
+    assert matcher.match?([1, 4, 5])
     assert_no_errors matcher.match([1, 4, 5])
+    refute negated.match?([1, 4, 5])
     assert_errors negated.match([1, 4, 5]) do
       _or do
         error t.expression { _.sum }, msg(10).equal(10)
@@ -45,13 +53,17 @@ describe Matcher::ProjectMatcher do
       end
     end
 
+    refute matcher.match?([0, 4, 5])
     assert_errors matcher.match([0, 4, 5]),
       expression { _.sum } => msg(9).not.equal(10),
       expression { _.min } => msg(0).not.equal(1)
+    assert negated.match?([0, 4, 5])
     assert_no_errors negated.match([0, 4, 5])
 
+    refute matcher.match?([1, 2, 3, 4])
     assert_errors matcher.match([1, 2, 3, 4]),
       expression { _.max } => msg(4).not.equal(5)
+    assert negated.match?([1, 2, 3, 4])
     assert_no_errors negated.match([1, 2, 3, 4])
   end
 

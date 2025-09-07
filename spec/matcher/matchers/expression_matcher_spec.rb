@@ -39,6 +39,17 @@ describe Matcher::ExpressionMatcher do
     assert_kind_of Matcher::ExpressionMatcher, matcher
   end
 
+  it '#match?' do
+    matcher = Matcher.build { _ > 5 }
+    negated = ~matcher
+
+    assert matcher.match?(10)
+    refute negated.match?(10)
+
+    refute matcher.match?(2)
+    assert negated.match?(2)
+  end
+
   it 'matches truthy and falsy' do
     assert_errors match(nil) { _ },
       msg(nil).not.truthy

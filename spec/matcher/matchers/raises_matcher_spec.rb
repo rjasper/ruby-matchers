@@ -36,16 +36,22 @@ describe Matcher::RaisesMatcher do
     fetch_foo = expression { _.fetch(:foo) }
     rescue_last_exception = expression { rescue_exception(_.fetch(:foo)) }
 
+    assert matcher.match?({})
     assert_no_errors matcher.match({})
+    refute negated.match?({})
     assert_errors negated.match({}),
       rescue_last_exception => 'did not expect a kind of KeyError but got #<KeyError: key not found: :foo>'
 
+    refute matcher.match?({ foo: 1 })
     assert_errors matcher.match({ foo: 1 }),
       msg({ foo: 1 }).namespace(:expression).not.raising(fetch_foo, StandardError, { actual: { foo: 1 } })
+    assert negated.match?({ foo: 1 })
     assert_no_errors negated.match({ foo: 1 })
 
+    refute matcher.match?(nil)
     assert_errors matcher.match(nil),
       rescue_last_exception => "expected a kind of KeyError but got #<NoMethodError: undefined method `fetch' for nil>"
+    assert negated.match?(nil)
     assert_no_errors negated.match(nil)
   end
 
@@ -65,14 +71,18 @@ describe Matcher::RaisesMatcher do
     obj = klass.new('something went wrong')
     rescue_message = expression { rescue_exception(_.call).message }
 
+    assert matcher.match?(obj)
     assert_no_errors matcher.match(obj)
+    refute negated.match?(obj)
     assert_errors negated.match(obj),
       rescue_message => msg('something went wrong').matching(/something went wrong/)
 
     obj = klass.new('something else went wrong')
 
+    refute matcher.match?(obj)
     assert_errors matcher.match(obj),
       rescue_message => msg('something else went wrong').not.matching(/something went wrong/)
+    assert negated.match?(obj)
     assert_no_errors negated.match(obj)
   end
 
@@ -93,17 +103,20 @@ describe Matcher::RaisesMatcher do
 
     obj = klass.new(my_error_klass.new('something went wrong'))
 
+    assert matcher.match?(obj)
     assert_no_errors matcher.match(obj)
 
     obj = klass.new(my_error_klass.new('something else went wrong'))
     rescue_message = expression { rescue_exception(_.call).message }
 
+    refute matcher.match?(obj)
     assert_errors matcher.match(obj),
       rescue_message => msg('something else went wrong').not.matching(/something went wrong/)
 
     obj = klass.new(StandardError.new('something else went wrong'))
     rescue_from_call = expression { rescue_exception(_.call) }
 
+    refute matcher.match?(obj)
     assert_errors matcher.match(obj),
       rescue_from_call => msg(obj.error).not.kind_of(my_error_klass)
   end

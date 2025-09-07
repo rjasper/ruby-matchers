@@ -13,14 +13,19 @@ describe Matcher::OneMatcher do
     matcher = Matcher.build { one(_.odd?, _ % 3 == 0) }
     negated = ~matcher
 
+    assert matcher.match?(1)
     assert_no_errors matcher.match(1)
+    refute negated.match?(1)
     assert_errors negated.match(1),
       msg(1).predicate(:odd?)
 
+    assert matcher.match?(6)
     assert_no_errors matcher.match(6)
+    refute negated.match?(6)
     assert_errors negated.match(6),
       'expected _ % 3 != 0 but got 0 != 0, where _ = 6'
 
+    refute matcher.match?(2)
     assert_errors matcher.match(2) do
       _or do
         error msg(2).not.predicate(:odd?)
@@ -28,6 +33,7 @@ describe Matcher::OneMatcher do
       end
     end
 
+    assert negated.match?(2)
     assert_no_errors negated.match(2)
   end
 

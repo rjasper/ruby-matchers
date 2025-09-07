@@ -13,16 +13,20 @@ describe Matcher::IndexByMatcher do
   it 'expects an object responding to :each' do
     matcher = Matcher.build { index_by(_[:id], always) }
 
+    refute matcher.match?(nil)
     assert_errors matcher.match(nil),
       msg(nil).not.responding_to(:each)
+    assert matcher.~.match?(nil)
     assert_no_errors matcher.~.match(nil)
   end
 
   it 'rescues from call errors' do
     matcher = Matcher.build { index_by(_[:id], always) }
 
+    refute matcher.match?([nil])
     assert_errors matcher.match([nil]),
       0 => msg(nil).not.responding_to(:[])
+    assert matcher.~.match?([nil])
     assert_no_errors matcher.~.match([nil])
   end
 
@@ -36,7 +40,9 @@ describe Matcher::IndexByMatcher do
 
     negated = ~matcher
 
+    assert matcher.match?([{ id: 41, name: 'foo' }, { id: 42, name: 'bar' }])
     assert_no_errors matcher.match([{ id: 41, name: 'foo' }, { id: 42, name: 'bar' }])
+    refute negated.match?([{ id: 41, name: 'foo' }, { id: 42, name: 'bar' }])
     assert_or_errors negated.match([{ id: 41, name: 'foo' }, { id: 42, name: 'bar' }]),
       0 => {
         id: msg(41).equal(41),
@@ -47,8 +53,10 @@ describe Matcher::IndexByMatcher do
         name: msg('bar').equal('bar'),
       }
 
+    refute matcher.match?([{ id: 41, name: 'foo' }, { id: 42, name: 'baz' }])
     assert_errors matcher.match([{ id: 41, name: 'foo' }, { id: 42, name: 'baz' }]),
       1 => { name: msg('baz').not.equal('bar') }
+    assert negated.match?([{ id: 41, name: 'foo' }, { id: 42, name: 'baz' }])
     assert_no_errors negated.match([{ id: 41, name: 'foo' }, { id: 42, name: 'baz' }])
   end
 
@@ -68,8 +76,10 @@ describe Matcher::IndexByMatcher do
       { id: 41, name: 'qux' },
     ]
 
+    refute matcher.match?(actual)
     assert_errors matcher.match(actual),
       2 => msg({ id: 41, name: 'qux' }).duplicate_by(get_id, 41, 0)
+    assert negated.match?(actual)
     assert_no_errors negated.match(actual)
   end
 

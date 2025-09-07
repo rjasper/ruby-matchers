@@ -17,12 +17,16 @@ describe Matcher::InlineMatcher do
 
     negated = ~matcher
 
+    assert matcher.match?(1)
     assert_no_errors matcher.match(1)
+    refute negated.match?(1)
     assert_errors negated.match(1),
       msg(1).described_by('a number')
 
+    refute matcher.match?('foo')
     assert_errors matcher.match('foo'),
       msg('foo').not.described_by('a number')
+    assert negated.match?('foo')
     assert_no_errors negated.match('foo')
   end
 
@@ -35,12 +39,16 @@ describe Matcher::InlineMatcher do
 
     negated = ~matcher
 
+    assert matcher.match?(10)
     assert_no_errors matcher.match(10)
+    refute negated.match?(10)
     assert_errors negated.match(10),
       msg(10).greater_than(0)
 
+    refute matcher.match?(-5)
     assert_errors matcher.match(-5),
       msg(-5).not.greater_than(0)
+    assert negated.match?(-5)
     assert_no_errors negated.match(-5)
   end
 
@@ -51,7 +59,9 @@ describe Matcher::InlineMatcher do
 
     negated = ~matcher
 
+    assert negated.match?(false)
     assert_no_errors negated.match(false)
+    refute negated.match?(true)
     assert_errors negated.match(true),
       msg(true).namespace(:negated).valid(matcher)
   end

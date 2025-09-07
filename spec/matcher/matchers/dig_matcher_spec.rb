@@ -20,36 +20,50 @@ describe Matcher::DigMatcher do
 
     negated = ~matcher
 
+    assert matcher.match?({ foo: ['foobar'] })
     assert_no_errors matcher.match({ foo: ['foobar'] })
+    refute negated.match?({ foo: ['foobar'] })
     assert_errors negated.match({ foo: ['foobar'] }),
       foo: { 0 => msg('foobar').equal('foobar') }
 
+    refute matcher.match?({ foo: [] })
     assert_errors matcher.match({ foo: [] }),
       foo: msg([]).not.having_index(0)
+    assert negated.match?({ foo: [] })
     assert_no_errors negated.match({ foo: [] })
 
+    refute matcher.match?({})
     assert_errors matcher.match({}),
       msg({}).not.having_key(:foo)
+    assert negated.match?({})
     assert_no_errors negated.match({})
 
+    refute matcher.match?({ foo: 'bar' })
     assert_errors matcher.match({ foo: 'bar' }) do
       _or(:foo) do
         error msg('bar').not.kind_of(Hash)
         error msg('bar').not.kind_of(Array)
       end
     end
+    assert negated.match?({ foo: 'bar' })
     assert_no_errors negated.match({ foo: 'bar' })
 
+    refute matcher.match?({ foo: [nil] })
     assert_errors matcher.match({ foo: [nil] }),
       foo: { 0 => msg(nil).not.equal('foobar') }
+    assert negated.match?({ foo: [nil] })
     assert_no_errors negated.match({ foo: [nil] })
 
+    refute matcher.match?({ foo: ['qux'] })
     assert_errors matcher.match({ foo: ['qux'] }),
       foo: { 0 => msg('qux').not.equal('foobar') }
+    assert negated.match?({ foo: ['qux'] })
     assert_no_errors negated.match({ foo: ['qux'] })
 
+    refute matcher.match?([])
     assert_errors matcher.match([]),
       msg([]).not.kind_of(Hash)
+    assert negated.match?([])
     assert_no_errors negated.match([])
   end
 
@@ -60,36 +74,50 @@ describe Matcher::DigMatcher do
 
     negated = ~matcher
 
+    assert matcher.match?({ foo: ['foobar'] })
     assert_no_errors matcher.match({ foo: ['foobar'] })
+    refute negated.match?({ foo: ['foobar'] })
     assert_errors negated.match({ foo: ['foobar'] }),
       foo: { 0 => msg('foobar').equal('foobar') }
 
+    assert matcher.match?({ foo: [] })
     assert_no_errors matcher.match({ foo: [] })
+    refute negated.match?({ foo: [] })
     assert_errors negated.match({ foo: [] }),
       foo: msg([]).not.having_index(0)
 
+    assert matcher.match?({})
     assert_no_errors matcher.match({})
+    refute negated.match?({})
     assert_errors negated.match({}),
       msg({}).not.having_key(:foo)
 
+    refute matcher.match?({ foo: 'bar' })
     assert_errors matcher.match({ foo: 'bar' }) do
       _or(:foo) do
         error msg('bar').not.kind_of(Hash)
         error msg('bar').not.kind_of(Array)
       end
     end
+    assert negated.match?({ foo: 'bar' })
     assert_no_errors negated.match({ foo: 'bar' })
 
+    assert matcher.match?({ foo: [nil] })
     assert_no_errors matcher.match({ foo: [nil] })
+    refute negated.match?({ foo: [nil] })
     assert_errors negated.match({ foo: [nil] }),
       foo: { 0 => msg(nil).equal(nil) }
 
+    refute matcher.match?({ foo: ['qux'] })
     assert_errors matcher.match({ foo: ['qux'] }),
       foo: { 0 => msg('qux').not.equal('foobar') }
+    assert negated.match?({ foo: ['qux'] })
     assert_no_errors negated.match({ foo: ['qux'] })
 
+    refute matcher.match?([])
     assert_errors matcher.match([]),
       msg([]).not.kind_of(Hash)
+    assert negated.match?([])
     assert_no_errors negated.match([])
   end
 

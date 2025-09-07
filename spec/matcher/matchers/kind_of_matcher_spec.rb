@@ -11,12 +11,16 @@ describe Matcher::KindOfMatcher do
     matcher = Matcher.build { String }
     negated = ~matcher
 
+    assert matcher.match?('asdf')
     assert_no_errors matcher.match('asdf')
+    refute negated.match?('asdf')
     assert_errors negated.match('asdf'),
       msg('asdf').kind_of(String)
 
+    refute matcher.match?(1)
     assert_errors matcher.match(1),
       msg(1).not.kind_of(String)
+    assert negated.match?(1)
     assert_no_errors negated.match(1)
   end
 

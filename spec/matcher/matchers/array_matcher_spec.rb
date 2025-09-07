@@ -12,8 +12,11 @@ describe Matcher::ArrayMatcher do
   it 'expects an Array' do
     matcher = Matcher.build { [1, 2] }
 
+    refute matcher.match?(nil)
     assert_errors matcher.match(nil),
       msg(nil).not.kind_of(Array)
+
+    assert matcher.~.match?(nil)
     assert_no_errors matcher.~.match(nil)
   end
 
@@ -21,12 +24,18 @@ describe Matcher::ArrayMatcher do
     matcher = Matcher.build { [1, 2] }
     negated = ~matcher
 
+    refute matcher.match?([1])
     assert_errors matcher.match([1]),
       msg([1]).not.length_of(2, 1)
+
+    assert negated.match?([1])
     assert_no_errors negated.match([1])
 
+    refute matcher.match?([1, 2, 3])
     assert_errors matcher.match([1, 2, 3]),
       msg([1, 2, 3]).not.length_of(2, 3)
+
+    assert negated.match?([1, 2, 3])
     assert_no_errors negated.match([1, 2, 3])
   end
 
@@ -34,7 +43,10 @@ describe Matcher::ArrayMatcher do
     matcher = Matcher.build { [1, 2, 3] }
     negated = ~matcher
 
+    assert matcher.match?([1, 2, 3])
     assert_no_errors matcher.match([1, 2, 3])
+
+    refute negated.match?([1, 2, 3])
     assert_errors negated.match([1, 2, 3]) do
       _or do
         error 0, msg(1).equal(1)
@@ -43,10 +55,13 @@ describe Matcher::ArrayMatcher do
       end
     end
 
+    refute matcher.match?([4, 5, 6])
     assert_errors matcher.match([4, 5, 6]),
       0 => msg(4).not.equal(1),
       1 => msg(5).not.equal(2),
       2 => msg(6).not.equal(3)
+
+    assert negated.match?([4, 5, 6])
     assert_no_errors negated.match([4, 5, 6])
   end
 
