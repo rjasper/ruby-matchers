@@ -174,7 +174,7 @@ module Matcher
   end
 
   def self.of(object, matcher_cache: nil, expression_cache: nil)
-    object = Recorder.to_expression(object) if Recorder.recorder?(object)
+    object = Expression.try_recorder(object)
 
     case object
     when NoMatcher
