@@ -17,5 +17,16 @@ module Matcher
     it 'return well known variables' do
       assert_same Variable.actual, cache[Variable.new(:actual)]
     end
+
+    it '#variable_for' do
+      foo = cache.variable_for(:foo)
+
+      assert_kind_of Variable, foo
+      assert_same foo, cache.variable_for(:foo)
+    end
+
+    it '#variable_for: well known' do
+      assert_same Variable.actual, cache.variable_for(:actual)
+    end
   end
 end
