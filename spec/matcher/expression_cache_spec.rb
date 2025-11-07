@@ -18,6 +18,13 @@ module Matcher
       assert_same Variable.actual, cache[Variable.new(:actual)]
     end
 
+    it '#constant_for' do
+      one = cache.constant_for(1)
+
+      assert_kind_of Constant, one
+      assert_same one, cache.constant_for(1)
+    end
+
     it '#variable_for' do
       foo = cache.variable_for(:foo)
 

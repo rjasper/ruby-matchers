@@ -38,6 +38,11 @@ module Matcher
       label
     end
 
+    def constant_for(value)
+      label = label_for(@constant_labels, value)
+      @index[label] ||= Constant.new(value)
+    end
+
     def variable_for(symbol)
       return Variable.send(symbol) if Variable.well_known?(symbol)
 

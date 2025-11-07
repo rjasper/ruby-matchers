@@ -2,6 +2,14 @@
 
 module Matcher
   class Constant < Expression
+    def self.cache(value, expression_cache = ExpressionCache.current)
+      if expression_cache
+        expression_cache.constant_for(value)
+      else
+        Constant.new(value)
+      end
+    end
+
     attr_reader :value
 
     def initialize(value)
