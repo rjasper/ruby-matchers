@@ -3,6 +3,7 @@
 module Matcher
   class Base
     include NoExpression
+    include NoKey
 
     def ~
       matcher_cache = MatcherCache.current
