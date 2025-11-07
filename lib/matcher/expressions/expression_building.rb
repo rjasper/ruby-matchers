@@ -49,6 +49,13 @@ module Matcher
       expression.to_recorder
     end
 
+    def range(from, to, exclude_end = false)
+      from = expression_of(from)
+      to = expression_of(to)
+
+      RangeExpression.new(from, to, exclude_end)
+    end
+
     def rescue_exception(expression)
       expression = expression_of(expression)
       rescue_last_error = RescueLastErrorExpression.new(expression)
