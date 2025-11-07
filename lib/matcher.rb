@@ -195,12 +195,19 @@ module Matcher
       RegexpMatcher.cache(object, matcher_cache)
     when Hash
       hash = object.to_h do |k, v|
-        k = Expression.try_recorder(k)
-
-        if Recorder.recorder?(k)
+        case k
+        when -> { Recorder.recorder?(_1) }
           k = Recorder.to_expression(k)
-        elsif k.is_a?(Optional)
+        when Optional
           k = Optional.cache(k.value, matcher_cache)
+        when Base
+          raise 'Cannot use matcher as key for hash matcher'
+        when NoKey
+          raise "Cannot use #{k.class} as key for hash matcher"
+        when Others
+          # keep k
+        else
+          k = Expression.expression_or_value(k)
         end
 
         [k, of(v, matcher_cache:, expression_cache:)]

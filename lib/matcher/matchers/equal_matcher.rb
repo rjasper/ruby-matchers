@@ -182,8 +182,7 @@ module Matcher
 
   module MatcherBuilding
     def equal(value)
-      value = expression_of(value)
-      value = value.value if value.is_a?(Constant)
+      value = expression_or_value(value)
 
       EqualMatcher.cache(value, @matcher_cache)
     end

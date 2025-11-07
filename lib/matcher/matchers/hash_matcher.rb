@@ -5,8 +5,6 @@ module Matcher
     def initialize(hash, partial: false, negated: false)
       super()
 
-      hash.each_key { check_key(_1) }
-
       @hash = negated ? hash.transform_values(&:~) : hash
       @original_hash = hash
       @partial = partial
@@ -96,19 +94,6 @@ module Matcher
 
     private
 
-    def check_key(key)
-      case key
-      when Optional
-        check_key(key.value)
-      when Base
-        raise 'Cannot use matcher as key for hash matcher'
-      when NoKey
-        raise "Cannot use #{key.class} as key for hash matcher"
-      else
-        nil # ok
-      end
-    end
-
     def negated_check(state)
       actual = state.actual
 
@@ -195,12 +180,18 @@ module Matcher
 
   module MatcherBuilding
     def partial(hash)
-      hash = hash.transform_values { matcher_of(_1) }
+      hash = hash.to_h do |k, v|
+        [expression_or_value(k), matcher_of(v)]
+      end
+
       HashMatcher.new(hash, partial: true)
     end
 
     def partial_r(hash)
-      hash = hash.transform_values { partial_r_helper(_1) }
+      hash = hash.to_h do |k, v|
+        [expression_or_value(k), partial_r_helper(v)]
+      end
+
       HashMatcher.new(hash, partial: true)
     end
 

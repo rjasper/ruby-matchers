@@ -89,7 +89,7 @@ module Matcher
   module MatcherBuilding
     def keys(*keys, partial: false)
       keys.each_with_index do |key, i|
-        keys[i] = Recorder.to_expression(key) if Recorder.recorder?(key)
+        keys[i] = expression_or_value(key)
       end
 
       KeysMatcher.new(keys, partial:)

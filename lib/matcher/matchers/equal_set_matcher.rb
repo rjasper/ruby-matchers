@@ -84,10 +84,7 @@ module Matcher
 
   module MatcherBuilding
     def equal_set(*items)
-      items.map! do |item|
-        expr = expression_of(item)
-        expr.is_a?(Constant) ? expr.value : expr
-      end
+      items.map! { expression_or_value(_1) }
 
       EqualSetMatcher.new(items)
     end

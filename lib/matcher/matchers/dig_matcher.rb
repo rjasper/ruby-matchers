@@ -120,7 +120,7 @@ module Matcher
   module MatcherBuilding
     def dig(*keys, optional: false)
       keys.each_with_index do |key, i|
-        keys[i] = Recorder.to_expression(key) if Recorder.recorder?(key)
+        keys[i] = expression_or_value(key)
       end
 
       Pipe.new do |matcher|
