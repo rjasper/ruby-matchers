@@ -11,6 +11,48 @@ module Matcher
       assert_equal Constant.new(1), Expression.of(1)
     end
 
+    describe '::of' do
+      it 'Array' do
+        array = Expression.build { [concat(vars[:a])] }
+
+        var = Variable.new(:a)
+        string = StringExpression.new([var])
+        expected = ArrayExpression.new([string])
+
+        assert_equal expected, array
+      end
+
+      it 'Hash' do
+        hash = Expression.build { { [vars[:a]] => vars[:b]..vars[:c] } }
+
+        key = ArrayExpression.new([Variable.new(:a)])
+        value = RangeExpression.new(Variable.new(:b), Variable.new(:c))
+        expected = HashExpression.new([[key, value]])
+
+        assert_equal expected, hash
+      end
+
+      it 'Range' do
+        range = Expression.build { expr(1)..vars[:z] }
+
+        a = Constant.new(1)
+        z = Variable.new(:z)
+        expected = RangeExpression.new(a, z)
+
+        assert_equal expected, range
+      end
+
+      it 'Set' do
+        set = Expression.build { Set[concat(vars[:a])] }
+
+        var = Variable.new(:a)
+        string = StringExpression.new([var])
+        expected = SetExpression.new([string])
+
+        assert_equal expected, set
+      end
+    end
+
     it '::try_recorder' do
       one = Constant.new(1)
 

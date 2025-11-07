@@ -14,6 +14,10 @@ module Matcher
       Expression.of(value, expression_cache: @expression_cache)
     end
 
+    def expression_or_value(value)
+      Expression.expression_or_value(value, expression_cache: @expression_cache)
+    end
+
     def declare(*symbols, **assigns)
       symbols.concat(assigns.keys - symbols)
       conflicts = symbols & methods

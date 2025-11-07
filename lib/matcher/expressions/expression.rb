@@ -18,58 +18,77 @@ module Matcher
       end
     end
 
-    def self.of(obj, expression_cache: nil)
-      expression = case obj
+    def self.expression_or_value(obj, expression_cache: nil)
+      case obj
       when -> { Recorder.recorder?(_1) }
-        Recorder.to_expression(obj)
+        return Recorder.to_expression(obj)
       when Base
         raise ArgumentError, 'Cannot use matcher as expression'
       when NoExpression
         raise ArgumentError, "Cannot use #{obj.class} as expression"
       when Proc
         raise ArgumentError, "Cannot use Proc as expression. Use `expr { ... }' instead"
-      when Expression
-        obj
       when Array
-        if obj.any? { expression_or_recorder?(_1) }
-          items = obj.map { of(_1, expression_cache:) }
+        items = obj.map { expression_or_value(_1, expression_cache:) }
 
-          ArrayExpression.new(items)
-        else
-          Constant.new(obj)
-        end
-      when Hash
-        if obj.any? { |k, v| expression_or_recorder?(k) || expression_or_recorder?(v) }
-          pairs = obj.map do |key, value|
-            [of(key, expression_cache:), of(value, expression_cache:)]
+        if items.any? { _1.is_a?(Expression) }
+          items.each_with_index do |item, i|
+            items[i] = Constant.cache(item, expression_cache) unless item.is_a?(Expression)
           end
 
-          HashExpression.new(pairs)
-        else
-          Constant.new(obj)
+          return ArrayExpression.new(items)
+        end
+      when Hash
+        pairs = obj.map do |key, value|
+          key = expression_or_value(key, expression_cache:)
+          value = expression_or_value(value, expression_cache:)
+
+          [key, value]
+        end
+
+        if pairs.any? { |k, v| k.is_a?(Expression) || v.is_a?(Expression) }
+          pairs.each do |pair|
+            k, v = pair
+
+            pair[0] = Constant.cache(k, expression_cache) unless k.is_a?(Expression)
+            pair[1] = Constant.cache(v, expression_cache) unless v.is_a?(Expression)
+          end
+
+          return HashExpression.new(pairs)
         end
       when Range
-        if expression_or_recorder?(obj.begin) || expression_or_recorder?(obj.end)
-          begin_expr = of(obj.begin, expression_cache:)
-          end_expr = of(obj.end, expression_cache:)
+        from = expression_or_value(obj.begin, expression_cache:)
+        to = expression_or_value(obj.end, expression_cache:)
 
-          RangeExpression.new(begin_expr, end_expr, obj.exclude_end?)
-        else
-          Constant.new(obj)
+        if from.is_a?(Expression) || to.is_a?(Expression)
+          from = Constant.cache(from, expression_cache) unless from.is_a?(Expression)
+          to = Constant.cache(to, expression_cache) unless to.is_a?(Expression)
+
+          return RangeExpression.new(from, to, obj.exclude_end?)
         end
       when Set
-        if obj.any? { expression_or_recorder?(_1) }
-          items = obj.map { of(_1, expression_cache:) }
+        items = obj.map { expression_or_value(_1, expression_cache:) }
 
-          SetExpression.new(items)
-        else
-          Constant.new(obj)
+        if items.any? { _1.is_a?(Expression) }
+          items.each_with_index do |item, i|
+            items[i] = Constant.cache(item, expression_cache) unless item.is_a?(Expression)
+          end
+
+          return SetExpression.new(items)
         end
-      else
-        Constant.new(obj)
       end
 
-      expression_cache ? expression_cache[expression] : expression
+      obj
+    end
+
+    def self.of(obj, expression_cache: nil)
+      obj = expression_or_value(obj, expression_cache:)
+
+      if obj.is_a?(Expression)
+        obj
+      else
+        Constant.cache(obj, expression_cache)
+      end
     end
 
     def self.try_recorder(obj)
