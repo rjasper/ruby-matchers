@@ -97,10 +97,6 @@ module Matcher
       Recorder.to_expression(obj)
     end
 
-    def self.expression_or_recorder?(obj)
-      Recorder.recorder?(obj) || obj.is_a?(Expression)
-    end
-
     def initialize
       raise 'abstract class' if instance_of?(Expression)
     end
