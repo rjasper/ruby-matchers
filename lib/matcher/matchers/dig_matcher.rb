@@ -17,7 +17,7 @@ module Matcher
     end
 
     def validate(state, &)
-      return negated_check(state, &) if @negated
+      return validate_negated(state, &) if @negated
 
       cur = state.actual
       errors = state.errors
@@ -79,7 +79,7 @@ module Matcher
       index.between?(-array.length, array.length - 1)
     end
 
-    def negated_check(state)
+    def validate_negated(state)
       cur = state.actual
       errors = state.errors
 

@@ -18,7 +18,7 @@ module Matcher
     end
 
     def validate(state, &)
-      return negated_check(state, &) if @negated
+      return validate_negated(state, &) if @negated
 
       if @condition.is_a?(ExpressionMatcher)
         begin
@@ -40,7 +40,7 @@ module Matcher
 
     private
 
-    def negated_check(state)
+    def validate_negated(state)
       condition_errors = yield @condition
 
       state.errors << if condition_errors.valid?

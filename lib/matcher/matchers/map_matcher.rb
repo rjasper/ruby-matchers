@@ -18,7 +18,7 @@ module Matcher
     end
 
     def validate(state, &)
-      return negated_check(state, &) if @negated
+      return validate_negated(state, &) if @negated
 
       actual = state.actual
       values = state.values
@@ -57,7 +57,7 @@ module Matcher
 
     private
 
-    def negated_check(state)
+    def validate_negated(state)
       actual = state.actual
       values = state.values
 
