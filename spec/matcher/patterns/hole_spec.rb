@@ -20,4 +20,11 @@ describe Matcher::Hole do
       assert_no_pattern_match _ - 1
     end
   end
+
+  it 'matches with filter' do
+    with_pattern -> { hole(:expr) { _1.variables.include?(:actual) } } do
+      assert_pattern_match _ + 1, expr: _ + 1
+      assert_no_pattern_match vars[:a] + 1
+    end
+  end
 end

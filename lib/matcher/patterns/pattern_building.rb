@@ -15,8 +15,8 @@ module Matcher
       expr(hole)
     end
 
-    def hole(key)
-      expr(Hole.new(key))
+    def hole(key, &filter)
+      expr(Hole.new(key, filter))
     end
 
     def var(key)

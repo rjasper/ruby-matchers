@@ -2,14 +2,15 @@
 
 module Matcher
   class Hole
-    def initialize(key)
+    def initialize(key, filter = nil)
       @key = key
+      @filter = filter
     end
 
     attr_reader :key
 
-    def match?(_expression)
-      true
+    def match?(expression)
+      !@filter || @filter.call(expression)
     end
 
     def ==(other)
