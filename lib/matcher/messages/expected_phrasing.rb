@@ -177,7 +177,7 @@ module Matcher
           "but got #{value.inspect}#{where_text(given, expression)}"
       end
 
-      define(:length_of) do |expression, exp, act, given|
+      define(:length_of) do |expression, _value, exp, act, given|
         "#{verb} #{expression} to have length of #{exp}" \
           "#{" but was #{act}" if negated}#{where_text(given, expression)}"
       end

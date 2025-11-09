@@ -229,9 +229,9 @@ describe Matcher::ExpectedPhrasing do
 
     it 'length_of' do
       assert_phrase 'expected _ + [3] to have length of 2 but was 3, where _ = [1, 2]',
-        msg([1, 2]).namespace(:expression).not.length_of(expression { _ + [3] }, 2, 3, { actual: [1, 2] })
+        msg([1, 2]).namespace(:expression).not.length_of(expression { _ + [3] }, [1, 2, 3], 2, 3, { actual: [1, 2] })
       assert_phrase 'did not expect _ + [3] to have length of 3, where _ = [1, 2]',
-        msg([1, 2]).namespace(:expression).length_of(expression { _ + [3] }, 3, 3, { actual: [1, 2] })
+        msg([1, 2]).namespace(:expression).length_of(expression { _ + [3] }, [1, 2, 3], 3, 3, { actual: [1, 2] })
     end
 
     it 'having_key' do

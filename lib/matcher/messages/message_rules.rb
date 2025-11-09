@@ -119,7 +119,7 @@ module Matcher
 
     # length expression
     message capture(:act, hole(:object).length) == hole(:exp) do |v, e|
-      expression_message.length_of(e[:object], v[:exp], v[:act], given)
+      expression_message.length_of(e[:object], v[:object], v[:exp], v[:act], given)
     end
 
     # match regexp at
