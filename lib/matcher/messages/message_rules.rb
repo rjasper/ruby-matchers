@@ -11,9 +11,9 @@ module Matcher
       when :>
         standard_message.greater_than(v[:operand])
       when :<=
-        standard_message.less_or_equal_than(v[:operand])
+        standard_message.less_than_or_equal(v[:operand])
       when :>=
-        standard_message.greater_or_equal_than(v[:operand])
+        standard_message.greater_than_or_equal(v[:operand])
       when :<=>
         # <=> returns nil if operands are not comparable
         standard_message.comparable_to(v[:operand])

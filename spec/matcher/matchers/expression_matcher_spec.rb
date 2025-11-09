@@ -114,13 +114,13 @@ describe Matcher::ExpressionMatcher do
     assert_errors not_match(1) { _ > 0 },
       msg(1).greater_than(0)
     assert_errors match(1) { _ <= 0 },
-      msg(1).not.less_or_equal_than(0)
+      msg(1).not.less_than_or_equal(0)
     assert_errors not_match(0) { _ <= 0 },
-      msg(0).less_or_equal_than(0)
+      msg(0).less_than_or_equal(0)
     assert_errors match(-1) { _ >= 0 },
-      msg(-1).not.greater_or_equal_than(0)
+      msg(-1).not.greater_than_or_equal(0)
     assert_errors not_match(0) { _ >= 0 },
-      msg(0).greater_or_equal_than(0)
+      msg(0).greater_than_or_equal(0)
 
     assert_errors match(1) { _ * 2 < 0 },
       'expected _ * 2 < 0 but got 2 < 0, where _ = 1'
@@ -145,9 +145,9 @@ describe Matcher::ExpressionMatcher do
     assert_errors match(1) { expr(0) > _ },
       msg(1).not.less_than(0)
     assert_errors match(-1) { expr(0) <= _ },
-      msg(-1).not.greater_or_equal_than(0)
+      msg(-1).not.greater_than_or_equal(0)
     assert_errors match(1) { expr(0) >= _ },
-      msg(1).not.less_or_equal_than(0)
+      msg(1).not.less_than_or_equal(0)
   end
 
   it 'matches comparable to' do

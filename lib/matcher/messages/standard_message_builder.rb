@@ -26,12 +26,12 @@ module Matcher
       message(:greater_than, operand)
     end
 
-    def less_or_equal_than(operand)
-      message(:less_or_equal_than, operand)
+    def less_than_or_equal(operand)
+      message(:less_than_or_equal, operand)
     end
 
-    def greater_or_equal_than(operand)
-      message(:greater_or_equal_than, operand)
+    def greater_than_or_equal(operand)
+      message(:greater_than_or_equal, operand)
     end
 
     def comparable_to(operand)

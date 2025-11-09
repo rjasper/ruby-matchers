@@ -26,7 +26,7 @@ module Matcher
       if negated || (actual <=> operand).nil?
         "#{verb} a value < #{operand.inspect} but got #{actual.inspect}"
       else
-        phrase_negated(:greater_or_equal_than, operand)
+        phrase_negated(:greater_than_or_equal, operand)
       end
     end
 
@@ -34,11 +34,11 @@ module Matcher
       if negated || (actual <=> operand).nil?
         "#{verb} a value > #{operand.inspect} but got #{actual.inspect}"
       else
-        phrase_negated(:less_or_equal_than, operand)
+        phrase_negated(:less_than_or_equal, operand)
       end
     end
 
-    define(:less_or_equal_than) do |operand|
+    define(:less_than_or_equal) do |operand|
       if negated || (actual <=> operand).nil?
         "#{verb} a value <= #{operand.inspect} but got #{actual.inspect}"
       else
@@ -46,7 +46,7 @@ module Matcher
       end
     end
 
-    define(:greater_or_equal_than) do |operand|
+    define(:greater_than_or_equal) do |operand|
       if negated || (actual <=> operand).nil?
         "#{verb} a value >= #{operand.inspect} but got #{actual.inspect}"
       else
