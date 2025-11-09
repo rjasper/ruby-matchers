@@ -37,7 +37,7 @@ module Matcher
       attr_reader :state
 
       def_delegators :@state, *State.public_instance_methods - Object.public_instance_methods - %i[result]
-      def_delegators :@matcher, *InlineMatcher.public_instance_methods  - Object.public_instance_methods - %i[match check]
+      def_delegators :@matcher, :receiver, :matcher, :negated
 
       def _yield(matcher, act = @state.actual, **values)
         @yield.call(matcher, act, **values)
