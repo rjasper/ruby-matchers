@@ -56,7 +56,7 @@ module Matcher
     def each_value(matcher = UNDEFINED)
       return Pipe.new { each_value(_1) } if Matcher.undefined?(matcher)
 
-      assigns = { actual: ->(value:) { value } }
+      assigns = { actual: Variable.value }
       matcher = matcher_of(matcher)
 
       EachPairMatcher.new(
