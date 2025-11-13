@@ -53,7 +53,7 @@ module Matcher
       end
     end
 
-    IMPLICIT_MATCHER_CLASSES = [Module, Range, Regexp, Hash, Array].freeze
+    IMPLICIT_MATCHER_CLASSES = [Module, Range, Regexp, Hash, Array, Expression].freeze
 
     def to_s
       if IMPLICIT_MATCHER_CLASSES.any? { @value.is_a?(_1) }
