@@ -2,6 +2,14 @@
 
 module Matcher
   class Reporter
+    ##
+    # Formats an error tree as a human-readable string
+    # @example
+    #   errors = Matcher.build { Integer }.match("foo")
+    #   puts Reporter.report(errors)
+    #   # > root: expected a kind of Integer but got "foo"
+    # @param error [Error] the error tree from {Base#match}
+    # @return [String]
     def self.report(error)
       new.report(error)
     end

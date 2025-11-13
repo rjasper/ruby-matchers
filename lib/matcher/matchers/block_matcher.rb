@@ -46,6 +46,12 @@ module Matcher
   end
 
   module MatcherBuilding
+    ##
+    # Matches when block returns truthy
+    # @example
+    #   satisfy('an even number') { |actual:| actual.even? }
+    # @param message [String, nil] optional description for error reporting
+    # @return [BlockMatcher]
     def satisfy(message = nil, &block)
       BlockMatcher.new(block, message)
     end

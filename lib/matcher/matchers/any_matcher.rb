@@ -47,6 +47,15 @@ module Matcher
   end
 
   module MatcherBuilding
+    ##
+    # Matches any matcher
+    # @example
+    #   # matches "foo" and 1 but not 1.5
+    #   any(String, Integer)
+    #   # alternatively:
+    #   of(String) + of(Integer)
+    # @param matchers [Array<Base>]
+    # @return [AnyMatcher]
     def any(*matchers)
       case matchers.length
       when 0

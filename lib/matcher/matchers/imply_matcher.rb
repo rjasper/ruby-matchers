@@ -52,6 +52,25 @@ module Matcher
   end
 
   module MatcherBuilding
+    ##
+    # Matches if condition mismatches or given matcher matches.
+    # In other words, ignore +matcher+ unless +condition+ is met.
+    # @example
+    #   # matches "hello" and 42 but not "hi"
+    #   imply(String, _.length <= 4)
+    #   # alternatively:
+    #   imply(String) ^ (_.length <= 4) # or
+    #   of(String) >> (_.length <= 4)
+    # @overload imply(condition, matcher)
+    #   @param condition [Expression]
+    #   @param matcher [Base]
+    #   @return [ImplyMatcher]
+    # @overload imply(condition)
+    #   @param condition [Expression]
+    #   @return [Chain<ImplyMatcher>]
+    # @see Base#>>
+    # @see #imply_one
+    # @see #imply_any
     def imply(condition, matcher = UNDEFINED)
       return Chain.new { imply(condition, _1) } if Matcher.undefined?(matcher)
 

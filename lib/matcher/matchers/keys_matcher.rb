@@ -1,6 +1,16 @@
 # frozen_string_literal: true
 
 module Matcher
+  ##
+  # Match hash keys.
+  # @example
+  #   m = Matcher.build { keys(:foo, :bar) }
+  #
+  #   m.match?({ foo: 1, bar: 2 })
+  #   # => true
+  #   m.match({ foo: 1, qux: 3 })
+  #   # > root: expected to include key :bar but got {:foo=>1, :qux=>3}
+  #   # > root: did not expect to include key :qux but got {:foo=>1, :qux=>3}
   class KeysMatcher < Base
     def initialize(keys, partial: false, negated: false)
       super()
@@ -87,6 +97,17 @@ module Matcher
   end
 
   module MatcherBuilding
+    ##
+    # Matches all keys of a hash
+    # @example
+    #   # matches { foo: 1, bar: 2 } but not { foo: 1, qux: 3 }
+    #   keys(:foo, :bar)
+    #   # using key expression, matches { "the_key" => 23 }
+    #   let(my_key: :the_key) ^ keys(vars[:my_key].to_s)
+    # @param keys [Array] supports expressions
+    # @param partial [true, false] ignores extra keys when +true+
+    # @return [KeysMatcher]
+    # @see #partial_keys
     def keys(*keys, partial: false)
       keys.each_with_index do |key, i|
         keys[i] = expression_or_value(key)
@@ -95,8 +116,16 @@ module Matcher
       KeysMatcher.new(keys, partial:)
     end
 
-    def partial_keys(*)
-      keys(*, partial: true)
+    ##
+    # Matches hash if all given keys are included. Ignores extra keys.
+    # @example
+    #   # matches { foo: 1, bar: 2 } but not { bar: 2 }
+    #   partial_keys(:foo)
+    # @param keys [Array] supports expressions
+    # @return [KeysMatcher]
+    # @see #keys
+    def partial_keys(*keys)
+      keys(*keys, partial: true)
     end
   end
 end

@@ -47,6 +47,13 @@ module Matcher
   end
 
   module MatcherBuilding
+    ##
+    # Matches exactly one matcher
+    # @example
+    #   # matches [1] and [2] but not [] or [1, 2]
+    #   one(_.include?(1), _.include?(2))
+    # @param matchers [Array<Base>]
+    # @return [OneMatcher]
     def one(*matchers)
       matchers = matchers.map { matcher_of(_1) }
 

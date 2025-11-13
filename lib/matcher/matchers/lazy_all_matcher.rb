@@ -42,6 +42,18 @@ module Matcher
   end
 
   module MatcherBuilding
+    ##
+    # Matches all matchers lazily. Returns only the last match result (similar to &&)
+    # @example
+    #   # matches 3 but not "foo"
+    #   lazy_all(Integer, _ % 3 == 0)
+    #   # alternatively:
+    #   of(Integer) & _.positive?
+    # @param matchers [Array<Base>]
+    # @return [LazyAllMatcher]
+    # @see Base#&
+    # @see #lazy_any
+    # @see #all
     def lazy_all(*matchers)
       case matchers.length
       when 0

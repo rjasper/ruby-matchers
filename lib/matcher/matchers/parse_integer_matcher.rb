@@ -55,6 +55,22 @@ module Matcher
   end
 
   module MatcherBuilding
+    ##
+    # Parses integer and matches with given matcher
+    # @example
+    #   # matches "7"
+    #   parse_integer(_.odd?)
+    #   # alternatively:
+    #   parse_integer ^ (_.odd?)
+    #   # without matcher matches any integer string
+    #   parse_integer
+    # @overload parse_integer(matcher, base: 0)
+    #   @param matcher [Base]
+    #   @param base [Integer]
+    #   @return [ParseIntegerMatcher]
+    # @overload parse_integer(base: 0)
+    #   @return [OptionalChain<ParseIntegerMatcher>]
+    # @see #integer_format
     def parse_integer(matcher = UNDEFINED, base: 0)
       return Chain.new { parse_integer(_1, base:) }.optional if
         Matcher.undefined?(matcher)
@@ -64,6 +80,13 @@ module Matcher
       ParseIntegerMatcher.new(matcher, base:)
     end
 
+    ##
+    # Matches integer strings
+    # @example
+    #   # matches { payload: "42" }
+    #   { payload: integer_format }
+    # @param base [Integer]
+    # @return [ParseIntegerMatcher]
     def integer_format(base: 0)
       if base == 0
         @integer_format ||= ParseIntegerMatcher.new(AlwaysMatcher.instance, base:)

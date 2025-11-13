@@ -67,6 +67,20 @@ module Matcher
   end
 
   module MatcherBuilding
+    ##
+    # Matches exactly one implied matcher
+    # @example
+    #   # Strings should be lower case and integers positive. But it should
+    #   # either be a string or an integer.
+    #   # matches "foo" and 1 but not "BAR", -1, or nil
+    #   imply_one(
+    #     imply(String, _ == _.downcase),
+    #     imply(Integer, _.positive?),
+    #   )
+    # @param matchers [ImplyMatcher]
+    # @param else [Base] if no condition passed match against +else+ matcher.
+    # @return [ImplySomeMatcher]
+    # @see #imply
     def imply_one(*matchers, else: UNDEFINED)
       els = { else: }[:else]
       else_matcher = Matcher.undefined?(els) ? nil : matcher_of(els)
@@ -74,6 +88,18 @@ module Matcher
       ImplySomeMatcher.new(matchers, else_matcher, 1)
     end
 
+    ##
+    # Matches at least one implied matcher
+    # @example
+    #   # matches 9, 12, 40 but not 8, 21, 15.5
+    #   imply_any(
+    #     imply(_.even?, _ > 10),
+    #     imply(_ % 3 == 0, _ < 20),
+    #   )
+    # @param matchers [ImplyMatcher]
+    # @param else [Base] if no condition passed match against +else+ matcher.
+    # @return [ImplySomeMatcher]
+    # @see #imply
     def imply_any(*matchers, else: UNDEFINED)
       els = { else: }[:else]
       else_matcher = Matcher.undefined?(els) ? nil : matcher_of(els)

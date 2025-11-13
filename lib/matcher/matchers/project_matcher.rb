@@ -31,6 +31,24 @@ module Matcher
   end
 
   module MatcherBuilding
+    ##
+    # Matches the value of an expression
+    # @example
+    #   # matches "5"
+    #   project(_.to_i => _ < 10)
+    #   # alternatively:
+    #   project(_.to_i) ^ (_ < 10)
+    #   # project multiple expressions
+    #   project(
+    #     _.foo => 1,
+    #     _.bar => 2,
+    #   )
+    # @overload project(expression => matcher)
+    #   @return [ProjectMatcher]
+    # @overload project(expression)
+    #   @return [Chain<ProjectMatcher>]
+    # @overload project(**projections)
+    #   @return [AllMatcher<ProjectMatcher>]
     def project(expression = UNDEFINED, **projections)
       raise 'cannot mix project(expression) ^ matcher and project(expression => matcher)' if
         !Matcher.undefined?(expression) && !projections.empty?

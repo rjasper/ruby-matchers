@@ -1,6 +1,17 @@
 # frozen_string_literal: true
 
 module Matcher
+  ##
+  # Match array elements like a set.
+  # @example
+  #   m = Matcher.build { equal_set(1, 2, 3) }
+  #
+  #   m.match?([1, 2, 3]) # => true
+  #   m.match?([3, 2, 1]) # => true
+  #
+  #   m.match([1, 1, 3])
+  #   # > root[1]: did not expect duplicate originally at index 0 but got 1
+  #   # > root: expected 2 to be included but got [1, 1, 3]
   class EqualSetMatcher < Base
     def initialize(items, negated: false)
       super()
@@ -83,6 +94,13 @@ module Matcher
   end
 
   module MatcherBuilding
+    ##
+    # Matches array elements like a set
+    # @example
+    #   # matches [1, 2, 3] and [3, 2, 1] but neither [0, 1, 2] nor [1, 1, 2, 3]
+    #   equal_set(1, 2, 3)
+    # @param items [Array]
+    # @return [EqualSetMatcher]
     def equal_set(*items)
       items.map! { expression_or_value(_1) }
 

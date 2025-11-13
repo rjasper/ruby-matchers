@@ -60,6 +60,22 @@ module Matcher
   end
 
   module MatcherBuilding
+    ##
+    # Matches regular expression and passes MatchData to matcher
+    # @example
+    #   # matches "x=5" but not "y=5" or "x=20"
+    #   regexp(/x=(\d+)/, project(_[1].to_i => 0..10))
+    #   # alternatively:
+    #   regexp(/x=(\d+)/) ^ project(_[1].to_i => 0..10)
+    #   # without matcher passes if regular expression matches
+    #   regexp(/x=\d+/)
+    # @overload regexp(pattern, matcher)
+    #   @param pattern [Regexp]
+    #   @param matcher [Base]
+    #   @return [RegexpMatcher]
+    # @overload regexp(pattern)
+    #   @param pattern [Regexp]
+    #   @return [OptionalChain<RegexpMatcher>]
     def regexp(pattern, matcher = UNDEFINED)
       return Chain.new { regexp(pattern, _1) }.optional if
         Matcher.undefined?(matcher)

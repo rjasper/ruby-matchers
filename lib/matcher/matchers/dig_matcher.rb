@@ -114,18 +114,34 @@ module Matcher
   end
 
   module MatcherBuilding
-    def dig(*keys, optional: false)
-      keys.each_with_index do |key, i|
-        keys[i] = expression_or_value(key)
+    ##
+    # Matches deeply nested values
+    # @example
+    #   # matches [0, { a: { "B" => 42 } }] where b: "B", but not []
+    #   dig(1, :a, vars[:b]) ^ Integer
+    # @param path [Array<Expression>]
+    # @param optional [true, false] matches if path doesn't exist when +true+
+    # @return [Chain<DigMatcher>]
+    def dig(*path, optional: false)
+      path.each_with_index do |key, i|
+        path[i] = expression_or_value(key)
       end
 
       Chain.new do |matcher|
-        DigMatcher.new(keys, matcher, optional:)
+        DigMatcher.new(path, matcher, optional:)
       end
     end
 
-    def optional_dig(*)
-      dig(*, optional: true)
+    ##
+    # Matches deeply nested value only if path exists
+    # @example
+    #   # matches { a: { b: 1 } } and { a: {} } but
+    #   # neither { a: { b: nil } } nor { a: nil }
+    #   optional_dig(:a, :b) ^ 1
+    # @param path [Array<Expression>]
+    # @return [Chain<DigMatcher>]
+    def optional_dig(*path)
+      dig(*path, optional: true)
     end
   end
 end

@@ -1,6 +1,34 @@
     # frozen_string_literal: true
 
 module Matcher
+  ##
+  # It's possible to build calls with a block:
+  #
+  #   exp = Matcher::Expression.build do
+  #     _.map { |x| x * 2 }
+  #   end
+  #
+  #   exp.evaluate(actual: [1, 2]) # => [2, 4]
+  #
+  # During build time the block acts like an expression builder
+  # (e.g. like `Expression.build`), where its arguments are recorders. So the inside
+  # of a block cannot be arbitrary but must follow the same rules as for building
+  # other expressions.
+  #
+  #   # WRONG
+  #   Matcher::Expression.build do
+  #     _.map { |x| 2 * x } # cannot multiply 2 with a recorder
+  #   end
+  #
+  # == Support for symbol procs
+  #
+  #   exp = Matcher::Expression.build do
+  #     _.map(&:to_i)
+  #   end
+  #
+  #   exp.evaluate(actual: ['1', '2']) # => [1, 2]
+  #
+  # @see ExpressionBuilding#pass_through_blocks
   class Block
     extend Compatibility
 

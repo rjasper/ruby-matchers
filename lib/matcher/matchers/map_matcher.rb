@@ -1,6 +1,24 @@
 # frozen_string_literal: true
 
 module Matcher
+  ##
+  # Map items to another value before matching.
+  # @example
+  #   m = Matcher.build { map(_.to_i, [1, 2]) } # OR
+  #   m = Matcher.build { map(_.to_i) ^ [1, 2] }
+  #
+  #   m.match?(["1", "2"])
+  #   # => true
+  #   m.match(["1", :foo])
+  #   # > root[1]: expected an object responding to 'to_i' but got :foo
+  #   m.match(["1", "3"])
+  #   # > root[1].to_i: expected 2 but got 3
+  #
+  #   m = Matcher.build { map(_.to_i, _.sum == 3) }
+  #   m.match?(["1", "2"])
+  #   # => true
+  #   m.match(["1", "2", "3"])
+  #   # > root.map(&:to_i): expected actual.sum == 3 but got 6 == 3, where actual = [1, 2, 3]
   class MapMatcher < Base
     include MappingUtils
 
@@ -97,6 +115,26 @@ module Matcher
   end
 
   module MatcherBuilding
+    ##
+    # Maps items to another value before matching
+    # == +expression+ values
+    # - actual
+    # - index
+    # - original
+    # == +matcher+ values
+    # - original
+    # @example
+    #   # matches ["1", "2"]
+    #   map(_.to_i, [1, 2])
+    #   # alternatively:
+    #   map(_.to_i) ^ [1, 2]
+    # @overload map(expression, matcher)
+    #   @param expression [Expression]
+    #   @param matcher [Base]
+    #   @return [MapMatcher]
+    # @overload map(expression)
+    #   @param expression [Expression]
+    #   @return [Chain<MapMatcher>]
     def map(expression, matcher = UNDEFINED)
       return Chain.new { map(expression, _1) } if Matcher.undefined?(matcher)
 

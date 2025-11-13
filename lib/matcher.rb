@@ -147,6 +147,20 @@ module Matcher
     UNDEFINED == object
   end
 
+  ##
+  # Builds a matcher from a block
+  #
+  # Inside the block all matcher and expression building helpers are available.
+  # The return value of the block is converted to a matcher via +Matcher.of+.
+  # @example
+  #   m = Matcher.build do
+  #     { name: String, count: 1..10 }
+  #   end
+  #   m.match?({ name: 'test', count: 5 }) # => true
+  # @return [Base]
+  # @see Matcher.of
+  # @see MatcherBuilding
+  # @see ExpressionBuilding
   def self.build(&block)
     with_build_session do |build_session|
       builder = Builder.new(block.binding.receiver, build_session:)
@@ -175,6 +189,28 @@ module Matcher
     @max_reference_depth = value
   end
 
+  ##
+  # Converts an object into a matcher
+  #
+  # The conversion depends on the type of the value:
+  #
+  # +Module+ or +Class+: match kind with {KindOfMatcher}
+  #   Matcher.of(String).match?("Hello World!")
+  # +Range+: match between with {RangeMatcher}
+  #   Matcher.of(1..10).match?(5)
+  # +Regexp+: match pattern with {RegexpMatcher}
+  #   Matcher.of(/Hello/).match?("Hello World!")
+  # +Array+: match all elements with {ArrayMatcher}
+  #   Matcher.of([1, String]).match?([1, "Hello"])
+  # +Hash+: match all entries with {HashMatcher}
+  #   Matcher.of({ a: 1, b: 0..10 }).match?({ a: 1, b: 5 })
+  # +Expression+ or +Recorder+: match where evaluated expression is truthy {ExpressionMatcher}
+  #   even = Matcher::Expression.build { _.even? }
+  #   Matcher.of(even).match?(4)
+  # other objects: match equal value with {EqualMatcher}
+  #   Matcher.of(1).match?(1)
+  # @param object the value to convert
+  # @return [Base]
   def self.of(object, matcher_cache: nil, expression_cache: nil)
     object = Expression.try_recorder(object)
 

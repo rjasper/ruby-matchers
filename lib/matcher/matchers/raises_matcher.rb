@@ -58,6 +58,33 @@ module Matcher
   end
 
   module MatcherBuilding
+    ##
+    # Matches raised error
+    # @example
+    #   # matches {} (because fetch raises KeyError)
+    #   raises(_.fetch(:foo), KeyError)
+    #   # alternatively:
+    #   raises(_.fetch(:foo)) ^ KeyError
+    #   # match error message
+    #   raises(_.call, message: /something went wrong/)
+    #   # pass block instead of expression
+    #   raises(NoMethodError) { |x| x.fetch(:foo) }
+    #   # rescue non-standard exceptions
+    #   raises(_.call, rescue: Exception)
+    # @overload raises(expression, matcher, message: UNDEFINED, rescue: StandardError)
+    #   Matches error raised from expression.
+    #   @param expression [Expression]
+    #   @param matcher [Base] matcher for error
+    #   @param message [Base] matcher for message
+    #   @param rescue [Class] exception class to rescue
+    #   @return [RaisesMatcher]
+    # @overload raises(matcher, message: UNDEFINED, rescue: StandardError, &)
+    #   Matches error raised from block.
+    #   @param matcher [Base] matcher for error
+    #   @param message [Base] matcher for message
+    #   @param rescue [Class] exception class to rescue
+    #   @yield actual
+    #   @return [OptionalChain<RaisesMatcher>]
     def raises(
       expression_or_matcher = UNDEFINED,
       matcher = UNDEFINED,

@@ -61,6 +61,35 @@ module Matcher
   end
 
   module MatcherBuilding
+    ##
+    # Creates an anonymous custom matcher
+    #
+    # If you need more control to define your matching logic then +inline+
+    # may give you an alternative to implementing a new matcher class. Within
+    # the +inline+ block you have direct access to +actual+, +errors+, +_yield+
+    # and other state methods.
+    #
+    # @example
+    #   # matches distinct arrays
+    #   inline do
+    #     indices = Hash.new
+    #
+    #     actual.each_with_index do |e, i|
+    #       if (original_index = indices[e])
+    #         errors[i] << expected.not.duplicate(original_index)
+    #       else
+    #         indices[e] = i
+    #       end
+    #     end
+    #   end
+    #
+    # @param matcher [Base] optionaly provide a child matcher. Call the matcher
+    #   with +_yield matcher, actual, **values+
+    # @param negatable [true, false] set to true if your matching logic respects
+    #   the negated flag. Otherwise, the default negation implementation is used.
+    #   When +negated = true+ the child matcher is automatically negated.
+    # @yield inline context
+    # @return [InlineMatcher]
     def inline(matcher = UNDEFINED, negatable: false, &)
       matcher = Matcher.undefined?(matcher) ? nil : matcher_of(matcher)
 

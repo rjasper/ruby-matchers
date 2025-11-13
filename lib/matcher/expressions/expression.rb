@@ -1,6 +1,27 @@
 # frozen_string_literal: true
 
 module Matcher
+  ##
+  # Expressions are a central feature of this library. They are used for:
+  # 
+  # - building ad-hoc matchers (e.g. <tt>_ > 10</tt> , +_.even?+ )
+  # - tracking where match errors happen (e.g. <tt>root[:name]: expected ...</tt> )
+  # - as parameters for other matchers like +map+ where they take the role of
+  #   anonymous functions (e.g. <tt>map(_.to_s, "some_string")</tt> )
+  # 
+  # Helpers (like +map+) use expressions instead of procs because the AST of an
+  # Expression can be inspected and transformed. This is useful when building
+  # the path and message of errors.
+  #
+  #   my_expression = Matcher::Expression.build { _ * 21 }
+  #   my_expression.evaluate(actual: 2) # => 42
+  #   # proc equivalent:
+  #   ->(x) { x * 21 }
+  #
+  # Have a look at {Recorder} where we explain how reorders are used to build
+  # expressions.
+  #
+  # @see Recorder
   class Expression
     class ExpressionBuilder
       include ExpressionBuilding
@@ -10,6 +31,20 @@ module Matcher
       end
     end
 
+    ##
+    # Builds an expression conveniently using {Recorder} and helpers from
+    # {ExpressionBuilding}.
+    #
+    # @example
+    #   Matcher::Expression.build do
+    #     _.sum(&:to_i)
+    #   end
+    #
+    #   Matcher::Expression.build do
+    #     range(vars[:from], vars[:to]).include?(_)
+    #   end
+    #
+    # @see ExpressionBuilding
     def self.build(&)
       Matcher.with_build_session do |build_session|
         builder = ExpressionBuilder.new(build_session:)

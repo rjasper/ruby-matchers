@@ -1,6 +1,55 @@
 # frozen_string_literal: true
 
 module Matcher
+  ##
+  # The core building block of composing expressions is a method *call*. For
+  # instance, <tt>a + b</tt> is a call where +a+ receives +b+ via its method
+  # <tt>+</tt>.
+  #
+  # Our expression builder tracks Ruby calls with Recorder objects which work
+  # like this:
+  #   # let's build an AST for "Hello".upcase
+  #
+  #   # explicitly by hand
+  #   hello = Matcher::Constant.new("Hello")
+  #   hello_upcase = Matcher::Call.new(hello, :upcase)
+  #   hello_upcase.evaluate({}) # => "HELLO"
+  #
+  #   # with recorder
+  #   hello = Matcher::Constant.new("Hello")
+  #   hello_rec = Matcher::Recorder.new(hello)
+  #   hello_upcase_rec = hello_rec.upcase # the magic
+  #   hello_upcase = Matcher::Recorder.to_expression(hello_upcase_rec) # => "Hello".upcase
+  #   hello_upcase.evaluate({}) # => "HELLO"
+  #
+  #   # with builder
+  #   Matcher::Expression.build do
+  #     expr("Hello").upcase
+  #   end
+  #
+  # == Recorders are nasty
+  #
+  # To do their job any call to a recorder must return a new recorder. But this
+  # also makes them ill-behaved because methods like <tt>==</tt> or <tt>is_a?</tt> don't behave
+  # like you expect them to. They don't have any methods defined (except +__id__+
+  # and +__send__+). Instead all calls are handled by +method_missing+.
+  #
+  # The consequence:
+  #   # let r be a recorder
+  #   r = Matcher::Recorder.new(Matcher::Variable.actual)
+  #
+  #   # everything below returns a recorder
+  #
+  #   r == nil # truthy
+  #   r != r # truthy
+  #   !r # truthy
+  #   !!r # still truthy
+  #   r.class # not Recorder (but a Recorder instance)
+  #   r.object_id # not an integer
+  #   r.to_s # not a string
+  #
+  # This makes them very hard to deal with, should you encounter them where you
+  # wouldn't expect them.
   class Recorder
     def self.recorder?(object)
       Object.instance_method(:kind_of?)

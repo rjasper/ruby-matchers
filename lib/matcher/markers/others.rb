@@ -13,6 +13,14 @@ module Matcher
   end
 
   module MatcherBuilding
+    ##
+    # Hash key that matches remaining entries
+    # @example
+    #   {
+    #     id: Integer,
+    #     others => each_value(String),
+    #   }
+    # @return [Others]
     def others
       Others.instance
     end

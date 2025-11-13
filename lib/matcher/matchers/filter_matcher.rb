@@ -79,6 +79,25 @@ module Matcher
   end
 
   module MatcherBuilding
+    # Matches only filtered elements
+    # == +expression+ values
+    # - actual
+    # - index
+    # - original
+    # == +matcher+ values
+    # - original
+    # @example
+    #   # matches [1, 2, 3, 4, 5]
+    #   filter(_.odd?, [1, 3, 5])
+    #   # alternatively:
+    #   filter(_.odd?) ^ [1, 3, 5]
+    # @overload filter(expression, matcher)
+    #   @param expression [Expression] matches elements for which +expression+ is truthy
+    #   @param matcher
+    #   @return [FilterMatcher]
+    # @overload filter(expression)
+    #   @param expression [Expression] matches elements for which +expression+ is truthy
+    #   @return [Chain<FilterMatcher>]
     def filter(expression, matcher = UNDEFINED)
       return Chain.new { filter(expression, _1) } if
         Matcher.undefined?(matcher)

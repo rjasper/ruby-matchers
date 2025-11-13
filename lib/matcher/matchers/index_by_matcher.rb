@@ -136,6 +136,33 @@ module Matcher
   end
 
   module MatcherBuilding
+    ##
+    # Matches against an indexed version of actual.
+    #
+    # This is really useful when validating an array of items where the order
+    # shouldn't matter.
+    # @example
+    #   # matches:
+    #   # [
+    #   #   { name: "bar", value: 2 },
+    #   #   { name: "foo", value: 1 },
+    #   # ]
+    #   index_by(_[:name], {
+    #     "foo" => { name: "foo", value: 1 },
+    #     "bar" => { name: "bar", value: 2 },
+    #   })
+    #   # alternatively:
+    #   index_by(_[:name]) ^ {
+    #     "foo" => { name: "foo", value: 1 },
+    #     "bar" => { name: "bar", value: 2 },
+    #   }
+    # @overload index_by(expression, matcher)
+    #   @param expression [Expression]
+    #   @param matcher [Base]
+    #   @return [IndexByMatcher]
+    # @overload index_by(expression)
+    #   @param expression [Expression]
+    #   @return [Chain<IndexByMatcher>]
     def index_by(expression, matcher = UNDEFINED)
       return Chain.new { index_by(expression, _1) } if Matcher.undefined?(matcher)
 

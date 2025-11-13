@@ -44,6 +44,20 @@ module Matcher
   end
 
   module MatcherBuilding
+    ##
+    # Sets values for the given matcher
+    # @example
+    #   # matches 1
+    #   let({ a: 1 }, _ == vars[:a])
+    #   # alternatively:
+    #   let(a: 1) ^ (_ == vars[:a])
+    # @overload let(assigns, matcher)
+    #   @param assigns [Hash]
+    #   @param matcher [Base]
+    #   @return [LetMatcher]
+    # @overload let(**kwargs)
+    #   @param kwargs [Hash] same as assigns
+    #   @return [Chain<LetMatcher>]
     def let(assigns = nil, matcher = UNDEFINED, **kwargs)
       raise "Cannot set both assigns and kwargs" if assigns && !kwargs.empty?
 

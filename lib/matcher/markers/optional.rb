@@ -57,6 +57,20 @@ module Matcher
   end
 
   module MatcherBuilding
+    ##
+    # Marks a hash key as optional or wraps a matcher to also accept +nil+
+    # @example
+    #   # optional hash key
+    #   { optional(:foo) => 1 }
+    #   # matches "Hello" and nil but not 1
+    #   optional(String)
+    #   # alternatively:
+    #   optional ^ String
+    # @overload optional(value)
+    #   @param value
+    #   @return [Optional]
+    # @overload optional
+    #   @return [Chain]
     def optional(value = UNDEFINED)
       return Chain.new { optional(_1) } if Matcher.undefined?(value)
 

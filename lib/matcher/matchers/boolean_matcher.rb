@@ -23,6 +23,11 @@ module Matcher
   end
 
   module MatcherBuilding
+    ##
+    # Matches +true+ and +false+
+    # @example
+    #   { available: boolean }
+    # @return [BooleanMatcher]
     def boolean
       @boolean ||= BooleanMatcher.new
     end

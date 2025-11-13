@@ -181,6 +181,13 @@ module Matcher
   end
 
   module MatcherBuilding
+    ##
+    # Matches equal value
+    # @example
+    #   # matches String but not "foo"
+    #   equal(String)
+    # @param value
+    # @return [EqualMatcher]
     def equal(value)
       value = expression_or_value(value)
 

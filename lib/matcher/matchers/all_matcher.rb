@@ -36,6 +36,16 @@ module Matcher
   end
 
   module MatcherBuilding
+    ##
+    # Matches all matchers
+    # @example
+    #   # matches 12 but not 9 or 13
+    #   all(_ > 10, _.even?)
+    #   # alternatively:
+    #   of(_ > 10) * of(_.even?)
+    # @param matchers [Array<Base>]
+    # @return [AllMatcher]
+    # @see Base#*
     def all(*matchers)
       case matchers.length
       when 0

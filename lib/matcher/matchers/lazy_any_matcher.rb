@@ -42,6 +42,18 @@ module Matcher
   end
 
   module MatcherBuilding
+    ##
+    # Matches any matcher lazily. Returns only the last match result (similar to ||)
+    # @example
+    #   # matches "foo" and 42 but not +nil+ or +true+
+    #   lazy_any(String, Integer)
+    #   # alternatively:
+    #   of(String) | of(Integer)
+    # @param matchers [Array<Base>]
+    # @return [LazyAnyMatcher]
+    # @see Base#|
+    # @see #lazy_all
+    # @see #any
     def lazy_any(*matchers)
       case matchers.length
       when 0

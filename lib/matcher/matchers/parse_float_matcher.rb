@@ -49,6 +49,21 @@ module Matcher
   end
 
   module MatcherBuilding
+    ##
+    # Parses float and matches with given matcher.
+    # @example
+    #   # matches "1.0"
+    #   parse_float(_ > 0.0)
+    #   # alternatively:
+    #   parse_float ^ (_ > 0.0)
+    #   # without matcher matches any float string
+    #   parse_float
+    # @overload parse_float(matcher)
+    #   @param matcher [Base]
+    #   @return [ParseFloatMatcher]
+    # @overload parse_float
+    #   @return [OptionalChain<ParseFloatMatcher>]
+    # @see #float_format
     def parse_float(matcher = UNDEFINED)
       return Chain.new { parse_float(_1) }.optional if
         Matcher.undefined?(matcher)
@@ -58,6 +73,12 @@ module Matcher
       ParseFloatMatcher.new(matcher)
     end
 
+    ##
+    # Matches float strings
+    # @example
+    #   # matches { payload: "1.5" }
+    #   { payload: float_format }
+    # @return [ParseFloatMatcher]
     def float_format
       @float_format ||= ParseFloatMatcher.new(AlwaysMatcher.instance)
     end

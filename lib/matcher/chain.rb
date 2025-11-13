@@ -1,6 +1,30 @@
 # frozen_string_literal: true
 
 module Matcher
+  ##
+  # Matcher helpers like +each+ or +map+ can be chained with the +^+ operator or
+  # +chain+ helper. If a helper has the form <tt>my_helper(..., matcher)</tt> then it
+  # usually also supports this form <tt>my_helper(...) ^ matcher</tt>. This helps reducing
+  # nested parenthesis:
+  #
+  #   # before
+  #   let({ limit: 10 }, map(_.compact, filter(_.even?, _ < vars[:limit])))
+  #
+  #   # with ^
+  #   let(limit: 10) ^
+  #     map(_.compact) ^
+  #     filter(_.even?) ^
+  #     (_ < vars[:limit])
+  #
+  #   # with chain
+  #   chain(
+  #     let(limit: 10),
+  #     map(_.compact),
+  #     filter(_.even?),
+  #     _ < vars[:limit],
+  #   )
+  #
+  # Keep operator precedence in mind when working with expressions.
   class Chain
     include NoMatcher
     include NoExpression
@@ -15,6 +39,17 @@ module Matcher
       Chain.new(negated: !@negated, &@block)
     end
 
+    ##
+    # Chains this with a matcher or another chain
+    #
+    # Many helpers return a Chain that accepts a child matcher via +^+.
+    # Chains can also be composed: +each ^ map(_.to_i) ^ (_ > 0)+.
+    # @example
+    #   each ^ Integer
+    #   map(_.to_i) ^ [1, 2]
+    #   filter(_.odd?) ^ [1, 3, 5]
+    # @param operand matcher or chain
+    # @return [Base]
     def ^(operand)
       if !Recorder.recorder?(operand) && operand.is_a?(Chain)
         Chain.new { @block.call(operand ^ _1) }
@@ -32,8 +67,18 @@ module Matcher
   end
 
   module MatcherBuilding
-    def chain(*chain)
-      chain.reduce(:^)
+    ##
+    # Reduces multiple chains to one
+    # @example
+    #   chain(let(limit: 10), map(_.compact), filter(_.even?), _ < vars[:limit])
+    #   # instead of
+    #   let(limit: 10) ^ map(_.compact) ^ filter(_.even?) ^ (_ < vars[:limit])
+    #   # which is equivalent to
+    #   let({ limit: 10 }, map(_.compact, filter(_.even?, _ < vars[:limit])))
+    # @param *chains
+    # @return [Chain]
+    def chain(*chains)
+      chains.reduce(:^)
     end
   end
 end

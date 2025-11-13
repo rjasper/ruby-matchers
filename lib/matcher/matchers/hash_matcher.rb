@@ -1,6 +1,90 @@
 # frozen_string_literal: true
 
 module Matcher
+  ##
+  # == Basic hash matching
+  #
+  #   m = Matcher.build do
+  #     { foo: 1 }
+  #   end
+  #
+  #   m.match?({ foo: 1 })
+  #   # => true
+  #   m.match({ foo: 0 })
+  #   # > root[:foo]: expected 1 but got 0
+  #   m.match({ foo: 1, bar: 1 })
+  #   # > root[:bar]: did not expect to include key :bar but got {:foo=>1, :bar=>2}
+  #
+  #   # Use matchers for values
+  #   m = Matcher.build { { foo: Integer } }
+  #   m.match?({ foo: 2 }) # => true
+  #
+  # == Variables passed to value matchers
+  #
+  # HashMatcher passes +key+, +value+ and +parent+ to its value matchers.
+  #
+  #   # key
+  #   m = Matcher.build { { foo: _ == k.to_s } }
+  #   m.match?({ foo: "foo" })
+  #   # => true
+  #   m.match({ foo: "bar" })
+  #   # > root[:foo]: expected actual == key.to_s but got "bar" == "foo", where k = :foo
+  #
+  #   # parent
+  #   m = Matcher.build do
+  #     {
+  #       items: Array,
+  #       length: equal(parent[:items].length),
+  #     }
+  #   end
+  #
+  #   m.match({ items: [1], length: 10 })
+  #   # > root[:length]: expected 1 but got 10
+  #
+  # == Match hash partially
+  #
+  # Use +partial+ and +partial_r+ to match a hash only partially.
+  #
+  # == Optional keys
+  #
+  # Match value only if key included:
+  #
+  #   m = Matcher.build do
+  #     { optional(:foo) => 1 }
+  #   end
+  #
+  #   m.match?({})           # => true
+  #   m.match?({ foo: 1 })   # => true
+  #   m.match?({ foo: 2 })   # => false
+  #   m.match?({ foo: nil }) # => false
+  #
+  # == Match remaining entries
+  #
+  #   m = Matcher.build do
+  #     {
+  #       id: Integer,
+  #       others => each_value(String),
+  #     }
+  #   end
+  #
+  #   m.match?({ id: 1, foo: "bar" })
+  #   # => true
+  #   m.match({ id: 1, foo: nil })
+  #   # > root[:foo]: expected a kind of String but got nil
+  #
+  # == Expression keys
+  #
+  #   m = Matcher.build do
+  #     { vars[:my_key] => 1 }
+  #   end
+  #
+  #   m.match?({ foo: 1 }, my_key: :foo) # => true
+  #
+  # @see MatcherBuilding#partial
+  # @see MatcherBuilding#partial_r
+  # @see MatcherBuilding#each_pair
+  # @see MatcherBuilding#each_key
+  # @see MatcherBuilding#each_value
   class HashMatcher < Base
     def initialize(hash, partial: false, negated: false)
       super()
@@ -179,6 +263,13 @@ module Matcher
   end
 
   module MatcherBuilding
+    ##
+    # Matches hash partially
+    # @example
+    #   # matches { foo: 1, bar: 2 } but not { foo: 0, bar: 2 }
+    #   partial(foo: 1)
+    # @param hash [Hash]
+    # @return [HashMatcher]
     def partial(hash)
       hash = hash.to_h do |k, v|
         [expression_or_value(k), matcher_of(v)]
@@ -187,6 +278,15 @@ module Matcher
       HashMatcher.new(hash, partial: true)
     end
 
+    ##
+    # Matches nested hashes partially
+    # @example
+    #   # matches { foo: { bar: 1, baz: 2 }, qux: 3 }
+    #   partial_r(foo: { bar: 1 })
+    #   # equivalent to:
+    #   partial(foo: partial(bar: 1))
+    # @param hash [Hash]
+    # @return [HashMatcher]
     def partial_r(hash)
       hash = hash.to_h do |k, v|
         [expression_or_value(k), partial_r_helper(v)]
