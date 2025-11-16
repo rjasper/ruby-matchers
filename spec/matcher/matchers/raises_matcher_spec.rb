@@ -130,6 +130,25 @@ describe Matcher::RaisesMatcher do
       rescue_from_call => msg(obj.error).not.kind_of(my_error_klass)
   end
 
+  it 'rescues standard errors' do
+    matcher = Matcher.build do
+      raises(kernel.raise(_))
+    end
+
+    e = assert_raises(Exception) { matcher.match(Exception) }
+    assert_instance_of Exception, e
+
+    assert matcher.match?(StandardError)
+  end
+
+  it 'rescues non-standard exceptions' do
+    matcher = Matcher.build do
+      raises(kernel.raise(_), rescue: Exception)
+    end
+
+    assert matcher.match?(Exception)
+  end
+
   it '#to_s' do
     matcher = Matcher.build { raises(_.foo, StandardError) }
 

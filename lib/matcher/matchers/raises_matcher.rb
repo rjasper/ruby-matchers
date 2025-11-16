@@ -2,17 +2,28 @@
 
 module Matcher
   class RaisesMatcher < Base
-    def initialize(expression, matcher, negated: false)
+    def initialize(
+      expression,
+      matcher,
+      negated: false,
+      rescue_exception: StandardError
+    )
       super()
 
       @expression = expression
       @matcher = negated ? ~matcher : matcher
       @original_matcher = matcher
       @negated = negated
+      @rescue_exception = rescue_exception
     end
 
     def negate
-      RaisesMatcher.new(@expression, @original_matcher, negated: !@negated)
+      RaisesMatcher.new(
+        @expression,
+        @original_matcher,
+        negated: !@negated,
+        rescue_exception: @rescue_exception,
+      )
     end
 
     def validate(state)
@@ -21,8 +32,8 @@ module Matcher
       return if @negated
 
       given = @expression.given_for(state.values)
-      state.errors << state.expected.namespace(:expression).raising(@expression, StandardError, given)
-    rescue StandardError => e
+      state.errors << state.expected.namespace(:expression).raising(@expression, @rescue_exception, given)
+    rescue @rescue_exception => e
       state.errors[rescue_last_error] << yield(@matcher, unwrap_exception(e))
     end
 
@@ -51,6 +62,7 @@ module Matcher
       expression_or_matcher = UNDEFINED,
       matcher = UNDEFINED,
       message: UNDEFINED,
+      rescue: StandardError,
       &block
     )
       no_arg1 = Matcher.undefined?(expression_or_matcher)
@@ -69,7 +81,7 @@ module Matcher
         expression = expression_of(expression_or_matcher)
       end
 
-      return Pipe.new { raises(expression, _1, message:) }.optional if
+      return Pipe.new { raises(expression, _1, message:, rescue:) }.optional if
         Matcher.undefined?(matcher)
 
       matcher = matcher_of(matcher)
@@ -81,7 +93,7 @@ module Matcher
         matcher &= ProjectMatcher.new(@raises_message_call, message_matcher)
       end
 
-      RaisesMatcher.new(expression, matcher)
+      RaisesMatcher.new(expression, matcher, rescue_exception: { rescue: }[:rescue])
     end
   end
 end
