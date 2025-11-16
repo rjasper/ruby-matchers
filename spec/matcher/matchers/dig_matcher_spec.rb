@@ -102,11 +102,21 @@ describe Matcher::DigMatcher do
     assert negated.match?({ foo: 'bar' })
     assert_no_errors negated.match({ foo: 'bar' })
 
-    assert matcher.match?({ foo: [nil] })
-    assert_no_errors matcher.match({ foo: [nil] })
-    refute negated.match?({ foo: [nil] })
-    assert_errors negated.match({ foo: [nil] }),
-      foo: { 0 => msg(nil).equal(nil) }
+    refute matcher.match?({ foo: nil })
+    assert_errors matcher.match({ foo: nil })do
+      _or(:foo) do
+        error msg(nil).not.kind_of(Hash)
+        error msg(nil).not.kind_of(Array)
+      end
+    end
+    assert negated.match?({ foo: nil })
+    assert_no_errors negated.match({ foo: nil })
+
+    refute matcher.match?({ foo: [nil] })
+    assert_errors matcher.match({ foo: [nil] }),
+      foo: { 0 => msg(nil).not.equal('foobar') }
+    assert negated.match?({ foo: [nil] })
+    assert_no_errors negated.match({ foo: [nil] })
 
     refute matcher.match?({ foo: ['qux'] })
     assert_errors matcher.match({ foo: ['qux'] }),

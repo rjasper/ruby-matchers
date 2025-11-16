@@ -45,7 +45,7 @@ module Matcher
 
         if cur.nil?
           if @optional
-            return nil
+            return nil unless is_array ? index?(prev, key) : prev.key?(key)
           elsif is_array
             unless index?(prev, key)
               errors << state.expected(prev).having_index(key)
@@ -93,20 +93,16 @@ module Matcher
         cur = cur[key]
 
         if cur.nil?
-          included = is_array ? index?(prev, key) : prev.key?(key)
-
-          if @optional
-            if included
-              errors[key] << state.expected(cur).not.equal(nil)
-            elsif is_array
-              errors << state.expected(prev).having_index(key)
-            else
-              errors << state.expected(prev).having_key(key)
+          if is_array
+            unless index?(prev, key)
+              errors << state.expected(prev).having_index(key) if @optional
+              return nil
             end
-
-            return nil
-          elsif !included
-            return nil
+          else
+            unless prev.key?(key)
+              errors << state.expected(prev).having_key(key) if @optional
+              return nil
+            end
           end
         end
 
