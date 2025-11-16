@@ -55,6 +55,15 @@ describe Matcher::RaisesMatcher do
     assert_no_errors negated.match(nil)
   end
 
+  it 'matches raises exception from block' do
+    matcher = Matcher.build do
+      raises(ZeroDivisionError) { |x| 1 / x }
+    end
+
+    assert matcher.match?(0)
+    refute matcher.match?(1)
+  end
+
   it 'matches raised exceptions with message' do
     matcher = Matcher.build { raises(_.call, message: /something went wrong/) }
     negated = ~matcher
