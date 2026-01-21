@@ -32,7 +32,7 @@ module Matcher
 
   module MatcherBuilding
     def each(matcher = UNDEFINED)
-      return Pipe.new { each(_1) } if Matcher.undefined?(matcher)
+      return Chain.new { each(_1) } if Matcher.undefined?(matcher)
 
       EachMatcher.new(matcher_of(matcher))
     end

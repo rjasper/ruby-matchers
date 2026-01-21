@@ -35,7 +35,7 @@ module Matcher
       raise 'cannot mix project(expression) ^ matcher and project(expression => matcher)' if
         !Matcher.undefined?(expression) && !projections.empty?
 
-      return Pipe.new { project(expression => _1) } unless Matcher.undefined?(expression)
+      return Chain.new { project(expression => _1) } unless Matcher.undefined?(expression)
 
       project_matchers = projections.map do |e, m|
         e = expression_of(e)

@@ -80,7 +80,7 @@ module Matcher
 
   module MatcherBuilding
     def filter(expression, matcher = UNDEFINED)
-      return Pipe.new { filter(expression, _1) } if
+      return Chain.new { filter(expression, _1) } if
         Matcher.undefined?(matcher)
 
       expression = expression_of(expression)

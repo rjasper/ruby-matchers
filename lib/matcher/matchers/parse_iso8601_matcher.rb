@@ -56,7 +56,7 @@ module Matcher
 
   module MatcherBuilding
     def parse_iso8601(matcher = UNDEFINED)
-      return Pipe.new { parse_iso8601(_1) }.optional if
+      return Chain.new { parse_iso8601(_1) }.optional if
         Matcher.undefined?(matcher)
 
       matcher = matcher_of(matcher)

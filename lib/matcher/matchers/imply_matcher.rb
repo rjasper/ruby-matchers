@@ -53,7 +53,7 @@ module Matcher
 
   module MatcherBuilding
     def imply(condition, matcher = UNDEFINED)
-      return Pipe.new { imply(condition, _1) } if Matcher.undefined?(matcher)
+      return Chain.new { imply(condition, _1) } if Matcher.undefined?(matcher)
 
       condition = matcher_of(condition)
       matcher = matcher_of(matcher)

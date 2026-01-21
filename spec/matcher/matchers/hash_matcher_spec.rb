@@ -20,12 +20,12 @@ describe Matcher::HashMatcher do
       assert_equal 'Cannot use matcher as key for hash matcher', e.message
     end
 
-    it 'raises on pipe key' do
+    it 'raises on chain key' do
       e = assert_raises StandardError do
         Matcher.build { { dig(:foo, :bar) => 'foobar' } }
       end
 
-      assert_equal 'Cannot use Matcher::Pipe as key for hash matcher', e.message
+      assert_equal 'Cannot use Matcher::Chain as key for hash matcher', e.message
     end
 
     it 'raises on vars key' do

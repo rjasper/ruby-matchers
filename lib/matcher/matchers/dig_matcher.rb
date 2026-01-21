@@ -119,7 +119,7 @@ module Matcher
         keys[i] = expression_or_value(key)
       end
 
-      Pipe.new do |matcher|
+      Chain.new do |matcher|
         DigMatcher.new(keys, matcher, optional:)
       end
     end

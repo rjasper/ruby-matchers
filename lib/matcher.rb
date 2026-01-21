@@ -26,8 +26,8 @@ require_relative 'matcher/expression_cache'
 require_relative 'matcher/hash_stack'
 require_relative 'matcher/list'
 require_relative 'matcher/matcher_cache'
-require_relative 'matcher/optional_pipe'
-require_relative 'matcher/pipe'
+require_relative 'matcher/optional_chain'
+require_relative 'matcher/chain'
 require_relative 'matcher/reporter'
 require_relative 'matcher/state'
 require_relative 'matcher/undefined'
@@ -182,7 +182,7 @@ module Matcher
       raise ArgumentError, "Cannot use #{object.class} as matcher"
     when Module
       KindOfMatcher.cache(object, matcher_cache)
-    when OptionalPipe
+    when OptionalChain
       object.fallback
     when Base
       object

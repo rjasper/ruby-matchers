@@ -2,9 +2,9 @@
 
 require 'test_helper'
 
-describe Matcher::Pipe do
-  it 'builds up and reduces chain of pipes' do
-    matcher = pipe(divisible_by(2)) ^ pipe(divisible_by(3)) ^ divisible_by(5)
+describe Matcher::Chain do
+  it 'builds up and reduces chain' do
+    matcher = chain(divisible_by(2)) ^ chain(divisible_by(3)) ^ divisible_by(5)
 
     assert_no_errors matcher.match(30)
 
@@ -16,7 +16,7 @@ describe Matcher::Pipe do
 
   it 'can negate itself' do
     # divisible by 2 and not (by 3 and 5)
-    matcher = pipe(divisible_by(2)) ^ ~pipe(divisible_by(3)) ^ divisible_by(5)
+    matcher = chain(divisible_by(2)) ^ ~chain(divisible_by(3)) ^ divisible_by(5)
 
     assert_no_errors matcher.match(4) # divisible by 2 but not 3 or 5
     assert_no_errors matcher.match(6) # divisible by 2 and 3 but not 5
@@ -33,7 +33,7 @@ describe Matcher::Pipe do
 
   describe '#optional' do
     it 'can optionally fall back to value' do
-      matcher = Matcher.of(pipe(divisible_by(2)) ^ pipe(divisible_by(3)).optional)
+      matcher = Matcher.of(chain(divisible_by(2)) ^ chain(divisible_by(3)).optional)
 
       assert_no_errors matcher.match(6)
 
@@ -43,7 +43,7 @@ describe Matcher::Pipe do
     end
 
     it 'can optionally negate itself' do
-      matcher = Matcher.of(~pipe(divisible_by(3)).optional)
+      matcher = Matcher.of(~chain(divisible_by(3)).optional)
 
       assert_no_errors matcher.match(4)
 
@@ -61,7 +61,7 @@ describe Matcher::Pipe do
     Matcher.build { _ % n == 0 }
   end
 
-  def pipe(matcher)
-    Matcher::Pipe.new { |rhs| matcher * rhs }
+  def chain(matcher)
+    Matcher::Chain.new { |rhs| matcher * rhs }
   end
 end

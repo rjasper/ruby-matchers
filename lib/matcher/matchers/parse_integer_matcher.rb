@@ -56,7 +56,7 @@ module Matcher
 
   module MatcherBuilding
     def parse_integer(matcher = UNDEFINED, base: 0)
-      return Pipe.new { parse_integer(_1, base:) }.optional if
+      return Chain.new { parse_integer(_1, base:) }.optional if
         Matcher.undefined?(matcher)
 
       matcher = matcher_of(matcher)

@@ -1,24 +1,24 @@
 # frozen_string_literal: true
 
 module Matcher
-  class OptionalPipe
+  class OptionalChain
     include NoExpression
     include NoKey
     extend Forwardable
 
-    def initialize(pipe, fallback)
-      @pipe = pipe
+    def initialize(chain, fallback)
+      @chain = chain
       @fallback = fallback
     end
 
-    def_delegator :@pipe, :^
+    def_delegator :@chain, :^
 
     def ~
-      OptionalPipe.new(~@pipe, @fallback)
+      OptionalChain.new(~@chain, @fallback)
     end
 
     def fallback
-      @pipe ^ @fallback
+      @chain ^ @fallback
     end
   end
 end

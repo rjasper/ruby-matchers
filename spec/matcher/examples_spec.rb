@@ -73,7 +73,7 @@ describe 'examples' do
     assert_no_errors matcher.match(graph)
   end
 
-  it 'pipe' do
+  it 'chain' do
     matcher = Matcher.build do
       declare :c
 

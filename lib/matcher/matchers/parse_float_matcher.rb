@@ -50,7 +50,7 @@ module Matcher
 
   module MatcherBuilding
     def parse_float(matcher = UNDEFINED)
-      return Pipe.new { parse_float(_1) }.optional if
+      return Chain.new { parse_float(_1) }.optional if
         Matcher.undefined?(matcher)
 
       matcher = matcher_of(matcher)

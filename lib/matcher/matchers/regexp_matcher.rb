@@ -61,7 +61,7 @@ module Matcher
 
   module MatcherBuilding
     def regexp(pattern, matcher = UNDEFINED)
-      return Pipe.new { regexp(pattern, _1) }.optional if
+      return Chain.new { regexp(pattern, _1) }.optional if
         Matcher.undefined?(matcher)
 
       RegexpMatcher.new(pattern, matcher_of(matcher))

@@ -57,7 +57,7 @@ module Matcher
 
   module MatcherBuilding
     def parse_json(matcher = UNDEFINED, **)
-      return Pipe.new { parse_json(_1, **) }.optional if
+      return Chain.new { parse_json(_1, **) }.optional if
         Matcher.undefined?(matcher)
 
       matcher = matcher_of(matcher)

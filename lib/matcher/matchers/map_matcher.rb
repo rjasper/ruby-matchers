@@ -98,7 +98,7 @@ module Matcher
 
   module MatcherBuilding
     def map(expression, matcher = UNDEFINED)
-      return Pipe.new { map(expression, _1) } if Matcher.undefined?(matcher)
+      return Chain.new { map(expression, _1) } if Matcher.undefined?(matcher)
 
       expression = expression_of(expression)
       matcher = matcher_of(matcher)

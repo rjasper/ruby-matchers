@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Matcher
-  class Pipe
+  class Chain
     include NoMatcher
     include NoExpression
     include NoKey
@@ -12,12 +12,12 @@ module Matcher
     end
 
     def ~
-      Pipe.new(negated: !@negated, &@block)
+      Chain.new(negated: !@negated, &@block)
     end
 
     def ^(operand)
-      if !Recorder.recorder?(operand) && operand.is_a?(Pipe)
-        Pipe.new { @block.call(operand ^ _1) }
+      if !Recorder.recorder?(operand) && operand.is_a?(Chain)
+        Chain.new { @block.call(operand ^ _1) }
       else
         matcher = Matcher.cache(operand)
         result = @block.call(matcher)
@@ -27,7 +27,7 @@ module Matcher
     end
 
     def optional(fallback = AlwaysMatcher.instance)
-      OptionalPipe.new(self, fallback)
+      OptionalChain.new(self, fallback)
     end
   end
 end

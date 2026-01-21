@@ -58,7 +58,7 @@ module Matcher
 
   module MatcherBuilding
     def optional(value = UNDEFINED)
-      return Pipe.new { optional(_1) } if Matcher.undefined?(value)
+      return Chain.new { optional(_1) } if Matcher.undefined?(value)
 
       value = Expression.try_recorder(value)
 

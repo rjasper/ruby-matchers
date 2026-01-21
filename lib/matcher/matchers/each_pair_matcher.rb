@@ -38,13 +38,13 @@ module Matcher
 
   module MatcherBuilding
     def each_pair(matcher = UNDEFINED)
-      return Pipe.new { each_pair(_1) } if Matcher.undefined?(matcher)
+      return Chain.new { each_pair(_1) } if Matcher.undefined?(matcher)
 
       EachPairMatcher.new(matcher_of(matcher))
     end
 
     def each_key(matcher = UNDEFINED)
-      return Pipe.new { each_key(_1) } if Matcher.undefined?(matcher)
+      return Chain.new { each_key(_1) } if Matcher.undefined?(matcher)
 
       matcher = matcher_of(matcher)
 
@@ -54,7 +54,7 @@ module Matcher
     end
 
     def each_value(matcher = UNDEFINED)
-      return Pipe.new { each_value(_1) } if Matcher.undefined?(matcher)
+      return Chain.new { each_value(_1) } if Matcher.undefined?(matcher)
 
       assigns = { actual: Variable.value }
       matcher = matcher_of(matcher)

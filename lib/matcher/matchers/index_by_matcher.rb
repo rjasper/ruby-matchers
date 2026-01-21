@@ -137,7 +137,7 @@ module Matcher
 
   module MatcherBuilding
     def index_by(expression, matcher = UNDEFINED)
-      return Pipe.new { index_by(expression, _1) } if Matcher.undefined?(matcher)
+      return Chain.new { index_by(expression, _1) } if Matcher.undefined?(matcher)
 
       expression = expression_of(expression)
       matcher = matcher_of(matcher)

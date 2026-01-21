@@ -81,7 +81,7 @@ module Matcher
         expression = expression_of(expression_or_matcher)
       end
 
-      return Pipe.new { raises(expression, _1, message:, rescue:) }.optional if
+      return Chain.new { raises(expression, _1, message:, rescue:) }.optional if
         Matcher.undefined?(matcher)
 
       matcher = matcher_of(matcher)

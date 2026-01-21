@@ -49,7 +49,7 @@ module Matcher
 
       assigns ||= kwargs
 
-      return Pipe.new { let(assigns, _1) } if Matcher.undefined?(matcher)
+      return Chain.new { let(assigns, _1) } if Matcher.undefined?(matcher)
 
       matcher = matcher_of(matcher)
 

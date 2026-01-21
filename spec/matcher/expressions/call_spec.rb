@@ -202,9 +202,9 @@ describe Matcher::Call do
     c = Matcher::Variable.new(:c)
 
     ampersand = Matcher::Call.new(b, :'&&', [c])
-    pipe = Matcher::Call.new(a, :'||', [ampersand])
+    chain = Matcher::Call.new(a, :'||', [ampersand])
 
-    assert_equal pipe, call
+    assert_equal chain, call
   end
 
   it '#to_s: root' do
