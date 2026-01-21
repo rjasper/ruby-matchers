@@ -4,19 +4,42 @@ require 'test_helper'
 
 describe Matcher::Chain do
   it 'builds up and reduces chain' do
-    matcher = chain(divisible_by(2)) ^ chain(divisible_by(3)) ^ divisible_by(5)
+    matchers = []
 
-    assert_no_errors matcher.match(30)
+    matchers << (
+      to_chain(divisible_by(2)) ^
+        to_chain(divisible_by(3)) ^
+        divisible_by(5)
+    )
 
-    assert_errors matcher.match(7),
-      'expected _ % 2 == 0 but got 1 == 0, where _ = 7',
-      'expected _ % 3 == 0 but got 1 == 0, where _ = 7',
-      'expected _ % 5 == 0 but got 2 == 0, where _ = 7'
+    matchers << Matcher.build do
+      chain(
+        outside { to_chain(divisible_by(2)) },
+        outside { to_chain(divisible_by(3)) },
+        outside { divisible_by(5) },
+      )
+    end
+
+    matchers << Matcher.build do
+      chain(
+        outside { to_chain(divisible_by(2)) },
+        outside { to_chain(divisible_by(3)) },
+      ) ^ outside { divisible_by(5) }
+    end
+
+    matchers.each do |matcher|
+      assert_no_errors matcher.match(30)
+
+      assert_errors matcher.match(7),
+        'expected _ % 2 == 0 but got 1 == 0, where _ = 7',
+        'expected _ % 3 == 0 but got 1 == 0, where _ = 7',
+        'expected _ % 5 == 0 but got 2 == 0, where _ = 7'
+    end
   end
 
   it 'can negate itself' do
     # divisible by 2 and not (by 3 and 5)
-    matcher = chain(divisible_by(2)) ^ ~chain(divisible_by(3)) ^ divisible_by(5)
+    matcher = to_chain(divisible_by(2)) ^ ~to_chain(divisible_by(3)) ^ divisible_by(5)
 
     assert_no_errors matcher.match(4) # divisible by 2 but not 3 or 5
     assert_no_errors matcher.match(6) # divisible by 2 and 3 but not 5
@@ -33,7 +56,7 @@ describe Matcher::Chain do
 
   describe '#optional' do
     it 'can optionally fall back to value' do
-      matcher = Matcher.of(chain(divisible_by(2)) ^ chain(divisible_by(3)).optional)
+      matcher = Matcher.of(to_chain(divisible_by(2)) ^ to_chain(divisible_by(3)).optional)
 
       assert_no_errors matcher.match(6)
 
@@ -43,7 +66,7 @@ describe Matcher::Chain do
     end
 
     it 'can optionally negate itself' do
-      matcher = Matcher.of(~chain(divisible_by(3)).optional)
+      matcher = Matcher.of(~to_chain(divisible_by(3)).optional)
 
       assert_no_errors matcher.match(4)
 
@@ -61,7 +84,7 @@ describe Matcher::Chain do
     Matcher.build { _ % n == 0 }
   end
 
-  def chain(matcher)
+  def to_chain(matcher)
     Matcher::Chain.new { |rhs| matcher * rhs }
   end
 end

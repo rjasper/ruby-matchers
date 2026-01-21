@@ -30,4 +30,10 @@ module Matcher
       OptionalChain.new(self, fallback)
     end
   end
+
+  module MatcherBuilding
+    def chain(*chain)
+      chain.reduce(:^)
+    end
+  end
 end
