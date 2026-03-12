@@ -42,6 +42,17 @@ describe Matcher::Call do
       assert_equal 2, struct.foo
     end
 
+    it 'returns operand of index assignment' do
+      call = expression do
+        assign { _[:foo] = 2 }
+      end
+
+      struct = Struct.new(:foo).new
+
+      assert_equal 2, call.evaluate(actual: struct)
+      assert_equal 2, struct.foo
+    end
+
     it 'raises CallError' do
       err = assert_raises Matcher::CallError do
         expression { _.foo }.evaluate(actual: nil)

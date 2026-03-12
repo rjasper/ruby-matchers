@@ -126,8 +126,8 @@ module Matcher
 
       Call.reset_last_assign
 
-      status = if call&.binary?
-        arg = call.args[0]
+      status = if call&.assignment?
+        arg = call.args.last
 
         if value.is_a?(Constant)
           arg.is_a?(Constant) && value.value.equal?(arg.value)
