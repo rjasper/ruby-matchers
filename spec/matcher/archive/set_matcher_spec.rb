@@ -59,10 +59,10 @@ describe Matcher::SetMatcher do
 
     assert_no_errors matcher.match(self_array)
     assert_errors negated.match(self_array),
-      'did not expect object to be an equal set to [_ == parent] but got [[...]]'
+      'did not expect object to be an equal set to [actual == parent] but got [[...]]'
 
     assert_errors matcher.match([1]),
-      'expected to include an element matching _ == parent but got [1]',
+      'expected to include an element matching actual == parent but got [1]',
       0 => msg([1]).including(1)
     assert_no_errors negated.match([1])
   end

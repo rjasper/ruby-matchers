@@ -58,13 +58,13 @@ describe Matcher::Call do
         expression { _.foo }.evaluate(actual: nil)
       end
 
-      assert_equal "_.foo raised NoMethodError: undefined method `foo' for nil", err.message
+      assert_equal "actual.foo raised NoMethodError: undefined method `foo' for nil", err.message
 
       err = assert_raises Matcher::CallError do
         expression { (_ - 1) / 0 }.evaluate(actual: 1)
       end
 
-      assert_equal '(_ - 1) / 0 raised ZeroDivisionError: divided by 0', err.message
+      assert_equal '(actual - 1) / 0 raised ZeroDivisionError: divided by 0', err.message
     end
   end
 
@@ -110,7 +110,7 @@ describe Matcher::Call do
 
     assert_equal 123, call.evaluate(actual: 1, c: 2, d: 3)
     assert_equal %i[actual c d], call.variables
-    assert_equal '_ * 100 + c * 10 + d', call.to_s
+    assert_equal 'actual * 100 + c * 10 + d', call.to_s
   end
 
   # rubocop:disable Style/CaseEquality, Layout/SpaceBeforeBrackets
@@ -119,85 +119,85 @@ describe Matcher::Call do
       assert_equal expected, expression(&block).to_s
     end
 
-    examine['_'] { _ }
-    examine['!_'] { !_ }
-    examine['~_'] { ~_ }
-    examine['+_'] { +_ }
-    examine['-_'] { -_ }
+    examine['actual'] { _ }
+    examine['!actual'] { !_ }
+    examine['~actual'] { ~_ }
+    examine['+actual'] { +_ }
+    examine['-actual'] { -_ }
 
-    examine['_ + 2'] { _ + 2 }
-    examine['_ - 2'] { _ - 2 }
-    examine['_ * 2'] { _ * 2 }
-    examine['_ / 2'] { _ / 2 }
-    examine['_ % 2'] { _ % 2 }
-    examine['_ < 2'] { _ < 2 }
-    examine['_ > 2'] { _ > 2 }
-    examine['_ <= 2'] { _ <= 2 }
-    examine['_ >= 2'] { _ >= 2 }
-    examine['_ <=> 2'] { _ <=> 2 }
-    examine['_ == 2'] { _ == 2 }
-    examine['_ === 2'] { _ === 2 }
-    examine['_ != 2'] { _ != 2 }
-    examine['_ =~ 2'] { _ =~ 2 }
-    examine['_ !~ 2'] { _ !~ 2 }
-    examine['_ & 2'] { _ & 2 }
-    examine['_ | 2'] { _ | 2 }
-    examine['_ ^ 2'] { _ ^ 2 }
-    examine['_ << 2'] { _ << 2 }
-    examine['_ >> 2'] { _ >> 2 }
+    examine['actual + 2'] { _ + 2 }
+    examine['actual - 2'] { _ - 2 }
+    examine['actual * 2'] { _ * 2 }
+    examine['actual / 2'] { _ / 2 }
+    examine['actual % 2'] { _ % 2 }
+    examine['actual < 2'] { _ < 2 }
+    examine['actual > 2'] { _ > 2 }
+    examine['actual <= 2'] { _ <= 2 }
+    examine['actual >= 2'] { _ >= 2 }
+    examine['actual <=> 2'] { _ <=> 2 }
+    examine['actual == 2'] { _ == 2 }
+    examine['actual === 2'] { _ === 2 }
+    examine['actual != 2'] { _ != 2 }
+    examine['actual =~ 2'] { _ =~ 2 }
+    examine['actual !~ 2'] { _ !~ 2 }
+    examine['actual & 2'] { _ & 2 }
+    examine['actual | 2'] { _ | 2 }
+    examine['actual ^ 2'] { _ ^ 2 }
+    examine['actual << 2'] { _ << 2 }
+    examine['actual >> 2'] { _ >> 2 }
 
-    examine['_ && 2'] { logical_operators { _ & 2 } }
-    examine['_ || 2'] { logical_operators { _ | 2 } }
+    examine['actual && 2'] { logical_operators { _ & 2 } }
+    examine['actual || 2'] { logical_operators { _ | 2 } }
 
-    examine['_**2'] { _**2 }
+    examine['actual**2'] { _**2 }
 
-    examine['_[1, 2, a: 3]'] { _[1, 2, a: 3] }
-    examine['_[1, 2, a: 3] { |x| x * 4 }'] { _[1, 2, a: 3] { |x| x * 4 } }
-    examine['_[1, 2, a: 3, &:four]'] { _[1, 2, a: 3, &:four] }
+    examine['actual[1, 2, a: 3]'] { _[1, 2, a: 3] }
+    examine['actual[1, 2, a: 3] { |x| x * 4 }'] { _[1, 2, a: 3] { |x| x * 4 } }
+    examine['actual[1, 2, a: 3, &:four]'] { _[1, 2, a: 3, &:four] }
 
-    examine['_[1] = 2'] { _.[]=(1, 2) }
-    examine['_[1, 2] = 3'] { _.[]=(1, 2, 3) }
-    examine['_.foo = "bar"'] { assign { _.foo = 'bar' } }
+    examine['actual[1] = 2'] { _.[]=(1, 2) }
+    examine['actual[1, 2] = 3'] { _.[]=(1, 2, 3) }
+    examine['actual.foo = "bar"'] { assign { _.foo = 'bar' } }
 
-    examine['_.foo'] { _.foo }
-    examine['_.foo(1, a: 2)'] { _.foo(1, a: 2) }
-    examine['_.foo { 2 }'] { _.foo { 2 } }
-    examine['_.foo(&:bar)'] { _.foo(&:bar) }
-    examine['_.foo(&:"42")'] { _.foo(&:'42') }
-    examine['_.foo(1, a: 2) { 3 }'] { _.foo(1, a: 2) { 3 } }
+    examine['actual.foo'] { _.foo }
+    examine['actual.foo(1, a: 2)'] { _.foo(1, a: 2) }
+    examine['actual.foo { 2 }'] { _.foo { 2 } }
+    examine['actual.foo(&:bar)'] { _.foo(&:bar) }
+    examine['actual.foo(&:"42")'] { _.foo(&:'42') }
+    examine['actual.foo(1, a: 2) { 3 }'] { _.foo(1, a: 2) { 3 } }
 
-    examine['_.+@(1)'] { _.+@(1) }
-    examine['_.+@ { "" }'] { _.+@ { '' } }
+    examine['actual.+@(1)'] { _.+@(1) }
+    examine['actual.+@ { "" }'] { _.+@ { '' } }
 
-    examine['_.+'] { _.+ }
-    examine['_.+(1, 2)'] { _.+(1, 2) }
-    examine['_.+ { 1 }'] { _.+ { 1 } }
+    examine['actual.+'] { _.+ }
+    examine['actual.+(1, 2)'] { _.+(1, 2) }
+    examine['actual.+ { 1 }'] { _.+ { 1 } }
 
-    examine['_.**'] { _.** }
-    examine['_.**(1, 2)'] { _.**(1, 2) }
-    examine['_.** { 1 }'] { _.** { 1 } }
+    examine['actual.**'] { _.** }
+    examine['actual.**(1, 2)'] { _.**(1, 2) }
+    examine['actual.** { 1 }'] { _.** { 1 } }
 
-    examine['_.[]='] { _.[]= }
-    examine['_.[]=(1)'] { _.[]=(1) }
-    examine['_.[]=(1, 2, a: 3)'] { _.[]=(1, 2, a: 3) }
-    examine['_.[]=(1, 2) { 3 }'] { _.[]=(1, 2) { 3 } }
-    examine['_.[]= { 1 }'] { _.[]= { 1 } }
+    examine['actual.[]='] { _.[]= }
+    examine['actual.[]=(1)'] { _.[]=(1) }
+    examine['actual.[]=(1, 2, a: 3)'] { _.[]=(1, 2, a: 3) }
+    examine['actual.[]=(1, 2) { 3 }'] { _.[]=(1, 2) { 3 } }
+    examine['actual.[]= { 1 }'] { _.[]= { 1 } }
 
     # precedence and parentheses
-    examine['(_ + 1) * 2'] { (_ + 1) * 2 }
-    examine['_ + 1'] { _ + 1 }
-    examine['_ + _ * 2'] { _ + _ * 2 }
-    examine['_ * (_ + 2)'] { _ * (_ + 2) }
-    examine['_ + _ - 1'] { _ + _ - 1 }
-    examine['-(_ + 1)'] { -(_ + 1) }
-    examine['-_ + 1'] { -_ + 1 }
-    examine['(_ + [1])[0]'] { (_ + [1])[0] }
-    examine['(_ + 1).foo'] { (_ + 1).foo }
-    examine['_[0] + [1]'] { _[0] + [1] }
-    examine['_ - _ - _'] { _ - _ - _ }
-    examine['_ - (_ - _)'] { _ - (_ - _) }
-    examine['(_ == _) == _'] { (_ == _) == _ }
-    examine['_ == (_ == _)'] { _ == (_ == _) }
+    examine['(actual + 1) * 2'] { (_ + 1) * 2 }
+    examine['actual + 1'] { _ + 1 }
+    examine['actual + actual * 2'] { _ + _ * 2 }
+    examine['actual * (actual + 2)'] { _ * (_ + 2) }
+    examine['actual + actual - 1'] { _ + _ - 1 }
+    examine['-(actual + 1)'] { -(_ + 1) }
+    examine['-actual + 1'] { -_ + 1 }
+    examine['(actual + [1])[0]'] { (_ + [1])[0] }
+    examine['(actual + 1).foo'] { (_ + 1).foo }
+    examine['actual[0] + [1]'] { _[0] + [1] }
+    examine['actual - actual - actual'] { _ - _ - _ }
+    examine['actual - (actual - actual)'] { _ - (_ - _) }
+    examine['(actual == actual) == actual'] { (_ == _) == _ }
+    examine['actual == (actual == actual)'] { _ == (_ == _) }
   end
   # rubocop:enable Style/CaseEquality, Layout/SpaceBeforeBrackets
 
@@ -216,12 +216,6 @@ describe Matcher::Call do
     chain = Matcher::Call.new(a, :'||', [ampersand])
 
     assert_equal chain, call
-  end
-
-  it '#to_s: root' do
-    exp = expression { _.bar + 1 }
-
-    assert_equal 'foo.bar + 1', exp.to_s(substitutions: { actual: 'foo' })
   end
 
   it 'records class' do

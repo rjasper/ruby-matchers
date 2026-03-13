@@ -34,7 +34,7 @@ describe Matcher::Reporter do
       root[:nested]: nested wrong
       root[:foo].bar: foobar
       root + root: 2 roots
-      root[:too_long] -> _ + _ + _: 3 long roots
+      root[:too_long] -> actual + actual + actual: 3 long roots
       Math.sqrt(root): square root of root
       expected at least one error to be absent:
       - root: either correct this

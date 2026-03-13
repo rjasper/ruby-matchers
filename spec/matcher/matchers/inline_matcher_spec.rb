@@ -80,7 +80,7 @@ describe Matcher::InlineMatcher do
       inline(_.even?, negatable: true) { errors << 'dummy' }
     end
 
-    assert_equal "inline(_.even?) { inline_matcher_spec.rb:#{lineno} }", matcher.to_s
-    assert_equal "~inline(_.even?) { inline_matcher_spec.rb:#{lineno} }", matcher.~.to_s
+    assert_equal "inline(actual.even?) { inline_matcher_spec.rb:#{lineno} }", matcher.to_s
+    assert_equal "~inline(actual.even?) { inline_matcher_spec.rb:#{lineno} }", matcher.~.to_s
   end
 end

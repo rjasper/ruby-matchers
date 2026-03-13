@@ -117,14 +117,14 @@ describe Matcher::ReferenceMatcher do
     refute negated.match?([0, 1])
     assert_errors negated.match([0, 1]) do
       _or do
-        error 0, 'expected _ != i but got 0 != 0'
-        error 1, 'expected _ != i but got 1 != 1'
+        error 0, 'expected actual != index but got 0 != 0'
+        error 1, 'expected actual != index but got 1 != 1'
       end
     end
 
     refute matcher.match?([0, 0])
     assert_errors matcher.match([0, 0]),
-      1 => 'expected _ == i but got 0 == 1'
+      1 => 'expected actual == index but got 0 == 1'
     assert negated.match?([0, 0])
     assert_no_errors negated.match([0, 0])
   end

@@ -49,12 +49,10 @@ module Matcher
       RangeExpression.new(from, to, @exclude_end)
     end
 
-    def to_s(substitutions: Expression.default_substitutions)
-      from_s = @begin.to_s(substitutions:)
-      to_s = @end.to_s(substitutions:)
+    def to_s
       dots = @exclude_end ? '...' : '..'
 
-      "#{from_s}#{dots}#{to_s}"
+      "#{@begin}#{dots}#{@end}"
     end
   end
 end

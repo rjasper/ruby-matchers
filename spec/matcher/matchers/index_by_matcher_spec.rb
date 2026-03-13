@@ -143,9 +143,9 @@ describe Matcher::IndexByMatcher do
   end
 
   it '#to_s' do
-    assert_equal 'index_by(_[:id], always)',
+    assert_equal 'index_by(actual[:id], always)',
       Matcher.build { index_by(_[:id], always) }.to_s
-    assert_equal '~index_by(_[:id], always)',
+    assert_equal '~index_by(actual[:id], always)',
       Matcher.build { ~index_by(_[:id], always) }.to_s
   end
 end

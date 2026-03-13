@@ -70,7 +70,7 @@ describe Matcher::ProjectMatcher do
   it '#to_s' do
     matcher = Matcher.build { project(_.my_method => 42) }
 
-    assert_equal 'project(_.my_method => 42)', matcher.to_s
-    assert_equal '~project(_.my_method => 42)', matcher.~.to_s
+    assert_equal 'project(actual.my_method => 42)', matcher.to_s
+    assert_equal '~project(actual.my_method => 42)', matcher.~.to_s
   end
 end

@@ -152,7 +152,7 @@ describe Matcher::RaisesMatcher do
   it '#to_s' do
     matcher = Matcher.build { raises(_.foo, StandardError) }
 
-    assert_equal 'raises(_.foo, StandardError)', matcher.to_s
-    assert_equal '~raises(_.foo, StandardError)', matcher.~.to_s
+    assert_equal 'raises(actual.foo, StandardError)', matcher.to_s
+    assert_equal '~raises(actual.foo, StandardError)', matcher.~.to_s
   end
 end

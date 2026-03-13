@@ -43,7 +43,7 @@ describe Matcher::FilterMatcher do
 
     refute matcher.match?([0, 1, 2])
     assert_errors matcher.match([0, 1, 2]),
-      0 => 'did not expect 10 / _ to raise ZeroDivisionError, where _ = 0: divided by 0'
+      0 => 'did not expect 10 / actual to raise ZeroDivisionError, where actual = 0: divided by 0'
     assert negated.match?([0, 1, 2])
     assert_no_errors negated.match([0, 1, 2])
   end
@@ -55,10 +55,10 @@ describe Matcher::FilterMatcher do
 
     assert_no_errors matcher.match([7, 8, 9, 10])
     assert_errors negated.match([7, 8, 9, 10]),
-      filter => 'expected _.sum >= 20 but got 16 >= 20, where _ = [7, 9]'
+      filter => 'expected actual.sum >= 20 but got 16 >= 20, where actual = [7, 9]'
 
     assert_errors matcher.match([7, 8, 9, 11]),
-      filter => 'expected _.sum < 20 but got 27 < 20, where _ = [7, 9, 11]'
+      filter => 'expected actual.sum < 20 but got 27 < 20, where actual = [7, 9, 11]'
     assert_no_errors negated.match([7, 8, 9, 11])
   end
 
@@ -69,7 +69,7 @@ describe Matcher::FilterMatcher do
     end
 
     assert_errors matcher.match([0, 1, 2, 3]),
-      filter_with_index => 'expected _.join == "024" but got "02" == "024", where _ = [0, 2]'
+      filter_with_index => 'expected actual.join == "024" but got "02" == "024", where actual = [0, 2]'
   end
 
   it 'passes original to filter' do
@@ -82,20 +82,20 @@ describe Matcher::FilterMatcher do
     end
 
     assert_errors matcher.match([1, 2, 3]), # sum = 6, average = 2
-      filter => 'expected _.join == "12" but got "1" == "12", where _ = [1]'
+      filter => 'expected actual.join == "12" but got "1" == "12", where actual = [1]'
   end
 
   it 'passes original to matcher' do
     matcher = Matcher.build { filter(_.odd?) ^ each(_ < original.sum / 2.0) }
 
     assert_errors matcher.match([1, 2, 3]), # sum = 6
-      2 => 'expected _ < original.sum / 2.0 but got 3 < 3.0, where original = [1, 2, 3]'
+      2 => 'expected actual < original.sum / 2.0 but got 3 < 3.0, where original = [1, 2, 3]'
   end
 
   it '#to_s' do
-    assert_equal 'filter(_.odd?, _ < 10)',
+    assert_equal 'filter(actual.odd?, actual < 10)',
       Matcher.build { filter(_.odd?, _ < 10) }.to_s
-    assert_equal '~filter(_.odd?, _ < 10)',
+    assert_equal '~filter(actual.odd?, actual < 10)',
       Matcher.build { ~filter(_.odd?, _ < 10) }.to_s
   end
 end

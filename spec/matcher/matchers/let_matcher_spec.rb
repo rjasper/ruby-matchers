@@ -31,10 +31,10 @@ describe Matcher::LetMatcher do
 
     assert_no_errors matcher.match('foo')
     assert_errors negated.match('foo'),
-      'expected _ != myvar but got "foo" != "foo"'
+      'expected actual != myvar but got "foo" != "foo"'
 
     assert_errors matcher.match('bar'),
-      'expected _ == myvar but got "bar" == "foo"'
+      'expected actual == myvar but got "bar" == "foo"'
     assert_no_errors negated.match('bar')
   end
 
@@ -67,10 +67,10 @@ describe Matcher::LetMatcher do
     assert_no_errors matcher.match(actual)
     assert_errors negated.match(actual) do
       _or do
-        error :depth, 'expected _ != depth but got 0 != 0'
+        error :depth, 'expected actual != depth but got 0 != 0'
         error :value, msg(42).equal(42)
-        error %i[child depth], 'expected _ != depth but got 1 != 1'
-        error %i[child value], 'expected _ != parent_value / 2 + 2 but got 23 != 23, where parent_value = 42'
+        error %i[child depth], 'expected actual != depth but got 1 != 1'
+        error %i[child value], 'expected actual != parent_value / 2 + 2 but got 23 != 23, where parent_value = 42'
       end
     end
 
@@ -86,8 +86,8 @@ describe Matcher::LetMatcher do
     assert_errors matcher.match(actual),
       value: 'expected 42 but got 16',
       child: {
-        depth: 'expected _ == depth but got 2 == 1',
-        value: 'expected _ == parent_value / 2 + 2 but got 11 == 10, where parent_value = 16',
+        depth: 'expected actual == depth but got 2 == 1',
+        value: 'expected actual == parent_value / 2 + 2 but got 11 == 10, where parent_value = 16',
       }
     assert_no_errors negated.match(actual)
   end
@@ -119,7 +119,7 @@ describe Matcher::LetMatcher do
     Matcher.build do
       declare :a, :b
 
-      t.assert_equal 'let(a: 0, b: ->(_) { ... }) ^ (_ == a + b)',
+      t.assert_equal 'let(a: 0, b: ->(_) { ... }) ^ (actual == a + b)',
         (let(a: 0, b: ->(_) { 2 * _ }) ^ (_ == a + b)).to_s
       t.assert_equal 'let(a: 0, b: ->(_) { ... }) ^ (a + b).even?',
         (let(a: 0, b: ->(_) { 2 * _ }) ^ (a + b).even?).to_s
@@ -130,7 +130,7 @@ describe Matcher::LetMatcher do
       t.assert_equal "let(a: 0, b: ->(_) { ... }) ^ partial({:foo=>42})",
         (let(a: 0, b: ->(_) { 2 * _ }) ^ partial({ foo: 42 })).to_s
 
-      t.assert_equal 'let(a: 0) ^ neg(_ > a)', neg(let(a: 0) ^ (_ > a)).to_s
+      t.assert_equal 'let(a: 0) ^ neg(actual > a)', neg(let(a: 0) ^ (_ > a)).to_s
 
       nil
     end

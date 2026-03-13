@@ -68,7 +68,7 @@ module Matcher
       ProcExpression.new(@block, substitution: replacements)
     end
 
-    def to_s(substitutions: nil)
+    def to_s
       args_and_kwargs = Utils.inspect_block_params(@block)
 
       if args_and_kwargs.empty?

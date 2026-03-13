@@ -14,7 +14,7 @@ describe Matcher::Hole do
       hole = pattern.expression.value
 
       assert_kind_of Matcher::MethodHole, hole
-      assert_equal 'method_hole(:key, _, :apply)', hole.to_s
+      assert_equal 'method_hole(:key, actual, :apply)', hole.to_s
     end
 
     it 'looks like method_hole(:key, :method, arg, key: value)' do
@@ -25,7 +25,7 @@ describe Matcher::Hole do
       hole = pattern.expression.value
 
       assert_kind_of Matcher::MethodHole, hole
-      assert_equal 'method_hole(:key, _, :apply, foo, bar: bar)', hole.to_s
+      assert_equal 'method_hole(:key, actual, :apply, foo, bar: bar)', hole.to_s
     end
   end
 

@@ -20,7 +20,9 @@ module Matcher
       end
 
       if remaining >= 0 && key.variables.include?(:actual)
-        key.to_s(substitutions: { actual: path })
+        Variable.with_substitutions(actual: path) do
+          key.to_s
+        end
       else
         "#{path} -> #{key}"
       end

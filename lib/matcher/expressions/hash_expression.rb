@@ -42,15 +42,15 @@ module Matcher
       HashExpression.new(substituted_pairs)
     end
 
-    def to_s(substitutions: Expression.default_substitutions)
+    def to_s
       parts = @pairs.map do |k, v|
         key_part = if k.is_a?(Constant) && k.value.is_a?(Symbol)
           "#{k.value}:"
         else
-          "#{k.to_s(substitutions:)} =>"
+          "#{k} =>"
         end
 
-        "#{key_part} #{v.to_s(substitutions:)}"
+        "#{key_part} #{v}"
       end
 
       "{ #{parts.join(', ')} }"

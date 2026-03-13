@@ -29,8 +29,8 @@ describe Matcher do
 
   it '::parenthesize' do
     assert_equal '1', Matcher.parenthesize(Matcher.of(1))
-    assert_equal '(_ > 10)', Matcher.parenthesize(Matcher.build { _ > 10 })
-    assert_equal 'neg(_ > 10)', Matcher.parenthesize(~Matcher.build { _ > 10 })
+    assert_equal '(actual > 10)', Matcher.parenthesize(Matcher.build { _ > 10 })
+    assert_equal 'neg(actual > 10)', Matcher.parenthesize(~Matcher.build { _ > 10 })
     assert_equal '{:foo=>"bar"}', Matcher.parenthesize(Matcher.build { { foo: 'bar' } })
     assert_equal 'any(String, Integer)', Matcher.parenthesize(Matcher.build { any(String, Integer) })
   end

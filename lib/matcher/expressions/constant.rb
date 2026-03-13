@@ -46,7 +46,7 @@ module Matcher
       self
     end
 
-    def to_s(substitutions: nil)
+    def to_s
       @value.inspect
     end
   end

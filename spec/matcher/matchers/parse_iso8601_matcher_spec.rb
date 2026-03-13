@@ -64,9 +64,9 @@ describe Matcher::ParseIso8601Matcher do
   it '#to_s' do
     time = Time.utc(2023)
 
-    assert_equal 'parse_iso8601(_ < 2023-01-01 00:00:00 UTC)',
+    assert_equal 'parse_iso8601(actual < 2023-01-01 00:00:00 UTC)',
       Matcher.build { parse_iso8601(_ < time) }.to_s
-    assert_equal '~parse_iso8601(_ < 2023-01-01 00:00:00 UTC)',
+    assert_equal '~parse_iso8601(actual < 2023-01-01 00:00:00 UTC)',
       Matcher.build { ~parse_iso8601(_ < time) }.to_s
 
     assert_equal 'iso8601_format',

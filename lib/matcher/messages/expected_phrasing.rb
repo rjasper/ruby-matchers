@@ -327,15 +327,13 @@ module Matcher
     def where_text(values, *expressions)
       return '' if values.empty?
 
-      substitutions = Expression.default_substitutions
-
       except = expressions.filter_map { _1.symbol if _1.is_a?(Variable) }
       symbols = expressions.flat_map(&:variables).uniq - except
 
       return '' if symbols.empty?
 
       list = symbols
-        .map { "#{substitutions[_1] || _1} = #{values.fetch(_1).inspect}" }
+        .map { "#{_1} = #{values.fetch(_1).inspect}" }
         .join(', ')
 
       ", where #{list}"

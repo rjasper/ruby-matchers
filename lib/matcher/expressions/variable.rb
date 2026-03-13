@@ -28,6 +28,22 @@ module Matcher
       end
     end
 
+    def self.substitutions
+      Thread.current[:matcher_variable_substitution_stack]
+    end
+
+    def self.with_substitutions(**substitutions)
+      stack = (Thread.current[:matcher_variable_substitution_stack] ||= HashStack.new)
+      stack.push(substitutions)
+
+      begin
+        yield
+      ensure
+        stack.pop(substitutions)
+        Thread.current[:matcher_variable_substitution_stack] = nil if stack.empty?
+      end
+    end
+
     attr_reader :symbol
 
     def initialize(symbol)
@@ -62,8 +78,8 @@ module Matcher
       symbol ? Variable.new(symbol) : self
     end
 
-    def to_s(substitutions: Expression.default_substitutions)
-      substitutions&.[](@symbol) || @symbol.to_s
+    def to_s
+      Variable.substitutions&.[](@symbol) || @symbol.to_s
     end
   end
 end

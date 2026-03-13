@@ -38,10 +38,8 @@ module Matcher
       ArrayExpression.new(substituted_items)
     end
 
-    def to_s(substitutions: Expression.default_substitutions)
-      strings = @items.map { _1.to_s(substitutions:) }
-
-      "[#{strings.join(', ')}]"
+    def to_s
+      "[#{@items.map(&:to_s).join(', ')}]"
     end
   end
 end

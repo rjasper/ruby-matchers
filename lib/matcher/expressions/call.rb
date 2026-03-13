@@ -181,8 +181,8 @@ module Matcher
       Call.new(receiver, @method, args, kwargs, block)
     end
 
-    def to_s(substitutions: Expression.default_substitutions)
-      receiver = parenthesize(@receiver, false, substitutions)
+    def to_s
+      receiver = parenthesize(@receiver, false)
 
       case @method
       when :!, :~, :+@, :-@
@@ -190,7 +190,7 @@ module Matcher
         return "#{@method[0]}#{receiver}" if unary?
       when :+, :-, :*, :/, :%, :**,:<, :>, :<=, :>=, :<=>, :==, :===, :!=, :=~, :!~, :&, :|, :^, :<<, :>>, :'&&', :'||'
         if binary?
-          operand = parenthesize(@args[0], true, substitutions)
+          operand = parenthesize(@args[0], true)
 
           # foo**2
           return "#{receiver}**#{operand}" if @method == :**
@@ -200,12 +200,12 @@ module Matcher
         end
       when :[]
         # foo[a, b, ...]
-        return "#{receiver}[#{args_and_kwargs_string(substitutions)}]#{block_string}"
+        return "#{receiver}[#{args_and_kwargs_string}]#{block_string}"
       when :[]=
         # foo[a, b, ...] = 1
         if @args.length >= 2 && @kwargs.empty? && !@block
-          first_args = @args[0..-2].map { _1.to_s(substitutions:) }.join(', ')
-          last_arg = @args[-1].to_s(substitutions:)
+          first_args = @args[0..-2].map(&:to_s).join(', ')
+          last_arg = @args[-1].to_s
 
           return "#{receiver}[#{first_args}] = #{last_arg}"
         end
@@ -214,12 +214,12 @@ module Matcher
       if @method.end_with?('=') && @method != :[]= && binary?
         # foo.bar = 42
 
-        "#{receiver}.#{@method[0..-2]} = #{@args[0].to_s(substitutions:)}"
+        "#{receiver}.#{@method[0..-2]} = #{@args[0]}"
       else
         # foo.bar OR foo.bar(arg1, arg2, ...)
 
         is_kernel = @receiver.is_a?(Constant) && @receiver.value == Kernel
-        args_and_kwargs = args_and_kwargs_string(substitutions)
+        args_and_kwargs = args_and_kwargs_string
         string = is_kernel ? @method.to_s : "#{receiver}.#{@method}"
         string += "(#{args_and_kwargs})" unless args_and_kwargs.empty?
         string += block_string
@@ -288,10 +288,10 @@ module Matcher
       [kwargs, kwargs_t]
     end
 
-    def args_and_kwargs_string(substitutions)
-      args = @args.map { _1.to_s(substitutions:)}
+    def args_and_kwargs_string
+      args = @args.map(&:to_s)
       kwargs = @kwargs.map do |k, v|
-        v_to_s = v.to_s(substitutions:)
+        v_to_s = v.to_s
 
         if k.is_a?(Symbol)
           "#{k}: #{v_to_s}"
@@ -316,8 +316,8 @@ module Matcher
       end
     end
 
-    def parenthesize(operand, is_rhs, substitutions)
-      operand_string = operand.to_s(substitutions:)
+    def parenthesize(operand, is_rhs)
+      operand_string = operand.to_s
 
       return "(#{operand_string})" if operand.is_a?(RescueLastErrorExpression)
       return operand_string unless operand.instance_of?(Call)

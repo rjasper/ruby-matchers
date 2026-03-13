@@ -36,7 +36,7 @@ describe Matcher::ExpressionLabeler do
     refute_equal string_l, labeler.label(expression { concat(vars[:foo], 'baz') })
   end
 
-  it 'can substitute label for _' do
+  it 'can substitute label for actual' do
     a = labeler.label(expression { _.foo })
     b = labeler.label(expression { _.bar }, a)
     c = labeler.label(expression { _.foo.bar })

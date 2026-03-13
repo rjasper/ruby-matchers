@@ -61,11 +61,11 @@ describe Matcher::Variable do
     it 'substitutes its symbol' do
       var = Matcher::Variable.new(:hello)
 
-      assert_equal 'hi', var.to_s(substitutions: { hello: 'hi' })
-    end
+      actual = Matcher::Variable.with_substitutions(hello: 'hi') do
+        var.to_s
+      end
 
-    it 'applies default substitutions' do
-      assert_equal '_', Matcher::Variable.new(:actual).to_s
+      assert_equal 'hi', actual
     end
   end
 end

@@ -23,13 +23,13 @@ describe Matcher::OneMatcher do
     assert_no_errors matcher.match(6)
     refute negated.match?(6)
     assert_errors negated.match(6),
-      'expected _ % 3 != 0 but got 0 != 0, where _ = 6'
+      'expected actual % 3 != 0 but got 0 != 0, where actual = 6'
 
     refute matcher.match?(2)
     assert_errors matcher.match(2) do
       _or do
         error msg(2).not.predicate(:odd?)
-        error 'expected _ % 3 == 0 but got 2 == 0, where _ = 2'
+        error 'expected actual % 3 == 0 but got 2 == 0, where actual = 2'
       end
     end
 

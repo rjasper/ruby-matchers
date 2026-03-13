@@ -48,14 +48,14 @@ describe Matcher::EachPairMatcher do
     refute negated.match?({ '1' => 1, 'a' => :a })
     assert_errors negated.match({ '1' => 1, 'a' => :a }) do
       _or do
-        error '1', 'expected k != v.to_s but got "1" != "1", where v = 1'
-        error 'a', 'expected k != v.to_s but got "a" != "a", where v = :a'
+        error '1', 'expected key != value.to_s but got "1" != "1", where value = 1'
+        error 'a', 'expected key != value.to_s but got "a" != "a", where value = :a'
       end
     end
 
     refute matcher.match?({ '1' => 1, 'a' => :a, 0 => '0' })
     assert_errors matcher.match({ '1' => 1, 'a' => :a, 0 => '0' }),
-      0 => 'expected k == v.to_s but got 0 == "0", where v = "0"'
+      0 => 'expected key == value.to_s but got 0 == "0", where value = "0"'
     assert negated.match?({ '1' => 1, 'a' => :a, 0 => '0' })
     assert_no_errors negated.match({ '1' => 1, 'a' => :a, 0 => '0' })
   end

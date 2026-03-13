@@ -56,9 +56,9 @@ describe Matcher::ParseFloatMatcher do
   end
 
   it '#to_s' do
-    assert_equal 'parse_float(_.positive?)',
+    assert_equal 'parse_float(actual.positive?)',
       Matcher.build { parse_float(_.positive?) }.to_s
-    assert_equal '~parse_float(_.positive?)',
+    assert_equal '~parse_float(actual.positive?)',
       Matcher.build { ~parse_float(_.positive?) }.to_s
 
     assert_equal 'float_format',

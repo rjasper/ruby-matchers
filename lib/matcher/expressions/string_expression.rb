@@ -38,12 +38,12 @@ module Matcher
       StringExpression.new(substituted_parts)
     end
 
-    def to_s(substitutions: Expression.default_substitutions)
+    def to_s
       parts = @parts.map do |part|
         if part.is_a?(Constant) && part.value.is_a?(String)
           part.value
         else
-          "\#{#{part.to_s(substitutions:)}}"
+          "\#{#{part}}"
         end
       end
 

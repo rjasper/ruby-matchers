@@ -31,9 +31,9 @@ describe Matcher::Chain do
       assert_no_errors matcher.match(30)
 
       assert_errors matcher.match(7),
-        'expected _ % 2 == 0 but got 1 == 0, where _ = 7',
-        'expected _ % 3 == 0 but got 1 == 0, where _ = 7',
-        'expected _ % 5 == 0 but got 2 == 0, where _ = 7'
+        'expected actual % 2 == 0 but got 1 == 0, where actual = 7',
+        'expected actual % 3 == 0 but got 1 == 0, where actual = 7',
+        'expected actual % 5 == 0 but got 2 == 0, where actual = 7'
     end
   end
 
@@ -46,10 +46,10 @@ describe Matcher::Chain do
     assert_no_errors matcher.match(10) # divisible by 2 and 5 but not 3
 
     assert_errors matcher.match(15) do
-      error 'expected _ % 2 == 0 but got 1 == 0, where _ = 15'
+      error 'expected actual % 2 == 0 but got 1 == 0, where actual = 15'
       _or do
-        error 'expected _ % 3 != 0 but got 0 != 0, where _ = 15'
-        error 'expected _ % 5 != 0 but got 0 != 0, where _ = 15'
+        error 'expected actual % 3 != 0 but got 0 != 0, where actual = 15'
+        error 'expected actual % 5 != 0 but got 0 != 0, where actual = 15'
       end
     end
   end
@@ -61,8 +61,8 @@ describe Matcher::Chain do
       assert_no_errors matcher.match(6)
 
       assert_errors matcher.match(7),
-        'expected _ % 2 == 0 but got 1 == 0, where _ = 7',
-        'expected _ % 3 == 0 but got 1 == 0, where _ = 7'
+        'expected actual % 2 == 0 but got 1 == 0, where actual = 7',
+        'expected actual % 3 == 0 but got 1 == 0, where actual = 7'
     end
 
     it 'can optionally negate itself' do
@@ -73,7 +73,7 @@ describe Matcher::Chain do
       # "did not expect to exist" is a strange error message, but is actually
       # what we expect in this case. I just didn't come up with a better example.
       assert_or_errors matcher.match(6),
-        'expected _ % 3 != 0 but got 0 != 0, where _ = 6',
+        'expected actual % 3 != 0 but got 0 != 0, where actual = 6',
         msg(6).exist
     end
   end

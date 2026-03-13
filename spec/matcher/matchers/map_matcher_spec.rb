@@ -59,10 +59,10 @@ describe Matcher::MapMatcher do
 
     assert_no_errors matcher.match([[1], [2, 3], [4]])
     assert_errors negated.match([[1], [2, 3], [4]]),
-      key => 'expected _.sum != 4 but got 4 != 4, where _ = [1, 2, 1]'
+      key => 'expected actual.sum != 4 but got 4 != 4, where actual = [1, 2, 1]'
 
     assert_errors matcher.match([[1], [2, 3]]),
-      key => 'expected _.sum == 4 but got 3 == 4, where _ = [1, 2]'
+      key => 'expected actual.sum == 4 but got 3 == 4, where actual = [1, 2]'
     assert_no_errors negated.match([[1], [2, 3]])
   end
 
@@ -107,13 +107,13 @@ describe Matcher::MapMatcher do
 
     assert_no_errors matcher.match(array)
     assert_errors matcher.match([{ a: 1 }]),
-      0 => { a: 'expected _ == original but got 1 == [{:a=>1}]' }
+      0 => { a: 'expected actual == original but got 1 == [{:a=>1}]' }
   end
 
   it '#to_s' do
     matcher = Matcher.build { map(_.length, _.sum == 4) }
 
-    assert_equal 'map(_.length, _.sum == 4)', matcher.to_s
-    assert_equal '~map(_.length, _.sum == 4)', matcher.~.to_s
+    assert_equal 'map(actual.length, actual.sum == 4)', matcher.to_s
+    assert_equal '~map(actual.length, actual.sum == 4)', matcher.~.to_s
   end
 end

@@ -75,7 +75,7 @@ describe Matcher::ArrayMatcher do
     assert_no_errors matcher.match([0, 10, 20])
 
     assert_errors matcher.match([0, 11, 20]),
-      1 => 'expected _ == i * 10 but got 11 == 10, where i = 1'
+      1 => 'expected actual == index * 10 but got 11 == 10, where index = 1'
   end
 
   it 'passes parent' do
@@ -88,7 +88,7 @@ describe Matcher::ArrayMatcher do
     assert_no_errors matcher.match([1, 3, 5])
 
     assert_errors matcher.match([1, 5, 3]),
-      2 => 'expected parent[i - 1] < parent[i] but got 5 < 3, where parent = [1, 5, 3], i = 2'
+      2 => 'expected parent[index - 1] < parent[index] but got 5 < 3, where parent = [1, 5, 3], index = 2'
   end
 
   it '#to_s' do

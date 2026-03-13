@@ -43,7 +43,7 @@ describe Matcher::RuleSet do
       end
     end
 
-    assert_equal 'got true for _ < 10', message_for(5) { !((_ <=> 10) >= 0) }
+    assert_equal 'got true for actual < 10', message_for(5) { !((_ <=> 10) >= 0) }
   end
 
   it 'negates message after transform' do

@@ -30,7 +30,7 @@ describe Matcher::Phrasing do
     path = expression { _.foo }
     my_phrasing = klass.new(path, message)
 
-    assert_equal '_.foo: expected not 42', my_phrasing.apply
+    assert_equal 'actual.foo: expected not 42', my_phrasing.apply
   end
 
   it 'phrases other message' do

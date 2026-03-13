@@ -56,11 +56,11 @@ describe Matcher::ParseIntegerMatcher do
   end
 
   it '#to_s' do
-    assert_equal 'parse_integer(_.even?)',
+    assert_equal 'parse_integer(actual.even?)',
       Matcher.build { parse_integer(_.even?) }.to_s
-    assert_equal '~parse_integer(_.even?)',
+    assert_equal '~parse_integer(actual.even?)',
       Matcher.build { ~parse_integer(_.even?) }.to_s
-    assert_equal 'parse_integer(_.even?, base: 2)',
+    assert_equal 'parse_integer(actual.even?, base: 2)',
       Matcher.build { parse_integer(_.even?, base: 2) }.to_s
 
     assert_equal 'integer_format',
