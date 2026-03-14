@@ -1,0 +1,5 @@
+module Matcher
+  class EachPairMatcher
+    def negate: -> NegatedEachPairMatcher
+  end
+end

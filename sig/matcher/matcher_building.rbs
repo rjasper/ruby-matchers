@@ -1,0 +1,5 @@
+module Matcher
+  module MatcherBuilding
+    def each_pair: (matcher?: untyped) -> EachPairMatcher
+  end
+end
