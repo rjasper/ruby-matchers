@@ -31,5 +31,9 @@ module Matcher
     def inspect
       to_s
     end
+
+    def report
+      Reporter.report(self)
+    end
   end
 end

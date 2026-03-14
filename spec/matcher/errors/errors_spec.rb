@@ -231,4 +231,8 @@ describe Matcher::Error do
     assert_equal _or(nested(:foo, a), b, nested(:bar, c), d),
       _or(nested(:foo, a), b) | _or(nested(:bar, c), d)
   end
+
+  it '#report' do
+    assert_kind_of String, element('something went wrong').report
+  end
 end
