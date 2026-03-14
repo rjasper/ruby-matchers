@@ -25,6 +25,7 @@ module Matcher
     def negate
       NegatedMatcher.new(self)
     end
+    protected :negate
 
     def +(matcher)
       matcher = Matcher.cache(matcher)
@@ -116,6 +117,7 @@ module Matcher
     def validate(state)
       raise NotImplementedError
     end
+    protected :validate
 
     def inspect
       to_s
