@@ -32,7 +32,6 @@ module Matcher
 
       unless visited.add?(actual.object_id)
         state.errors << state.report.namespace(:reference).cyclic if @negated == @cyclic
-
         return
       end
 
