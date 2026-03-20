@@ -106,7 +106,7 @@ describe Matcher::LetMatcher do
       each_pair ^ let(actual: ->(key:, value:) { key + value }) ^ of(_.even?)
     end
 
-    assert_no_errors matcher.match({2 => 4, 1 => 3})
+    assert_no_errors matcher.match({ 2 => 4, 1 => 3 })
 
     assert_errors matcher.match({ 1 => 2, 4 => 3 }),
       1 => msg(3).not.predicate(:even?),
@@ -127,7 +127,7 @@ describe Matcher::LetMatcher do
         (let(a: 0, b: ->(_) { 2 * _ }) ^ [a, b]).to_s
       t.assert_equal "let(a: 0, b: ->(_) { ... }) ^ -> { let_matcher_spec.rb:#{__LINE__ + 1} }",
         (let(a: 0, b: ->(_) { 2 * _ }) ^ -> { false }).to_s
-      t.assert_equal "let(a: 0, b: ->(_) { ... }) ^ partial({:foo=>42})",
+      t.assert_equal "let(a: 0, b: ->(_) { ... }) ^ partial(#{{ foo: 42 }})",
         (let(a: 0, b: ->(_) { 2 * _ }) ^ partial({ foo: 42 })).to_s
 
       t.assert_equal 'let(a: 0) ^ neg(actual > a)', neg(let(a: 0) ^ (_ > a)).to_s

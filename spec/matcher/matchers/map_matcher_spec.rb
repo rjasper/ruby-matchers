@@ -107,7 +107,7 @@ describe Matcher::MapMatcher do
 
     assert_no_errors matcher.match(array)
     assert_errors matcher.match([{ a: 1 }]),
-      0 => { a: 'expected actual == original but got 1 == [{:a=>1}]' }
+      0 => { a: "expected actual == original but got 1 == #{[{ a: 1 }]}" }
   end
 
   it '#to_s' do

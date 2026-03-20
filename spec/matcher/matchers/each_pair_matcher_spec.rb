@@ -85,7 +85,7 @@ describe Matcher::EachPairMatcher do
   it '#to_s' do
     matcher = Matcher.build { each_pair({ 'a' => 1 }) }
 
-    assert_equal 'each_pair({"a"=>1})', matcher.to_s
-    assert_equal '~each_pair({"a"=>1})', matcher.~.to_s
+    assert_equal "each_pair(#{{ "a" => 1 }})", matcher.to_s
+    assert_equal "~each_pair(#{{ "a" => 1 }})", matcher.~.to_s
   end
 end

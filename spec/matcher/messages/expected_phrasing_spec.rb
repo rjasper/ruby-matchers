@@ -86,7 +86,7 @@ describe Matcher::ExpectedPhrasing do
     it 'having_key' do
       assert_phrase 'expected to include key :foo but got {}',
         msg({}).not.having_key(:foo)
-      assert_phrase 'did not expect to include key :foo but got {:foo=>true}',
+      assert_phrase "did not expect to include key :foo but got #{{ foo: true }}",
         msg({ foo: true }).having_key(:foo)
     end
 
@@ -237,7 +237,7 @@ describe Matcher::ExpectedPhrasing do
     it 'having_key' do
       assert_phrase 'expected actual.to_h to include key :foo but got {}, where actual = []',
         msg([]).namespace(:expression).not.having_key(expression { _.to_h }, {}, :foo, { actual: [] })
-      assert_phrase 'did not expect actual.to_h to include key :foo but got {:foo=>true}, where actual = [[:foo, true]]',
+      assert_phrase "did not expect actual.to_h to include key :foo but got #{{ foo: true }}, where actual = [[:foo, true]]",
         msg([[:foo, true]]).namespace(:expression).having_key(expression { _.to_h }, { foo: true }, :foo, { actual: [[:foo, true]] })
     end
 

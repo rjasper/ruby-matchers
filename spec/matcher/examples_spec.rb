@@ -33,9 +33,9 @@ describe 'examples' do
 
     assert_errors matcher.match(tree) do
       _or(:right) do
-        error 'expected nil but got {:key=>7, :left=>{:key=>5, :left=>nil, :right=>nil}, :right=>{:key=>10, :left=>nil, :right=>nil}}'
+        error "expected nil but got #{{ key: 7, left: { :key => 5, :left => nil, :right => nil }, right: { key: 10, left: nil, right: nil } }}"
         _or(:left) do
-          error 'expected nil but got {:key=>5, :left=>nil, :right=>nil}'
+          error "expected nil but got #{{ key: 5, left: nil, right: nil }}"
           error :key, 'expected actual > low && actual < high to be truthy but got false, where actual = 5, low = 5, high = 7'
         end
       end

@@ -207,7 +207,7 @@ describe Matcher::ExpressionMatcher do
     assert_errors match([]) { _.to_h.key?(:foo) },
       'expected actual.to_h to include key :foo but got {}, where actual = []'
     assert_errors not_match([[:foo, true]]) { _.to_h.key?(:foo) },
-      'did not expect actual.to_h to include key :foo but got {:foo=>true}, where actual = [[:foo, true]]'
+      "did not expect actual.to_h to include key :foo but got #{{ foo: true }}, where actual = [[:foo, true]]"
   end
 
   it 'matches including' do

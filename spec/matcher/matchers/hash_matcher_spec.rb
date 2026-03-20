@@ -274,13 +274,13 @@ describe Matcher::HashMatcher do
     refute negated.match?({ foo: 42 }, meta:)
     assert_errors negated.match({ foo: 42 }, meta:),
       expression { _[vars[:meta][:key]] } =>
-          'expected actual != meta[:value] but got 42 != 42, where meta = {:key=>:foo, :value=>42}'
+        "expected actual != meta[:value] but got 42 != 42, where meta = #{{ key: :foo, value: 42 }}"
 
     refute matcher.match?({ foo: 43, bar: 23 }, meta:)
     assert_errors matcher.match({ foo: 43, bar: 23 }, meta:),
       bar: msg({ foo: 43, bar: 23 }).having_key(:bar),
       expression { _[vars[:meta][:key]] } =>
-        'expected actual == meta[:value] but got 43 == 42, where meta = {:key=>:foo, :value=>42}'
+        "expected actual == meta[:value] but got 43 == 42, where meta = #{{ key: :foo, value: 42 }}"
 
     assert negated.match?({ foo: 43, bar: 23 }, meta:)
     assert_no_errors negated.match({ foo: 43, bar: 23 }, meta:)
@@ -305,20 +305,20 @@ describe Matcher::HashMatcher do
 
     assert_no_errors matcher.match(self_hash)
     assert_errors matcher.match({ self: {} }),
-      self: 'expected actual == parent but got {} == {:self=>{}}'
+      self: "expected actual == parent but got {} == #{{ self: {} }}"
   end
 
   it '#to_s: all entries' do
     matcher = Matcher.build { { a: { b: 'c' } } }
 
-    assert_equal '{:a=>{:b=>"c"}}', matcher.to_s
-    assert_equal 'neg({:a=>{:b=>"c"}})', matcher.~.to_s
+    assert_equal({ a: { b: "c"}}.to_s, matcher.to_s)
+    assert_equal "neg(#{{ a: { b: "c"}}})", matcher.~.to_s
   end
 
   it '#to_s: partial entries' do
     matcher = Matcher.build { partial({ a: { b: 'c' } }) }
 
-    assert_equal 'partial({:a=>{:b=>"c"}})', matcher.to_s
-    assert_equal '~partial({:a=>{:b=>"c"}})', matcher.~.to_s
+    assert_equal "partial(#{{ a: { b: "c"}}})", matcher.to_s
+    assert_equal "~partial(#{{ a: { b: "c"}}})", matcher.~.to_s
   end
 end
