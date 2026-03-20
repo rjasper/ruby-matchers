@@ -105,7 +105,7 @@ describe Matcher::ReferenceMatcher do
 
   it 'matches without cache' do
     matcher = Matcher.build do
-      refs[:index, cache: false] = _ == index
+      refs[:index, { cache: false }] = _ == index
 
       [refs[:index], refs[:index]]
     end
