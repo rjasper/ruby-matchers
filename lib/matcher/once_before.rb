@@ -3,6 +3,7 @@
 module Matcher
   module OnceBefore
     def once_before(method, &)
+      mod = self
       original_method = "_before_once_#{method}"
       alias_method(original_method, method)
 
@@ -10,8 +11,8 @@ module Matcher
         instance_exec(&)
         send(original_method, *args, **kwargs, &block)
       ensure
-        self.class.alias_method(method, original_method)
-        self.class.undef_method(original_method)
+        mod.alias_method(method, original_method)
+        mod.undef_method(original_method)
       end
     end
   end
