@@ -2,6 +2,8 @@
 
 module Matcher
   class Block
+    extend Compatibility
+
     class Context
       attr_reader :expression, :values
 
@@ -57,7 +59,7 @@ module Matcher
           expression.receiver == Recorder.to_expression(args[0])
 
       ExpressionWalker.each_variable(expression) do |variable|
-        raise "parameter `#{variable.symbol}' shadows an outer variable" if
+        raise "parameter #{quote_method(variable.symbol)} shadows an outer variable" if
           parameter_names.include?(variable.symbol) &&
             !variable_object_ids.include?(variable.object_id)
       end

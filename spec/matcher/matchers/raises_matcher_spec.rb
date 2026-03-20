@@ -3,6 +3,8 @@
 require 'test_helper'
 
 describe Matcher::RaisesMatcher do
+  include Matcher::Compatibility
+
   it 'is built by raises' do
     kind = Matcher::RaisesMatcher
 
@@ -50,7 +52,7 @@ describe Matcher::RaisesMatcher do
 
     refute matcher.match?(nil)
     assert_errors matcher.match(nil),
-      rescue_last_exception => "expected a kind of KeyError but got #<NoMethodError: undefined method `fetch' for nil>"
+      rescue_last_exception => "expected a kind of KeyError but got #<NoMethodError: undefined method #{quote_method(:fetch)} for nil>"
     assert negated.match?(nil)
     assert_no_errors negated.match(nil)
   end
