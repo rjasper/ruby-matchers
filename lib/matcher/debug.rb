@@ -2,26 +2,41 @@
 
 module Matcher
   module Debug
-    def self.enable
-      init(force: true)
-    end
+    class << self
+      extend OnceBefore
 
-    DEBUGGERS = %w[/bin/irb: ruby-debug-ide].freeze
+      DEBUGGERS = %w[/bin/irb: ruby-debug-ide].freeze
 
-    def self.init(force: false)
-      return if @initialized
+      def enable
+        init(force: true)
+      end
 
-      main_caller = caller[-1]
+      def init(force: false)
+        return if @initialized
 
-      return if !force && DEBUGGERS.none? { main_caller.include?(_1) }
+        main_caller = caller[-1]
 
-      Recorder.prepend(ExpressionRecorderDebug)
-      @initialized = true
-    end
+        return if !force && DEBUGGERS.none? { main_caller.include?(_1) }
 
-    def self.debugging?(last_caller)
-      %w[puts p].any? { last_caller.end_with?(":in `#{_1}'") } ||
-        last_caller.include?('ruby-debug-ide')
+        Recorder.prepend(ExpressionRecorderDebug)
+        @initialized = true
+      end
+
+      def debugging?(trace)
+        last_trace_item = trace[0]
+
+        %w[puts p].any? { call_from?(last_trace_item, _1) } ||
+          last_trace_item.include?('ruby-debug-ide') ||
+          trace.any? { call_from?(_1, 'output_value') }
+      end
+
+      def call_from?(trace_item, method)
+        trace_item.end_with?("#{@method_quote_delimiter}#{method}'")
+      end
+
+      once_before :call_from? do
+        @method_quote_delimiter = caller[0].include?('`') ? '`' : '#'
+      end
     end
   end
 
@@ -29,7 +44,7 @@ module Matcher
     private
 
     def method_missing(method, *args, **kwargs, &block)
-      if Debug.debugging?(caller[0])
+      if Debug.debugging?(caller)
         return @expression.to_s if %i[to_s inspect].include?(method)
 
         return Object.instance_method(method)
@@ -40,7 +55,7 @@ module Matcher
     end
 
     def respond_to_missing?(method, _include_private = false)
-      return Object.instance_methods.include?(method) if Debug.debugging?(caller[0])
+      return Object.instance_methods.include?(method) if Debug.debugging?(caller)
 
       super
     end
