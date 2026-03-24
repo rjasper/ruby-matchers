@@ -110,7 +110,7 @@ module Matcher
       from = expression_of(from)
       to = expression_of(to)
 
-      RangeExpression.new(from, to, exclude_end)
+      RangeExpression.new(from, to, exclude_end).to_recorder
     end
 
     def rescue_exception(expression)
