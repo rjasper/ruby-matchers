@@ -71,11 +71,6 @@ module Matcher
       @expression = expression
     end
 
-    # NOTE: That might be a really nasty thing to do. Let's see how it goes.
-    define_method(:object_id) do
-      method_missing(:object_id)
-    end
-
     def method_missing(method, *args, **kwargs, &block)
       # *.hash.to_int indicates that a Hash evaluates this recorder as a key.
       if @hash_parent # @hash_parent is set if @expression is a *.hash call.
