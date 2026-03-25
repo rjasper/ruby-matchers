@@ -9,7 +9,6 @@ module Matcher
     end
 
     def_delegators :@stacks, :empty?, :key?, :keys
-    def_delegators :to_h, :merge
 
     def [](key)
       @stacks[key]&.last
