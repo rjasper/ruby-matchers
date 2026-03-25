@@ -1,11 +1,16 @@
 # Matcher
 
-TODO: Delete this and the text below, and describe your gem
+A Ruby gem for validating nested data structures.
 
-Welcome to your new gem! In this directory, you'll find the files you need to be
-able to package up your Ruby library into a gem. Put your Ruby code in the file
-`lib/matcher`. To experiment with that code, run `bin/console` for an
-interactive prompt.
+Whether you're checking API responses, configuration files, AI output, or
+asserting complex structures in tests — writing validation for nested data by
+hand gets tedious fast, and the errors are usually vague. Instead of an opaque
+`assert_equal` diff on a large hash, this gem tells you exactly where things
+went wrong: `root[:users][1][:age]: expected a value >= 18 but got 12`.
+
+You describe the expected structure using a DSL that mirrors the shape of the
+data. Ruby literals like classes, ranges, and regexps become matchers
+automatically.
 
 ## Installation
 
@@ -35,49 +40,136 @@ executing:
     - [Recursive Matchers](doc/guide-11-refs.md)
     - [Custom Matchers](doc/guide-12-custom-matchers.md)
 
-## Example
+## Examples
 
 ```ruby
 matcher = Matcher.build do
   {
     name: String,
-    checksum: /\A[0-9a-f]{32}\z/,
-    count: 1..10,
-    size: [32, _.even?],
-    value: _ < 100,
-    not_zero: of(Integer) & ~equal(0),
+    age: 0..150,
+    email: /@/,
+    tags: each(String),
   }
 end
 
-matcher.match?({
-  name: 'test',
-  checksum: '912ec803b2ce49e4a541068d495ab570',
-  count: 2,
-  size: [32, 16],
-  value: 42,
-  not_zero: 1
-})
+matcher.match?({ name: "Alice", age: 30, email: "alice@example.com", tags: ["admin"] })
 # => true
 
-errors = matcher.match({
-  name: nil,
-  checksum: 'kS7IA7LOSeSlQQaNSVq1cA==',
-  count: 0,
-  size: [30, 15],
-  value: 1337,
-  not_zero: 0,
-})
-
+errors = matcher.match({ name: nil, age: -1, email: "invalid", tags: [42] })
 puts errors.report
-
 # > root[:name]: expected a kind of String but got nil
-# > root[:checksum]: expected value to match /\A[0-9a-f]{32}\z/ but got "kS7IA7LOSeSlQQaNSVq1cA=="
-# > root[:count]: expected value to be between 1 and 10 but got 0
-# > root[:size][0]: expected 32 but got 30
-# > root[:size][1]: expected value to be even but got 15
-# > root[:value]: expected a value < 100 but got 1337
-# > root[:not_zero]: did not expect 0
+# > root[:age]: expected value to be between 0 and 150 but got -1
+# > root[:email]: expected value to match /@/ but got "invalid"
+# > root[:tags][0]: expected a kind of String but got 42
 ```
+
+### Expressions
+
+Expressions like `_ >= 18` or `_.even?` work as matchers, as projections in
+helpers like `map` or `filter`, and as the source for error messages.
+
+```ruby
+matcher = Matcher.build do
+  { users: each({ name: String, age: _ >= 18 }) }
+end
+
+errors = matcher.match({
+  users: [
+    { name: "Alice", age: 25 },
+    { name: "Bob", age: 12 },
+  ]
+})
+puts errors.report
+# > root[:users][1][:age]: expected a value >= 18 but got 12
+```
+
+Error messages are derived from the expression, not hand-written. Expressions
+are not limited to simple comparisons — method chains and blocks work too:
+
+```ruby
+_.sum(&:length) > 10
+```
+
+See the [expressions guide](doc/guide-8-expressions.md) for more.
+
+### Combine matchers
+
+Matchers combine with `&` (and), `|` (or), and `~` (negate).
+
+```ruby
+matcher = Matcher.build do
+  {
+    id: any(String, Integer),
+    score: of(Integer) & _.positive?,
+    status: ~equal("deleted"),
+  }
+end
+
+errors = matcher.match({ id: nil, score: -5, status: "deleted" })
+puts errors.report
+# > expected at least one error to be absent:
+# > - root[:id]: expected a kind of String but got nil
+# > - root[:id]: expected a kind of Integer but got nil
+# > root[:score]: expected value to be positive but got -5
+# > root[:status]: did not expect "deleted"
+```
+
+See also `one`, `>>` (imply) and more:
+
+```ruby
+of(String) >> (_.length <= 255) # if it's a String, it must be short
+```
+
+See [combining matchers](doc/guide-5-combine-matchers.md).
+
+### Error tracing through transformations
+
+After `map`, `filter`, or `dig`, errors still point to the position in the
+original data.
+
+```ruby
+matcher = Matcher.build do
+  filter(_.odd?) ^ each(_ < 10)
+end
+
+errors = matcher.match([2, 3, 4, 15, 6])
+puts errors.report
+# > root[3]: expected a value < 10 but got 15
+```
+
+The error reports index 3 in the original array, not index 1 in the filtered
+result. See also `map`, `dig`, `index_by`, and `project`:
+
+```ruby
+project(_.to_i => 1..100, _.length => 1..3) # match projected values
+```
+
+See [enumerables](doc/guide-4-enumerables.md) and [calls](doc/guide-6-calls.md).
+
+### Recursive structures
+
+`refs` lets matchers reference themselves for trees and graphs.
+
+```ruby
+matcher = Matcher.build do
+  refs[:node] = {
+    value: Integer,
+    children: each(refs[:node]),
+  }
+end
+
+errors = matcher.match({
+  value: 1,
+  children: [
+    { value: 2, children: [] },
+    { value: "three", children: [] },
+  ]
+})
+puts errors.report
+# > root[:children][1][:value]: expected a kind of Integer but got "three"
+```
+
+See [Recursive Matchers](doc/guide-11-refs.md)
 
 ## Development
 
