@@ -11,6 +11,7 @@ module Matcher
         instance_exec(&)
         send(original_method, *args, **kwargs, &block)
       ensure
+        mod.undef_method(method)
         mod.alias_method(method, original_method)
         mod.undef_method(original_method)
       end
