@@ -11,7 +11,6 @@ module Matcher
   module NoKey end
 end
 
-require_relative 'matcher/once_before'
 require_relative 'matcher/expressions/expression_building'
 require_relative 'matcher/matchers/matcher_building'
 require_relative 'matcher/patterns/pattern_building'

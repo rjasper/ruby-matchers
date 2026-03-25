@@ -3,8 +3,6 @@
 module Matcher
   module Debug
     class << self
-      extend OnceBefore
-
       DEBUGGERS = %w[/bin/irb: ruby-debug-ide].freeze
 
       def enable
@@ -30,12 +28,10 @@ module Matcher
           trace.any? { call_from?(_1, 'output_value') }
       end
 
-      def call_from?(trace_item, method)
-        trace_item.end_with?("#{@method_quote_delimiter}#{method}'")
-      end
+      @@method_quote_delimiter = caller[0].include?('`') ? '`' : '#'
 
-      once_before :call_from? do
-        @method_quote_delimiter = caller[0].include?('`') ? '`' : '#'
+      def call_from?(trace_item, method)
+        trace_item.end_with?("#{@@method_quote_delimiter}#{method}'")
       end
     end
   end
