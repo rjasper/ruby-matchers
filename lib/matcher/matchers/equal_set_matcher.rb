@@ -25,16 +25,6 @@ module Matcher
       EqualSetMatcher.new(@items, negated: !@negated)
     end
 
-    def set_for(values)
-      if @includes_expressions
-        @items.to_set do |item|
-          item.is_a?(Expression) ? item.evalute(values) : item
-        end
-      else
-        @set ||= Set.new(@items)
-      end
-    end
-
     def validate(state)
       return validate_negated(state) if @negated
 
@@ -45,7 +35,7 @@ module Matcher
         return
       end
 
-      expected_set = set_for(state.values)
+      expected_set = item_set(state.values)
       missing = expected_set.dup
 
       actual.each_with_index do |act, i|
@@ -70,12 +60,22 @@ module Matcher
 
     private
 
+    def item_set(values)
+      if @includes_expressions
+        @items.to_set do |item|
+          item.is_a?(Expression) ? item.evaluate(values) : item
+        end
+      else
+        @item_set ||= Set.new(@items)
+      end
+    end
+
     def validate_negated(state)
       actual = state.actual
 
       return unless actual.respond_to?(:each)
 
-      expected_set = set_for(state.values)
+      expected_set = item_set(state.values)
       missing = expected_set.dup
 
       actual.each do |act|

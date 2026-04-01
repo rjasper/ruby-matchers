@@ -52,6 +52,17 @@ describe Matcher::EqualSetMatcher do
     assert_no_errors negated.match(nil)
   end
 
+  it 'matches with evaluated expressions' do
+    matcher = Matcher.build { equal_set(1, 2, vars[:foo]) }
+    negated = ~matcher
+
+    assert matcher.match?([3, 1, 2], foo: 3)
+    assert_no_errors matcher.match([3, 1, 2], foo: 3)
+    refute negated.match?([3, 1, 2], foo: 3)
+    assert_errors negated.match([3, 1, 2], foo: 3),
+      msg([3, 1, 2]).namespace(:set).equal([1, 2, expression { vars[:foo] }])
+  end
+
   it 'matches empty array' do
     matcher = Matcher.build { equal_set }
     negated = ~matcher
