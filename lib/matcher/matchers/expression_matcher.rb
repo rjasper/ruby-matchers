@@ -55,17 +55,6 @@ module Matcher
 
     private
 
-    NEGATED_COMPARISONS = {
-      :== => :!=,
-      :!= => :==,
-      :< => :>=,
-      :> => :<=,
-      :>= => :<,
-      :<= => :>,
-      :=~ => :!~,
-      :!~ => :=~,
-    }.freeze
-
     def message_factory
       @message_factory ||= ExpressionMatcher.message_rules.apply(@expression)
     end
