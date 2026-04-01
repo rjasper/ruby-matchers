@@ -5,11 +5,7 @@ require_relative "matcher/version"
 require 'singleton'
 require 'forwardable'
 
-module Matcher
-  module NoMatcher end
-  module NoExpression end
-  module NoKey end
-end
+require_relative 'matcher/markers'
 
 require_relative 'matcher/expressions/expression_building'
 require_relative 'matcher/matchers/matcher_building'
