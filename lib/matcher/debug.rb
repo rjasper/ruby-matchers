@@ -51,7 +51,7 @@ module Matcher
     end
 
     def respond_to_missing?(method, _include_private = false)
-      return Object.instance_methods.include?(method) if Debug.debugging?(caller)
+      return Object.method_defined?(method) if Debug.debugging?(caller)
 
       super
     end

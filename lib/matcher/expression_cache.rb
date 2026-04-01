@@ -9,7 +9,7 @@ module Matcher
     def initialize
       super
 
-      @cache = Hash.new.compare_by_identity
+      @cache = {}.compare_by_identity
       @index = [Variable.actual]
     end
 

@@ -53,7 +53,7 @@ module Matcher
     transform(
       method_hole(
         :call,
-        hole(:operand) { !_1.variables.include?(:actual)},
+        hole(:operand) { !_1.variables.include?(:actual) },
         %i[== != < > <= >= equal? include? in?],
         hole(:actual) { _1.variables.include?(:actual) },
       ),

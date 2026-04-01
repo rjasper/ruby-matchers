@@ -39,7 +39,7 @@ module Matcher
     end
 
     def to_s
-      "Set[#{@items.map(&:to_s).join(', ')}]"
+      "Set[#{@items.join(', ')}]"
     end
   end
 end

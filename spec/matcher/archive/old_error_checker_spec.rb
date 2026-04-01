@@ -44,12 +44,12 @@ describe Matcher::OldErrorChecker do
 
     assert_equal <<~TEXT, error_checker.check(expected, actual)
       expected:
-      
+
       root: a
       root: b
-      
+
       but got:
-      
+
       expected at least one error to be absent:
       - root: a
       - root: b

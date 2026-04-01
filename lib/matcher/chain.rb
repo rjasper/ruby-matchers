@@ -48,13 +48,13 @@ module Matcher
     #   each ^ Integer
     #   map(_.to_i) ^ [1, 2]
     #   filter(_.odd?) ^ [1, 3, 5]
-    # @param operand matcher or chain
+    # @param other matcher or chain
     # @return [Base]
-    def ^(operand)
-      if !Recorder.recorder?(operand) && operand.is_a?(Chain)
-        Chain.new { @block.call(operand ^ _1) }
+    def ^(other)
+      if !Recorder.recorder?(other) && other.is_a?(Chain)
+        Chain.new { @block.call(other ^ _1) }
       else
-        matcher = Matcher.cache(operand)
+        matcher = Matcher.cache(other)
         result = @block.call(matcher)
         result = ~result if @negated
         result

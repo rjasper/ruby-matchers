@@ -18,7 +18,7 @@ module Matcher
 
       @items = items
       @negated = negated
-      @includes_expressions = items.any? { _1.is_a?(Expression) }
+      @includes_expressions = items.any?(Expression)
     end
 
     def negate
@@ -65,7 +65,7 @@ module Matcher
     end
 
     def to_s
-      "#{'~' if @negated}equal_set(#{@items.map(&:to_s).join(', ')})"
+      "#{'~' if @negated}equal_set(#{@items.join(', ')})"
     end
 
     private

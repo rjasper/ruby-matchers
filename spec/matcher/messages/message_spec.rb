@@ -62,7 +62,7 @@ module Matcher
         end
 
         it 'in' do
-          matcher = Matcher.build { vars[:collection].include?(_.upcase)}
+          matcher = Matcher.build { vars[:collection].include?(_.upcase) }
           message = matcher.match('c', collection: %w[A B]).message
           expected = Message.new(:in, true, 'C', %w[A B])
 

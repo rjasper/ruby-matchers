@@ -4,10 +4,15 @@ require 'test_helper'
 
 describe Matcher::IndexByMatcher do
   it 'is built by index_by' do
-    assert_kind_of Matcher::IndexByMatcher,
-      (Matcher.build { index_by(_[:id], always) })
-    assert_kind_of Matcher::IndexByMatcher,
-      (Matcher.build { index_by(_[:id]) ^ always })
+    assert_kind_of(
+      Matcher::IndexByMatcher,
+      Matcher.build { index_by(_[:id], always) },
+    )
+
+    assert_kind_of(
+      Matcher::IndexByMatcher,
+      Matcher.build { index_by(_[:id]) ^ always },
+    )
   end
 
   it 'expects an object responding to :each' do

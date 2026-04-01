@@ -10,13 +10,13 @@ module Matcher
 
     attr_reader :matchers
 
-    def *(matcher)
-      matcher = Matcher.cache(matcher)
+    def *(other)
+      other = Matcher.cache(other)
 
-      if matcher.is_a?(AllMatcher)
-        AllMatcher.new(@matchers + matcher.matchers)
+      if other.is_a?(AllMatcher)
+        AllMatcher.new(@matchers + other.matchers)
       else
-        AllMatcher.new(@matchers + [matcher])
+        AllMatcher.new(@matchers + [other])
       end
     end
 
@@ -31,7 +31,7 @@ module Matcher
     end
 
     def to_s
-      "all(#{@matchers.map(&:to_s).join(', ')})"
+      "all(#{@matchers.join(', ')})"
     end
   end
 

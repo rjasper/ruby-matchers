@@ -103,7 +103,7 @@ describe Matcher::DigMatcher do
     assert_no_errors negated.match({ foo: 'bar' })
 
     refute matcher.match?({ foo: nil })
-    assert_errors matcher.match({ foo: nil })do
+    assert_errors matcher.match({ foo: nil }) do
       _or(:foo) do
         error msg(nil).not.kind_of(Hash)
         error msg(nil).not.kind_of(Array)

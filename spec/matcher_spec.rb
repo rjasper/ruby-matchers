@@ -17,7 +17,10 @@ describe Matcher do
 
   it 'checks unused refs' do
     assert_raises StandardError, match: 'unused ref: foo' do
-      Matcher.build { refs[:foo] = 'foo'; 1 }
+      Matcher.build do
+        refs[:foo] = 'foo'
+        1
+      end
     end
   end
 

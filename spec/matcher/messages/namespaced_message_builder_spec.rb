@@ -9,7 +9,7 @@ describe Matcher::NamespacedMessageBuilder do
     message = builder.hello('world', from: 'aliens')
 
     refute builder.hello.negated
-    assert_equal [:my_realm, :hello], message.key
+    assert_equal %i[my_realm hello], message.key
     assert_equal ['world'], message.args
     assert_equal({ from: 'aliens' }, message.kwargs)
   end

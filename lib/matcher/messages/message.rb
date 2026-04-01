@@ -89,7 +89,7 @@ module Matcher
         k.is_a?(Symbol) ? "#{k}: #{v.inspect}" : "#{k.inspect} => #{v.inspect}"
       end
 
-      string = String.new("report(#{@actual.inspect})")
+      string = "report(#{@actual.inspect})"
       string += ".namespace(#{namespace.inspect})" if namespace
       string += '.not' if @negated
       string += ".#{key}"

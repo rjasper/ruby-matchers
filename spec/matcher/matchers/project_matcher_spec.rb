@@ -4,10 +4,15 @@ require 'test_helper'
 
 describe Matcher::ProjectMatcher do
   it 'is build by project' do
-    assert_kind_of Matcher::ProjectMatcher,
-      (Matcher.build { project(_.sum => 4) })
-    assert_kind_of Matcher::ProjectMatcher,
-      (Matcher.build { project(_.sum) ^ 4 })
+    assert_kind_of(
+      Matcher::ProjectMatcher,
+      Matcher.build { project(_.sum => 4) },
+    )
+
+    assert_kind_of(
+      Matcher::ProjectMatcher,
+      Matcher.build { project(_.sum) ^ 4 },
+    )
   end
 
   it 'expects no call errors' do

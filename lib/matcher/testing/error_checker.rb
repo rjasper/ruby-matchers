@@ -268,7 +268,7 @@ module Matcher
       key = [tree.hierarchy, content]
       identity = @identities[key]
 
-      (tree.identity = identity)
+      tree.identity = identity
     end
 
     def identify_candidates(expected_tree)

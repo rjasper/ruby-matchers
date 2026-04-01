@@ -94,8 +94,8 @@ module Matcher
       @partial = partial
       @negated = negated
       @includes_others = hash.include?(Others.instance)
-      @includes_optionals = hash.each_key.any? { _1.is_a?(Optional) }
-      @includes_expressions = hash.each_key.any? { _1.is_a?(Expression) }
+      @includes_optionals = hash.each_key.any?(Optional)
+      @includes_expressions = hash.each_key.any?(Expression)
 
       raise 'cannot use partial(others => ...)' if @partial && @includes_others
     end

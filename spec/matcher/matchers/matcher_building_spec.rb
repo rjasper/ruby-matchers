@@ -10,8 +10,10 @@ describe Matcher::MatcherBuilding do
   it '#neg' do
     inner_matcher = Class.new(Matcher::Base).new
 
-    assert_kind_of Matcher::NegatedMatcher,
-      (Matcher.build { neg(inner_matcher) })
+    assert_kind_of(
+      Matcher::NegatedMatcher,
+      Matcher.build { neg(inner_matcher) },
+    )
   end
 
   describe 'present' do

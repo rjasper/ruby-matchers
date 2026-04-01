@@ -4,10 +4,8 @@ require 'test_helper'
 
 describe Matcher::ImplyMatcher do
   it 'is built by imply' do
-    assert_kind_of Matcher::ImplyMatcher,
-      (Matcher.build { imply(Integer, 1) })
-    assert_kind_of Matcher::ImplyMatcher,
-      (Matcher.build { imply(Integer) ^ 1 })
+    assert_kind_of(Matcher::ImplyMatcher, Matcher.build { imply(Integer, 1) })
+    assert_kind_of(Matcher::ImplyMatcher, Matcher.build { imply(Integer) ^ 1 })
   end
 
   it 'matches against implied matchers' do

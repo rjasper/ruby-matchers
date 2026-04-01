@@ -29,20 +29,18 @@ module Matcher
 
       if @negated
         state.errors << yield(~valid_matchers[0]) if valid_matchers.length == 1
-      else
-        if valid_matchers.length == 0
-          state.errors << OrError.from(invalid_errors)
-        elsif valid_matchers.length > 1
-          negated_matchers = valid_matchers.map(&:~)
-          any_matcher = AnyMatcher.new(negated_matchers)
+      elsif valid_matchers.length == 0
+        state.errors << OrError.from(invalid_errors)
+      elsif valid_matchers.length > 1
+        negated_matchers = valid_matchers.map(&:~)
+        any_matcher = AnyMatcher.new(negated_matchers)
 
-          state.errors << yield(any_matcher)
-        end
+        state.errors << yield(any_matcher)
       end
     end
 
     def to_s
-      "#{'~' if @negated}one(#{@matchers.map(&:to_s).join(', ')})"
+      "#{'~' if @negated}one(#{@matchers.join(', ')})"
     end
   end
 

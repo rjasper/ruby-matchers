@@ -321,7 +321,7 @@ module Matcher
     end
 
     def join(objects)
-      objects.map(&:to_s).join(', ')
+      objects.join(', ')
     end
 
     def where_text(values, *expressions)

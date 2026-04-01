@@ -4,10 +4,15 @@ require 'test_helper'
 
 describe Matcher::MapMatcher do
   it 'is built by map' do
-    assert_kind_of Matcher::MapMatcher,
-      (Matcher.build { map(_.length, [1, 2]) })
-    assert_kind_of Matcher::MapMatcher,
-      (Matcher.build { map(_.length) ^ [1, 2] })
+    assert_kind_of(
+      Matcher::MapMatcher,
+      Matcher.build { map(_.length, [1, 2]) },
+    )
+
+    assert_kind_of(
+      Matcher::MapMatcher,
+      Matcher.build { map(_.length) ^ [1, 2] },
+    )
   end
 
   it 'expects actual to respond to :each' do

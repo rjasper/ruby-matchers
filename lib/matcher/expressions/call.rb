@@ -188,7 +188,7 @@ module Matcher
       when :!, :~, :+@, :-@
         # !foo
         return "#{@method[0]}#{receiver}" if unary?
-      when :+, :-, :*, :/, :%, :**,:<, :>, :<=, :>=, :<=>, :==, :===, :!=, :=~, :!~, :&, :|, :^, :<<, :>>, :'&&', :'||'
+      when :+, :-, :*, :/, :%, :**, :<, :>, :<=, :>=, :<=>, :==, :===, :!=, :=~, :!~, :&, :|, :^, :<<, :>>, :'&&', :'||'
         if binary?
           operand = parenthesize(@args[0], true)
 
@@ -204,7 +204,7 @@ module Matcher
       when :[]=
         # foo[a, b, ...] = 1
         if @args.length >= 2 && @kwargs.empty? && !@block
-          first_args = @args[0..-2].map(&:to_s).join(', ')
+          first_args = @args[0..-2].join(', ')
           last_arg = @args[-1].to_s
 
           return "#{receiver}[#{first_args}] = #{last_arg}"
@@ -244,7 +244,7 @@ module Matcher
       begin
         result = receiver.send(@method, *args, **kwargs, &block)
         assignment? ? args.last : result
-      rescue => e
+      rescue StandardError => e
         message = "#{self} raised #{e.class}: #{e.message}"
         given = given_for(values)
 
@@ -301,7 +301,7 @@ module Matcher
       end
 
       list = args + kwargs
-      list << "&#{@block.symbol.inspect}" if @block&.is_a?(SymbolProc)
+      list << "&#{@block.symbol.inspect}" if @block.is_a?(SymbolProc)
 
       list.join(', ')
     end

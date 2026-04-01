@@ -5,6 +5,7 @@ module Matcher
     extend Forwardable
 
     attr_reader :path, :message
+
     def_delegator :@message, :actual
     def_delegator :@message, :negated
 

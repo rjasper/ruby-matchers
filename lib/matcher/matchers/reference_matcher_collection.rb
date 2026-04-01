@@ -42,7 +42,7 @@ module Matcher
         options = DEFAULT_OPTIONS
         matcher = matcher_or_options
       else
-        options = matcher_or_options.merge(DEFAULT_OPTIONS) { |_k, l, r| l }
+        options = matcher_or_options.merge(DEFAULT_OPTIONS) { |_k, l, _r| l }
       end
 
       @last_object_id = matcher.__id__

@@ -335,18 +335,18 @@ describe Matcher::ExpressionMatcher do
   end
 
   it 'matches kind_of' do
-    assert_errors match('string') { _.kind_of?(Numeric) },
+    assert_errors match('string') { _.is_a?(Numeric) },
       msg('string').not.kind_of(Numeric)
-    assert_errors not_match(1) { _.kind_of?(Numeric) },
+    assert_errors not_match(1) { _.is_a?(Numeric) },
       msg(1).kind_of(Numeric)
     assert_errors match('string') { _.is_a?(Numeric) },
       msg('string').not.kind_of(Numeric)
     assert_errors not_match(1) { _.is_a?(Numeric) },
       msg(1).kind_of(Numeric)
 
-    assert_errors match(1.0) { (_ + 1).kind_of?(Integer) },
+    assert_errors match(1.0) { (_ + 1).is_a?(Integer) },
       'expected actual + 1 to be a kind of Integer but got 2.0, where actual = 1.0'
-    assert_errors not_match(1) { (_ + 1).kind_of?(Integer) },
+    assert_errors not_match(1) { (_ + 1).is_a?(Integer) },
       'did not expect actual + 1 to be a kind of Integer but got 2, where actual = 1'
     assert_errors match(1.0) { (_ + 1).is_a?(Integer) },
       'expected actual + 1 to be a kind of Integer but got 2.0, where actual = 1.0'

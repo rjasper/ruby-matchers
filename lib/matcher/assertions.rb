@@ -5,7 +5,6 @@ module Matcher
     def assert_structure(actual, &)
       errors = Matcher.build(&).match(actual)
 
-      # rubocop:disable Minitest/AssertWithExpectedArgument
       assert(false, <<~TEXT.chomp) unless errors.valid?
         For object:
 
@@ -15,7 +14,6 @@ module Matcher
 
         #{Reporter.report(errors)}
       TEXT
-      # rubocop:enable Minitest/AssertWithExpectedArgument
     end
   end
 end

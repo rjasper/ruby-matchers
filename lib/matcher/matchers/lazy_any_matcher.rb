@@ -14,13 +14,13 @@ module Matcher
       LazyAllMatcher.new(@matchers.map(&:~))
     end
 
-    def |(matcher)
-      matcher = Matcher.cache(matcher)
+    def |(other)
+      other = Matcher.cache(other)
 
-      if matcher.is_a?(LazyAnyMatcher)
-        LazyAnyMatcher.new(@matchers + matcher.matchers)
+      if other.is_a?(LazyAnyMatcher)
+        LazyAnyMatcher.new(@matchers + other.matchers)
       else
-        LazyAnyMatcher.new(@matchers + [matcher])
+        LazyAnyMatcher.new(@matchers + [other])
       end
     end
 
@@ -37,7 +37,7 @@ module Matcher
     end
 
     def to_s
-      "lazy_any(#{@matchers.map(&:to_s).join(', ')})"
+      "lazy_any(#{@matchers.join(', ')})"
     end
   end
 

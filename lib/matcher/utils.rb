@@ -58,7 +58,7 @@ module Matcher
       end
 
       arg_parts = arg_names.all? { _1.match?(/^_[1-9]$/) } ? [] : arg_names
-      kwarg_parts = kwarg_names.map { "#{_1}:"}
+      kwarg_parts = kwarg_names.map { "#{_1}:" }
 
       (arg_parts + kwarg_parts).join(', ')
     end

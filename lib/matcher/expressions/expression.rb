@@ -3,12 +3,12 @@
 module Matcher
   ##
   # Expressions are a central feature of this library. They are used for:
-  # 
+  #
   # - building ad-hoc matchers (e.g. <tt>_ > 10</tt> , +_.even?+ )
   # - tracking where match errors happen (e.g. <tt>root[:name]: expected ...</tt> )
   # - as parameters for other matchers like +map+ where they take the role of
   #   anonymous functions (e.g. <tt>map(_.to_s, "some_string")</tt> )
-  # 
+  #
   # Helpers (like +map+) use expressions instead of procs because the AST of an
   # Expression can be inspected and transformed. This is useful when building
   # the path and message of errors.
@@ -66,7 +66,7 @@ module Matcher
       when Array
         items = obj.map { expression_or_value(_1, expression_cache:) }
 
-        if items.any? { _1.is_a?(Expression) }
+        if items.any?(Expression)
           items.each_with_index do |item, i|
             items[i] = Constant.cache(item, expression_cache) unless item.is_a?(Expression)
           end
@@ -104,7 +104,7 @@ module Matcher
       when Set
         items = obj.map { expression_or_value(_1, expression_cache:) }
 
-        if items.any? { _1.is_a?(Expression) }
+        if items.any?(Expression)
           items.each_with_index do |item, i|
             items[i] = Constant.cache(item, expression_cache) unless item.is_a?(Expression)
           end

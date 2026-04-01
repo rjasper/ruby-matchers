@@ -80,7 +80,7 @@ describe Matcher::Call do
     it 'evaluates kwargs' do
       call = expression { _.merge(foo: vars[:foo]) }
 
-      assert_equal [[{}], [], { :foo => ["foo"] }, { :foo => "foo" }],
+      assert_equal [[{}], [], { foo: ["foo"] }, { foo: "foo" }],
         call.evaluate_tree(actual: {}, foo: 'foo')
     end
 
@@ -115,7 +115,7 @@ describe Matcher::Call do
     assert_equal 'actual * 100 + c * 10 + d', call.to_s
   end
 
-  # rubocop:disable Style/CaseEquality, Layout/SpaceBeforeBrackets
+  # rubocop:disable Style/CaseEquality
   it '#to_s' do
     examine = lambda do |expected, &block|
       assert_equal expected, expression(&block).to_s
@@ -201,7 +201,7 @@ describe Matcher::Call do
     examine['(actual == actual) == actual'] { (_ == _) == _ }
     examine['actual == (actual == actual)'] { _ == (_ == _) }
   end
-  # rubocop:enable Style/CaseEquality, Layout/SpaceBeforeBrackets
+  # rubocop:enable Style/CaseEquality
 
   it 'logical operators' do
     call = Matcher.with_settings(logical_operators: true) do

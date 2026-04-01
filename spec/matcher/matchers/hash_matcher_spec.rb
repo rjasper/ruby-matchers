@@ -311,14 +311,14 @@ describe Matcher::HashMatcher do
   it '#to_s: all entries' do
     matcher = Matcher.build { { a: { b: 'c' } } }
 
-    assert_equal({ a: { b: "c"}}.to_s, matcher.to_s)
-    assert_equal "neg(#{{ a: { b: "c"}}})", matcher.~.to_s
+    assert_equal({ a: { b: "c" } }.to_s, matcher.to_s)
+    assert_equal "neg(#{{ a: { b: "c" } }})", matcher.~.to_s
   end
 
   it '#to_s: partial entries' do
     matcher = Matcher.build { partial({ a: { b: 'c' } }) }
 
-    assert_equal "partial(#{{ a: { b: "c"}}})", matcher.to_s
-    assert_equal "~partial(#{{ a: { b: "c"}}})", matcher.~.to_s
+    assert_equal "partial(#{{ a: { b: "c" } }})", matcher.to_s
+    assert_equal "~partial(#{{ a: { b: "c" } }})", matcher.~.to_s
   end
 end

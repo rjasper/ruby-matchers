@@ -3,7 +3,6 @@
 require 'test_helper'
 
 describe Matcher::ParseIso8601Matcher do
-
   it 'is built by parse_iso8601' do
     time = Time.utc(2023)
     matcher = Matcher.build { parse_iso8601(_ < time) }

@@ -30,68 +30,68 @@ module Matcher
     protected :negate
 
     ##
-    # Combines with matcher to AnyMatcher
-    # @param matcher
+    # Combines with other to AnyMatcher
+    # @param other
     # @return [AnyMatcher]
     # @see MatcherBuilding#any
-    def +(matcher)
-      matcher = Matcher.cache(matcher)
+    def +(other)
+      other = Matcher.cache(other)
 
-      matchers = if matcher.is_a?(AnyMatcher)
-        [self].concat(matcher.matchers)
+      matchers = if other.is_a?(AnyMatcher)
+        [self].concat(other.matchers)
       else
-        [self, matcher]
+        [self, other]
       end
 
       AnyMatcher.new(matchers)
     end
 
     ##
-    # Combines with matcher to AllMatcher
-    # @param matcher
+    # Combines with other to AllMatcher
+    # @param other
     # @return [AllMatcher]
     # @see MatcherBuilding#all
-    def *(matcher)
-      matcher = Matcher.cache(matcher)
+    def *(other)
+      other = Matcher.cache(other)
 
-      matchers = if matcher.is_a?(AllMatcher)
-        [self].concat(matcher.matchers)
+      matchers = if other.is_a?(AllMatcher)
+        [self].concat(other.matchers)
       else
-        [self, matcher]
+        [self, other]
       end
 
       AllMatcher.new(matchers)
     end
 
     ##
-    # Combines with matcher to LazyAnyMatcher
-    # @param matcher
+    # Combines with other to LazyAnyMatcher
+    # @param other
     # @return [LazyAnyMatcher]
     # @see MatcherBuilding#lazy_any
-    def |(matcher)
-      matcher = Matcher.cache(matcher)
+    def |(other)
+      other = Matcher.cache(other)
 
-      matchers = if matcher.is_a?(LazyAnyMatcher)
-        [self].concat(matcher.matchers)
+      matchers = if other.is_a?(LazyAnyMatcher)
+        [self].concat(other.matchers)
       else
-        [self, matcher]
+        [self, other]
       end
 
       LazyAnyMatcher.new(matchers)
     end
 
     ##
-    # Combines with matcher to LazyAllMatcher
-    # @param matcher
+    # Combines with other to LazyAllMatcher
+    # @param other
     # @return [LazyAllMatcher]
     # @see MatcherBuilding#lazy_all
-    def &(matcher)
-      matcher = Matcher.cache(matcher)
+    def &(other)
+      other = Matcher.cache(other)
 
-      matchers = if matcher.is_a?(LazyAllMatcher)
-        [self].concat(matcher.matchers)
+      matchers = if other.is_a?(LazyAllMatcher)
+        [self].concat(other.matchers)
       else
-        [self, matcher]
+        [self, other]
       end
 
       LazyAllMatcher.new(matchers)
@@ -99,11 +99,11 @@ module Matcher
 
     ##
     # Implies another matcher
-    # @param matcher
+    # @param other
     # @return [ImplyMatcher]
     # @see MatcherBuilding#imply
-    def >>(matcher)
-      ImplyMatcher.new(self, Matcher.cache(matcher))
+    def >>(other)
+      ImplyMatcher.new(self, Matcher.cache(other))
     end
 
     StackData = Struct.new(:actual, :vals, :errors)

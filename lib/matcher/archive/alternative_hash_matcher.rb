@@ -53,7 +53,7 @@ module Matcher
 
       need_extra_keys = !partial || includes_others
       keys = hash.each_key.map { Optional.value_of(_1) }
-      includes_expressions = keys.any? { _1.is_a?(Expression) }
+      includes_expressions = keys.any?(Expression)
 
       if need_extra_keys || includes_expressions
         inner_matcher = InlineMatcher.new(inner_matcher, negatable: true) do |actual, y|

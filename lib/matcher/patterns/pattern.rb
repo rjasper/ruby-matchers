@@ -82,7 +82,7 @@ module Matcher
     end
 
     def similar_call?(expression, pattern)
-      expression.class == pattern.class &&
+      expression.instance_of?(pattern.class) &&
         expression.method == pattern.method &&
         expression.args.length == pattern.args.length &&
         expression.kwargs.size == pattern.kwargs.size &&
