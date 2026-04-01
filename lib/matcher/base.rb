@@ -175,15 +175,9 @@ module Matcher
     end
 
     ##
-    # Stores information for this matcher class during match time.
-    def self.session
-      Matcher.session[self] ||= {}
-    end
-
-    ##
     # Stores information for this matcher's class during match time.
     def class_session
-      self.class.session
+      Matcher.session[self.class] ||= {}
     end
   end
 end
