@@ -28,10 +28,10 @@ module Matcher
     class InlineContext
       extend Forwardable
 
-      def initialize(matcher, state, y)
+      def initialize(matcher, state, block)
         @matcher = matcher
         @state = state
-        @yield = y
+        @block = block
       end
 
       attr_reader :state
@@ -40,7 +40,7 @@ module Matcher
       def_delegators :@matcher, :receiver, :matcher, :negated
 
       def _yield(matcher, act = @state.actual, **values)
-        @yield.call(matcher, act, **values)
+        @block.call(matcher, act, **values)
       end
     end
 
