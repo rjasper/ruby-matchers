@@ -141,9 +141,7 @@ module Matcher
     end
 
     def given_for(values)
-      variables.each_with_object({}) do |symbol, given|
-        given[symbol] = values[symbol]
-      end
+      variables.to_h { [_1, values[_1]] }
     end
 
     def visit

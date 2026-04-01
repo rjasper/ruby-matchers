@@ -42,7 +42,7 @@ describe Matcher::LetMatcher do
     matcher = Matcher.build do
       let(
         depth: 0,
-        parent_value: ->(_) { _[:value] },
+        parent_value: ->(x) { x[:value] },
       ) ^ {
         depth: _ == vars[:depth],
         value: 42,
@@ -119,16 +119,16 @@ describe Matcher::LetMatcher do
     Matcher.build do
       declare :a, :b
 
-      t.assert_equal 'let(a: 0, b: ->(_) { ... }) ^ (actual == a + b)',
-        (let(a: 0, b: ->(_) { 2 * _ }) ^ (_ == a + b)).to_s
-      t.assert_equal 'let(a: 0, b: ->(_) { ... }) ^ (a + b).even?',
-        (let(a: 0, b: ->(_) { 2 * _ }) ^ (a + b).even?).to_s
-      t.assert_equal 'let(a: 0, b: ->(_) { ... }) ^ [a, b]',
-        (let(a: 0, b: ->(_) { 2 * _ }) ^ [a, b]).to_s
-      t.assert_equal "let(a: 0, b: ->(_) { ... }) ^ -> { let_matcher_spec.rb:#{__LINE__ + 1} }",
-        (let(a: 0, b: ->(_) { 2 * _ }) ^ -> { false }).to_s
-      t.assert_equal "let(a: 0, b: ->(_) { ... }) ^ partial(#{{ foo: 42 }})",
-        (let(a: 0, b: ->(_) { 2 * _ }) ^ partial({ foo: 42 })).to_s
+      t.assert_equal 'let(a: 0, b: ->(x) { ... }) ^ (actual == a + b)',
+        (let(a: 0, b: ->(x) { 2 * x }) ^ (_ == a + b)).to_s
+      t.assert_equal 'let(a: 0, b: ->(x) { ... }) ^ (a + b).even?',
+        (let(a: 0, b: ->(x) { 2 * x }) ^ (a + b).even?).to_s
+      t.assert_equal 'let(a: 0, b: ->(x) { ... }) ^ [a, b]',
+        (let(a: 0, b: ->(x) { 2 * x }) ^ [a, b]).to_s
+      t.assert_equal "let(a: 0, b: ->(x) { ... }) ^ -> { let_matcher_spec.rb:#{__LINE__ + 1} }",
+        (let(a: 0, b: ->(x) { 2 * x }) ^ -> { false }).to_s
+      t.assert_equal "let(a: 0, b: ->(x) { ... }) ^ partial(#{{ foo: 42 }})",
+        (let(a: 0, b: ->(x) { 2 * x }) ^ partial({ foo: 42 })).to_s
 
       t.assert_equal 'let(a: 0) ^ neg(actual > a)', neg(let(a: 0) ^ (_ > a)).to_s
 

@@ -222,7 +222,7 @@ module Matcher
         if key.is_a?(Others)
           result = yield(value, actual.slice(*extra_keys))
 
-          return if result.valid?
+          return nil if result.valid?
 
           collector << result
 
@@ -238,12 +238,12 @@ module Matcher
         if actual_value.nil? && !actual.key?(key)
           next if is_optional
 
-          return
+          return nil
         end
 
         result = yield(value, actual_value, key:, parent: actual)
 
-        return if result.valid?
+        return nil if result.valid?
 
         error_key = key_call_for(error_key) if error_key.is_a?(Expression)
 

@@ -18,7 +18,7 @@ module Matcher
     end
 
     def errors
-      @error_collector ||= new_collector
+      @errors ||= new_collector
     end
 
     def new_collector
@@ -26,7 +26,7 @@ module Matcher
     end
 
     def result
-      @error_collector&.error || EmptyError.instance
+      @errors&.error || EmptyError.instance
     end
 
     def report(actual = self.actual)

@@ -18,8 +18,8 @@ describe Matcher::Optional do
   end
 
   it '#==' do
-    assert Matcher::Optional.new(1) == Matcher::Optional.new(1)
-    refute Matcher::Optional.new(1) == Matcher::Optional.new(2)
+    assert_equal Matcher::Optional.new([1]), Matcher::Optional.new([1])
+    refute_equal Matcher::Optional.new([1]), Matcher::Optional.new([2])
   end
 
   it 'works as hash key' do

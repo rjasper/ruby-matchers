@@ -45,7 +45,7 @@ describe Matcher::NestedExpressionNormalizer do
       t.examine [:a, _.z, (_ + _.b(k: _)).c(_)],
         (_[:a].z + _[:a].z.b(k: _[:a].z)).c(_[:a].z)
 
-      block = proc { |_| _ + 1 }
+      block = proc { |x| x + 1 }
       t.examine [_[:a] + expr(&block)],
         _[:a] + expr(&block)
     end

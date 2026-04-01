@@ -16,8 +16,7 @@ module Matcher
 
     def ==(other)
       equal?(other) ||
-        other.instance_of?(self.class) &&
-        @expression == other.expression
+        other.instance_of?(self.class) && @expression == other.expression
     end
     alias eql? ==
 

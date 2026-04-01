@@ -5,6 +5,8 @@ module Matcher
     BOOLEAN = [false, true].freeze
 
     def initialize(negated: false)
+      super()
+
       @negated = negated
     end
 

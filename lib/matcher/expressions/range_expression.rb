@@ -17,8 +17,9 @@ module Matcher
     end
 
     def ==(other)
-      equal?(other) ||
-        other.instance_of?(RangeExpression) &&
+      return true if equal?(other)
+
+      other.instance_of?(RangeExpression) &&
         other.begin.eql?(@begin) &&
         other.end.eql?(@end) &&
         other.exclude_end?.eql?(@exclude_end)

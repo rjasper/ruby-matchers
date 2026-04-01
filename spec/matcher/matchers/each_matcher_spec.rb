@@ -55,7 +55,8 @@ describe Matcher::EachMatcher do
     end
 
     assert_errors matcher.match([41, 42, 43, 45]),
-      3 => 'expected actual == parent.length * 10 + index + 1 but got 45 == 44, where parent = [41, 42, 43, 45], index = 3'
+      3 => "expected actual == parent.length * 10 + index + 1 " \
+        "but got 45 == 44, where parent = [41, 42, 43, 45], index = 3"
   end
 
   it '#to_s' do

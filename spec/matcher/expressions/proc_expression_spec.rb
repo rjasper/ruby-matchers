@@ -20,19 +20,19 @@ describe Matcher::ProcExpression do
   end
 
   it '#variables' do
-    expr = build { |_, x:| _ == x }
+    expr = build { |actual, x:| actual == x }
 
     assert_equal %i[actual x], expr.variables
     assert_equal %i[a b], expr.substitute(actual: :a, x: :b).variables
   end
 
   it '#evaluate' do
-    expr = build { |_, foo:| [_, foo] }
+    expr = build { |actual, foo:| [actual, foo] }
     assert_equal [42, 'bar'], expr.evaluate({ actual: 42, foo: 'bar' })
   end
 
   it '#substitute' do
-    expr = build { |_, x:, y:| _ * 100 + x * 10 + y }
+    expr = build { |actual, x:, y:| actual * 100 + x * 10 + y }
 
     assert_equal 123, expr.evaluate({ actual: 1, x: 2, y: 3 })
 
@@ -48,9 +48,9 @@ describe Matcher::ProcExpression do
   end
 
   it '#to_s' do
-    expr = build { |_, foo:| foo * Math.sqrt(_) }
+    expr = build { |actual, foo:| foo * Math.sqrt(actual) }
 
-    assert_equal 'expr { |_, foo:| ... }', expr.to_s
+    assert_equal 'expr { |actual, foo:| ... }', expr.to_s
   end
 
   private

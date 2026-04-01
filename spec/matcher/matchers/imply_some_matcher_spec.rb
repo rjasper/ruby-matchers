@@ -80,7 +80,8 @@ describe Matcher::ImplySomeMatcher do
     assert_no_errors matcher.match({ divisible_by: 3, value: 6 })
     refute negated.match?({ divisible_by: 3, value: 6 })
     assert_errors negated.match({ divisible_by: 3, value: 6 }),
-      value: "expected actual % parent[:divisible_by] != 0 but got 0 != 0, where actual = 6, parent = #{{ divisible_by: 3, value: 6 }}"
+      value: "expected actual % parent[:divisible_by] != 0 but got 0 != 0, " \
+        "where actual = 6, parent = #{{ divisible_by: 3, value: 6 }}"
 
     refute matcher.match?({ divisible_by: 3, odd: true, value: 6 })
     assert_errors matcher.match({ divisible_by: 3, odd: true, value: 6 }),
@@ -90,13 +91,15 @@ describe Matcher::ImplySomeMatcher do
 
     refute matcher.match?({ divisible_by: 3, odd: true, value: 5 })
     assert_errors matcher.match({ divisible_by: 3, odd: true, value: 5 }),
-      value: "expected actual % parent[:divisible_by] == 0 but got 2 == 0, where actual = 5, parent = #{{ divisible_by: 3, odd: true, value: 5 }}"
+      value: "expected actual % parent[:divisible_by] == 0 but got 2 == 0, " \
+        "where actual = 5, parent = #{{ divisible_by: 3, odd: true, value: 5 }}"
     assert negated.match?({ divisible_by: 3, odd: true, value: 5 })
     assert_no_errors negated.match({ divisible_by: 3, odd: true, value: 5 })
 
     refute matcher.match?({})
     assert_errors matcher.match({}),
-      "expected to satisfy any condition but got {} and met none of these: partial(#{{ divisible_by: Integer }}), partial(#{{ odd: true }})"
+      "expected to satisfy any condition but got {} and met none of these: " \
+        "partial(#{{ divisible_by: Integer }}), partial(#{{ odd: true }})"
     assert negated.match?({})
     assert_no_errors negated.match({})
   end
@@ -113,7 +116,9 @@ describe Matcher::ImplySomeMatcher do
 
     refute matcher.match?({ foo: true, bar: true, data: 'bar' })
     assert_errors matcher.match({ foo: true, bar: true, data: 'bar' }),
-      "expected to satisfy one condition but got #{{ foo: true, bar: true, data: "bar" }} and met these: actual[:foo] == true, actual[:bar] == true",
+      "expected to satisfy one condition but got " \
+        "#{{ foo: true, bar: true, data: "bar" }} and met these: " \
+        "actual[:foo] == true, actual[:bar] == true",
       data: msg('bar').not.equal('foo')
     assert negated.match?({ foo: true, bar: true, data: 'bar' })
     assert_no_errors negated.match({ foo: true, bar: true, data: 'bar' })

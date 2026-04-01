@@ -92,7 +92,8 @@ module Matcher
     end
 
     define(:duplicate_by) do |expression, value, original_index|
-      "#{verb} duplicate by #{expression.inspect}=#{value.inspect} originally at index #{original_index} but got #{actual.inspect}"
+      "#{verb} duplicate by #{expression.inspect}=#{value.inspect} " \
+        "originally at index #{original_index} but got #{actual.inspect}"
     end
 
     define(:matching) do |pattern|
@@ -282,7 +283,8 @@ module Matcher
       private :x_conditions
 
       define(:no_condition_satisfied) do |conditions, count|
-        "#{negated_verb} to satisfy #{x_conditions(count)} but got #{actual.inspect} and met none of these: #{join(conditions)}"
+        "#{negated_verb} to satisfy #{x_conditions(count)} " \
+          "but got #{actual.inspect} and met none of these: #{join(conditions)}"
       end
 
       define(:x_conditions_satisfied) do |conditions, count|

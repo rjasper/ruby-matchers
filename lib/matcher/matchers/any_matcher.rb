@@ -33,7 +33,7 @@ module Matcher
       sub_errors = @matchers.map do |matcher|
         sub_error = yield matcher
 
-        return if sub_error.valid?
+        return nil if sub_error.valid?
 
         sub_error
       end

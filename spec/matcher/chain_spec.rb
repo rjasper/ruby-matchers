@@ -80,8 +80,8 @@ describe Matcher::Chain do
 
   private
 
-  def divisible_by(n)
-    Matcher.build { _ % n == 0 }
+  def divisible_by(divisor)
+    Matcher.build { _ % divisor == 0 }
   end
 
   def to_chain(matcher)

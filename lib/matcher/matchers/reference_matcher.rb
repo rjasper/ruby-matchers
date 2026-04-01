@@ -50,7 +50,8 @@ module Matcher
   #   graph = { vertices: [a, b, c] }
   #
   #   m.match(graph)
-  #   # > root[:vertices][0][:edges][0][:destination][:edges][0][:destination][:edges][0][:weight]: expected a kind of Integer but got "3"
+  #   # > root[:vertices][0][:edges][0][:destination][:edges][0][:destination]~
+  #   #   [:edges][0][:weight]: expected a kind of Integer but got "3"
   #   # > root[:vertices][1]: actual has already failed before
   #   # > root[:vertices][2]: actual has already failed before
   #

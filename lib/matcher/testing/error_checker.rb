@@ -69,10 +69,9 @@ module Matcher
         false
       end
 
-      def to_s
+      def inspect
         "#<Tree #{hierarchy} #{children.map(&:hierarchy).inspect}>"
       end
-      alias inspect to_s
     end
 
     Leaf = Struct.new(
@@ -88,10 +87,9 @@ module Matcher
         true
       end
 
-      def to_s
+      def inspect
         "#<Leaf #{hierarchy} #{path} #{message.inspect}>"
       end
-      alias inspect to_s
     end
 
     private
@@ -204,11 +202,13 @@ module Matcher
         if expected_tree.leaf?
           return false unless actual_tree.leaf?
 
-          if expected_tree.message.is_a?(String)
-            return expected_tree.phrase_label == actual_tree.phrase_label
+          result = if expected_tree.message.is_a?(String)
+            expected_tree.phrase_label == actual_tree.phrase_label
           else
-            return expected_tree.message_label == actual_tree.message_label
+            expected_tree.message_label == actual_tree.message_label
           end
+
+          return result
         elsif actual_tree.leaf?
           return false
         else

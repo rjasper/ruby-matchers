@@ -88,7 +88,7 @@ module Matcher
           values.merge(actual: item, index: i, original: actual),
         )
       rescue CallError
-        return if @negated
+        return nil if @negated
       end
 
       mapped_errors = yield @matcher, mapped, original: actual

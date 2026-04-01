@@ -21,7 +21,7 @@ module Matcher
       state.actual.each.with_index do |item, i|
         result = yield @neg_matcher, item, index: i, parent: state.actual
 
-        return if result.valid?
+        return nil if result.valid?
 
         collector[i] << result
       end

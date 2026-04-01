@@ -23,7 +23,7 @@ module Matcher
       actual.each do |key, value|
         result = yield(@neg_matcher, [key, value], key:, value:, parent: actual)
 
-        return if result.valid?
+        return nil if result.valid?
 
         collector[key] << result
       end

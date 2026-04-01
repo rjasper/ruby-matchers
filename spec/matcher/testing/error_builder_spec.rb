@@ -94,8 +94,8 @@ describe Matcher::ErrorBuilder do
   end
 
   describe '::build' do
-    it 'returns EmptyError if no build was built' do
-      assert_equal(empty, klass.build {})
+    it 'returns EmptyError if no error was built' do
+      assert_equal(empty, klass.build { nil })
     end
 
     it 'returns first error if only one was built' do

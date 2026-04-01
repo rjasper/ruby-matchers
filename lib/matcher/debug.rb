@@ -39,15 +39,14 @@ module Matcher
   module ExpressionRecorderDebug
     private
 
-    def method_missing(method, *args, **kwargs, &block)
+    def method_missing(method, ...)
       if Debug.debugging?(caller)
         return @expression.to_s if %i[to_s inspect].include?(method)
 
-        return Object.instance_method(method)
-          .bind_call(self, *args, **kwargs, &block)
+        Object.instance_method(method).bind_call(self, ...)
+      else
+        super
       end
-
-      super
     end
 
     def respond_to_missing?(method, _include_private = false)

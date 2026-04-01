@@ -4,9 +4,7 @@ module Matcher
   class ErrorCollector
     def self.error_from(obj)
       case obj
-      when String
-        ElementError.new(obj)
-      when Message
+      when String, Message
         ElementError.new(obj)
       when Error
         obj

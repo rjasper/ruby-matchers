@@ -23,7 +23,7 @@ module Matcher
       @array.length.times do |i|
         result = yield @neg_array[i], actual[i], index: i, parent: actual
 
-        return if result.valid?
+        return nil if result.valid?
 
         collector[i] << result
       end

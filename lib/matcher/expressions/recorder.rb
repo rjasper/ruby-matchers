@@ -87,8 +87,11 @@ module Matcher
       if @hash_caller # @hash_caller indicates the "uncertain" state.
         if method == :eql? && @hash_confirmed && caller[0] == @hash_caller
           # Return proper eql? result.
-          return Recorder.recorder?(args[0]) &&
+
+          result = Recorder.recorder?(args[0]) &&
             @expression.eql?(Recorder.to_expression(args[0]))
+
+          return result
         else # Not a call from Hash.
           # Leave the "uncertain" state and resume recorder behavior.
           @hash_caller = nil

@@ -47,12 +47,12 @@ module Matcher
       @rescue_last_error ||= RescueLastErrorExpression.new(@expression)
     end
 
-    def unwrap_exception(e)
-      case e
+    def unwrap_exception(error)
+      case error
       when CallError
-        e.cause
+        error.cause
       else
-        e
+        error
       end
     end
   end
