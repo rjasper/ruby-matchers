@@ -97,8 +97,10 @@ module Matcher
 
     # transform instance_of?
     transform(
+      # rubocop:disable Style/ClassEqualityComparison
       hole(:obj).class == hole(:class),
       hole(:class) == hole(:obj).class,
+      # rubocop:enable Style/ClassEqualityComparison
     ) do |m|
       call(m[:root], m[:obj], :instance_of?, m[:class])
     end

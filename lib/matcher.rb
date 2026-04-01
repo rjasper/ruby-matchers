@@ -138,7 +138,10 @@ module Matcher
 
   def self.undefined?(object)
     # Note that for an ExpressionRecorder object == UNDEFINED won't work.
+
+    # rubocop:disable Style/YodaCondition
     UNDEFINED == object
+    # rubocop:enable Style/YodaCondition
   end
 
   ##

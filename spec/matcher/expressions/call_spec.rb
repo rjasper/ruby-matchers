@@ -198,8 +198,10 @@ describe Matcher::Call do
     examine['actual[0] + [1]'] { _[0] + [1] }
     examine['actual - actual - actual'] { _ - _ - _ }
     examine['actual - (actual - actual)'] { _ - (_ - _) }
+    # rubocop:disable Lint/BinaryOperatorWithIdenticalOperands
     examine['(actual == actual) == actual'] { (_ == _) == _ }
     examine['actual == (actual == actual)'] { _ == (_ == _) }
+    # rubocop:enable Lint/BinaryOperatorWithIdenticalOperands
   end
   # rubocop:enable Style/CaseEquality
 

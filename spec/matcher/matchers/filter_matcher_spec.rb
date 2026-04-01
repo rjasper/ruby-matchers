@@ -65,7 +65,9 @@ describe Matcher::FilterMatcher do
   it 'passes index to filter' do
     matcher = Matcher.build { filter(index.even?) ^ (_.join == '024') }
     filter_with_index = expression do
+      # rubocop:disable Lint/UnusedBlockArgument
       _.filter.with_index { |e, index| index.even? }
+      # rubocop:enable Lint/UnusedBlockArgument
     end
 
     assert_errors matcher.match([0, 1, 2, 3]),

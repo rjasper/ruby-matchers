@@ -334,11 +334,13 @@ module Matcher
       assert_errors not_match(0) { (_ + 1).instance_of?(Integer) },
         'did not expect actual + 1 to be an instance of Integer but got 1, where actual = 0'
 
-    assert_errors match('string') { _.class == Integer },
-      msg('string').not.instance_of(Integer)
-    assert_errors match('string') { expr(Integer) == _.class },
-      msg('string').not.instance_of(Integer)
-  end
+      # rubocop:disable Style/ClassEqualityComparison
+      assert_errors match('string') { _.class == Integer },
+        msg('string').not.instance_of(Integer)
+      assert_errors match('string') { expr(Integer) == _.class },
+        msg('string').not.instance_of(Integer)
+      # rubocop:enable Style/ClassEqualityComparison
+    end
 
     it 'matches kind_of' do
       assert_errors match('string') { _.is_a?(Numeric) },

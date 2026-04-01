@@ -28,7 +28,11 @@ module Matcher
           trace.any? { call_from?(_1, 'output_value') }
       end
 
+      # rubocop:disable Style/ClassVars
+
       @@method_quote_delimiter = caller[0].include?('`') ? '`' : '#'
+
+      # rubocop:enable Style/ClassVars
 
       def call_from?(trace_item, method)
         trace_item.end_with?("#{@@method_quote_delimiter}#{method}'")

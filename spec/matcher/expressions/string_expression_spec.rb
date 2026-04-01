@@ -25,6 +25,8 @@ describe Matcher::StringExpression do
   it '#to_s' do
     expression = Matcher::Expression.build { concat(vars[:foo] * 2, 'bar') }
 
+    # rubocop:disable Lint/InterpolationCheck
     assert_equal '"#{foo * 2}bar"', expression.to_s
+    # rubocop:enable Lint/InterpolationCheck
   end
 end

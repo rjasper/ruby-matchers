@@ -51,7 +51,9 @@ module Matcher
       if @method.is_a?(Array)
         @method.include?(method)
       else
+        # rubocop:disable Style/CaseEquality
         @method === method
+        # rubocop:enable Style/CaseEquality
       end
     end
   end

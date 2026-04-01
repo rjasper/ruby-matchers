@@ -61,7 +61,10 @@ describe Matcher::Block do
     end
 
     it 'simplifies a block to a SymbolProc' do
+      # rubocop:disable Style/SymbolProc
       block = Matcher::Block.build { |x| x.foo }
+      # rubocop:enable Style/SymbolProc
+
       symbol_proc = Matcher::SymbolProc.new(:foo)
 
       assert_kind_of Matcher::SymbolProc, block
