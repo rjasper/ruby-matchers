@@ -2,7 +2,7 @@
 
 module Matcher
   class RangeExpression < Expression
-    def initialize(from, to, exclude_end = false)
+    def initialize(from, to, exclude_end: false)
       super()
 
       @begin = from
@@ -47,7 +47,7 @@ module Matcher
       from = @begin.substitute(replacements)
       to = @end.substitute(replacements)
 
-      RangeExpression.new(from, to, @exclude_end)
+      RangeExpression.new(from, to, exclude_end: @exclude_end)
     end
 
     def to_s

@@ -106,11 +106,11 @@ module Matcher
     # @param to [Expression, Object]
     # @param exclude_end [Boolean]
     # @return [RangeExpression]
-    def range(from, to, exclude_end = false)
+    def range(from, to, exclude_end: false)
       from = expression_of(from)
       to = expression_of(to)
 
-      RangeExpression.new(from, to, exclude_end).to_recorder
+      RangeExpression.new(from, to, exclude_end:).to_recorder
     end
 
     def rescue_exception(expression)

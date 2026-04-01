@@ -99,7 +99,7 @@ module Matcher
           from = Constant.cache(from, expression_cache) unless from.is_a?(Expression)
           to = Constant.cache(to, expression_cache) unless to.is_a?(Expression)
 
-          return RangeExpression.new(from, to, obj.exclude_end?)
+          return RangeExpression.new(from, to, exclude_end: obj.exclude_end?)
         end
       when Set
         items = obj.map { expression_or_value(_1, expression_cache:) }
