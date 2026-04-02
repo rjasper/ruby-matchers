@@ -103,14 +103,14 @@ describe Matcher::IndexByMatcher do
     matcher = Matcher.build { index_by(_[:id]) ^ (_ > subset) }
     negated = ~matcher
 
-    map_to_h = expression { _.map { |e| [e[:id], e] }.to_h }
+    to_h = expression { _.to_h { |e| [e[:id], e] } }
 
     assert_no_errors matcher.match(superset.values)
     assert_or_errors negated.match(superset.values),
-      map_to_h => "did not expect a value > #{subset} but got #{superset}"
+      to_h => "did not expect a value > #{subset} but got #{superset}"
 
     assert_errors matcher.match(subset.values),
-      map_to_h => "expected a value > #{subset} but got #{subset}"
+      to_h => "expected a value > #{subset} but got #{subset}"
     assert_no_errors negated.match(subset.values)
   end
 

@@ -124,14 +124,13 @@ module Matcher
       pair = ArrayExpression.new([substituted, Variable.new(element)])
       block = Block.new(parameters, pair)
 
-      map = if with_index
-        enum_for_map = Call.new(Variable.actual, :map)
-        Call.new(enum_for_map, :with_index, [], {}, block)
+      receiver = if with_index
+        Call.new(Variable.actual, :each_with_index)
       else
-        Call.new(Variable.actual, :map, [], {}, block)
+        Variable.actual
       end
 
-      @mapped_base = Call.new(map, :to_h)
+      @mapped_base = Call.new(receiver, :to_h, [], {}, block)
     end
   end
 
