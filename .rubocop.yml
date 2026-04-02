@@ -13,8 +13,6 @@ Layout/CaseIndentation:
   EnforcedStyle: end
 Layout/DotPosition:
   EnforcedStyle: leading
-Layout/EmptyLinesAroundAttributeAccessor:
-  Enabled: false
 Layout/EndAlignment:
   EnforcedStyleAlignWith: start_of_line
 Layout/FirstArrayElementLineBreak:
@@ -33,6 +31,8 @@ Layout/FirstHashElementIndentation:
 Layout/LineEndStringConcatenationIndentation:
   Enabled: true
   EnforcedStyle: indented
+Layout/LineLength:
+  AutoCorrect: false
 Layout/MultilineArrayLineBreaks:
   Enabled: true
 Layout/MultilineMethodArgumentLineBreaks:
@@ -68,6 +68,9 @@ Lint/IncompatibleIoSelectWithFiberScheduler:
   Enabled: true
 Lint/LambdaWithoutLiteralBlock:
   Enabled: true
+Lint/LiteralInInterpolation:
+  Exclude:
+  - spec/**/*.rb
 Lint/NoReturnInBeginEndBlocks:
   Enabled: true
 Lint/NumberedParameterAssignment:
@@ -88,8 +91,6 @@ Lint/TripleQuotes:
   Enabled: true
 Lint/UnexpectedBlockArity:
   Enabled: true
-Lint/UnifiedInteger:
-  Enabled: false
 Lint/UnmodifiedReduceAccumulator:
   Enabled: true
 Lint/UselessRuby2Keywords:
@@ -102,30 +103,22 @@ Metrics/ClassLength:
   Enabled: false
 Metrics/CyclomaticComplexity:
   Enabled: false
+Metrics/ModuleLength:
+  Enabled: false
 Metrics/MethodLength:
   Enabled: false
 Metrics/ParameterLists:
   Enabled: false
 Metrics/PerceivedComplexity:
   Enabled: false
-Minitest/AssertEmptyLiteral:
-  Enabled: false
-Minitest/AssertInDelta:
-  Enabled: false
-Minitest/AssertTruthy:
-  Enabled: false
-Minitest/MultipleAssertions:
-  Enabled: false
-Minitest/RefuteFalse:
-  Enabled: false
 Naming/BlockForwarding:
-  Enabled: false # Ruby 3.3.0 bug, see https://bugs.ruby-lang.org/issues/20090
+  Enabled: true
 Security/CompoundHash:
   Enabled: true
 Security/IoMethods:
   Enabled: true
 Style/ArgumentsForwarding:
-  Enabled: false # Ruby 3.3.0 bug, see https://bugs.ruby-lang.org/issues/20090
+  Enabled: true
 Style/EmptyElse:
   EnforcedStyle: empty
 Style/CollectionCompact:
@@ -175,14 +168,10 @@ Style/NumberedParameters:
 Style/NumberedParametersLimit:
   Enabled: true
   Max: 2
-Style/NumericLiterals:
-  Enabled: false
 Style/ObjectThen:
   Enabled: true
 Style/OpenStructUse:
   Enabled: true
-Style/PerlBackrefs:
-  Enabled: false
 Style/QuotedSymbols:
   Enabled: true
 Style/RedundantArgument:
@@ -195,6 +184,8 @@ Style/SelectByRegexp:
   Enabled: true
 Style/StringChars:
   Enabled: true
+Style/StringLiteralsInInterpolation:
+  Enabled: false
 Style/SwapValues:
   Enabled: true
 Style/TrailingCommaInArguments:
@@ -203,5 +194,7 @@ Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: consistent_comma
 Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: consistent_comma
+Style/WordArray:
+  Enabled: false
 Style/ZeroLengthPredicate:
   Enabled: false
