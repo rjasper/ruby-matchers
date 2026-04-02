@@ -2,10 +2,10 @@
 
 module Matcher
   class ErrorChecker
+    Result = Struct.new(:ok, :reason, :missing_phrases, :extra_phrases)
+
     def initialize(phrasing)
       @phrasing = phrasing
-      @missing_phrases = []
-      @extra_phrases = []
       @label_count = 0
 
       label_counter = proc do |h, k|
@@ -24,38 +24,35 @@ module Matcher
       @phrasing_labels = Hash.new(&label_counter)
     end
 
-    attr_reader :reason, :missing_phrases, :extra_phrases
-
     def check(expected, actual)
       if expected.valid? && !actual.valid?
-        @reason = 'expected no errors'
-        return false
+        return not_ok('expected no errors')
       elsif !expected.valid? && actual.valid?
-        @reason = 'did not expect no errors'
+        return not_ok('did not expect no errors')
       end
 
       expected_tree, expected_leaves = analyze(expected)
       actual_tree, actual_leaves = analyze(actual)
 
-      if actual_tree.label != expected_tree.label
-        @reason = 'error has not the expected structure'
-        return false
-      end
+      return not_ok('error has not the expected structure') if
+        actual_tree.label != expected_tree.label
 
       propagate_hierarchy(expected_tree)
       propagate_hierarchy(actual_tree)
 
-      unless check_phrases(expected_leaves, actual_leaves)
-        @reason = 'error has unexpected messages'
-        return false
+      missing_phrases, extra_phrases = check_phrases(expected_leaves, actual_leaves)
+
+      if !missing_phrases.empty? || !extra_phrases.empty?
+        result = not_ok('error has unexpected messages')
+        result.missing_phrases = missing_phrases
+        result.extra_phrases = extra_phrases
+        return result
       end
 
-      unless check_trees(expected_tree, actual_tree)
-        @reason = 'error tree does not match expected'
-        return false
-      end
+      return not_ok('error tree does not match expected') unless
+        check_trees(expected_tree, actual_tree)
 
-      true
+      ok
     end
 
     Tree = Struct.new(
@@ -93,6 +90,14 @@ module Matcher
     end
 
     private
+
+    def ok
+      Result.new(true)
+    end
+
+    def not_ok(reason)
+      Result.new(false, reason)
+    end
 
     # assign labels and hierarchy
 
@@ -160,6 +165,8 @@ module Matcher
       end
 
       inverted_phrase_index = @phrase_index.invert
+      missing_phrases = []
+      extra_phrases = []
 
       counts.each do |key, count|
         next if count == 0
@@ -168,13 +175,13 @@ module Matcher
         phrase = inverted_phrase_index[phrase_label]
 
         if count < 0
-          @missing_phrases << [phrase, -count]
+          missing_phrases << [phrase, -count]
         else
-          @extra_phrases << [phrase, count]
+          extra_phrases << [phrase, count]
         end
       end
 
-      @missing_phrases.empty? && @extra_phrases.empty?
+      [missing_phrases, extra_phrases]
     end
 
     def index_message(leaf)

@@ -18,7 +18,7 @@ describe Matcher::ErrorChecker do
       error :foo, msg(1).not.equal(2)
     end
 
-    assert checker.check(expected, actual)
+    assert checker.check(expected, actual).ok
   end
 
   it 'considers double "and" equivalent to single one' do
@@ -38,7 +38,7 @@ describe Matcher::ErrorChecker do
       end
     end
 
-    assert checker.check(expected, actual)
+    assert checker.check(expected, actual).ok
   end
 
   it 'considers double "or" equivalent to single one' do
@@ -62,13 +62,13 @@ describe Matcher::ErrorChecker do
       end
     end
 
-    assert checker.check(expected, actual)
+    assert checker.check(expected, actual).ok
   end
 
   it 'checks empty errors' do
     empty = build_errors
 
-    assert checker.check(empty, empty)
+    assert checker.check(empty, empty).ok
   end
 
   it 'detects unexpected structure' do
@@ -81,8 +81,10 @@ describe Matcher::ErrorChecker do
       error 'something went wrong'
     end
 
-    refute checker.check(expected, actual)
-    assert_equal 'error has not the expected structure', checker.reason
+    result = checker.check(expected, actual)
+
+    refute result.ok
+    assert_equal 'error has not the expected structure', result.reason
   end
 
   it 'detects unexpected message' do
@@ -94,10 +96,12 @@ describe Matcher::ErrorChecker do
       error 'something went failed'
     end
 
-    refute checker.check(expected, actual)
-    assert_equal 'error has unexpected messages', checker.reason
-    assert_equal [['something went wrong', 1]], checker.missing_phrases
-    assert_equal [['something went failed', 1]], checker.extra_phrases
+    result = checker.check(expected, actual)
+
+    refute result.ok
+    assert_equal 'error has unexpected messages', result.reason
+    assert_equal [['something went wrong', 1]], result.missing_phrases
+    assert_equal [['something went failed', 1]], result.extra_phrases
   end
 
   it 'detects unexpected tree in detail' do
@@ -125,22 +129,24 @@ describe Matcher::ErrorChecker do
       end
     end
 
-    refute checker.check(expected, actual)
-    assert_equal 'error tree does not match expected', checker.reason
+    result = checker.check(expected, actual)
+
+    refute result.ok
+    assert_equal 'error tree does not match expected', result.reason
   end
 
   it 'recognizes expected phrasing in message' do
     expected = Matcher::ElementError.new('expected 2 but got 1')
     actual = Matcher::ElementError.new(msg(1).not.equal(2))
 
-    assert checker.check(expected, actual)
+    assert checker.check(expected, actual).ok
   end
 
   it 'recognizes expected message' do
     expected = Matcher::ElementError.new(msg(1).not.equal(2))
     actual = Matcher::ElementError.new(msg(1).not.equal(2))
 
-    assert checker.check(expected, actual)
+    assert checker.check(expected, actual).ok
   end
 
   describe 'mixed children (parents and leaves)' do
@@ -163,7 +169,7 @@ describe Matcher::ErrorChecker do
         end
       end
 
-      assert checker.check(expected, actual)
+      assert checker.check(expected, actual).ok
     end
 
     it 'detects unexpected leaf' do
@@ -188,7 +194,7 @@ describe Matcher::ErrorChecker do
         end
       end
 
-      refute checker.check(expected, actual)
+      refute checker.check(expected, actual).ok
     end
 
     it 'detects unexpected parents' do
@@ -232,7 +238,7 @@ describe Matcher::ErrorChecker do
         end
       end
 
-      refute checker.check(expected, actual)
+      refute checker.check(expected, actual).ok
     end
   end
 
@@ -309,7 +315,7 @@ describe Matcher::ErrorChecker do
       end
     end
 
-    refute checker.check(expected, actual)
+    refute checker.check(expected, actual).ok
   end
 
   it 'detects if there are too few candidates for all identities' do
@@ -405,7 +411,7 @@ describe Matcher::ErrorChecker do
       end
     end
 
-    refute checker.check(expected, actual)
+    refute checker.check(expected, actual).ok
   end
 
   it 'recognizes valid positions for ambiguous candidates' do
@@ -515,7 +521,7 @@ describe Matcher::ErrorChecker do
       end
     end
 
-    assert checker.check(expected, actual)
+    assert checker.check(expected, actual).ok
   end
 
   it 'detects valid positions impossible for ambiguous candidates' do
@@ -625,7 +631,7 @@ describe Matcher::ErrorChecker do
       end
     end
 
-    refute checker.check(expected, actual)
+    refute checker.check(expected, actual).ok
   end
 
   it '#match_identities3' do

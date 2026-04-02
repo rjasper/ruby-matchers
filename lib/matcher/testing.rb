@@ -51,14 +51,14 @@ module Matcher
       checker = ErrorChecker.new(phrasing)
       result = checker.check(expected, actual)
 
-      return if result
+      return if result.ok
 
       reporter = Reporter.new
 
       io = StringIO.new
 
       io.puts <<~TEXT
-        #{checker.reason}
+        #{result.reason}
 
         expected:
 
@@ -69,16 +69,18 @@ module Matcher
         #{reporter.report(actual).chomp}
       TEXT
 
-      unless checker.missing_phrases.empty?
+      missing_phrases = result.missing_phrases
+      if missing_phrases && !missing_phrases.empty?
         io.puts "\nmissing:"
-        checker.missing_phrases.each do |phrase, count|
+        missing_phrases.each do |phrase, count|
           io.puts "- #{phrase}#{"(#{count}x)" if count > 1}"
         end
       end
 
-      unless checker.extra_phrases.empty?
+      extra_phrases = result.extra_phrases
+      if extra_phrases && !extra_phrases.empty?
         io.puts "\nextra:"
-        checker.extra_phrases.each do |phrase, count|
+        extra_phrases.each do |phrase, count|
           io.puts "- #{phrase}#{"(#{count}x)" if count > 1}"
         end
       end
