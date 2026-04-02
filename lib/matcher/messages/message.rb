@@ -91,7 +91,7 @@ module Matcher
 
       string = "report(#{@actual.inspect})"
       string += ".namespace(#{namespace.inspect})" if namespace
-      string += '.not' if @negated
+      string += ".not" if @negated
       string += ".#{key}"
       string += "(#{args_and_kwargs.join(', ')})" unless args_and_kwargs.empty?
 

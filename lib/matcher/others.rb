@@ -7,7 +7,7 @@ module Matcher
     include NoExpression
 
     def to_s
-      'others'
+      "others"
     end
     alias inspect to_s
   end

@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::Base do
-  it 'checks match level' do
+  it "checks match level" do
     matcher = Matcher.build do
       refs[:obj] = project(_.dup) ^ refs[:obj]
     end
 
     Matcher.stub(:max_reference_depth, 2) do
       assert_errors matcher.match(Object.new),
-        expression { _.dup.dup.dup } => 'match level too deep: 3'
+        expression { _.dup.dup.dup } => "match level too deep: 3"
     end
   end
 
-  it 'scopes values' do
+  it "scopes values" do
     matcher = Matcher.build do
       declare :foo
 
@@ -28,9 +28,9 @@ describe Matcher::Base do
     assert_no_errors matcher.match([1, 2, 1])
   end
 
-  it '#~: caches negated matchers' do
+  it "#~: caches negated matchers" do
     Matcher.with_build_session do
-      matcher = Matcher.build { 'foo' }
+      matcher = Matcher.build { "foo" }
       negated = ~matcher
 
       assert_same negated, ~matcher

@@ -4,7 +4,7 @@ module Matcher
   class ExpectedPhrasing < Phrasing
     define(:truthy) do
       verb = verb(negated: true)
-      truthy_or_falsy = negated ? 'truthy' : 'falsy'
+      truthy_or_falsy = negated ? "truthy" : "falsy"
 
       "#{verb} a #{truthy_or_falsy} value but got #{actual.inspect}"
     end
@@ -117,7 +117,7 @@ module Matcher
     end
 
     define(:predicate) do |predicate|
-      predicate = predicate.to_s.delete_suffix('?')
+      predicate = predicate.to_s.delete_suffix("?")
 
       "#{verb} value to be #{predicate} but got #{actual.inspect}"
     end
@@ -129,7 +129,7 @@ module Matcher
     namespace(:expression) do
       define(:truthy) do |expression, value, given|
         verb = verb(negated: true)
-        truthy_or_falsy = negated ? 'truthy' : 'falsy'
+        truthy_or_falsy = negated ? "truthy" : "falsy"
 
         "#{verb} #{expression} to be #{truthy_or_falsy} " \
           "but got #{value.inspect}#{where_text(given, expression)}"
@@ -204,12 +204,12 @@ module Matcher
       end
 
       match_at_words = {
-        :== => 'at',
-        :!= => 'not at',
-        :< => 'before',
-        :> => 'after',
-        :<= => 'at or before',
-        :>= => 'at or after',
+        :== => "at",
+        :!= => "not at",
+        :< => "before",
+        :> => "after",
+        :<= => "at or before",
+        :>= => "at or after",
       }
 
       define(:match_at) do |expression, value, pattern, position, comparison, operand, given|
@@ -240,7 +240,7 @@ module Matcher
       end
 
       define(:predicate) do |expression, value, predicate, given|
-        predicate = predicate.to_s.delete_suffix('?')
+        predicate = predicate.to_s.delete_suffix("?")
 
         "#{verb} #{expression} to be #{predicate} " \
           "but got #{value.inspect}#{where_text(given, expression)}"
@@ -273,9 +273,9 @@ module Matcher
       def x_conditions(count)
         case count
         when :any
-          'any condition'
+          "any condition"
         when 1
-          'one condition'
+          "one condition"
         else
           "#{count} conditions"
         end
@@ -299,7 +299,7 @@ module Matcher
       end
 
       define(:failed_from_cache) do
-        'actual has already failed before'
+        "actual has already failed before"
       end
     end
 
@@ -315,7 +315,7 @@ module Matcher
       # A message says what actual is but expected says what it is not. That's why
       # the verb is counter-intuitively negated.
 
-      negated ? 'expected' : 'did not expect'
+      negated ? "expected" : "did not expect"
     end
 
     def negated_verb
@@ -323,20 +323,20 @@ module Matcher
     end
 
     def join(objects)
-      objects.join(', ')
+      objects.join(", ")
     end
 
     def where_text(values, *expressions)
-      return '' if values.empty?
+      return "" if values.empty?
 
       except = expressions.filter_map { _1.symbol if _1.is_a?(Variable) }
       symbols = expressions.flat_map(&:variables).uniq - except
 
-      return '' if symbols.empty?
+      return "" if symbols.empty?
 
       list = symbols
         .map { "#{_1} = #{values.fetch(_1).inspect}" }
-        .join(', ')
+        .join(", ")
 
       ", where #{list}"
     end

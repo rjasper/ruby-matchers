@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::NeverMatcher do
-  it 'is built by never' do
+  it "is built by never" do
     matcher = Matcher.build { never }
 
     assert_kind_of Matcher::NeverMatcher, matcher
   end
 
-  it 'matchers never' do
+  it "matchers never" do
     matcher = Matcher.build { never }
     negated = ~matcher
 
@@ -39,15 +39,15 @@ describe Matcher::NeverMatcher do
     assert_no_errors negated.match([])
   end
 
-  it '#~' do
+  it "#~" do
     matcher = Matcher.build { never }
 
     assert_kind_of Matcher::AlwaysMatcher, ~matcher
   end
 
-  it '#to_s' do
+  it "#to_s" do
     matcher = Matcher.build { never }
 
-    assert_equal 'never', matcher.to_s
+    assert_equal "never", matcher.to_s
   end
 end

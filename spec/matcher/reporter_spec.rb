@@ -1,29 +1,29 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::Reporter do
-  it 'looks nice' do
+  it "looks nice" do
     t = self
 
     errors = build_errors do
-      error 'base wrong'
-      error :nested, 'nested wrong'
-      error t.expression { _[:foo].bar }, 'foobar'
-      error t.expression { _ + _ }, '2 roots'
-      error [:too_long, t.expression { _ + _ + _ }], '3 long roots'
-      error t.expression { expr(Math).sqrt(_) }, 'square root of root'
+      error "base wrong"
+      error :nested, "nested wrong"
+      error t.expression { _[:foo].bar }, "foobar"
+      error t.expression { _ + _ }, "2 roots"
+      error [:too_long, t.expression { _ + _ + _ }], "3 long roots"
+      error t.expression { expr(Math).sqrt(_) }, "square root of root"
 
       _or do
-        error 'either correct this'
+        error "either correct this"
 
         _and do
-          error 'or all of this'
-          error 'and this'
+          error "or all of this"
+          error "and this"
 
           _or do
-            error 1, 'or1'
-            error 2, 'or2'
+            error 1, "or1"
+            error 2, "or2"
           end
         end
       end

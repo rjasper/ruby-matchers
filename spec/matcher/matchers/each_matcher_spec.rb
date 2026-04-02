@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::EachMatcher do
-  it 'is built by each' do
+  it "is built by each" do
     assert_kind_of(Matcher::EachMatcher, Matcher.build { each(Integer) })
     assert_kind_of(Matcher::EachMatcher, Matcher.build { each ^ Integer })
   end
 
-  it 'expects an object responding to :each' do
+  it "expects an object responding to :each" do
     matcher = Matcher.build { each(Integer) }
 
     refute matcher.match?(nil)
@@ -18,7 +18,7 @@ describe Matcher::EachMatcher do
     assert_no_errors matcher.~.match(nil)
   end
 
-  it 'matches each' do
+  it "matches each" do
     matcher = Matcher.build { each(1) }
     negated = ~matcher
 
@@ -40,16 +40,16 @@ describe Matcher::EachMatcher do
     assert_no_errors negated.match([1, 2, 3])
   end
 
-  it 'passes index' do
+  it "passes index" do
     matcher = Matcher.build do
       each(_ == i.to_s)
     end
 
-    assert_errors matcher.match(['0', '1', '3']),
+    assert_errors matcher.match(["0", "1", "3"]),
       2 => 'expected actual == index.to_s but got "3" == "2", where index = 2'
   end
 
-  it 'passes parent' do
+  it "passes parent" do
     matcher = Matcher.build do
       each(_ == parent.length * 10 + index + 1)
     end
@@ -59,10 +59,10 @@ describe Matcher::EachMatcher do
         "but got 45 == 44, where parent = [41, 42, 43, 45], index = 3"
   end
 
-  it '#to_s' do
+  it "#to_s" do
     matcher = Matcher.build { each(1) }
 
-    assert_equal 'each(1)', matcher.to_s
-    assert_equal '~each(1)', matcher.~.to_s
+    assert_equal "each(1)", matcher.to_s
+    assert_equal "~each(1)", matcher.~.to_s
   end
 end

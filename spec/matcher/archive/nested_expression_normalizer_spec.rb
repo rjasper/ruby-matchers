@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'test_helper'
-require 'matcher/archive/nested_expression_normalizer'
+require "test_helper"
+require "matcher/archive/nested_expression_normalizer"
 
 describe Matcher::NestedExpressionNormalizer do
   def examine(keys, recorder)
@@ -19,7 +19,7 @@ describe Matcher::NestedExpressionNormalizer do
     assert_equal expected, actual
   end
 
-  it 'normalizes nested expressions' do
+  it "normalizes nested expressions" do
     t = self
 
     Matcher::Builder.new(nil).instance_exec do
@@ -28,8 +28,8 @@ describe Matcher::NestedExpressionNormalizer do
       t.examine [_.a], _.a
       t.examine [_.a, :b], _.a[:b]
 
-      t.examine [_.a('foo').b, :c, :d],
-        _.a('foo').b[:c][:d]
+      t.examine [_.a("foo").b, :c, :d],
+        _.a("foo").b[:c][:d]
       t.examine [_.a.b, :c, :d],
         _.a.b[:c][:d]
       t.examine [_.a, _ + _],

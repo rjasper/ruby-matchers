@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::PatternMatch do
   let(:match) do
@@ -15,7 +15,7 @@ describe Matcher::PatternMatch do
     Matcher::AstMapping.new.receiver.args[0]
   end
 
-  it '#[]' do
+  it "#[]" do
     match.capture(:foo, exp, mapping)
 
     capture = match[:foo]
@@ -25,7 +25,7 @@ describe Matcher::PatternMatch do
     assert_equal mapping, capture.mapping
   end
 
-  it '#include?' do
+  it "#include?" do
     refute match.include?(:foo)
 
     match.capture(:foo, exp, mapping)
@@ -33,7 +33,7 @@ describe Matcher::PatternMatch do
     assert match.include?(:foo)
   end
 
-  it '#value_paths' do
+  it "#value_paths" do
     match.capture(:foo, exp, mapping)
 
     expected = [
@@ -46,7 +46,7 @@ describe Matcher::PatternMatch do
     assert_equal({ foo: expected }, match.value_paths)
   end
 
-  it '#expression' do
+  it "#expression" do
     match.capture(:foo, exp, mapping)
 
     assert_equal({ foo: exp }, match.expressions)

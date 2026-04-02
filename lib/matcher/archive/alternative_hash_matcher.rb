@@ -37,7 +37,7 @@ module Matcher
     def build_matcher(hash, partial)
       includes_others = hash.include?(Others.instance)
 
-      raise 'cannot use partial(others => ...)' if partial && includes_others
+      raise "cannot use partial(others => ...)" if partial && includes_others
 
       kind_of_hash = CaseEqualityMatcher.new(Hash)
 
@@ -85,7 +85,7 @@ module Matcher
         extra_keys = receiver.session[:extra_keys]
 
         if negated?
-          errors << 'no extra key' if extra_keys.empty?
+          errors << "no extra key" if extra_keys.empty?
         else
           extra_keys.each do |key|
             errors[key] << expected(actual).not.having_key(key)

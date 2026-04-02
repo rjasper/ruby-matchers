@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::Optional do
-  describe 'optional helper' do
-    it 'builds Optional' do
+  describe "optional helper" do
+    it "builds Optional" do
       assert_kind_of(Matcher::Optional, Matcher.build { break optional(1) })
     end
 
-    it 'converts recorder to expression' do
+    it "converts recorder to expression" do
       assert_equal(1, Matcher.build { break optional(1).value })
 
       expected = Matcher::Variable.actual
@@ -17,12 +17,12 @@ describe Matcher::Optional do
     end
   end
 
-  it '#==' do
+  it "#==" do
     assert_equal Matcher::Optional.new([1]), Matcher::Optional.new([1])
     refute_equal Matcher::Optional.new([1]), Matcher::Optional.new([2])
   end
 
-  it 'works as hash key' do
+  it "works as hash key" do
     o1_a = Matcher::Optional.new(1)
     o1_b = Matcher::Optional.new(1)
     o2_a = Matcher::Optional.new(2)
@@ -34,7 +34,7 @@ describe Matcher::Optional do
     assert_equal 2, hash[o2_b]
   end
 
-  it '#to_s' do
-    assert_equal 'optional(:foo)', Matcher::Optional.new(:foo).to_s
+  it "#to_s" do
+    assert_equal "optional(:foo)", Matcher::Optional.new(:foo).to_s
   end
 end

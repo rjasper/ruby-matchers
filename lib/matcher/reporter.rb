@@ -17,7 +17,7 @@ module Matcher
     def initialize
       @level = 0
       @continue_line = false
-      @path_stack = ['root']
+      @path_stack = ["root"]
       @phrasing = ExpectedPhrasing.phrasing
     end
 
@@ -53,7 +53,7 @@ module Matcher
     end
 
     def report_empty
-      'no error'
+      "no error"
     end
 
     def report_element(element)
@@ -76,10 +76,10 @@ module Matcher
     end
 
     def report_or(error)
-      line('expected at least one error to be absent:')
+      line("expected at least one error to be absent:")
 
       error.children.each do |n|
-        line('- ', newline: false)
+        line("- ", newline: false)
 
         @level += 1
         report_error(n)
@@ -88,7 +88,7 @@ module Matcher
     end
 
     def line(message, newline: true)
-      message = '  ' * @level + message unless @continue_line
+      message = "  " * @level + message unless @continue_line
       message += "\n" if newline
 
       @continue_line = !newline

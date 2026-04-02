@@ -91,7 +91,7 @@ module Matcher
     # @overload expr(&block)
     #   @return [Recorder]
     def expr(obj = UNDEFINED, &block)
-      raise 'obj and block given' if !Matcher.undefined?(obj) && block_given?
+      raise "obj and block given" if !Matcher.undefined?(obj) && block_given?
 
       expression = block_given? ? ProcExpression.new(block) : expression_of(obj)
       expression.to_recorder
@@ -278,7 +278,7 @@ module Matcher
         end
       end
 
-      raise 'Could not return last assignment' unless status
+      raise "Could not return last assignment" unless status
 
       call.to_recorder
     end

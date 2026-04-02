@@ -19,7 +19,7 @@ module Matcher
     end
 
     def initialize(children)
-      raise 'children fewer than 2' if children.length < 2
+      raise "children fewer than 2" if children.length < 2
 
       super()
 

@@ -58,7 +58,7 @@ module Matcher
       when -> { Recorder.recorder?(_1) }
         return Recorder.to_expression(obj)
       when Base
-        raise ArgumentError, 'Cannot use matcher as expression'
+        raise ArgumentError, "Cannot use matcher as expression"
       when NoExpression
         raise ArgumentError, "Cannot use #{obj.class} as expression"
       when Proc
@@ -133,7 +133,7 @@ module Matcher
     end
 
     def initialize
-      raise 'abstract class' if instance_of?(Expression)
+      raise "abstract class" if instance_of?(Expression)
     end
 
     def evaluate_tree(values)

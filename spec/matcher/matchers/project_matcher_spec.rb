@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::ProjectMatcher do
-  it 'is build by project' do
+  it "is build by project" do
     assert_kind_of(
       Matcher::ProjectMatcher,
       Matcher.build { project(_.sum => 4) },
@@ -15,7 +15,7 @@ describe Matcher::ProjectMatcher do
     )
   end
 
-  it 'expects no call errors' do
+  it "expects no call errors" do
     matcher = Matcher.build { project(_.sum => 4) }
 
     refute matcher.match?(nil)
@@ -25,7 +25,7 @@ describe Matcher::ProjectMatcher do
     assert_no_errors matcher.~.match(nil)
   end
 
-  it 'matches projected object' do
+  it "matches projected object" do
     matcher = Matcher.build { project(_.sum => 4) }
     negated = ~matcher
 
@@ -42,7 +42,7 @@ describe Matcher::ProjectMatcher do
     assert_no_errors negated.match([2, 3])
   end
 
-  it 'matches multiple projections' do
+  it "matches multiple projections" do
     matcher = Matcher.build { project(_.sum => 10, _.min => 1, _.max => 5) }
     negated = ~matcher
     t = self
@@ -72,10 +72,10 @@ describe Matcher::ProjectMatcher do
     assert_no_errors negated.match([1, 2, 3, 4])
   end
 
-  it '#to_s' do
+  it "#to_s" do
     matcher = Matcher.build { project(_.my_method => 42) }
 
-    assert_equal 'project(actual.my_method => 42)', matcher.to_s
-    assert_equal '~project(actual.my_method => 42)', matcher.~.to_s
+    assert_equal "project(actual.my_method => 42)", matcher.to_s
+    assert_equal "~project(actual.my_method => 42)", matcher.~.to_s
   end
 end

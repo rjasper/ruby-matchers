@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'time'
+require "time"
 
 module Matcher
   class ParseIso8601Matcher < Base
@@ -42,7 +42,7 @@ module Matcher
     end
 
     def to_s
-      prefix = @negated ? '~' : ''
+      prefix = @negated ? "~" : ""
 
       return "#{prefix}iso8601_format" if @original_matcher.is_a?(AlwaysMatcher)
 

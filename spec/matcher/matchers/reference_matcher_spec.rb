@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::ReferenceMatcher do
-  it 'is build by refs[]' do
+  it "is build by refs[]" do
     matcher = Matcher.build do
       refs[:foo] = { bar: refs[:foo] }
       refs[:foo]
@@ -12,8 +12,8 @@ describe Matcher::ReferenceMatcher do
     assert_kind_of Matcher::ReferenceMatcher, matcher
   end
 
-  describe 'MatcherBuilding#refs' do
-    it 'returns target matcher if last line was refs[]=' do
+  describe "MatcherBuilding#refs" do
+    it "returns target matcher if last line was refs[]=" do
       ref_matcher = nil
 
       matcher = Matcher.build do
@@ -24,24 +24,24 @@ describe Matcher::ReferenceMatcher do
       assert_same ref_matcher.send(:target), matcher
     end
 
-    it 'checks for undefined refs' do
+    it "checks for undefined refs" do
       err = assert_raises StandardError do
         Matcher.build { [refs[:foo]] }
       end
 
-      assert_equal 'undefined ref: foo', err.message
+      assert_equal "undefined ref: foo", err.message
     end
 
-    it 'checks for unused refs' do
+    it "checks for unused refs" do
       err = assert_raises StandardError do
         Matcher.build { refs[:foo] = Integer }
       end
 
-      assert_equal 'unused ref: foo', err.message
+      assert_equal "unused ref: foo", err.message
     end
   end
 
-  it 'matches linked lists' do
+  it "matches linked lists" do
     matcher = Matcher.build do
       refs[:list] = {
         head: Integer,
@@ -76,34 +76,34 @@ describe Matcher::ReferenceMatcher do
     assert_no_errors negated.match(invalid_list)
   end
 
-  it 'caches results' do
+  it "caches results" do
     matcher = Matcher.build do
-      refs[:foo] = 'foo'
+      refs[:foo] = "foo"
 
       [refs[:foo], refs[:foo]]
     end
 
     negated = ~matcher
 
-    assert matcher.match?(['foo', 'foo'])
-    assert_no_errors matcher.match(['foo', 'foo'])
-    refute negated.match?(['foo', 'foo'])
-    assert_errors negated.match(['foo', 'foo']) do
+    assert matcher.match?(["foo", "foo"])
+    assert_no_errors matcher.match(["foo", "foo"])
+    refute negated.match?(["foo", "foo"])
+    assert_errors negated.match(["foo", "foo"]) do
       _or do
-        error 0, msg('foo').equal('foo')
-        error 1, 'actual has already failed before'
+        error 0, msg("foo").equal("foo")
+        error 1, "actual has already failed before"
       end
     end
 
-    refute matcher.match?(['bar', 'bar'])
-    assert_errors matcher.match(['bar', 'bar']),
-      0 => msg('bar').not.equal('foo'),
-      1 => 'actual has already failed before'
-    assert negated.match?(['bar', 'bar'])
-    assert_no_errors negated.match(['bar', 'bar'])
+    refute matcher.match?(["bar", "bar"])
+    assert_errors matcher.match(["bar", "bar"]),
+      0 => msg("bar").not.equal("foo"),
+      1 => "actual has already failed before"
+    assert negated.match?(["bar", "bar"])
+    assert_no_errors negated.match(["bar", "bar"])
   end
 
-  it 'matches without cache' do
+  it "matches without cache" do
     matcher = Matcher.build do
       refs[:index, { cache: false }] = _ == index
 
@@ -117,19 +117,19 @@ describe Matcher::ReferenceMatcher do
     refute negated.match?([0, 1])
     assert_errors negated.match([0, 1]) do
       _or do
-        error 0, 'expected actual != index but got 0 != 0'
-        error 1, 'expected actual != index but got 1 != 1'
+        error 0, "expected actual != index but got 0 != 0"
+        error 1, "expected actual != index but got 1 != 1"
       end
     end
 
     refute matcher.match?([0, 0])
     assert_errors matcher.match([0, 0]),
-      1 => 'expected actual == index but got 0 == 1'
+      1 => "expected actual == index but got 0 == 1"
     assert negated.match?([0, 0])
     assert_no_errors negated.match([0, 0])
   end
 
-  it 'detects cycles' do
+  it "detects cycles" do
     matcher = Matcher.build do
       list = refs[:list]
 
@@ -163,13 +163,13 @@ describe Matcher::ReferenceMatcher do
 
     refute matcher.match?(actual)
     assert_errors matcher.match(actual) do
-      error %i[tail tail], 'did not expect a cyclic structure but actual has already been visited'
+      error %i[tail tail], "did not expect a cyclic structure but actual has already been visited"
     end
     assert negated.match?(actual)
     assert_no_errors negated.match(actual)
   end
 
-  it 'allows cycles' do
+  it "allows cycles" do
     matcher = Matcher.build do
       ring = refs[:ring, cyclic: true]
 
@@ -198,7 +198,7 @@ describe Matcher::ReferenceMatcher do
         error :value, msg(1).kind_of(Integer)
         error %i[next value], msg(2).kind_of(Integer)
         error %i[next next value], msg(3).kind_of(Integer)
-        error %i[next next next], 'did not expect a cyclic structure but actual has already been visited'
+        error %i[next next next], "did not expect a cyclic structure but actual has already been visited"
       end
     end
 
@@ -211,13 +211,13 @@ describe Matcher::ReferenceMatcher do
     assert_no_errors negated.match(ring2)
   end
 
-  it '#to_s' do
+  it "#to_s" do
     matcher = Matcher.build do
       refs[:foo] = { bar: refs[:foo] }
       refs[:foo]
     end
 
-    assert_equal 'refs[:foo]', matcher.to_s
-    assert_equal '~refs[:foo]', matcher.~.to_s
+    assert_equal "refs[:foo]", matcher.to_s
+    assert_equal "~refs[:foo]", matcher.~.to_s
   end
 end

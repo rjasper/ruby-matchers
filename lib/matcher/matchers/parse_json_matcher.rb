@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'json'
+require "json"
 
 module Matcher
   class ParseJsonMatcher < Base
@@ -43,7 +43,7 @@ module Matcher
     end
 
     def to_s
-      prefix = @negated ? '~' : ''
+      prefix = @negated ? "~" : ""
 
       return "#{prefix}json_format" if @original_matcher.is_a?(AlwaysMatcher)
 

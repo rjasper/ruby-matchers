@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::OrError do
   include Matcher::ErrorTesting
 
-  describe '#&' do
-    it 'does not modify itself' do
-      a = element('a')
-      b = element('b')
-      c = element('c')
-      d = element('d')
+  describe "#&" do
+    it "does not modify itself" do
+      a = element("a")
+      b = element("b")
+      c = element("c")
+      d = element("d")
 
       or1 = _or(a, b)
       or2 = _or(c, d)

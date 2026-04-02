@@ -26,15 +26,15 @@ module Matcher
 
     def check(expected, actual)
       if expected.valid? && !actual.valid?
-        return not_ok('expected no errors')
+        return not_ok("expected no errors")
       elsif !expected.valid? && actual.valid?
-        return not_ok('did not expect no errors')
+        return not_ok("did not expect no errors")
       end
 
       expected_tree, expected_leaves = analyze(expected)
       actual_tree, actual_leaves = analyze(actual)
 
-      return not_ok('error has not the expected structure') if
+      return not_ok("error has not the expected structure") if
         actual_tree.label != expected_tree.label
 
       propagate_hierarchy(expected_tree)
@@ -43,13 +43,13 @@ module Matcher
       missing_phrases, extra_phrases = check_phrases(expected_leaves, actual_leaves)
 
       if !missing_phrases.empty? || !extra_phrases.empty?
-        result = not_ok('error has unexpected messages')
+        result = not_ok("error has unexpected messages")
         result.missing_phrases = missing_phrases
         result.extra_phrases = extra_phrases
         return result
       end
 
-      return not_ok('error tree does not match expected') unless
+      return not_ok("error tree does not match expected") unless
         check_trees(expected_tree, actual_tree)
 
       ok
@@ -113,7 +113,7 @@ module Matcher
       when EmptyError
         Leaf.new(0)
       when AndError, OrError
-        operator = error.is_a?(AndError) ? 'and' : 'or'
+        operator = error.is_a?(AndError) ? "and" : "or"
 
         left_children, right_children = error.children
           .map { analyze_helper(_1, path, path_label, leaves) }

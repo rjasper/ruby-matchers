@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Matcher
-  autoload :ParseJsonMatcher, 'matcher/matchers/parse_json_matcher'
+  autoload :ParseJsonMatcher, "matcher/matchers/parse_json_matcher"
 
   module MatcherBuilding
     ##

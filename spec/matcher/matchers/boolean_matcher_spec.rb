@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 module Matcher
   describe BooleanMatcher do
-    it 'is built by boolean' do
+    it "is built by boolean" do
       matcher = Matcher.build { boolean }
 
       assert_kind_of BooleanMatcher, matcher
     end
 
-    it 'matches true and false' do
+    it "matches true and false" do
       matcher = Matcher.build { boolean }
       negated = ~matcher
 
@@ -30,11 +30,11 @@ module Matcher
       assert_no_errors negated.match(1)
     end
 
-    it '#to_s' do
+    it "#to_s" do
       matcher = Matcher.build { boolean }
 
-      assert_equal 'boolean', matcher.to_s
-      assert_equal '~boolean', matcher.~.to_s
+      assert_equal "boolean", matcher.to_s
+      assert_equal "~boolean", matcher.~.to_s
     end
   end
 end

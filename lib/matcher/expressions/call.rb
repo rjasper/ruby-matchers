@@ -51,13 +51,13 @@ module Matcher
       if binary? && Matcher.settings[:logical_operators]
         case method
         when :&
-          @method = :'&&'
+          @method = :"&&"
         when :|
-          @method = :'||'
+          @method = :"||"
         end
       end
 
-      set_last_assign if method.end_with?('=')
+      set_last_assign if method.end_with?("=")
     end
 
     def unary?
@@ -73,7 +73,7 @@ module Matcher
     end
 
     def assignment?
-      @method.end_with?('=') && !%i[<= >= == === !=].include?(@method)
+      @method.end_with?("=") && !%i[<= >= == === !=].include?(@method)
     end
 
     def precedence
@@ -188,7 +188,7 @@ module Matcher
       when :!, :~, :+@, :-@
         # !foo
         return "#{@method[0]}#{receiver}" if unary?
-      when :+, :-, :*, :/, :%, :**, :<, :>, :<=, :>=, :<=>, :==, :===, :!=, :=~, :!~, :&, :|, :^, :<<, :>>, :'&&', :'||'
+      when :+, :-, :*, :/, :%, :**, :<, :>, :<=, :>=, :<=>, :==, :===, :!=, :=~, :!~, :&, :|, :^, :<<, :>>, :"&&", :"||"
         if binary?
           operand = parenthesize(@args[0], true)
 
@@ -204,14 +204,14 @@ module Matcher
       when :[]=
         # foo[a, b, ...] = 1
         if @args.length >= 2 && @kwargs.empty? && !@block
-          first_args = @args[0..-2].join(', ')
+          first_args = @args[0..-2].join(", ")
           last_arg = @args[-1].to_s
 
           return "#{receiver}[#{first_args}] = #{last_arg}"
         end
       end
 
-      if @method.end_with?('=') && @method != :[]= && binary?
+      if @method.end_with?("=") && @method != :[]= && binary?
         # foo.bar = 42
 
         "#{receiver}.#{@method[0..-2]} = #{@args[0]}"
@@ -231,7 +231,7 @@ module Matcher
     private
 
     def lazy?(receiver)
-      @method == :'&&' && !receiver || @method == :'||' && receiver
+      @method == :"&&" && !receiver || @method == :"||" && receiver
     end
 
     def logical_operator?
@@ -303,16 +303,16 @@ module Matcher
       list = args + kwargs
       list << "&#{@block.symbol.inspect}" if @block.is_a?(SymbolProc)
 
-      list.join(', ')
+      list.join(", ")
     end
 
     def block_string
       if @block.is_a?(Block)
         " #{@block.to_s(as_block: true)}"
       elsif @block && !@block.is_a?(SymbolProc)
-        ' { ... }'
+        " { ... }"
       else
-        ''
+        ""
       end
     end
 

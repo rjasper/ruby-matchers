@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::OneMatcher do
-  it 'is built by one' do
+  it "is built by one" do
     matcher = Matcher.build { one(String, Integer) }
 
     assert_kind_of Matcher::OneMatcher, matcher
   end
 
-  it 'matches one' do
+  it "matches one" do
     matcher = Matcher.build { one(_.odd?, _ % 3 == 0) }
     negated = ~matcher
 
@@ -23,13 +23,13 @@ describe Matcher::OneMatcher do
     assert_no_errors matcher.match(6)
     refute negated.match?(6)
     assert_errors negated.match(6),
-      'expected actual % 3 != 0 but got 0 != 0, where actual = 6'
+      "expected actual % 3 != 0 but got 0 != 0, where actual = 6"
 
     refute matcher.match?(2)
     assert_errors matcher.match(2) do
       _or do
         error msg(2).not.predicate(:odd?)
-        error 'expected actual % 3 == 0 but got 2 == 0, where actual = 2'
+        error "expected actual % 3 == 0 but got 2 == 0, where actual = 2"
       end
     end
 
@@ -37,10 +37,10 @@ describe Matcher::OneMatcher do
     assert_no_errors negated.match(2)
   end
 
-  it '#to_s' do
+  it "#to_s" do
     matcher = Matcher.build { one(String, Integer) }
 
-    assert_equal 'one(String, Integer)', matcher.to_s
-    assert_equal '~one(String, Integer)', matcher.~.to_s
+    assert_equal "one(String, Integer)", matcher.to_s
+    assert_equal "~one(String, Integer)", matcher.~.to_s
   end
 end

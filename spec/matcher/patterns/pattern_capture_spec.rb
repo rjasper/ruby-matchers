@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::PatternCapture do
-  it '#value_path' do
+  it "#value_path" do
     mapping = Matcher::AstMapping.new
     capture = Matcher::PatternCapture.new
 

@@ -33,7 +33,7 @@ module Matcher
     private
 
     def assert_errors_helper(actual, base, nested, block, phrasing: ExpectedPhrasing.phrasing, use_or: false)
-      raise 'cannot pass expected errors directly if block given' if
+      raise "cannot pass expected errors directly if block given" if
         (!base.empty? || !nested.empty?) && block
 
       expected_nodes = if block
@@ -45,7 +45,7 @@ module Matcher
       error_klass = use_or ? OrError : AndError
       expected = error_klass.from(expected_nodes)
 
-      assert false, 'expected an error but no error present' if
+      assert false, "expected an error but no error present" if
         expected.valid? && actual.valid?
 
       checker = ErrorChecker.new(phrasing)

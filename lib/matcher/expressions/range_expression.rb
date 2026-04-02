@@ -51,7 +51,7 @@ module Matcher
     end
 
     def to_s
-      dots = @exclude_end ? '...' : '..'
+      dots = @exclude_end ? "..." : ".."
 
       "#{@begin}#{dots}#{@end}"
     end

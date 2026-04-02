@@ -96,9 +96,9 @@ module Matcher
       no_arg2 = Matcher.undefined?(matcher)
 
       if no_arg1 == no_arg2 && no_arg1 ^ block_given?
-        raise ArgumentError, 'both expression and block given' unless no_arg1
+        raise ArgumentError, "both expression and block given" unless no_arg1
 
-        raise ArgumentError, 'neither expression nor block given'
+        raise ArgumentError, "neither expression nor block given"
       end
 
       if block_given?

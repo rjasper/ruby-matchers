@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::ErrorChecker do
   let(:checker) do
     Matcher::ErrorChecker.new(Matcher::ExpectedPhrasing.phrasing)
   end
 
-  it 'recognizes simple expected errors' do
+  it "recognizes simple expected errors" do
     expected = build_errors do
-      error 'something went wrong'
+      error "something went wrong"
       error :foo, msg(1).not.equal(2)
     end
 
     actual = build_errors do
-      error 'something went wrong'
+      error "something went wrong"
       error :foo, msg(1).not.equal(2)
     end
 
@@ -25,16 +25,16 @@ describe Matcher::ErrorChecker do
     t = self
 
     expected = build_errors do
-      error :foo, 'foo'
-      error t.expression { _.bar[1] }, 'bar1'
-      error t.expression { _.bar[2] }, 'bar2'
+      error :foo, "foo"
+      error t.expression { _.bar[1] }, "bar1"
+      error t.expression { _.bar[2] }, "bar2"
     end
 
     actual = build_errors do
-      error :foo, 'foo'
+      error :foo, "foo"
       _and(t.expression { _.bar }) do
-        error 1, 'bar1'
-        error 2, 'bar2'
+        error 1, "bar1"
+        error 2, "bar2"
       end
     end
 
@@ -46,18 +46,18 @@ describe Matcher::ErrorChecker do
 
     expected = build_errors do
       _or do
-        error :foo, 'foo'
-        error t.expression { _.bar[1] }, 'bar1'
-        error t.expression { _.bar[2] }, 'bar2'
+        error :foo, "foo"
+        error t.expression { _.bar[1] }, "bar1"
+        error t.expression { _.bar[2] }, "bar2"
       end
     end
 
     actual = build_errors do
       _or do
-        error :foo, 'foo'
+        error :foo, "foo"
         _or(t.expression { _.bar }) do
-          error 1, 'bar1'
-          error 2, 'bar2'
+          error 1, "bar1"
+          error 2, "bar2"
         end
       end
     end
@@ -65,114 +65,114 @@ describe Matcher::ErrorChecker do
     assert checker.check(expected, actual).ok
   end
 
-  it 'checks empty errors' do
+  it "checks empty errors" do
     empty = build_errors
 
     assert checker.check(empty, empty).ok
   end
 
-  it 'detects unexpected structure' do
+  it "detects unexpected structure" do
     expected = build_errors do
-      error 'something went wrong'
+      error "something went wrong"
       error :foo, msg(1).not.equal(2)
     end
 
     actual = build_errors do
-      error 'something went wrong'
+      error "something went wrong"
     end
 
     result = checker.check(expected, actual)
 
     refute result.ok
-    assert_equal 'error has not the expected structure', result.reason
+    assert_equal "error has not the expected structure", result.reason
   end
 
-  it 'detects unexpected message' do
+  it "detects unexpected message" do
     expected = build_errors do
-      error 'something went wrong'
+      error "something went wrong"
     end
 
     actual = build_errors do
-      error 'something went failed'
+      error "something went failed"
     end
 
     result = checker.check(expected, actual)
 
     refute result.ok
-    assert_equal 'error has unexpected messages', result.reason
-    assert_equal [['something went wrong', 1]], result.missing_phrases
-    assert_equal [['something went failed', 1]], result.extra_phrases
+    assert_equal "error has unexpected messages", result.reason
+    assert_equal [["something went wrong", 1]], result.missing_phrases
+    assert_equal [["something went failed", 1]], result.extra_phrases
   end
 
-  it 'detects unexpected tree in detail' do
+  it "detects unexpected tree in detail" do
     expected = build_errors do
       _or do
-        error 'a'
-        error 'b'
+        error "a"
+        error "b"
       end
 
       _or do
-        error 'c'
-        error 'd'
+        error "c"
+        error "d"
       end
     end
 
     actual = build_errors do
       _or do
-        error 'a'
-        error 'c'
+        error "a"
+        error "c"
       end
 
       _or do
-        error 'b'
-        error 'd'
+        error "b"
+        error "d"
       end
     end
 
     result = checker.check(expected, actual)
 
     refute result.ok
-    assert_equal 'error tree does not match expected', result.reason
+    assert_equal "error tree does not match expected", result.reason
   end
 
-  it 'recognizes expected phrasing in message' do
-    expected = Matcher::ElementError.new('expected 2 but got 1')
+  it "recognizes expected phrasing in message" do
+    expected = Matcher::ElementError.new("expected 2 but got 1")
     actual = Matcher::ElementError.new(msg(1).not.equal(2))
 
     assert checker.check(expected, actual).ok
   end
 
-  it 'recognizes expected message' do
+  it "recognizes expected message" do
     expected = Matcher::ElementError.new(msg(1).not.equal(2))
     actual = Matcher::ElementError.new(msg(1).not.equal(2))
 
     assert checker.check(expected, actual).ok
   end
 
-  describe 'mixed children (parents and leaves)' do
-    it 'recognizes expected mixed tree' do
+  describe "mixed children (parents and leaves)" do
+    it "recognizes expected mixed tree" do
       expected = build_errors do
-        error 'a'
+        error "a"
 
         _or do
-          error 'b'
-          error 'c'
+          error "b"
+          error "c"
         end
       end
 
       actual = build_errors do
-        error 'a'
+        error "a"
 
         _or do
-          error 'b'
-          error 'c'
+          error "b"
+          error "c"
         end
       end
 
       assert checker.check(expected, actual).ok
     end
 
-    it 'detects unexpected leaf' do
+    it "detects unexpected leaf" do
       # NOTE: msg(1).less_than(2) and msg(1).not.greater_than_or_equal(2)
       # produce the same expected phrasing.
 
@@ -181,7 +181,7 @@ describe Matcher::ErrorChecker do
 
         _or do
           error msg(1).not.greater_than_or_equal(2)
-          error 'b'
+          error "b"
         end
       end
 
@@ -190,50 +190,50 @@ describe Matcher::ErrorChecker do
 
         _or do
           error msg(1).less_than(2)
-          error 'b'
+          error "b"
         end
       end
 
       refute checker.check(expected, actual).ok
     end
 
-    it 'detects unexpected parents' do
+    it "detects unexpected parents" do
       expected = build_errors do
         _or do
-          error 'a'
+          error "a"
 
           _and do
-            error 'b1'
-            error 'b2'
+            error "b1"
+            error "b2"
           end
         end
 
         _or do
-          error 'c'
+          error "c"
 
           _and do
-            error 'd1'
-            error 'd2'
+            error "d1"
+            error "d2"
           end
         end
       end
 
       actual = build_errors do
         _or do
-          error 'c'
+          error "c"
 
           _and do
-            error 'b1'
-            error 'b2'
+            error "b1"
+            error "b2"
           end
         end
 
         _or do
-          error 'a'
+          error "a"
 
           _and do
-            error 'd1'
-            error 'd2'
+            error "d1"
+            error "d2"
           end
         end
       end
@@ -242,39 +242,39 @@ describe Matcher::ErrorChecker do
     end
   end
 
-  it 'detects if unambiguous candidates dont match' do
+  it "detects if unambiguous candidates dont match" do
     expected = build_errors do
       _or do
         _and do
-          error 'a1'
-          error 'a2'
+          error "a1"
+          error "a2"
         end
 
         _and do
-          error 'a1'
-          error 'a2'
+          error "a1"
+          error "a2"
         end
 
         _and do
-          error 'b1'
-          error 'b2'
+          error "b1"
+          error "b2"
         end
       end
 
       _or do
         _and do
-          error 'b1'
-          error 'b2'
+          error "b1"
+          error "b2"
         end
 
         _and do
-          error 'c1'
-          error 'c2'
+          error "c1"
+          error "c2"
         end
 
         _and do
-          error 'd1'
-          error 'd2'
+          error "d1"
+          error "d2"
         end
       end
     end
@@ -282,35 +282,35 @@ describe Matcher::ErrorChecker do
     actual = build_errors do
       _or do
         _and do
-          error 'a1'
-          error 'a2'
+          error "a1"
+          error "a2"
         end
 
         _and do
-          error 'b1'
-          error 'b2'
+          error "b1"
+          error "b2"
         end
 
         _and do
-          error 'b1'
-          error 'b2'
+          error "b1"
+          error "b2"
         end
       end
 
       _or do
         _and do
-          error 'a1'
-          error 'a2'
+          error "a1"
+          error "a2"
         end
 
         _and do
-          error 'c1'
-          error 'c2'
+          error "c1"
+          error "c2"
         end
 
         _and do
-          error 'd1'
-          error 'd2'
+          error "d1"
+          error "d2"
         end
       end
     end
@@ -318,49 +318,49 @@ describe Matcher::ErrorChecker do
     refute checker.check(expected, actual).ok
   end
 
-  it 'detects if there are too few candidates for all identities' do
+  it "detects if there are too few candidates for all identities" do
     expected = build_errors do
       _or do
         _and do
-          error 'a1'
-          error 'expected 1 but got 2'
+          error "a1"
+          error "expected 1 but got 2"
         end
 
         _and do
-          error 'a1'
+          error "a1"
           error msg(2).not.equal(1)
         end
 
         _and do
-          error 'a1'
+          error "a1"
           error msg(2).not.equal(1)
         end
 
         _and do
-          error 'b1'
-          error 'b2'
+          error "b1"
+          error "b2"
         end
       end
 
       _or do
         _and do
-          error 'a1'
+          error "a1"
           error msg(2).not.equal(1)
         end
 
         _and do
-          error 'b1'
-          error 'b2'
+          error "b1"
+          error "b2"
         end
 
         _and do
-          error 'c1'
-          error 'c2'
+          error "c1"
+          error "c2"
         end
 
         _and do
-          error 'd1'
-          error 'd2'
+          error "d1"
+          error "d2"
         end
       end
     end
@@ -368,45 +368,45 @@ describe Matcher::ErrorChecker do
     actual = build_errors do
       _or do
         _and do
-          error 'a1'
-          error 'expected 1 but got 2'
+          error "a1"
+          error "expected 1 but got 2"
         end
 
         _and do
-          error 'a1'
+          error "a1"
           error msg(2).not.equal(1)
         end
 
         _and do
-          error 'b1'
-          error 'b2'
+          error "b1"
+          error "b2"
         end
 
         _and do
-          error 'b1'
-          error 'b2'
+          error "b1"
+          error "b2"
         end
       end
 
       _or do
         _and do
-          error 'a1'
+          error "a1"
           error msg(2).not.equal(1)
         end
 
         _and do
-          error 'a1'
+          error "a1"
           error msg(2).not.equal(1)
         end
 
         _and do
-          error 'c1'
-          error 'c2'
+          error "c1"
+          error "c2"
         end
 
         _and do
-          error 'd1'
-          error 'd2'
+          error "d1"
+          error "d2"
         end
       end
     end
@@ -414,55 +414,55 @@ describe Matcher::ErrorChecker do
     refute checker.check(expected, actual).ok
   end
 
-  it 'recognizes valid positions for ambiguous candidates' do
+  it "recognizes valid positions for ambiguous candidates" do
     expected = build_errors do
       _or do
         _and do
-          error 'a'
+          error "a"
           error 'expected a falsy value but got "a"'
         end
 
         _and do
-          error 'b'
+          error "b"
           error 'expected a falsy value but got "b"'
         end
 
         _and do
-          error 'c'
-          error msg('c').truthy
+          error "c"
+          error msg("c").truthy
         end
       end
 
       _or do
         _and do
-          error 'a'
-          error msg('a').truthy
+          error "a"
+          error msg("a").truthy
         end
 
         _and do
-          error 'b'
+          error "b"
           error 'expected a falsy value but got "b"'
         end
 
         _and do
-          error 'c'
+          error "c"
           error 'expected a falsy value but got "c"'
         end
       end
 
       _or do
         _and do
-          error 'a'
+          error "a"
           error 'expected a falsy value but got "a"'
         end
 
         _and do
-          error 'b'
-          error msg('b').truthy
+          error "b"
+          error msg("b").truthy
         end
 
         _and do
-          error 'c'
+          error "c"
           error 'expected a falsy value but got "c"'
         end
       end
@@ -471,51 +471,51 @@ describe Matcher::ErrorChecker do
     actual = build_errors do
       _or do
         _and do
-          error 'a'
+          error "a"
           error 'expected a falsy value but got "a"'
         end
 
         _and do
-          error 'b'
-          error msg('b').truthy
+          error "b"
+          error msg("b").truthy
         end
 
         _and do
-          error 'c'
-          error msg('c').truthy
+          error "c"
+          error msg("c").truthy
         end
       end
 
       _or do
         _and do
-          error 'a'
-          error msg('a').truthy
+          error "a"
+          error msg("a").truthy
         end
 
         _and do
-          error 'b'
+          error "b"
           error 'expected a falsy value but got "b"'
         end
 
         _and do
-          error 'c'
-          error msg('c').truthy
+          error "c"
+          error msg("c").truthy
         end
       end
 
       _or do
         _and do
-          error 'a'
-          error msg('a').truthy
+          error "a"
+          error msg("a").truthy
         end
 
         _and do
-          error 'b'
-          error msg('b').truthy
+          error "b"
+          error msg("b").truthy
         end
 
         _and do
-          error 'c'
+          error "c"
           error 'expected a falsy value but got "c"'
         end
       end
@@ -524,55 +524,55 @@ describe Matcher::ErrorChecker do
     assert checker.check(expected, actual).ok
   end
 
-  it 'detects valid positions impossible for ambiguous candidates' do
+  it "detects valid positions impossible for ambiguous candidates" do
     expected = build_errors do
       _or do
         _and do
-          error 'a'
+          error "a"
           error 'expected a falsy value but got "a"'
         end
 
         _and do
-          error 'b'
-          error msg('b').truthy
+          error "b"
+          error msg("b").truthy
         end
 
         _and do
-          error 'c'
-          error msg('c').truthy
+          error "c"
+          error msg("c").truthy
         end
       end
 
       _or do
         _and do
-          error 'a'
+          error "a"
           error 'expected a falsy value but got "a"'
         end
 
         _and do
-          error 'b'
-          error msg('b').truthy
+          error "b"
+          error msg("b").truthy
         end
 
         _and do
-          error 'c'
-          error msg('c').truthy
+          error "c"
+          error msg("c").truthy
         end
       end
 
       _or do
         _and do
-          error 'a'
+          error "a"
           error 'expected a falsy value but got "a"'
         end
 
         _and do
-          error 'b'
+          error "b"
           error 'expected a falsy value but got "b"'
         end
 
         _and do
-          error 'c'
+          error "c"
           error 'expected a falsy value but got "c"'
         end
       end
@@ -581,51 +581,51 @@ describe Matcher::ErrorChecker do
     actual = build_errors do
       _or do
         _and do
-          error 'a'
+          error "a"
           error 'expected a falsy value but got "a"'
         end
 
         _and do
-          error 'b'
-          error msg('b').truthy
+          error "b"
+          error msg("b").truthy
         end
 
         _and do
-          error 'c'
-          error msg('c').truthy
+          error "c"
+          error msg("c").truthy
         end
       end
 
       _or do
         _and do
-          error 'a'
-          error msg('a').truthy
+          error "a"
+          error msg("a").truthy
         end
 
         _and do
-          error 'b'
+          error "b"
           error 'expected a falsy value but got "b"'
         end
 
         _and do
-          error 'c'
-          error msg('c').truthy
+          error "c"
+          error msg("c").truthy
         end
       end
 
       _or do
         _and do
-          error 'a'
-          error msg('a').truthy
+          error "a"
+          error msg("a").truthy
         end
 
         _and do
-          error 'b'
-          error msg('b').truthy
+          error "b"
+          error msg("b").truthy
         end
 
         _and do
-          error 'c'
+          error "c"
           error 'expected a falsy value but got "c"'
         end
       end
@@ -634,23 +634,23 @@ describe Matcher::ErrorChecker do
     refute checker.check(expected, actual).ok
   end
 
-  it '#match_identities3' do
+  it "#match_identities3" do
     [
-      ['1, 2, 3', '1,2,3', true],
-      ['1, 2, 1', '1,2,1', true],
-      ['1, 2, 1', '1,1,1', false],
-      ['1, 2, 1', '2,2,1', false],
-      ['1|2, 2|3, 4|5', '1,2,3', false],
-      ['1|2, 2', '1,1,2', false],
-      ['1, 2|3, 4, 1|4', '1,2,3,4', false],
-      ['1, 2|3, 4|2, 1|4', '1,2,3,4', true],
-      ['1, 1|2|3, 1', '1,2,3', false],
-      ['1|2, 2|3, 1|3', '1,2,3', true],
-      ['1, 2|5, 6|3, 6|5, 4|5|6, 1|2|3|4', '1,2,3,4,5,6', true],
-      ['1, 2|5, 3|4, 1|2|3, 1|2|3, 4|5|6, 4|5|7', '1,2,3,4,5,6,7', true],
+      ["1, 2, 3", "1,2,3", true],
+      ["1, 2, 1", "1,2,1", true],
+      ["1, 2, 1", "1,1,1", false],
+      ["1, 2, 1", "2,2,1", false],
+      ["1|2, 2|3, 4|5", "1,2,3", false],
+      ["1|2, 2", "1,1,2", false],
+      ["1, 2|3, 4, 1|4", "1,2,3,4", false],
+      ["1, 2|3, 4|2, 1|4", "1,2,3,4", true],
+      ["1, 1|2|3, 1", "1,2,3", false],
+      ["1|2, 2|3, 1|3", "1,2,3", true],
+      ["1, 2|5, 6|3, 6|5, 4|5|6, 1|2|3|4", "1,2,3,4,5,6", true],
+      ["1, 2|5, 3|4, 1|2|3, 1|2|3, 4|5|6, 4|5|7", "1,2,3,4,5,6,7", true],
     ].each do |candidates, identities, expected|
-      identities = identities.split(',').map(&:to_i)
-      positions = candidates.split(',').map { _1.split('|').map(&:to_i) }
+      identities = identities.split(",").map(&:to_i)
+      positions = candidates.split(",").map { _1.split("|").map(&:to_i) }
 
       actual = checker.send(:match_identities?, positions, identities)
 

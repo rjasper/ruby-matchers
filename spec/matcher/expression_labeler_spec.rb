@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::ExpressionLabeler do
   let(:labeler) { Matcher::ExpressionLabeler.new }
 
-  it 'returns the same label for equivalent expressions' do
+  it "returns the same label for equivalent expressions" do
     a = labeler.label(expression { (vars[:foo] + [1]).sum { |x| x % 2 } })
     b = labeler.label(expression { (vars[:foo] + [1]).sum { |x| x % 2 } })
     c = labeler.label(expression { (vars[:foo] + [2]).sum { |x| x % 2 } })
@@ -20,11 +20,11 @@ describe Matcher::ExpressionLabeler do
     refute_equal a, f
   end
 
-  it 'labels data structures' do
+  it "labels data structures" do
     array_l = labeler.label(expression { [1, vars[:foo]] })
     hash_l = labeler.label(expression { { foo: vars[:foo] } })
     range_l = labeler.label(expression { vars[:foo]..vars[:bar] })
-    string_l = labeler.label(expression { concat(vars[:foo], 'bar') })
+    string_l = labeler.label(expression { concat(vars[:foo], "bar") })
 
     assert_equal array_l, labeler.label(expression { [1, vars[:foo]] })
     refute_equal array_l, labeler.label(expression { [1, vars[:bar]] })
@@ -32,11 +32,11 @@ describe Matcher::ExpressionLabeler do
     refute_equal hash_l, labeler.label(expression { { foo: vars[:bar] } })
     assert_equal range_l, labeler.label(expression { vars[:foo]..vars[:bar] })
     refute_equal range_l, labeler.label(expression { vars[:foo]..vars[:baz] })
-    assert_equal string_l, labeler.label(expression { concat(vars[:foo], 'bar') })
-    refute_equal string_l, labeler.label(expression { concat(vars[:foo], 'baz') })
+    assert_equal string_l, labeler.label(expression { concat(vars[:foo], "bar") })
+    refute_equal string_l, labeler.label(expression { concat(vars[:foo], "baz") })
   end
 
-  it 'can substitute label for actual' do
+  it "can substitute label for actual" do
     a = labeler.label(expression { _.foo })
     b = labeler.label(expression { _.bar }, a)
     c = labeler.label(expression { _.foo.bar })

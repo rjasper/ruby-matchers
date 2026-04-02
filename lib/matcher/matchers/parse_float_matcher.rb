@@ -40,7 +40,7 @@ module Matcher
     end
 
     def to_s
-      prefix = @negated ? '~' : ''
+      prefix = @negated ? "~" : ""
 
       return "#{prefix}float_format" if @original_matcher.is_a?(AlwaysMatcher)
 

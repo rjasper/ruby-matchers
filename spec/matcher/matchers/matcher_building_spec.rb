@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::MatcherBuilding do
-  it '#of' do
+  it "#of" do
     assert_kind_of(Matcher::Base, build { of(1) })
   end
 
-  it '#neg' do
+  it "#neg" do
     inner_matcher = Class.new(Matcher::Base).new
 
     assert_kind_of(
@@ -16,8 +16,8 @@ describe Matcher::MatcherBuilding do
     )
   end
 
-  describe 'present' do
-    it 'matches with given matcher if present' do
+  describe "present" do
+    it "matches with given matcher if present" do
       matcher = build { present(1) }
 
       assert matcher.match?(1)
@@ -31,7 +31,7 @@ describe Matcher::MatcherBuilding do
       end
     end
 
-    it 'complains when actual is nil' do
+    it "complains when actual is nil" do
       got_it_from_somewhere = nil
       matcher = build { present(got_it_from_somewhere) }
 

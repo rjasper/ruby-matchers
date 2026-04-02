@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::RuleSet do
   let(:context) do
@@ -13,7 +13,7 @@ describe Matcher::RuleSet do
 
   let(:rule_set) { Matcher::RuleSet.new }
 
-  it 'returns on message rule' do
+  it "returns on message rule" do
     configure do
       transform hole(:x) < hole(:y) do |m|
         call(m[:root], m[:y], :>, m[:x])
@@ -24,11 +24,11 @@ describe Matcher::RuleSet do
       end
     end
 
-    assert_equal '5 greater than 0', message_for(5) { _ > _ * 2 - 10 }
-    assert_equal '2 greater than 1', message_for(1) { _**2 < _ * 2 }
+    assert_equal "5 greater than 0", message_for(5) { _ > _ * 2 - 10 }
+    assert_equal "2 greater than 1", message_for(1) { _**2 < _ * 2 }
   end
 
-  it 'applies multiple transforms' do
+  it "applies multiple transforms" do
     configure do
       # rubocop:disable Style/InverseMethods
       transform !(hole(:x) >= hole(:y)) do |m|
@@ -46,11 +46,11 @@ describe Matcher::RuleSet do
     end
 
     # rubocop:disable Style/InverseMethods
-    assert_equal 'got true for actual < 10', message_for(5) { !((_ <=> 10) >= 0) }
+    assert_equal "got true for actual < 10", message_for(5) { !((_ <=> 10) >= 0) }
     # rubocop:enable Style/InverseMethods
   end
 
-  it 'negates message after transform' do
+  it "negates message after transform" do
     configure do
       transform !hole(:x), negate: true do |m|
         m[:x]

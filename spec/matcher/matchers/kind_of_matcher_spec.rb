@@ -1,21 +1,21 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::KindOfMatcher do
-  it 'is built from Module' do
+  it "is built from Module" do
     assert_kind_of(Matcher::KindOfMatcher, Matcher.build { String })
   end
 
-  it 'matches Module' do
+  it "matches Module" do
     matcher = Matcher.build { String }
     negated = ~matcher
 
-    assert matcher.match?('asdf')
-    assert_no_errors matcher.match('asdf')
-    refute negated.match?('asdf')
-    assert_errors negated.match('asdf'),
-      msg('asdf').kind_of(String)
+    assert matcher.match?("asdf")
+    assert_no_errors matcher.match("asdf")
+    refute negated.match?("asdf")
+    assert_errors negated.match("asdf"),
+      msg("asdf").kind_of(String)
 
     refute matcher.match?(1)
     assert_errors matcher.match(1),
@@ -24,10 +24,10 @@ describe Matcher::KindOfMatcher do
     assert_no_errors negated.match(1)
   end
 
-  it '#to_s' do
+  it "#to_s" do
     matcher = Matcher::KindOfMatcher.new(Integer)
 
-    assert_equal 'Integer', matcher.to_s
-    assert_equal 'neg(Integer)', matcher.~.to_s
+    assert_equal "Integer", matcher.to_s
+    assert_equal "neg(Integer)", matcher.~.to_s
   end
 end

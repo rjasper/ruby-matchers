@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::KeysMatcher do
-  it 'is built by keys' do
+  it "is built by keys" do
     assert_kind_of(Matcher::KeysMatcher, Matcher.build { keys(:foo, :bar) })
     assert_kind_of(Matcher::KeysMatcher, Matcher.build { partial_keys(:foo, :bar) })
   end
 
-  it 'matches all keys' do
+  it "matches all keys" do
     matcher = Matcher.build { keys(:foo, :bar) }
     negated = ~matcher
 
@@ -31,7 +31,7 @@ describe Matcher::KeysMatcher do
     assert_no_errors negated.match({ foo: 1, qux: 3 })
   end
 
-  it 'matches partial keys' do
+  it "matches partial keys" do
     matcher = Matcher.build { partial_keys(:foo, :bar) }
     negated = ~matcher
 
@@ -62,8 +62,8 @@ describe Matcher::KeysMatcher do
     assert_no_errors negated.match({ foo: 1 })
   end
 
-  it '#to_s' do
-    assert_equal 'keys(:foo, :bar)', Matcher.build { keys(:foo, :bar) }.to_s
-    assert_equal 'partial_keys(:foo, :bar)', Matcher.build { partial_keys(:foo, :bar) }.to_s
+  it "#to_s" do
+    assert_equal "keys(:foo, :bar)", Matcher.build { keys(:foo, :bar) }.to_s
+    assert_equal "partial_keys(:foo, :bar)", Matcher.build { partial_keys(:foo, :bar) }.to_s
   end
 end

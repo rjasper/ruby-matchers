@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::CallError do
-  it 'provides standard message for simple expression' do
+  it "provides standard message for simple expression" do
     exp = expression { _.foo }
 
     err = assert_raises Matcher::CallError do
@@ -13,7 +13,7 @@ describe Matcher::CallError do
     assert_equal msg(1).not.responding_to(:foo), err.message_for_errors(1)
   end
 
-  it 'provides expression message for receiver other than actual' do
+  it "provides expression message for receiver other than actual" do
     exp = expression { (_ + 1).foo }
 
     err = assert_raises Matcher::CallError do

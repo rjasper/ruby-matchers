@@ -13,7 +13,7 @@ module Matcher
     end
 
     def to_s
-      'never'
+      "never"
     end
   end
 

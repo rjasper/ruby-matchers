@@ -6,7 +6,7 @@ module Matcher
 
     # rubocop:disable Style/ClassVars
 
-    @@method_quote_delimiter = caller[0].include?('`') ? '`' : "'"
+    @@method_quote_delimiter = caller[0].include?("`") ? "`" : "'"
 
     # rubocop:enable Style/ClassVars
 

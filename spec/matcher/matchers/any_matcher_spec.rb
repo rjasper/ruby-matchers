@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::AnyMatcher do
-  it 'is built by any' do
+  it "is built by any" do
     matcher = Matcher.build { any(_.even?, _ % 3 == 0) }
 
     assert_kind_of Matcher::AnyMatcher, matcher
   end
 
-  it 'matches any' do
+  it "matches any" do
     matcher = Matcher.build { any(1, 2) }
     negated = ~matcher
 
@@ -36,7 +36,7 @@ describe Matcher::AnyMatcher do
     assert_no_errors negated.match(4)
   end
 
-  it 'matches never empty any' do
+  it "matches never empty any" do
     matcher = Matcher::AnyMatcher.new([])
     negated = ~matcher
 
@@ -46,24 +46,24 @@ describe Matcher::AnyMatcher do
     assert_no_errors negated.match(nil)
   end
 
-  it '#~' do
+  it "#~" do
     matcher = Matcher.build { ~any(1, 2) }
 
-    assert_equal 'all(neg(1), neg(2))', matcher.to_s
+    assert_equal "all(neg(1), neg(2))", matcher.to_s
   end
 
-  it '#+' do
-    assert_equal 'any(1, 2, 3)',
+  it "#+" do
+    assert_equal "any(1, 2, 3)",
       Matcher.build { any(1, 2) + 3 }.to_s
-    assert_equal 'any(1, 2, 3)',
+    assert_equal "any(1, 2, 3)",
       Matcher.build { of(1) + any(2, 3) }.to_s
-    assert_equal 'any(1, 2)',
+    assert_equal "any(1, 2)",
       Matcher.build { of(1) + 2 }.to_s
   end
 
-  it '#to_s' do
+  it "#to_s" do
     matcher = Matcher.build { any(1, 2) }
 
-    assert_equal 'any(1, 2)', matcher.to_s
+    assert_equal "any(1, 2)", matcher.to_s
   end
 end

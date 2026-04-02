@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::MessageFactory do
   let(:exp) do
@@ -24,7 +24,7 @@ describe Matcher::MessageFactory do
     Matcher::MessageRuleContext.new(matcher, state)
   end
 
-  it 'passes values and expressions to block' do
+  it "passes values and expressions to block" do
     value_tree = exp.evaluate_tree(actual: 1, foo: 2)
 
     message = factory.create(context, value_tree)
@@ -35,7 +35,7 @@ describe Matcher::MessageFactory do
     assert_equal [1, 4, actual, foo_times_two], message.args
   end
 
-  it 'negates messages' do
+  it "negates messages" do
     value_tree = exp.evaluate_tree(actual: 4, foo: 2)
 
     # standard_message is negated by default

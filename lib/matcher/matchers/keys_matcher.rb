@@ -55,8 +55,8 @@ module Matcher
     end
 
     def to_s
-      helper = @partial ? 'partial_keys' : 'keys'
-      args = @keys.map(&:inspect).join(', ')
+      helper = @partial ? "partial_keys" : "keys"
+      args = @keys.map(&:inspect).join(", ")
 
       "#{'~' if @negated}#{helper}(#{args})"
     end

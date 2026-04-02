@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::AlwaysMatcher do
-  it 'is built by always' do
+  it "is built by always" do
     matcher = Matcher.build { always }
 
     assert_kind_of Matcher::AlwaysMatcher, matcher
   end
 
-  it 'matches always' do
+  it "matches always" do
     matcher = Matcher.build { always }
     negated = ~matcher
 
@@ -39,15 +39,15 @@ describe Matcher::AlwaysMatcher do
     assert_errors negated.match([]), msg([]).exist
   end
 
-  it '#~' do
+  it "#~" do
     matcher = Matcher.build { always }
 
     assert_kind_of Matcher::NeverMatcher, ~matcher
   end
 
-  it '#to_s' do
+  it "#to_s" do
     matcher = Matcher.build { always }
 
-    assert_equal 'always', matcher.to_s
+    assert_equal "always", matcher.to_s
   end
 end

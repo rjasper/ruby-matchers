@@ -24,13 +24,13 @@ module Matcher
         last_trace_item = trace[0]
 
         %w[puts p].any? { call_from?(last_trace_item, _1) } ||
-          last_trace_item.include?('ruby-debug-ide') ||
-          trace.any? { call_from?(_1, 'output_value') }
+          last_trace_item.include?("ruby-debug-ide") ||
+          trace.any? { call_from?(_1, "output_value") }
       end
 
       # rubocop:disable Style/ClassVars
 
-      @@method_quote_delimiter = caller[0].include?('`') ? '`' : '#'
+      @@method_quote_delimiter = caller[0].include?("`") ? "`" : "#"
 
       # rubocop:enable Style/ClassVars
 

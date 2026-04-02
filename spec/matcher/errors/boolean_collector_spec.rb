@@ -1,51 +1,51 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::BooleanCollector do
   include Matcher::ErrorTesting
 
   let(:collector) { Matcher::BooleanCollector.new }
 
-  it 'empty' do
+  it "empty" do
     assert_equal empty, collector.error
     assert collector.empty?
   end
 
-  it 'add empty' do
+  it "add empty" do
     collector << empty
 
     assert_equal empty, collector.error
   end
 
-  it 'and error' do
+  it "and error" do
     assert_throws(:mismatch) do
-      collector << element('foo')
+      collector << element("foo")
     end
 
-    assert_equal element('invalid'), collector.error
+    assert_equal element("invalid"), collector.error
   end
 
-  it 'or error' do
+  it "or error" do
     collector.or!
-    collector << element('foo')
+    collector << element("foo")
 
-    assert_equal element('invalid'), collector.error
+    assert_equal element("invalid"), collector.error
   end
 
-  it 'nested' do
+  it "nested" do
     assert_throws(:mismatch) do
-      collector[0] << element('foo')
+      collector[0] << element("foo")
     end
 
-    assert_equal element('invalid'), collector.error
+    assert_equal element("invalid"), collector.error
   end
 
-  it 'clear' do
+  it "clear" do
     collector.or!
-    collector << element('foo')
+    collector << element("foo")
 
-    assert_equal element('invalid'), collector.error
+    assert_equal element("invalid"), collector.error
 
     collector.clear
 

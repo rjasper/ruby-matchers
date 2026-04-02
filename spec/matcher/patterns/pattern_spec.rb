@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::Pattern do
-  it '::build' do
+  it "::build" do
     pattern = Matcher::Pattern.build { hole(:foo) > 1 }
 
     expected = Matcher::Expression.build do
@@ -13,7 +13,7 @@ describe Matcher::Pattern do
     assert_equal expected, pattern.expression
   end
 
-  it '::build: caches expressions' do
+  it "::build: caches expressions" do
     pattern = Matcher::Pattern.build do
       [const(:foo), const(:foo)]
     end

@@ -24,7 +24,7 @@ module Matcher
       @result
     end
 
-    INVALID_ERROR = ElementError.new('invalid')
+    INVALID_ERROR = ElementError.new("invalid")
     private_constant :INVALID_ERROR
 
     def error

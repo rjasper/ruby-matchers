@@ -19,7 +19,7 @@ module Matcher
     end
 
     def initialize(children)
-      raise 'children fewer than 2' if children.length < 2
+      raise "children fewer than 2" if children.length < 2
 
       super()
 
@@ -80,7 +80,7 @@ module Matcher
     alias dup clone
 
     def to_s
-      @children.join(' & ')
+      @children.join(" & ")
     end
   end
 end

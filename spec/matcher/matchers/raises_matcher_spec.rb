@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::RaisesMatcher do
   include Matcher::Compatibility
 
-  it 'is built by raises' do
+  it "is built by raises" do
     kind = Matcher::RaisesMatcher
 
     assert_instance_of(kind, Matcher.build { raises(_.foo, StandardError) })
@@ -22,16 +22,16 @@ describe Matcher::RaisesMatcher do
       Matcher.build { raises }
     end
 
-    assert_equal 'neither expression nor block given', err.message
+    assert_equal "neither expression nor block given", err.message
 
     err = assert_raises(ArgumentError) do
       Matcher.build { raises(_.foo, StandardError, &:foo) }
     end
 
-    assert_equal 'both expression and block given', err.message
+    assert_equal "both expression and block given", err.message
   end
 
-  it 'matches raised exceptions' do
+  it "matches raised exceptions" do
     matcher = Matcher.build { raises(_.fetch(:foo), KeyError) }
     negated = ~matcher
 
@@ -42,7 +42,7 @@ describe Matcher::RaisesMatcher do
     assert_no_errors matcher.match({})
     refute negated.match?({})
     assert_errors negated.match({}),
-      rescue_last_exception => 'did not expect a kind of KeyError but got #<KeyError: key not found: :foo>'
+      rescue_last_exception => "did not expect a kind of KeyError but got #<KeyError: key not found: :foo>"
 
     refute matcher.match?({ foo: 1 })
     assert_errors matcher.match({ foo: 1 }),
@@ -58,7 +58,7 @@ describe Matcher::RaisesMatcher do
     assert_no_errors negated.match(nil)
   end
 
-  it 'matches raises exception from block' do
+  it "matches raises exception from block" do
     matcher = Matcher.build do
       raises(ZeroDivisionError) { |x| 1 / x }
     end
@@ -67,7 +67,7 @@ describe Matcher::RaisesMatcher do
     refute matcher.match?(1)
   end
 
-  it 'matches raised exceptions with message' do
+  it "matches raised exceptions with message" do
     matcher = Matcher.build { raises(_.call, message: /something went wrong/) }
     negated = ~matcher
     klass = Class.new do
@@ -80,25 +80,25 @@ describe Matcher::RaisesMatcher do
       end
     end
 
-    obj = klass.new('something went wrong')
+    obj = klass.new("something went wrong")
     rescue_message = expression { rescue_exception(_.call).message }
 
     assert matcher.match?(obj)
     assert_no_errors matcher.match(obj)
     refute negated.match?(obj)
     assert_errors negated.match(obj),
-      rescue_message => msg('something went wrong').matching(/something went wrong/)
+      rescue_message => msg("something went wrong").matching(/something went wrong/)
 
-    obj = klass.new('something else went wrong')
+    obj = klass.new("something else went wrong")
 
     refute matcher.match?(obj)
     assert_errors matcher.match(obj),
-      rescue_message => msg('something else went wrong').not.matching(/something went wrong/)
+      rescue_message => msg("something else went wrong").not.matching(/something went wrong/)
     assert negated.match?(obj)
     assert_no_errors negated.match(obj)
   end
 
-  it 'matches message lazily' do
+  it "matches message lazily" do
     my_error_klass = Class.new(StandardError)
     matcher = Matcher.build { raises(_.call, my_error_klass, message: /something went wrong/) }
     klass = Class.new do
@@ -113,19 +113,19 @@ describe Matcher::RaisesMatcher do
       end
     end
 
-    obj = klass.new(my_error_klass.new('something went wrong'))
+    obj = klass.new(my_error_klass.new("something went wrong"))
 
     assert matcher.match?(obj)
     assert_no_errors matcher.match(obj)
 
-    obj = klass.new(my_error_klass.new('something else went wrong'))
+    obj = klass.new(my_error_klass.new("something else went wrong"))
     rescue_message = expression { rescue_exception(_.call).message }
 
     refute matcher.match?(obj)
     assert_errors matcher.match(obj),
-      rescue_message => msg('something else went wrong').not.matching(/something went wrong/)
+      rescue_message => msg("something else went wrong").not.matching(/something went wrong/)
 
-    obj = klass.new(StandardError.new('something else went wrong'))
+    obj = klass.new(StandardError.new("something else went wrong"))
     rescue_from_call = expression { rescue_exception(_.call) }
 
     refute matcher.match?(obj)
@@ -133,7 +133,7 @@ describe Matcher::RaisesMatcher do
       rescue_from_call => msg(obj.error).not.kind_of(my_error_klass)
   end
 
-  it 'rescues standard errors' do
+  it "rescues standard errors" do
     matcher = Matcher.build do
       raises(kernel.raise(_))
     end
@@ -144,7 +144,7 @@ describe Matcher::RaisesMatcher do
     assert matcher.match?(StandardError)
   end
 
-  it 'rescues non-standard exceptions' do
+  it "rescues non-standard exceptions" do
     matcher = Matcher.build do
       raises(kernel.raise(_), rescue: Exception)
     end
@@ -152,10 +152,10 @@ describe Matcher::RaisesMatcher do
     assert matcher.match?(Exception)
   end
 
-  it '#to_s' do
+  it "#to_s" do
     matcher = Matcher.build { raises(_.foo, StandardError) }
 
-    assert_equal 'raises(actual.foo, StandardError)', matcher.to_s
-    assert_equal '~raises(actual.foo, StandardError)', matcher.~.to_s
+    assert_equal "raises(actual.foo, StandardError)", matcher.to_s
+    assert_equal "~raises(actual.foo, StandardError)", matcher.~.to_s
   end
 end

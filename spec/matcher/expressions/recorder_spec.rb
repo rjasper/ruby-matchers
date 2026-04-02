@@ -1,33 +1,33 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::Recorder do
   let(:recorder) { Matcher::Recorder.new(Matcher::Variable.actual) }
 
-  it '::recorder?' do
+  it "::recorder?" do
     assert Matcher::Recorder.recorder?(recorder)
     refute Matcher::Recorder.recorder?(42)
   end
 
-  it '::to_expression' do
+  it "::to_expression" do
     assert_equal Matcher::Variable.actual,
       Matcher::Recorder.to_expression(recorder)
   end
 
-  it 'works as Hash key' do
+  it "works as Hash key" do
     hash = { recorder => 1 }
 
     assert_equal 1, hash[recorder]
   end
 
-  it 'works as Set element' do
+  it "works as Set element" do
     set = Set[recorder]
 
     assert set.include?(recorder)
   end
 
-  it 'records an expression' do
+  it "records an expression" do
     exp = Matcher::Recorder.to_expression(
       recorder.foo(1, bar: 2) { |x| x },
     )

@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::EqualSetMatcher do
-  it 'is built by equal_set' do
+  it "is built by equal_set" do
     matcher = Matcher.build { equal_set(1, vars[:foo]) }
 
     assert_kind_of Matcher::EqualSetMatcher, matcher
   end
 
-  it 'matches array like a set' do
+  it "matches array like a set" do
     matcher = Matcher.build { equal_set(1, 2, 3) }
     negated = ~matcher
 
@@ -52,7 +52,7 @@ describe Matcher::EqualSetMatcher do
     assert_no_errors negated.match(nil)
   end
 
-  it 'matches with evaluated expressions' do
+  it "matches with evaluated expressions" do
     matcher = Matcher.build { equal_set(1, 2, vars[:foo]) }
     negated = ~matcher
 
@@ -63,7 +63,7 @@ describe Matcher::EqualSetMatcher do
       msg([3, 1, 2]).namespace(:set).equal([1, 2, expression { vars[:foo] }])
   end
 
-  it 'matches empty array' do
+  it "matches empty array" do
     matcher = Matcher.build { equal_set }
     negated = ~matcher
 
@@ -80,10 +80,10 @@ describe Matcher::EqualSetMatcher do
     assert_no_errors negated.match([1])
   end
 
-  it '#to_s' do
-    assert_equal 'equal_set(1, foo)',
+  it "#to_s" do
+    assert_equal "equal_set(1, foo)",
       Matcher.build { equal_set(1, vars[:foo]) }.to_s
-    assert_equal '~equal_set(1, foo)',
+    assert_equal "~equal_set(1, foo)",
       Matcher.build { ~equal_set(1, vars[:foo]) }.to_s
   end
 end

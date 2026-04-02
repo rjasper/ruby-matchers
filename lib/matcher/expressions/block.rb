@@ -131,7 +131,7 @@ module Matcher
 
     def to_proc(values: nil)
       @proc ||= begin
-        kwlist = @parameters.map { |_type, name| "#{name}:" }.join(', ')
+        kwlist = @parameters.map { |_type, name| "#{name}:" }.join(", ")
 
         instance_eval(<<~RUBY, __FILE__, __LINE__ + 1)
           ->(#{arg_list}) { evaluate({ #{kwlist} }) }                           # ->(arg, kwarg:) { evaluate({ arg:, kwarg: }) }
@@ -173,7 +173,7 @@ module Matcher
         when :key, :keyreq
           "#{name}:"
         end
-      end.join(', ')
+      end.join(", ")
     end
 
     def evaluate(values)

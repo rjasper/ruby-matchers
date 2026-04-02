@@ -30,7 +30,7 @@ module Matcher
 
     def validate(state)
       if state.boolean?
-        state.errors << 'invalid' if @negated != !@expression.evaluate(state.values)
+        state.errors << "invalid" if @negated != !@expression.evaluate(state.values)
         return
       end
 

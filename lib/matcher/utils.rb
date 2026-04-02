@@ -5,7 +5,7 @@ module Matcher
     def self.to_string(obj)
       case obj
       when Hash
-        return '{}' if obj.empty?
+        return "{}" if obj.empty?
 
         body = obj.map do |k, v|
           if k.is_a?(Symbol)
@@ -60,7 +60,7 @@ module Matcher
       arg_parts = arg_names.all? { _1.match?(/^_[1-9]$/) } ? [] : arg_names
       kwarg_parts = kwarg_names.map { "#{_1}:" }
 
-      (arg_parts + kwarg_parts).join(', ')
+      (arg_parts + kwarg_parts).join(", ")
     end
 
     def self.block_location(block)

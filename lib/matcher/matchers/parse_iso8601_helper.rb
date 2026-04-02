@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Matcher
-  autoload :ParseIso8601Matcher, 'matcher/matchers/parse_iso8601_matcher'
+  autoload :ParseIso8601Matcher, "matcher/matchers/parse_iso8601_matcher"
 
   module MatcherBuilding
     ##

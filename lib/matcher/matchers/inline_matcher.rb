@@ -3,7 +3,7 @@
 module Matcher
   class InlineMatcher < Base
     def initialize(matcher = nil, negatable: false, negated: false, &block)
-      raise 'no block given' unless block_given?
+      raise "no block given" unless block_given?
 
       super()
 
@@ -53,7 +53,7 @@ module Matcher
       args = if @matcher
         "(#{@negated ? ~@matcher : @matcher})"
       else
-        ''
+        ""
       end
 
       "#{'~' if @negated}inline#{args} { #{Utils.block_location(@block)} }"

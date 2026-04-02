@@ -18,8 +18,8 @@ module Matcher
       return if expected_label == actual_label
 
       missing_messages = [
-        missing_message('missing', expected_leaves - actual_leaves),
-        missing_message('extra', actual_leaves - expected_leaves),
+        missing_message("missing", expected_leaves - actual_leaves),
+        missing_message("extra", actual_leaves - expected_leaves),
       ].compact.join("\n")
 
       return missing_messages unless missing_messages.empty?
@@ -51,7 +51,7 @@ module Matcher
     end
 
     def message_for(leaf)
-      path = 'root'
+      path = "root"
 
       leaf.path&.reverse_each do |key|
         path = NestedError.key_to_s(key, path)

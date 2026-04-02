@@ -6,7 +6,7 @@ module Matcher
       raise "count must be a positive integer or :any. Got #{count.inspect}" if
         count != :any && (!count.is_a?(Integer) || count <= 0)
 
-      raise 'else cannot be combined with count > 1' if
+      raise "else cannot be combined with count > 1" if
         else_matcher && count != :any && count != 1
 
       invalid_matcher = matchers.find { !_1.is_a?(ImplyMatcher) }
@@ -52,11 +52,11 @@ module Matcher
 
       case @count
       when :any
-        method = 'imply_any'
+        method = "imply_any"
       when 1
-        method = 'imply_one'
+        method = "imply_one"
       else
-        method = 'imply_some'
+        method = "imply_some"
         args << "count: #{@count}"
       end
 

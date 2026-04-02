@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::MapMatcher do
-  it 'is built by map' do
+  it "is built by map" do
     assert_kind_of(
       Matcher::MapMatcher,
       Matcher.build { map(_.length, [1, 2]) },
@@ -15,7 +15,7 @@ describe Matcher::MapMatcher do
     )
   end
 
-  it 'expects actual to respond to :each' do
+  it "expects actual to respond to :each" do
     matcher = Matcher.build { map(_.length, [1, 2]) }
 
     refute matcher.match?(nil)
@@ -25,7 +25,7 @@ describe Matcher::MapMatcher do
     assert_no_errors matcher.~.match(nil)
   end
 
-  it 'rescues from call errors' do
+  it "rescues from call errors" do
     matcher = Matcher.build { map(_.length, [1]) }
 
     refute matcher.match?([nil])
@@ -35,7 +35,7 @@ describe Matcher::MapMatcher do
     assert_no_errors matcher.~.match([nil])
   end
 
-  it 'matches mapped matcher' do
+  it "matches mapped matcher" do
     matcher = Matcher.build { map(_.length, [1, 2]) }
     negated = ~matcher
     t = self
@@ -57,21 +57,21 @@ describe Matcher::MapMatcher do
     assert_no_errors negated.match([[1], [1, 2, 3]])
   end
 
-  it 'maps base errors' do
+  it "maps base errors" do
     matcher = Matcher.build { map(_.length, _.sum == 4) }
     negated = ~matcher
     key = expression { _.map(&:length) }
 
     assert_no_errors matcher.match([[1], [2, 3], [4]])
     assert_errors negated.match([[1], [2, 3], [4]]),
-      key => 'expected actual.sum != 4 but got 4 != 4, where actual = [1, 2, 1]'
+      key => "expected actual.sum != 4 but got 4 != 4, where actual = [1, 2, 1]"
 
     assert_errors matcher.match([[1], [2, 3]]),
-      key => 'expected actual.sum == 4 but got 3 == 4, where actual = [1, 2]'
+      key => "expected actual.sum == 4 but got 3 == 4, where actual = [1, 2]"
     assert_no_errors negated.match([[1], [2, 3]])
   end
 
-  it 'maps functional error key' do
+  it "maps functional error key" do
     matcher = Matcher.build do
       map(_ + index * 10 + original.length * 100, [209, 218])
     end
@@ -85,7 +85,7 @@ describe Matcher::MapMatcher do
         msg(318).not.equal(218)
   end
 
-  it 'maps projection with block' do
+  it "maps projection with block" do
     matcher = Matcher.build do
       map(_.sum(&:to_i), [1, 2, 3])
     end
@@ -95,14 +95,14 @@ describe Matcher::MapMatcher do
       2 => { expression { _.sum(&:to_i) } => msg(4).not.equal(3) }
   end
 
-  it 'passes index' do
+  it "passes index" do
     matcher = Matcher.build { map(_[:a] + i, [10, 21, 32]) }
 
     assert_errors matcher.match([{ a: 10 }, { a: 20 }, { a: 40 }]),
       expression { _[2][:a] + i } => msg(42).not.equal(32)
   end
 
-  it 'passes original' do
+  it "passes original" do
     matcher = Matcher.build do
       map(_[:a], [_ == original])
     end
@@ -115,10 +115,10 @@ describe Matcher::MapMatcher do
       0 => { a: "expected actual == original but got 1 == #{[{ a: 1 }]}" }
   end
 
-  it '#to_s' do
+  it "#to_s" do
     matcher = Matcher.build { map(_.length, _.sum == 4) }
 
-    assert_equal 'map(actual.length, actual.sum == 4)', matcher.to_s
-    assert_equal '~map(actual.length, actual.sum == 4)', matcher.~.to_s
+    assert_equal "map(actual.length, actual.sum == 4)", matcher.to_s
+    assert_equal "~map(actual.length, actual.sum == 4)", matcher.~.to_s
   end
 end

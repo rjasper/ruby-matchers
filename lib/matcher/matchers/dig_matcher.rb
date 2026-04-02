@@ -67,7 +67,7 @@ module Matcher
 
     def to_s
       helper = "#{'optional_' if @optional}dig"
-      keys = @keys.map(&:inspect).join(', ')
+      keys = @keys.map(&:inspect).join(", ")
       matcher = Matcher.parenthesize(@original_matcher)
 
       "#{'~' if @negated}#{helper}(#{keys}) ^ #{matcher}"

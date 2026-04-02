@@ -41,14 +41,14 @@ module Matcher
     end
 
     def to_s
-      prefix = @negated ? '~' : ''
+      prefix = @negated ? "~" : ""
 
       if @original_matcher.is_a?(AlwaysMatcher)
-        args = @base == 0 ? '' : "(base: #{@base})"
+        args = @base == 0 ? "" : "(base: #{@base})"
         return "#{prefix}integer_format#{args}"
       end
 
-      base_arg = @base == 0 ? '' : ", base: #{@base}"
+      base_arg = @base == 0 ? "" : ", base: #{@base}"
 
       "#{'~' if @negated}parse_integer(#{@original_matcher}#{base_arg})"
     end

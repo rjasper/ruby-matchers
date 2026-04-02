@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::OptionalMatcher do
-  it 'is built by optional' do
+  it "is built by optional" do
     assert_kind_of(
       Matcher::OptionalMatcher,
       Matcher.build { optional(Integer) },
@@ -25,7 +25,7 @@ describe Matcher::OptionalMatcher do
     )
   end
 
-  it 'matches nil or matcher' do
+  it "matches nil or matcher" do
     matcher = Matcher.build { optional(Integer) }
     negated = ~matcher
 
@@ -41,15 +41,15 @@ describe Matcher::OptionalMatcher do
     assert_errors negated.match(1),
       msg(1).kind_of(Integer)
 
-    refute matcher.match?('foo')
-    assert_errors matcher.match('foo'),
-      msg('foo').not.kind_of(Integer)
-    assert negated.match?('foo')
-    assert_no_errors negated.match('foo')
+    refute matcher.match?("foo")
+    assert_errors matcher.match("foo"),
+      msg("foo").not.kind_of(Integer)
+    assert negated.match?("foo")
+    assert_no_errors negated.match("foo")
   end
 
-  it '#to_s' do
-    assert_equal 'optional(Integer)', Matcher.build { optional(Integer) }.to_s
-    assert_equal '~optional(Integer)', Matcher.build { ~optional(Integer) }.to_s
+  it "#to_s" do
+    assert_equal "optional(Integer)", Matcher.build { optional(Integer) }.to_s
+    assert_equal "~optional(Integer)", Matcher.build { ~optional(Integer) }.to_s
   end
 end

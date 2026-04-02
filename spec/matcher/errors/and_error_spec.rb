@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::AndError do
   include Matcher::ErrorTesting
 
-  describe '#&' do
-    it 'does not modify itself' do
-      a = element('a')
-      b = element('b')
-      c = element('c')
-      d = element('d')
+  describe "#&" do
+    it "does not modify itself" do
+      a = element("a")
+      b = element("b")
+      c = element("c")
+      d = element("d")
 
       and1 = _and(a, b)
       and2 = _and(c, d)

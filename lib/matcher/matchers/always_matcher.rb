@@ -11,7 +11,7 @@ module Matcher
     def validate(_state) end
 
     def to_s
-      'always'
+      "always"
     end
   end
 

@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::LazyAnyMatcher do
-  it 'is built by lazy_any' do
+  it "is built by lazy_any" do
     matcher = Matcher.build { lazy_any(_.even?, _ % 3 == 0) }
 
     assert_kind_of Matcher::LazyAnyMatcher, matcher
   end
 
-  it 'matches any lazily' do
+  it "matches any lazily" do
     matcher = Matcher.build { lazy_any(1, 2) }
     negated = ~matcher
 
@@ -29,24 +29,24 @@ describe Matcher::LazyAnyMatcher do
     assert_no_errors negated.match(4)
   end
 
-  it '#~' do
+  it "#~" do
     matcher = Matcher.build { ~lazy_any(1, 2) }
 
-    assert_equal 'lazy_all(neg(1), neg(2))', matcher.to_s
+    assert_equal "lazy_all(neg(1), neg(2))", matcher.to_s
   end
 
-  it '#|' do
-    assert_equal 'lazy_any(1, 2, 3)',
+  it "#|" do
+    assert_equal "lazy_any(1, 2, 3)",
       Matcher.build { lazy_any(1, 2) | 3 }.to_s
-    assert_equal 'lazy_any(1, 2, 3)',
+    assert_equal "lazy_any(1, 2, 3)",
       Matcher.build { of(1) | lazy_any(2, 3) }.to_s
-    assert_equal 'lazy_any(1, 2)',
+    assert_equal "lazy_any(1, 2)",
       Matcher.build { of(1) | 2 }.to_s
   end
 
-  it '#to_s' do
+  it "#to_s" do
     matcher = Matcher.build { lazy_any(1, 2) }
 
-    assert_equal 'lazy_any(1, 2)', matcher.to_s
+    assert_equal "lazy_any(1, 2)", matcher.to_s
   end
 end

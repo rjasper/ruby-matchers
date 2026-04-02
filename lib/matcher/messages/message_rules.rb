@@ -45,7 +45,7 @@ module Matcher
     end
 
     # predicate
-    message method_hole(:predicate, _, -> { _1.end_with?('?') }) do |_v, e|
+    message method_hole(:predicate, _, -> { _1.end_with?("?") }) do |_v, e|
       standard_message.predicate(e[:predicate].method)
     end
 
@@ -183,7 +183,7 @@ module Matcher
     end
 
     # predicate expression
-    message method_hole(:predicate, hole(:receiver), -> { _1.end_with?('?') }) do |v, e|
+    message method_hole(:predicate, hole(:receiver), -> { _1.end_with?("?") }) do |v, e|
       expression_message.predicate(e[:receiver], v[:receiver], e[:predicate].method, given)
     end
 

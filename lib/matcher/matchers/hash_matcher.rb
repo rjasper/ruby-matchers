@@ -97,7 +97,7 @@ module Matcher
       @includes_optionals = hash.each_key.any?(Optional)
       @includes_expressions = hash.each_key.any?(Expression)
 
-      raise 'cannot use partial(others => ...)' if @partial && @includes_others
+      raise "cannot use partial(others => ...)" if @partial && @includes_others
     end
 
     def negate

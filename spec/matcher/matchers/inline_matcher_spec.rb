@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::InlineMatcher do
-  it 'is built from inline' do
-    assert_kind_of(Matcher::InlineMatcher, Matcher.build { inline { errors << 'dummy' } })
+  it "is built from inline" do
+    assert_kind_of(Matcher::InlineMatcher, Matcher.build { inline { errors << "dummy" } })
   end
 
-  it 'matches inline implementation' do
+  it "matches inline implementation" do
     matcher = Matcher.build do
       inline(negatable: true) do
-        errors << expected.not_if(negated).described_by('a number') if
+        errors << expected.not_if(negated).described_by("a number") if
           negated == actual.is_a?(Numeric)
       end
     end
@@ -21,16 +21,16 @@ describe Matcher::InlineMatcher do
     assert_no_errors matcher.match(1)
     refute negated.match?(1)
     assert_errors negated.match(1),
-      msg(1).described_by('a number')
+      msg(1).described_by("a number")
 
-    refute matcher.match?('foo')
-    assert_errors matcher.match('foo'),
-      msg('foo').not.described_by('a number')
-    assert negated.match?('foo')
-    assert_no_errors negated.match('foo')
+    refute matcher.match?("foo")
+    assert_errors matcher.match("foo"),
+      msg("foo").not.described_by("a number")
+    assert negated.match?("foo")
+    assert_no_errors negated.match("foo")
   end
 
-  it 'forwards to given matcher' do
+  it "forwards to given matcher" do
     matcher = Matcher.build do
       inline(_ > 0, negatable: true) do
         errors << _yield(self.matcher)
@@ -52,9 +52,9 @@ describe Matcher::InlineMatcher do
     assert_no_errors negated.match(-5)
   end
 
-  it 'falls back to negated behaviour' do
+  it "falls back to negated behaviour" do
     matcher = Matcher.build do
-      inline { errors << 'falsy' unless actual }
+      inline { errors << "falsy" unless actual }
     end
 
     negated = ~matcher
@@ -66,10 +66,10 @@ describe Matcher::InlineMatcher do
       msg(true).namespace(:negated).valid(matcher)
   end
 
-  it '#to_s' do
+  it "#to_s" do
     lineno = __LINE__ + 2
     matcher = Matcher.build do
-      inline(negatable: true) { errors << 'dummy' }
+      inline(negatable: true) { errors << "dummy" }
     end
 
     assert_equal "inline { inline_matcher_spec.rb:#{lineno} }", matcher.to_s
@@ -77,7 +77,7 @@ describe Matcher::InlineMatcher do
 
     lineno = __LINE__ + 2
     matcher = Matcher.build do
-      inline(_.even?, negatable: true) { errors << 'dummy' }
+      inline(_.even?, negatable: true) { errors << "dummy" }
     end
 
     assert_equal "inline(actual.even?) { inline_matcher_spec.rb:#{lineno} }", matcher.to_s

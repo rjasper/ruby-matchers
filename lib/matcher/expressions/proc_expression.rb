@@ -17,7 +17,7 @@ module Matcher
       parameters.each_with_index do |(type, name), i|
         case type
         when :req, :opt
-          raise 'ProcExpression cannot have more than 1 arg' if i > 0
+          raise "ProcExpression cannot have more than 1 arg" if i > 0
         when :keyreq, :key
           raise 'ProcExpression cannot have an kwarg called "actual"' if name == :actual
         end
@@ -72,7 +72,7 @@ module Matcher
       args_and_kwargs = Utils.inspect_block_params(@block)
 
       if args_and_kwargs.empty?
-        'expr { ... }'
+        "expr { ... }"
       else
         "expr { |#{args_and_kwargs}| ... }"
       end

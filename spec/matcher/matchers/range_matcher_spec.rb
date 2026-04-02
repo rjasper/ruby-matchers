@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::RangeMatcher do
-  it 'is built from Range' do
+  it "is built from Range" do
     assert_kind_of(Matcher::RangeMatcher, Matcher.build { 1..3 })
   end
 
-  it 'matches Range' do
+  it "matches Range" do
     matcher = Matcher.build { 1..3 }
     negated = ~matcher
 
@@ -24,21 +24,21 @@ describe Matcher::RangeMatcher do
     assert_no_errors negated.match(4)
   end
 
-  it 'detects uncomparable values' do
+  it "detects uncomparable values" do
     matcher = Matcher.build { 1..3 }
     negated = ~matcher
 
-    refute matcher.match?('a')
-    assert_errors matcher.match('a'),
-      msg('a').not.comparable_to(1)
-    assert negated.match?('a')
-    assert_no_errors negated.match('a')
+    refute matcher.match?("a")
+    assert_errors matcher.match("a"),
+      msg("a").not.comparable_to(1)
+    assert negated.match?("a")
+    assert_no_errors negated.match("a")
   end
 
-  it '#to_s' do
+  it "#to_s" do
     matcher = Matcher::RangeMatcher.new(1..10)
 
-    assert_equal '1..10', matcher.to_s
-    assert_equal 'neg(1..10)', matcher.~.to_s
+    assert_equal "1..10", matcher.to_s
+    assert_equal "neg(1..10)", matcher.~.to_s
   end
 end

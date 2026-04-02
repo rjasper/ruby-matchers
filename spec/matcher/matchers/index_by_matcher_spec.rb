@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::IndexByMatcher do
-  it 'is built by index_by' do
+  it "is built by index_by" do
     assert_kind_of(
       Matcher::IndexByMatcher,
       Matcher.build { index_by(_[:id], always) },
@@ -15,7 +15,7 @@ describe Matcher::IndexByMatcher do
     )
   end
 
-  it 'expects an object responding to :each' do
+  it "expects an object responding to :each" do
     matcher = Matcher.build { index_by(_[:id], always) }
 
     refute matcher.match?(nil)
@@ -25,7 +25,7 @@ describe Matcher::IndexByMatcher do
     assert_no_errors matcher.~.match(nil)
   end
 
-  it 'rescues from call errors' do
+  it "rescues from call errors" do
     matcher = Matcher.build { index_by(_[:id], always) }
 
     refute matcher.match?([nil])
@@ -35,69 +35,69 @@ describe Matcher::IndexByMatcher do
     assert_no_errors matcher.~.match([nil])
   end
 
-  it 'matches indexed array with matcher and maps errors' do
+  it "matches indexed array with matcher and maps errors" do
     matcher = Matcher.build do
       index_by(_[:id]) ^ {
-        41 => { id: 41, name: 'foo' },
-        42 => { id: 42, name: 'bar' },
+        41 => { id: 41, name: "foo" },
+        42 => { id: 42, name: "bar" },
       }
     end
 
     negated = ~matcher
 
-    assert matcher.match?([{ id: 41, name: 'foo' }, { id: 42, name: 'bar' }])
-    assert_no_errors matcher.match([{ id: 41, name: 'foo' }, { id: 42, name: 'bar' }])
-    refute negated.match?([{ id: 41, name: 'foo' }, { id: 42, name: 'bar' }])
-    assert_or_errors negated.match([{ id: 41, name: 'foo' }, { id: 42, name: 'bar' }]),
+    assert matcher.match?([{ id: 41, name: "foo" }, { id: 42, name: "bar" }])
+    assert_no_errors matcher.match([{ id: 41, name: "foo" }, { id: 42, name: "bar" }])
+    refute negated.match?([{ id: 41, name: "foo" }, { id: 42, name: "bar" }])
+    assert_or_errors negated.match([{ id: 41, name: "foo" }, { id: 42, name: "bar" }]),
       0 => {
         id: msg(41).equal(41),
-        name: msg('foo').equal('foo'),
+        name: msg("foo").equal("foo"),
       },
       1 => {
         id: msg(42).equal(42),
-        name: msg('bar').equal('bar'),
+        name: msg("bar").equal("bar"),
       }
 
-    refute matcher.match?([{ id: 41, name: 'foo' }, { id: 42, name: 'baz' }])
-    assert_errors matcher.match([{ id: 41, name: 'foo' }, { id: 42, name: 'baz' }]),
-      1 => { name: msg('baz').not.equal('bar') }
-    assert negated.match?([{ id: 41, name: 'foo' }, { id: 42, name: 'baz' }])
-    assert_no_errors negated.match([{ id: 41, name: 'foo' }, { id: 42, name: 'baz' }])
+    refute matcher.match?([{ id: 41, name: "foo" }, { id: 42, name: "baz" }])
+    assert_errors matcher.match([{ id: 41, name: "foo" }, { id: 42, name: "baz" }]),
+      1 => { name: msg("baz").not.equal("bar") }
+    assert negated.match?([{ id: 41, name: "foo" }, { id: 42, name: "baz" }])
+    assert_no_errors negated.match([{ id: 41, name: "foo" }, { id: 42, name: "baz" }])
   end
 
-  it 'detects duplicate keys' do
+  it "detects duplicate keys" do
     matcher = Matcher.build do
       index_by(_[:id]) ^ {
-        41 => { id: 41, name: 'foo' },
-        42 => { id: 42, name: 'bar' },
+        41 => { id: 41, name: "foo" },
+        42 => { id: 42, name: "bar" },
       }
     end
 
     negated = ~matcher
     get_id = expression { _[:id] }
     actual = [
-      { id: 41, name: 'foo' },
-      { id: 42, name: 'bar' },
-      { id: 41, name: 'qux' },
+      { id: 41, name: "foo" },
+      { id: 42, name: "bar" },
+      { id: 41, name: "qux" },
     ]
 
     refute matcher.match?(actual)
     assert_errors matcher.match(actual),
-      2 => msg({ id: 41, name: 'qux' }).duplicate_by(get_id, 41, 0)
+      2 => msg({ id: 41, name: "qux" }).duplicate_by(get_id, 41, 0)
     assert negated.match?(actual)
     assert_no_errors negated.match(actual)
   end
 
-  it 'maps base errors' do
+  it "maps base errors" do
     subset = {
-      41 => { id: 41, name: 'foo' },
-      42 => { id: 42, name: 'bar' },
+      41 => { id: 41, name: "foo" },
+      42 => { id: 42, name: "bar" },
     }
 
     superset = {
-      41 => { id: 41, name: 'foo' },
-      42 => { id: 42, name: 'bar' },
-      43 => { id: 43, name: 'qux' },
+      41 => { id: 41, name: "foo" },
+      42 => { id: 42, name: "bar" },
+      43 => { id: 43, name: "qux" },
     }
 
     matcher = Matcher.build { index_by(_[:id]) ^ (_ > subset) }
@@ -114,29 +114,29 @@ describe Matcher::IndexByMatcher do
     assert_no_errors negated.match(subset.values)
   end
 
-  it 'passes index to projection' do
+  it "passes index to projection" do
     matcher = Matcher.build do
       index_by(_[:id] + index) ^ {
-        10 => { id: 10, name: 'foo' },
-        21 => { id: 20, name: 'bar' },
+        10 => { id: 10, name: "foo" },
+        21 => { id: 20, name: "bar" },
       }
     end
 
-    assert_no_errors matcher.match([{ id: 10, name: 'foo' }, { id: 20, name: 'bar' }])
+    assert_no_errors matcher.match([{ id: 10, name: "foo" }, { id: 20, name: "bar" }])
   end
 
-  it 'passes original to projection' do
+  it "passes original to projection" do
     matcher = Matcher.build do
       index_by(_[:id] + original.size) ^ {
-        12 => { id: 10, name: 'foo' },
-        22 => { id: 20, name: 'bar' },
+        12 => { id: 10, name: "foo" },
+        22 => { id: 20, name: "bar" },
       }
     end
 
-    assert_no_errors matcher.match([{ id: 10, name: 'foo' }, { id: 20, name: 'bar' }])
+    assert_no_errors matcher.match([{ id: 10, name: "foo" }, { id: 20, name: "bar" }])
   end
 
-  it 'passes original to matcher' do
+  it "passes original to matcher" do
     matcher = Matcher.build do
       index_by(_[:id]) ^ all(
         original.is_a?(Array),
@@ -144,13 +144,13 @@ describe Matcher::IndexByMatcher do
       )
     end
 
-    assert_no_errors matcher.match([{ id: 1, name: 'foo' }, { id: 2, name: 'bar' }])
+    assert_no_errors matcher.match([{ id: 1, name: "foo" }, { id: 2, name: "bar" }])
   end
 
-  it '#to_s' do
-    assert_equal 'index_by(actual[:id], always)',
+  it "#to_s" do
+    assert_equal "index_by(actual[:id], always)",
       Matcher.build { index_by(_[:id], always) }.to_s
-    assert_equal '~index_by(actual[:id], always)',
+    assert_equal "~index_by(actual[:id], always)",
       Matcher.build { ~index_by(_[:id], always) }.to_s
   end
 end

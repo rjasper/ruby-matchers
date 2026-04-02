@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 describe Matcher::ExpressionBuilding do
-  it '#assign' do
+  it "#assign" do
     matcher = Matcher.build do
       assign { _.foo = 1 }
     end
@@ -14,7 +14,7 @@ describe Matcher::ExpressionBuilding do
     assert_equal expected, matcher.expression
   end
 
-  it '#assign: +=' do
+  it "#assign: +=" do
     matcher = Matcher.build do
       assign { _.foo += 1 }
     end
@@ -27,7 +27,7 @@ describe Matcher::ExpressionBuilding do
       matcher.expression
   end
 
-  it '#pass_through_blocks' do
+  it "#pass_through_blocks" do
     exp = expression do
       pass_through_blocks { _.map { |x| x ? 2 * x : 0 } }
     end
@@ -35,7 +35,7 @@ describe Matcher::ExpressionBuilding do
     assert_equal [2, 4, 6, 0], exp.evaluate(actual: [1, 2, 3, nil])
   end
 
-  it '#declare' do
+  it "#declare" do
     matcher = Matcher.build do
       declare foo: 42
 
@@ -45,11 +45,11 @@ describe Matcher::ExpressionBuilding do
     assert_no_errors matcher.match(-19)
   end
 
-  it '#kernel' do
+  it "#kernel" do
     integer_of = expression do
       kernel::Integer(_)
     end
 
-    assert_equal 42, integer_of.evaluate(actual: '42')
+    assert_equal 42, integer_of.evaluate(actual: "42")
   end
 end
