@@ -178,7 +178,7 @@ module Matcher
       kwargs = @kwargs.transform_values(&substitute)
       kwargs = @kwargs if no_change
 
-      block = block.is_a?(Block) ? @block.substitute(replacements) : @block
+      block = @block.is_a?(Block) ? @block.substitute(replacements) : @block
 
       Call.new(receiver, @method, args, kwargs, block)
     end
