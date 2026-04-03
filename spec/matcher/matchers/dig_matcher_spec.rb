@@ -13,7 +13,7 @@ describe Matcher::DigMatcher do
     assert_kind_of(Matcher::DigMatcher, matcher)
   end
 
-  it "matches digged value" do
+  it "matches dug value" do
     matcher = Matcher.build do
       dig(:foo, 0) ^ "foobar"
     end
@@ -67,7 +67,7 @@ describe Matcher::DigMatcher do
     assert_no_errors negated.match([])
   end
 
-  it "matches digged value optionally" do
+  it "matches dug value optionally" do
     matcher = Matcher.build do
       optional_dig(:foo, 0) ^ "foobar"
     end

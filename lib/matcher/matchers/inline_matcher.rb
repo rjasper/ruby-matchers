@@ -68,7 +68,7 @@ module Matcher
     #
     # If you need more control to define your matching logic then +inline+
     # may give you an alternative to implementing a new matcher class. Within
-    # the +inline+ block you have direct access to +actual+, +errors+, +_yield+
+    # the +inline+ block you have direct access to +actual+, +errors+, +_yield+,
     # and other state methods.
     #
     # @example
@@ -85,7 +85,7 @@ module Matcher
     #     end
     #   end
     #
-    # @param matcher [Base] optionaly provide a child matcher. Call the matcher
+    # @param matcher [Base] optionally provide a child matcher. Call the matcher
     #   with +_yield matcher, actual, **values+
     # @param negatable [true, false] set to true if your matching logic respects
     #   the negated flag. Otherwise, the default negation implementation is

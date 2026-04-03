@@ -23,18 +23,18 @@ describe Matcher::LetMatcher do
 
   it "sets variable to value" do
     matcher = Matcher.build do
-      let(myvar: "foo") ^
-        (_ == vars[:myvar])
+      let(my_var: "foo") ^
+        (_ == vars[:my_var])
     end
 
     negated = ~matcher
 
     assert_no_errors matcher.match("foo")
     assert_errors negated.match("foo"),
-      'expected actual != myvar but got "foo" != "foo"'
+      'expected actual != my_var but got "foo" != "foo"'
 
     assert_errors matcher.match("bar"),
-      'expected actual == myvar but got "bar" == "foo"'
+      'expected actual == my_var but got "bar" == "foo"'
     assert_no_errors negated.match("bar")
   end
 

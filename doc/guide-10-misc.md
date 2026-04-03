@@ -4,7 +4,7 @@
 
 Matcher helpers like `each` or `map` can be chained with the `^` operator or
 `chain` helper. If a helper has the form `my_helper(..., matcher)` then it
-usually also supports this form `my_helper(...) ^ matcher`. This helps reducing
+usually also supports this form `my_helper(...) ^ matcher`. This helps to reduce
 nested parenthesis:
 
 ```ruby

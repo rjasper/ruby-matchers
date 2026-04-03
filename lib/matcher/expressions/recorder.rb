@@ -34,7 +34,7 @@ module Matcher
   # To do their job any call to a recorder must return a new recorder. But this
   # also makes them ill-behaved because methods like <tt>==</tt> or
   # <tt>is_a?</tt> don't behave like you expect them to. They don't have any
-  # methods defined (except +__id__+ and +__send__+). Instead all calls are
+  # methods defined (except +__id__+ and +__send__+). Instead, all calls are
   # handled by +method_missing+.
   #
   # The consequence:

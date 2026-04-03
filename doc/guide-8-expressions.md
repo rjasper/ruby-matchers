@@ -58,7 +58,7 @@ recorder can then also record a call so chains of calls are possible
 To do their job any call to a recorder must return a new recorder. But this
 also makes them ill-behaved because methods like `==` or `is_a?` don't behave
 like you expect them to. They don't have any methods defined (except `__id__`
-and `__send__`). Instead all calls are handled by method_missing.
+and `__send__`). Instead, all calls are handled by method_missing.
 
 The consequence:
 

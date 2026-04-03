@@ -27,7 +27,7 @@ describe Matcher::OldErrorChecker do
     assert_nil error_checker.check(expected, actual)
   end
 
-  it "hierarchie mismatch" do
+  it "hierarchy mismatch" do
     expected = build_errors do
       _and do
         error "a"

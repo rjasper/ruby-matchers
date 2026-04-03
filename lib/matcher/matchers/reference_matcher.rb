@@ -17,13 +17,13 @@ module Matcher
   #
   # == Allow cyclic references
   #
-  # By default reference matchers won't allow visiting the same object twice.
+  # By default, reference matchers won't allow visiting the same object twice.
   # However, for structures like graphs we can enable cyclic mode. When the
   # reference matcher revisits an object it will assume a new match would be
   # the same as the first match result and skip traversal.
   #
   # Also note, that when caching is enabled values won't be passed to the target
-  # matcher to ensure results are reproducable for the same object.
+  # matcher to ensure results are reproducible for the same object.
   #
   #   m = Matcher.build do
   #     refs[:vertex] = {
@@ -57,7 +57,7 @@ module Matcher
   #
   # == Disable cache
   #
-  # By default results are cached for each object during a match session.
+  # By default, results are cached for each object during a match session.
   # However, if a result depends not only on the actual value but also on other
   # passed values then the cache may return an incorrect result. See the example
   # below:

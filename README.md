@@ -83,8 +83,8 @@ puts errors.report
 # > root[:users][1][:age]: expected a value >= 18 but got 12
 ```
 
-Error messages are derived from the expression, not hand-written. Expressions
-are not limited to simple comparisons — method chains and blocks work too:
+Error messages are derived from the expression. Expressions are not limited to
+simple comparisons — method chains and blocks work too:
 
 ```ruby
 _.sum(&:length) > 10
@@ -185,8 +185,8 @@ to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub
-at https://github.com/[USERNAME]/matcher. This project is intended to be a safe,
+Bug reports and pull requests are welcome on GitHub at
+https://github.com/rjasper/ruby-matchers. This project is intended to be a safe,
 welcoming space for collaboration, and contributors are expected to adhere to
 the [code of conduct](https://github.com/[USERNAME]/matcher/blob/master/CODE_OF_CONDUCT.md).
 
