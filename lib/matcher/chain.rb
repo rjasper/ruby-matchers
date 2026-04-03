@@ -49,7 +49,7 @@ module Matcher
     #   map(_.to_i) ^ [1, 2]
     #   filter(_.odd?) ^ [1, 3, 5]
     # @param other matcher or chain
-    # @return [Base]
+    # @return [Base, Chain]
     def ^(other)
       if !Recorder.recorder?(other) && other.is_a?(Chain)
         Chain.new { @block.call(other ^ _1) }
@@ -76,7 +76,7 @@ module Matcher
     #   # which is equivalent to
     #   let({ limit: 10 }, map(_.compact, filter(_.even?, _ < vars[:limit])))
     # @param *chains
-    # @return [Chain]
+    # @return [Base, Chain]
     def chain(*chains)
       chains.reduce(:^)
     end
