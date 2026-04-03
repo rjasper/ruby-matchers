@@ -45,6 +45,17 @@ describe Matcher::ExpressionBuilding do
     assert_no_errors matcher.match(-19)
   end
 
+  it "#declare: isolation" do
+    Matcher.build do
+      declare foo: 42
+      outside.assert_equal "method", defined?(foo)
+    end
+
+    Matcher.build do
+      outside.assert_nil defined?(foo)
+    end
+  end
+
   it "#kernel" do
     integer_of = expression do
       kernel::Integer(_)
