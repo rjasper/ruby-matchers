@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module Matcher
-  module MatcherBuilding end
+  module MatcherDsl end
 end

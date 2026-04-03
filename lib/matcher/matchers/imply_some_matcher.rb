@@ -68,7 +68,7 @@ module Matcher
     end
   end
 
-  module MatcherBuilding
+  module MatcherDsl
     ##
     # Matches exactly one implied matcher
     # @example

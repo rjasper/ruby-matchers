@@ -2,11 +2,11 @@
 
 module Matcher
   class Builder
-    include ExpressionBuilding
-    include MatcherBuilding
+    include ExpressionDsl
+    include MatcherDsl
 
     def initialize(outside, build_session: Matcher.build_session)
-      ExpressionBuilding.init(self, build_session)
+      ExpressionDsl.init(self, build_session)
 
       @outside = outside
       @matcher_cache = MatcherCache.current(build_session)

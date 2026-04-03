@@ -2,7 +2,7 @@
 
 require "test_helper"
 
-describe Matcher::ExpressionBuilding do
+describe Matcher::ExpressionDsl do
   it "#assign" do
     matcher = Matcher.build do
       assign { _.foo = 1 }

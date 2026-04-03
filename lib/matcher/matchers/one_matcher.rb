@@ -44,7 +44,7 @@ module Matcher
     end
   end
 
-  module MatcherBuilding
+  module MatcherDsl
     ##
     # Matches exactly one matcher
     # @example

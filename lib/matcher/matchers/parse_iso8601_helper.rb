@@ -3,7 +3,7 @@
 module Matcher
   autoload :ParseIso8601Matcher, "matcher/matchers/parse_iso8601_matcher"
 
-  module MatcherBuilding
+  module MatcherDsl
     ##
     # Parses ISO 8601 time and matches with given matcher
     # @example

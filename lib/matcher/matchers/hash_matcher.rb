@@ -82,11 +82,11 @@ module Matcher
   #
   #   m.match?({ foo: 1 }, my_key: :foo) # => true
   #
-  # @see MatcherBuilding#partial
-  # @see MatcherBuilding#partial_r
-  # @see MatcherBuilding#each_pair
-  # @see MatcherBuilding#each_key
-  # @see MatcherBuilding#each_value
+  # @see MatcherDsl#partial
+  # @see MatcherDsl#partial_r
+  # @see MatcherDsl#each_pair
+  # @see MatcherDsl#each_key
+  # @see MatcherDsl#each_value
   class HashMatcher < Base
     def initialize(hash, partial: false, negated: false)
       super()
@@ -270,7 +270,7 @@ module Matcher
     end
   end
 
-  module MatcherBuilding
+  module MatcherDsl
     ##
     # Matches hash partially
     # @example

@@ -28,7 +28,7 @@ module Matcher
   #
   #   exp.evaluate(actual: ['1', '2']) # => [1, 2]
   #
-  # @see ExpressionBuilding#pass_through_blocks
+  # @see ExpressionDsl#pass_through_blocks
   class Block
     extend Compatibility
 

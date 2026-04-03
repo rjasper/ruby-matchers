@@ -6,7 +6,7 @@ module Matcher
       include PatternBuilding
 
       def initialize(build_session: Matcher.build_session)
-        ExpressionBuilding.init(self, build_session)
+        ExpressionDsl.init(self, build_session)
       end
     end
 

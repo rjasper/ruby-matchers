@@ -12,7 +12,7 @@ module Matcher
     alias inspect to_s
   end
 
-  module MatcherBuilding
+  module MatcherDsl
     ##
     # Hash key that matches remaining entries
     # @example

@@ -43,7 +43,7 @@ module Matcher
     end
   end
 
-  module MatcherBuilding
+  module MatcherDsl
     ##
     # Sets values for the given matcher
     # @example

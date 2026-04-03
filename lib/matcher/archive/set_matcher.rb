@@ -66,7 +66,7 @@ module Matcher
     end
   end
 
-  module MatcherBuilding
+  module MatcherDsl
     def set(array)
       SetMatcher.new(array.map { matcher_of(_1) })
     end

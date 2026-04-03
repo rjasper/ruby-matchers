@@ -17,7 +17,7 @@ module Matcher
     end
   end
 
-  module MatcherBuilding
+  module MatcherDsl
     ##
     # Never matches. Opposite of {#always}
     #

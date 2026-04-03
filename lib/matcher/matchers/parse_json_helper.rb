@@ -3,7 +3,7 @@
 module Matcher
   autoload :ParseJsonMatcher, "matcher/matchers/parse_json_matcher"
 
-  module MatcherBuilding
+  module MatcherDsl
     ##
     # Parses JSON and matches with given matcher
     # @example

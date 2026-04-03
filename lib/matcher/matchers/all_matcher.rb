@@ -35,7 +35,7 @@ module Matcher
     end
   end
 
-  module MatcherBuilding
+  module MatcherDsl
     ##
     # Matches all matchers
     # @example

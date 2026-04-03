@@ -41,7 +41,7 @@ module Matcher
     end
   end
 
-  module MatcherBuilding
+  module MatcherDsl
     ##
     # Matches any matcher lazily. Returns only the last match result
     # (similar to ||).

@@ -59,7 +59,7 @@ module Matcher
     end
   end
 
-  module MatcherBuilding
+  module MatcherDsl
     ##
     # Matches regular expression and passes MatchData to matcher
     # @example

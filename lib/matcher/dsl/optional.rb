@@ -56,7 +56,7 @@ module Matcher
     alias inspect to_s
   end
 
-  module MatcherBuilding
+  module MatcherDsl
     ##
     # Marks a hash key as optional or wraps a matcher to also accept +nil+
     # @example

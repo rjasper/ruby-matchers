@@ -33,7 +33,7 @@ module Matcher
     # Combines with other to AnyMatcher
     # @param other
     # @return [AnyMatcher]
-    # @see MatcherBuilding#any
+    # @see MatcherDsl#any
     def +(other)
       other = Matcher.cache(other)
 
@@ -50,7 +50,7 @@ module Matcher
     # Combines with other to AllMatcher
     # @param other
     # @return [AllMatcher]
-    # @see MatcherBuilding#all
+    # @see MatcherDsl#all
     def *(other)
       other = Matcher.cache(other)
 
@@ -67,7 +67,7 @@ module Matcher
     # Combines with other to LazyAnyMatcher
     # @param other
     # @return [LazyAnyMatcher]
-    # @see MatcherBuilding#lazy_any
+    # @see MatcherDsl#lazy_any
     def |(other)
       other = Matcher.cache(other)
 
@@ -84,7 +84,7 @@ module Matcher
     # Combines with other to LazyAllMatcher
     # @param other
     # @return [LazyAllMatcher]
-    # @see MatcherBuilding#lazy_all
+    # @see MatcherDsl#lazy_all
     def &(other)
       other = Matcher.cache(other)
 
@@ -101,7 +101,7 @@ module Matcher
     # Implies another matcher
     # @param other
     # @return [ImplyMatcher]
-    # @see MatcherBuilding#imply
+    # @see MatcherDsl#imply
     def >>(other)
       ImplyMatcher.new(self, Matcher.cache(other))
     end

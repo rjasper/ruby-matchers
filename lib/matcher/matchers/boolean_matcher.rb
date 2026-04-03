@@ -24,7 +24,7 @@ module Matcher
     end
   end
 
-  module MatcherBuilding
+  module MatcherDsl
     ##
     # Matches +true+ and +false+
     # @example

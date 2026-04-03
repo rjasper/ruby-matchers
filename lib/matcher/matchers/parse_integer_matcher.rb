@@ -56,7 +56,7 @@ module Matcher
     end
   end
 
-  module MatcherBuilding
+  module MatcherDsl
     ##
     # Parses integer and matches with given matcher
     # @example

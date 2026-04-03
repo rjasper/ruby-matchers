@@ -48,7 +48,7 @@ module Matcher
     end
   end
 
-  module MatcherBuilding
+  module MatcherDsl
     ##
     # Parses float and matches with given matcher.
     # @example

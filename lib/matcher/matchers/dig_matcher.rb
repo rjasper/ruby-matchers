@@ -115,7 +115,7 @@ module Matcher
     end
   end
 
-  module MatcherBuilding
+  module MatcherDsl
     ##
     # Matches deeply nested values
     # @example
