@@ -3,8 +3,6 @@
 require "test_helper"
 
 describe Matcher::Call do
-  include Matcher::Compatibility
-
   describe "#evaluate" do
     it "evaluates basic call" do
       call = expression { _ + vars[:foo] }
@@ -60,8 +58,13 @@ describe Matcher::Call do
         expression { _.foo }.evaluate(actual: nil)
       end
 
-      expected = "actual.foo raised NoMethodError: " \
-        "undefined method #{quote_method(:foo)} for nil"
+      expected_error = begin
+        nil.foo
+      rescue NoMethodError => e
+        e
+      end
+
+      expected = "actual.foo raised NoMethodError: #{expected_error}"
 
       assert_equal expected, err.message
 
