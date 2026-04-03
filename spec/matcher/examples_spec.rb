@@ -30,7 +30,8 @@ describe "examples" do
       value: 1337,
     }),
       name: msg(nil).not.kind_of(String),
-      checksum: msg("kS7IA7LOSeSlQQaNSVq1cA==").not.matching(/\A[0-9a-f]{32}\z/),
+      checksum: msg("kS7IA7LOSeSlQQaNSVq1cA==")
+        .not.matching(/\A[0-9a-f]{32}\z/),
       count: msg(0).not.between(1, 10),
       size: {
         0 => msg(30).not.equal(32),

@@ -26,7 +26,8 @@ describe Matcher::ImplySomeMatcher do
 
     refute matcher.match?(:a)
     assert_errors matcher.match(:a),
-      "expected to satisfy one condition but got :a and met none of these: String, Integer"
+      "expected to satisfy one condition but got :a and met none of these: " \
+        "String, Integer"
     assert negated.match?(:a)
     assert_no_errors negated.match(:a)
   end
@@ -69,7 +70,8 @@ describe Matcher::ImplySomeMatcher do
   it "matches any" do
     matcher = Matcher.build do
       imply_any(
-        partial(divisible_by: Integer) >> partial(value: _ % parent[:divisible_by] == 0),
+        partial(divisible_by: Integer) >>
+          partial(value: _ % parent[:divisible_by] == 0),
         partial(odd: true) >> partial(value: _.odd?),
       )
     end
@@ -164,13 +166,22 @@ describe Matcher::ImplySomeMatcher do
       Matcher.build { imply_one(of(String) >> "string", of(Integer) >> 1) }.to_s
     assert_equal 'imply_any(imply(String, "string"), imply(Integer, 1))',
       Matcher.build { imply_any(of(String) >> "string", of(Integer) >> 1) }.to_s
-    assert_equal 'imply_some(imply(String, "string"), imply(Integer, 1), count: 2)',
-      Matcher.build { imply_some(of(String) >> "string", of(Integer) >> 1, count: 2) }.to_s
-
     assert_equal 'imply_one(imply(String, "string"), else: nil)',
       Matcher.build { imply_one(of(String) >> "string", else: nil) }.to_s
 
-    assert_equal '~imply_one(imply(String, "string"), imply(Integer, 1))',
-      Matcher.build { ~imply_one(of(String) >> "string", of(Integer) >> 1) }.to_s
+    expected =
+      'imply_some(imply(String, "string"), imply(Integer, 1), count: 2)'
+    matcher = Matcher.build do
+      imply_some(of(String) >> "string", of(Integer) >> 1, count: 2)
+    end
+
+    assert_equal expected, matcher.to_s
+
+    expected = '~imply_one(imply(String, "string"), imply(Integer, 1))'
+    matcher = Matcher.build do
+      ~imply_one(of(String) >> "string", of(Integer) >> 1)
+    end
+
+    assert_equal expected, matcher.to_s
   end
 end

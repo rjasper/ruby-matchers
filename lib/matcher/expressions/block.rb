@@ -11,9 +11,9 @@ module Matcher
   #   exp.evaluate(actual: [1, 2]) # => [2, 4]
   #
   # During build time the block acts like an expression builder
-  # (e.g. like `Expression.build`), where its arguments are recorders. So the inside
-  # of a block cannot be arbitrary but must follow the same rules as for building
-  # other expressions.
+  # (e.g. like `Expression.build`), where its arguments are recorders. So the
+  # inside of a block cannot be arbitrary but must follow the same rules as for
+  # building other expressions.
   #
   #   # WRONG
   #   Matcher::Expression.build do
@@ -87,9 +87,14 @@ module Matcher
           expression.receiver == Recorder.to_expression(args[0])
 
       ExpressionWalker.each_variable(expression) do |variable|
-        raise "parameter #{quote_method(variable.symbol)} shadows an outer variable" if
-          parameter_names.include?(variable.symbol) &&
-            !variable_object_ids.include?(variable.object_id)
+        shadowed = !parameter_names.include?(variable.symbol) ||
+          variable_object_ids.include?(variable.object_id)
+
+        next if shadowed
+
+        quoted_method = quote_method(variable.symbol)
+
+        raise "parameter #{quoted_method} shadows an outer variable"
       end
 
       new(parameters, expression)
@@ -156,9 +161,10 @@ module Matcher
     def to_s(as_block: false)
       if @parameters.empty?
         as_block ? "{ #{@expression} }" : "-> { #{@expression} }"
+      elsif as_block
+        "{ |#{arg_list}| #{@expression} }"
       else
-        args = arg_list
-        as_block ? "{ |#{args}| #{@expression} }" : "->(#{args}) { #{@expression} }"
+        "->(#{arg_list}) { #{@expression} }"
       end
     end
     alias inspect to_s

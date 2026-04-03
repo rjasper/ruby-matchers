@@ -12,8 +12,11 @@ module Matcher
 
     def label_tree(error)
       leaves = []
+      label = label_tree_helper(
+        error, List.empty, ExpressionLabeler::ROOT, leaves
+      )
 
-      [label_tree_helper(error, List.empty, ExpressionLabeler::ROOT, leaves), leaves]
+      [label, leaves]
     end
 
     Leaf = Struct.new(:label, :path, :message) do
@@ -33,12 +36,17 @@ module Matcher
       when EmptyError
         0
       when AndError, OrError
-        child_labels = error.children.map { label_tree_helper(_1, path, path_label, leaves) }
+        child_labels = error.children.map do |child|
+          label_tree_helper(child, path, path_label, leaves)
+        end
+
         group_label_for(error, child_labels.sort)
       when NestedError
         new_path_label = @expression_labeler.label(error.key, path_label)
 
-        label_tree_helper(error.child, path << error.key, new_path_label, leaves)
+        label_tree_helper(
+          error.child, path << error.key, new_path_label, leaves
+        )
       when ElementError
         label = element_label_for(path, path_label, error)
         message = error.message

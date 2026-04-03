@@ -52,8 +52,11 @@ module Matcher
 
         return error if error.is_a?(EmptyError) || @key == Variable.actual
 
-        key = @key
-        key = Call.new(Variable.actual, :[], [Constant.new(key)]) unless key.is_a?(Expression)
+        key = if @key.is_a?(Expression)
+          @key
+        else
+          Call.new(Variable.actual, :[], [Constant.new(@key)])
+        end
 
         @parent << NestedError.new(key, error)
 

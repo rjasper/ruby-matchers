@@ -34,9 +34,11 @@ module Matcher
 
     def build_message(state)
       if @description
-        state.expected.not_if(@negated).described_by(@description)
+        state.expected.not_if(@negated)
+          .described_by(@description)
       else
-        state.expected.namespace(:block).not_if(@negated).satisfied(block_location)
+        state.expected.namespace(:block).not_if(@negated)
+          .satisfied(block_location)
       end
     end
 

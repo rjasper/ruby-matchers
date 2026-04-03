@@ -14,7 +14,9 @@ module Matcher
     attr_reader :receiver, :method, :args, :kwargs
 
     def match?(expression)
-      return false if !expression.is_a?(Call) || !match_method?(expression.method)
+      if !expression.is_a?(Call) || !match_method?(expression.method)
+        return false
+      end
 
       yield Call.new(@receiver, expression.method, @args, @kwargs)
 

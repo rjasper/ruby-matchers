@@ -88,7 +88,8 @@ describe Matcher::ArrayMatcher do
     assert_no_errors matcher.match([1, 3, 5])
 
     assert_errors matcher.match([1, 5, 3]),
-      2 => "expected parent[index - 1] < parent[index] but got 5 < 3, where parent = [1, 5, 3], index = 2"
+      2 => "expected parent[index - 1] < parent[index] but got 5 < 3, " \
+        "where parent = [1, 5, 3], index = 2"
   end
 
   it "#to_s" do

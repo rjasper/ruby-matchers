@@ -22,8 +22,11 @@ module Matcher
       symbols.concat(assigns.keys - symbols)
       conflicts = symbols & methods
 
-      raise "Cannot declare these variables: #{conflicts.join(', ')}" if conflicts.length > 1
-      raise "Cannot declare variable \"#{conflicts[0]}\"" if conflicts.length == 1
+      if conflicts.length > 1
+        raise "Cannot declare these variables: #{conflicts.join(', ')}"
+      elsif conflicts.length == 1
+        raise "Cannot declare variable \"#{conflicts[0]}\""
+      end
 
       symbols.each do |symbol|
         define_singleton_method(symbol) do
@@ -47,8 +50,8 @@ module Matcher
     #
     # == Turn an object into a recorder
     #
-    # Note, that the arguments of a call are implicitly converted to expressions.
-    # No need to use +expr+ on the right-hand-side of an operator.
+    # Note, that the arguments of a call are implicitly converted to
+    # expressions. No need to use +expr+ on the right-hand-side of an operator.
     #
     #   # BAD
     #   expr(Time).now + expr(3600)
@@ -73,9 +76,9 @@ module Matcher
     #   my_expr.evaluate(true) # => 1
     #   my_expr.inspect my_expr # => "expr { ... }"
     #
-    # The disadvantage of block expressions is that we cannot inspect them easily. So
-    # they should be avoided if possible. Alternatively, consider using inline
-    # matchers or implement a new matcher class.
+    # The disadvantage of block expressions is that we cannot inspect them
+    # easily. So they should be avoided if possible. Alternatively, consider
+    # using inline matchers or implement a new matcher class.
     #
     # @example
     #   # turn object into recorder
@@ -205,8 +208,8 @@ module Matcher
     ##
     # Evaluates block with +&+ and +|+ acting as +&&+ and +||+
     #
-    # We cannot capture `&&` and `||` directly when building expressions. But as a
-    # workaround we can substitute them with `&` and `|`.
+    # We cannot capture `&&` and `||` directly when building expressions. But as
+    # a workaround we can substitute them with `&` and `|`.
     #
     #   lo { (_ % 4 == 0) & (_ % 100 != 0) | (_ % 400 != 0) }
     #   # => actual % 4 == 0 && actual % 100 != 0 || actual % 400 != 0

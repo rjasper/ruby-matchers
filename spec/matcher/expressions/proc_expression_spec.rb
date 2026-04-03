@@ -16,7 +16,9 @@ describe Matcher::ProcExpression do
       build { |actual:| actual + 1 }
     end
 
-    assert_equal 'ProcExpression cannot have an kwarg called "actual"', err.message
+    expected = 'ProcExpression cannot have a kwarg called "actual"'
+
+    assert_equal expected, err.message
   end
 
   it "#variables" do

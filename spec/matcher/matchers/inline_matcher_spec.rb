@@ -4,7 +4,11 @@ require "test_helper"
 
 describe Matcher::InlineMatcher do
   it "is built from inline" do
-    assert_kind_of(Matcher::InlineMatcher, Matcher.build { inline { errors << "dummy" } })
+    matcher = Matcher.build do
+      inline { errors << "dummy" }
+    end
+
+    assert_kind_of Matcher::InlineMatcher, matcher
   end
 
   it "matches inline implementation" do
@@ -80,7 +84,9 @@ describe Matcher::InlineMatcher do
       inline(_.even?, negatable: true) { errors << "dummy" }
     end
 
-    assert_equal "inline(actual.even?) { inline_matcher_spec.rb:#{lineno} }", matcher.to_s
-    assert_equal "~inline(actual.even?) { inline_matcher_spec.rb:#{lineno} }", matcher.~.to_s
+    assert_equal "inline(actual.even?) { inline_matcher_spec.rb:#{lineno} }",
+      matcher.to_s
+    assert_equal "~inline(actual.even?) { inline_matcher_spec.rb:#{lineno} }",
+      matcher.~.to_s
   end
 end

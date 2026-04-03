@@ -18,7 +18,8 @@ module Matcher
   #   m.match?(["1", "2"])
   #   # => true
   #   m.match(["1", "2", "3"])
-  #   # > root.map(&:to_i): expected actual.sum == 3 but got 6 == 3, where actual = [1, 2, 3]
+  #   # > root.map(&:to_i): expected actual.sum == 3 but got 6 == 3,
+  #   #   where actual = [1, 2, 3]
   class MapMatcher < Base
     include MappingUtils
 

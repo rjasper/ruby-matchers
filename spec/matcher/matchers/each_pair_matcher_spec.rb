@@ -63,8 +63,10 @@ describe Matcher::EachPairMatcher do
     refute negated.match?({ "1" => 1, "a" => :a })
     assert_errors negated.match({ "1" => 1, "a" => :a }) do
       _or do
-        error "1", 'expected key != value.to_s but got "1" != "1", where value = 1'
-        error "a", 'expected key != value.to_s but got "a" != "a", where value = :a'
+        error "1",
+          'expected key != value.to_s but got "1" != "1", where value = 1'
+        error "a",
+          'expected key != value.to_s but got "a" != "a", where value = :a'
       end
     end
 

@@ -21,7 +21,8 @@ describe Matcher::BlockMatcher do
 
     refute negated.match?(4)
     assert_errors negated.match(4),
-      "did not expect to satisfy condition block_matcher_spec.rb:#{lineno} but got 4"
+      "did not expect to satisfy condition block_matcher_spec.rb:#{lineno} " \
+        "but got 4"
 
     refute matcher.match?(0)
     assert_errors matcher.match(0),

@@ -4,8 +4,10 @@ module Matcher
   class Call < Expression
     attr_reader :receiver, :method, :args, :kwargs, :block
 
-    UNARY_OPERATORS = %i[! ~ +@ -@].freeze
-    BINARY_OPERATORS = %i[+ - * ** / % < > <= >= <=> == === != =~ !~ & | ^ << >> && ||].freeze
+    UNARY_OPERATORS =
+      %i[! ~ +@ -@].freeze
+    BINARY_OPERATORS =
+      %i[+ - * ** / % < > <= >= <=> == === != =~ !~ & | ^ << >> && ||].freeze
 
     OPERATOR_PRECEDENCE = begin
       precedence = {}
@@ -188,7 +190,9 @@ module Matcher
       when :!, :~, :+@, :-@
         # !foo
         return "#{@method[0]}#{receiver}" if unary?
-      when :+, :-, :*, :/, :%, :**, :<, :>, :<=, :>=, :<=>, :==, :===, :!=, :=~, :!~, :&, :|, :^, :<<, :>>, :"&&", :"||"
+      when :+, :-, :*, :/, :%, :**, :<, :>, :<=, :>=, :<=>, :==, :===, :!=, :=~,
+        :!~, :&, :|, :^, :<<, :>>, :"&&", :"||"
+
         if binary?
           operand = parenthesize(@args[0], true)
 
@@ -327,9 +331,11 @@ module Matcher
         # also parenthesize rhs if precedence is the same
         operand.precedence >= precedence
       else
-        # also parenthesize lhs if both operators are any of: <=> == === != =~ !~
+        # also parenthesize lhs if both operators are any of:
+        # <=> == === != =~ !~
         operand.precedence > precedence ||
-          operand.precedence == precedence && %i[<=> == === != =~ !~].include?(@method)
+          operand.precedence == precedence &&
+            %i[<=> == === != =~ !~].include?(@method)
       end
 
       need_parentheses ? "(#{operand_string})" : operand_string

@@ -14,7 +14,8 @@ describe Matcher::ExpectedPhrasing do
     end
 
     it "same" do
-      assert_phrase "expected same as 2 (id=#{2.object_id}) but got 1 (id=#{1.object_id})",
+      assert_phrase "expected same as 2 (id=#{2.object_id}) " \
+        "but got 1 (id=#{1.object_id})",
         msg(1).not.same(2)
       assert_phrase "did not expect same as 1 (id=#{1.object_id})",
         msg(1).same(1)
@@ -56,9 +57,11 @@ describe Matcher::ExpectedPhrasing do
     end
 
     it "comparable_to" do
-      assert_phrase "expected a value comparable to #<Set: {1}> but got #<Set: {2}>",
+      assert_phrase "expected a value comparable to #<Set: {1}> " \
+        "but got #<Set: {2}>",
         msg(Set[2]).not.comparable_to(Set[1])
-      assert_phrase "did not expect a value comparable to #<Set: {1}> but got #<Set: {1, 2}>",
+      assert_phrase "did not expect a value comparable to #<Set: {1}> " \
+        "but got #<Set: {1, 2}>",
         msg(Set[1, 2]).comparable_to(Set[1])
     end
 
@@ -86,7 +89,8 @@ describe Matcher::ExpectedPhrasing do
     it "having_key" do
       assert_phrase "expected to include key :foo but got {}",
         msg({}).not.having_key(:foo)
-      assert_phrase "did not expect to include key :foo but got #{{ foo: true }}",
+      assert_phrase "did not expect to include key :foo " \
+        "but got #{{ foo: true }}",
         msg({ foo: true }).having_key(:foo)
     end
 
@@ -100,7 +104,8 @@ describe Matcher::ExpectedPhrasing do
     it "in" do
       assert_phrase 'expected object to be included in ["bar"] but got "foo"',
         msg("foo").not.in(["bar"])
-      assert_phrase 'did not expect object to be included in ["foo"] but got "foo"',
+      assert_phrase 'did not expect object to be included in ["foo"] ' \
+        'but got "foo"',
         msg("foo").in(["foo"])
     end
 
@@ -115,16 +120,19 @@ describe Matcher::ExpectedPhrasing do
       actual = { id: 5 }
       expr = expression { _[:id] }
 
-      assert_phrase "expected duplicate by actual[:id]=5 originally at index 7 but got #{actual.inspect}",
+      assert_phrase "expected duplicate by actual[:id]=5 originally " \
+        "at index 7 but got #{actual.inspect}",
         msg(actual).not.duplicate_by(expr, 5, 7)
-      assert_phrase "did not expect duplicate by actual[:id]=5 originally at index 7 but got #{actual.inspect}",
+      assert_phrase "did not expect duplicate by actual[:id]=5 originally " \
+        "at index 7 but got #{actual.inspect}",
         msg(actual).duplicate_by(expr, 5, 7)
     end
 
     it "matching" do
       assert_phrase 'expected value to match /Hello/ but got "Hi!"',
         msg("Hi!").not.matching(/Hello/)
-      assert_phrase 'did not expect value to match /Hello/ but got "Hello World!"',
+      assert_phrase "did not expect value to match /Hello/ " \
+        'but got "Hello World!"',
         msg("Hello World!").matching(/Hello/)
     end
 
@@ -174,22 +182,28 @@ describe Matcher::ExpectedPhrasing do
   describe "expression" do
     it "truthy" do
       assert_phrase "expected foo to be truthy but got false",
-        msg(nil).namespace(:expression).not.truthy(expression { vars[:foo] }, false, { foo: false })
+        msg(nil).namespace(:expression).not.truthy(
+          expression { vars[:foo] }, false, { foo: false }
+        )
       assert_phrase "expected foo to be falsy but got true",
-        msg(nil).namespace(:expression).truthy(expression { vars[:foo] }, true, { foo: true })
+        msg(nil).namespace(:expression).truthy(
+          expression { vars[:foo] }, true, { foo: true }
+        )
     end
 
     it "same" do
       assert_phrase "expected actual + 1 to be same as actual * 2 " \
         "but got 3 (id=#{3.object_id}) and 4 (id=#{4.object_id}), " \
         "where actual = 2",
-        msg(nil).namespace(:expression)
-          .not.same(expression { _ + 1 }, expression { _ * 2 }, 3, 4, { actual: 2 })
+        msg(nil).namespace(:expression).not.same(
+          expression { _ + 1 }, expression { _ * 2 }, 3, 4, { actual: 2 }
+        )
 
       assert_phrase "did not expect actual + 1 to be same as actual * 2 " \
         "but got 2 (id=#{2.object_id}), where actual = 1",
-        msg(nil).namespace(:expression)
-          .same(expression { _ + 1 }, expression { _ * 2 }, 2, 2, { actual: 1 })
+        msg(nil).namespace(:expression).same(
+          expression { _ + 1 }, expression { _ * 2 }, 2, 2, { actual: 1 }
+        )
     end
 
     it "comparison" do
@@ -203,7 +217,8 @@ describe Matcher::ExpectedPhrasing do
       assert_phrase "expected actual * 2 < 0 but got 2 < 0, where actual = 1",
         msg(1).namespace(:expression)
           .not.comparison(expression { _ * 2 < 0 }, 2, 0, { actual: 1 })
-      assert_phrase "expected actual * 2 >= 0 but got -2 >= 0, where actual = -1",
+      assert_phrase "expected actual * 2 >= 0 but got -2 >= 0, " \
+        "where actual = -1",
         msg(-1).namespace(:expression)
           .comparison(expression { _ * 2 < 0 }, -2, 0, { actual: -1 })
 
@@ -221,7 +236,8 @@ describe Matcher::ExpectedPhrasing do
         msg(-1).namespace(:expression)
           .comparison(expression { _ * 2 <= 0 }, -2, 0, { actual: -1 })
 
-      assert_phrase "expected actual * 2 >= 0 but got -2 >= 0, where actual = -1",
+      assert_phrase "expected actual * 2 >= 0 but got -2 >= 0, " \
+        "where actual = -1",
         msg(-1).namespace(:expression)
           .not.comparison(expression { _ * 2 >= 0 }, -2, 0, { actual: -1 })
       assert_phrase "expected actual * 2 < 0 but got 2 < 0, where actual = 1",
@@ -232,12 +248,14 @@ describe Matcher::ExpectedPhrasing do
     it "comparable_to" do
       assert_phrase "did not expect actual.to_set to be comparable to " \
         "#<Set: {1}> but got #<Set: {1, 2}>, where actual = [1, 2]",
-        msg([1, 2]).namespace(:expression)
-          .comparable_to(expression { _.to_set }, Set[1, 2], Set[1], { actual: [1, 2] })
+        msg([1, 2]).namespace(:expression).comparable_to(
+          expression { _.to_set }, Set[1, 2], Set[1], { actual: [1, 2] }
+        )
       assert_phrase "expected actual.to_set to be comparable to #<Set: {1}> " \
         "but got #<Set: {2}>, where actual = [2]",
-        msg([2]).namespace(:expression)
-          .not.comparable_to(expression { _.to_set }, Set[2], Set[1], { actual: [2] })
+        msg([2]).namespace(:expression).not.comparable_to(
+          expression { _.to_set }, Set[2], Set[1], { actual: [2] }
+        )
     end
 
     it "between" do
@@ -254,23 +272,27 @@ describe Matcher::ExpectedPhrasing do
     it "length_of" do
       assert_phrase "expected actual + [3] to have length of 2 but was 3, " \
         "where actual = [1, 2]",
-        msg([1, 2]).namespace(:expression)
-          .not.length_of(expression { _ + [3] }, [1, 2, 3], 2, 3, { actual: [1, 2] })
+        msg([1, 2]).namespace(:expression).not.length_of(
+          expression { _ + [3] }, [1, 2, 3], 2, 3, { actual: [1, 2] }
+        )
       assert_phrase "did not expect actual + [3] to have length of 3, " \
         "where actual = [1, 2]",
-        msg([1, 2]).namespace(:expression)
-          .length_of(expression { _ + [3] }, [1, 2, 3], 3, 3, { actual: [1, 2] })
+        msg([1, 2]).namespace(:expression).length_of(
+          expression { _ + [3] }, [1, 2, 3], 3, 3, { actual: [1, 2] }
+        )
     end
 
     it "having_key" do
       assert_phrase "expected actual.to_h to include key :foo but got {}, " \
         "where actual = []",
-        msg([]).namespace(:expression)
-          .not.having_key(expression { _.to_h }, {}, :foo, { actual: [] })
+        msg([]).namespace(:expression).not.having_key(
+          expression { _.to_h }, {}, :foo, { actual: [] }
+        )
       assert_phrase "did not expect actual.to_h to include key :foo " \
         "but got #{{ foo: true }}, where actual = [[:foo, true]]",
-        msg([[:foo, true]]).namespace(:expression)
-          .having_key(expression { _.to_h }, { foo: true }, :foo, { actual: [[:foo, true]] })
+        msg([[:foo, true]]).namespace(:expression).having_key(
+          expression { _.to_h }, { foo: true }, :foo, { actual: [[:foo, true]] }
+        )
     end
 
     it "in" do
@@ -285,71 +307,87 @@ describe Matcher::ExpectedPhrasing do
     end
 
     it "including" do
-      assert_phrase "expected actual[0..1] to include 4 but got [0, 1], " \
-        "where actual = [0, 1, 2]",
-        msg([0, 1, 2]).namespace(:expression)
-          .not.including(expression { _[0..1] }, [0, 1], 4, { actual: [0, 1, 2] })
-      assert_phrase "did not expect actual[0..1] to include 1 but got [0, 1], " \
-        "where actual = [0, 1, 2]",
-        msg([0, 1, 2]).namespace(:expression)
-          .including(expression { _[0..1] }, [0, 1], 1, { actual: [0, 1, 2] })
+      assert_phrase "expected actual[0..1] to include 4 " \
+        "but got [0, 1], where actual = [0, 1, 2]",
+        msg([0, 1, 2]).namespace(:expression).not.including(
+          expression { _[0..1] }, [0, 1], 4, { actual: [0, 1, 2] }
+        )
+      assert_phrase "did not expect actual[0..1] to include 1 " \
+        "but got [0, 1], where actual = [0, 1, 2]",
+        msg([0, 1, 2]).namespace(:expression).including(
+          expression { _[0..1] }, [0, 1], 1, { actual: [0, 1, 2] }
+        )
     end
 
     it "matching" do
-      assert_phrase 'expected actual.downcase to match /hello/ but got "hi!", ' \
-        'where actual = "Hi!"',
-        msg("Hi!").namespace(:expression)
-          .not.matching(expression { _.downcase }, "hi!", /hello/, { actual: "Hi!" })
+      assert_phrase "expected actual.downcase to match /hello/ " \
+        'but got "hi!", where actual = "Hi!"',
+        msg("Hi!").namespace(:expression).not.matching(
+          expression { _.downcase }, "hi!", /hello/, { actual: "Hi!" }
+        )
       assert_phrase "did not expect actual.downcase to match /hello/ " \
         'but got "hello world!", where actual = "Hello World!"',
-        msg("Hello World!").namespace(:expression)
-          .matching(expression { _.downcase }, "hello world!", /hello/, { actual: "Hello World!" })
+        msg("Hello World!").namespace(:expression).matching(
+          expression { _.downcase },
+          "hello world!",
+          /hello/,
+          { actual: "Hello World!" },
+        )
     end
 
     it "match_at" do
       actual = Matcher::Variable.actual
 
+      match_at = lambda do |comparison, operand|
+        msg("abcd").namespace(:expression).match_at(
+          actual, "abcd", /b/, 1, comparison, operand, { actual: "abcd" }
+        )
+      end
+
+      not_match_at = lambda do |comparison, operand|
+        message = match_at[comparison, operand]
+        message.negate!
+        message
+      end
+
       assert_phrase 'expected actual to match /b/ at 2 but was at 1 for "abcd"',
-        msg("abcd").namespace(:expression)
-          .not.match_at(actual, "abcd", /b/, 1, :==, 2, { actual: "abcd" })
+        not_match_at[:==, 2]
       assert_phrase 'did not expect actual to match /b/ at 1 for "abcd"',
-        msg("abcd").namespace(:expression)
-          .match_at(actual, "abcd", /b/, 1, :==, 1, { actual: "abcd" })
+        match_at[:==, 1]
 
       assert_phrase 'expected actual to match /b/ not at 1 for "abcd"',
-        msg("abcd").namespace(:expression)
-          .not.match_at(actual, "abcd", /b/, 1, :!=, 1, { actual: "abcd" })
-      assert_phrase 'did not expect actual to match /b/ not at 2 but was at 1 for "abcd"',
-        msg("abcd").namespace(:expression)
-          .match_at(actual, "abcd", /b/, 1, :!=, 2, { actual: "abcd" })
+        not_match_at[:!=, 1]
+      assert_phrase "did not expect actual to match /b/ not at 2 " \
+        'but was at 1 for "abcd"',
+        match_at[:!=, 2]
 
-      assert_phrase 'expected actual to match /b/ after 2 but was at 1 for "abcd"',
-        msg("abcd").namespace(:expression)
-          .not.match_at(actual, "abcd", /b/, 1, :>, 2, { actual: "abcd" })
-      assert_phrase 'did not expect actual to match /b/ after 0 but was at 1 for "abcd"',
-        msg("abcd").namespace(:expression)
-          .match_at(actual, "abcd", /b/, 1, :>, 0, { actual: "abcd" })
+      assert_phrase "expected actual to match /b/ after 2 " \
+        'but was at 1 for "abcd"',
+        not_match_at[:>, 2]
+      assert_phrase "did not expect actual to match /b/ after 0 " \
+        'but was at 1 for "abcd"',
+        match_at[:>, 0]
 
-      assert_phrase 'expected actual to match /b/ before 1 but was at 1 for "abcd"',
-        msg("abcd").namespace(:expression)
-          .not.match_at(actual, "abcd", /b/, 1, :<, 1, { actual: "abcd" })
-      assert_phrase 'did not expect actual to match /b/ before 2 but was at 1 for "abcd"',
-        msg("abcd").namespace(:expression)
-          .match_at(actual, "abcd", /b/, 1, :<, 2, { actual: "abcd" })
+      assert_phrase "expected actual to match /b/ before 1 " \
+        'but was at 1 for "abcd"',
+        not_match_at[:<, 1]
+      assert_phrase "did not expect actual to match /b/ before 2 " \
+        'but was at 1 for "abcd"',
+        match_at[:<, 2]
 
-      assert_phrase 'expected actual to match /b/ at or before 0 but was at 1 for "abcd"',
-        msg("abcd").namespace(:expression)
-          .not.match_at(actual, "abcd", /b/, 1, :<=, 0, { actual: "abcd" })
-      assert_phrase 'did not expect actual to match /b/ at or before 2 but was at 1 for "abcd"',
-        msg("abcd").namespace(:expression)
-          .match_at(actual, "abcd", /b/, 1, :<=, 2, { actual: "abcd" })
+      assert_phrase "expected actual to match /b/ at or before 0 " \
+        'but was at 1 for "abcd"',
+        not_match_at[:<=, 0]
+      assert_phrase "did not expect actual to match /b/ at or before 2 " \
+        'but was at 1 for "abcd"',
+        match_at[:<=, 2]
 
-      assert_phrase 'expected actual to match /b/ at or after 2 but was at 1 for "abcd"',
-        msg("abcd").namespace(:expression)
-          .not.match_at(actual, "abcd", /b/, 1, :>=, 2, { actual: "abcd" })
-      assert_phrase 'did not expect actual to match /b/ at or after 1 but was at 1 for "abcd"',
-        msg("abcd").namespace(:expression)
-          .match_at(actual, "abcd", /b/, 1, :>=, 1, { actual: "abcd" })
+      assert_phrase "expected actual to match /b/ at or after 2 " \
+        'but was at 1 for "abcd"',
+        not_match_at[:>=, 2]
+      assert_phrase "did not expect actual to match /b/ at or after 1 " \
+        'but was at 1 for "abcd"',
+        match_at[:>=, 1]
     end
 
     it "instance_of" do

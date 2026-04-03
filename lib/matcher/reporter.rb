@@ -58,7 +58,10 @@ module Matcher
 
     def report_element(element)
       message = element.message
-      message = @phrasing.call(@path_stack.last, message) if message.is_a?(Message)
+
+      if message.is_a?(Message)
+        message = @phrasing.call(@path_stack.last, message)
+      end
 
       line("#{@path_stack.last}: #{message}")
     end

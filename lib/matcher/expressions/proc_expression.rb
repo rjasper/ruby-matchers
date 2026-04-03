@@ -19,7 +19,9 @@ module Matcher
         when :req, :opt
           raise "ProcExpression cannot have more than 1 arg" if i > 0
         when :keyreq, :key
-          raise 'ProcExpression cannot have an kwarg called "actual"' if name == :actual
+          if name == :actual
+            raise 'ProcExpression cannot have a kwarg called "actual"'
+          end
         end
       end
     end
@@ -63,7 +65,9 @@ module Matcher
 
       return self if replacements.empty?
 
-      replacements = substitute_hash(@substitution, replacements) if @substitution
+      if @substitution
+        replacements = substitute_hash(@substitution, replacements)
+      end
 
       ProcExpression.new(@block, substitution: replacements)
     end

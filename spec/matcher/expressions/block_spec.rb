@@ -50,7 +50,8 @@ describe Matcher::Block do
         Matcher::Block.build { |a| a + outer_a.to_recorder }
       end
 
-      assert_equal "parameter #{quote_method(:a)} shadows an outer variable", e.message
+      assert_equal "parameter #{quote_method(:a)} shadows an outer variable",
+        e.message
     end
 
     it "creates SymbolProc from symbol notation" do

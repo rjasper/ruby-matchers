@@ -6,17 +6,19 @@ describe Matcher::RaisesMatcher do
   include Matcher::Compatibility
 
   it "is built by raises" do
-    kind = Matcher::RaisesMatcher
+    examine = lambda do |block|
+      assert_kind_of Matcher::RaisesMatcher, Matcher.build(&block)
+    end
 
-    assert_instance_of(kind, Matcher.build { raises(_.foo, StandardError) })
-    assert_instance_of(kind, Matcher.build { raises(_.foo, StandardError, message: /something went wrong/) })
-    assert_instance_of(kind, Matcher.build { raises(_.foo, message: /something went wrong/) })
-    assert_instance_of(kind, Matcher.build { raises(StandardError, &:foo) })
-    assert_instance_of(kind, Matcher.build { raises(StandardError, message: /something went wrong/, &:foo) })
-    assert_instance_of(kind, Matcher.build { raises(_.foo) ^ StandardError })
-    assert_instance_of(kind, Matcher.build { raises(_.foo, message: /something went wrong/) ^ StandardError })
-    assert_instance_of(kind, Matcher.build { raises(&:foo) ^ StandardError })
-    assert_instance_of(kind, Matcher.build { raises(message: /something went wrong/, &:foo) ^ StandardError })
+    examine.call -> { raises(_.foo, StandardError) }
+    examine.call -> { raises(_.foo, StandardError, message: /oops/) }
+    examine.call -> { raises(_.foo, message: /oops/) }
+    examine.call -> { raises(StandardError, &:foo) }
+    examine.call -> { raises(StandardError, message: /oops/, &:foo) }
+    examine.call -> { raises(_.foo) ^ StandardError }
+    examine.call -> { raises(_.foo, message: /oops/) ^ StandardError }
+    examine.call -> { raises(&:foo) ^ StandardError }
+    examine.call -> { raises(message: /oops/, &:foo) ^ StandardError }
 
     err = assert_raises(ArgumentError) do
       Matcher.build { raises }
@@ -42,11 +44,14 @@ describe Matcher::RaisesMatcher do
     assert_no_errors matcher.match({})
     refute negated.match?({})
     assert_errors negated.match({}),
-      rescue_last_exception => "did not expect a kind of KeyError but got #<KeyError: key not found: :foo>"
+      rescue_last_exception => "did not expect a kind of KeyError " \
+        "but got #<KeyError: key not found: :foo>"
 
     refute matcher.match?({ foo: 1 })
     assert_errors matcher.match({ foo: 1 }),
-      msg({ foo: 1 }).namespace(:expression).not.raising(fetch_foo, StandardError, { actual: { foo: 1 } })
+      msg({ foo: 1 }).namespace(:expression).not.raising(
+        fetch_foo, StandardError, { actual: { foo: 1 } }
+      )
     assert negated.match?({ foo: 1 })
     assert_no_errors negated.match({ foo: 1 })
 
@@ -87,20 +92,24 @@ describe Matcher::RaisesMatcher do
     assert_no_errors matcher.match(obj)
     refute negated.match?(obj)
     assert_errors negated.match(obj),
-      rescue_message => msg("something went wrong").matching(/something went wrong/)
+      rescue_message => msg("something went wrong")
+        .matching(/something went wrong/)
 
     obj = klass.new("something else went wrong")
 
     refute matcher.match?(obj)
     assert_errors matcher.match(obj),
-      rescue_message => msg("something else went wrong").not.matching(/something went wrong/)
+      rescue_message => msg("something else went wrong")
+        .not.matching(/something went wrong/)
     assert negated.match?(obj)
     assert_no_errors negated.match(obj)
   end
 
   it "matches message lazily" do
     my_error_klass = Class.new(StandardError)
-    matcher = Matcher.build { raises(_.call, my_error_klass, message: /something went wrong/) }
+    matcher = Matcher.build do
+      raises(_.call, my_error_klass, message: /something went wrong/)
+    end
     klass = Class.new do
       def initialize(error)
         @error = error
@@ -123,7 +132,8 @@ describe Matcher::RaisesMatcher do
 
     refute matcher.match?(obj)
     assert_errors matcher.match(obj),
-      rescue_message => msg("something else went wrong").not.matching(/something went wrong/)
+      rescue_message => msg("something else went wrong")
+        .not.matching(/something went wrong/)
 
     obj = klass.new(StandardError.new("something else went wrong"))
     rescue_from_call = expression { rescue_exception(_.call) }

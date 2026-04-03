@@ -46,7 +46,8 @@ describe Matcher::RuleSet do
     end
 
     # rubocop:disable Style/InverseMethods
-    assert_equal "got true for actual < 10", message_for(5) { !((_ <=> 10) >= 0) }
+    assert_equal "got true for actual < 10",
+      message_for(5) { !((_ <=> 10) >= 0) }
     # rubocop:enable Style/InverseMethods
   end
 

@@ -60,13 +60,18 @@ describe Matcher::Call do
         expression { _.foo }.evaluate(actual: nil)
       end
 
-      assert_equal "actual.foo raised NoMethodError: undefined method #{quote_method(:foo)} for nil", err.message
+      expected = "actual.foo raised NoMethodError: " \
+        "undefined method #{quote_method(:foo)} for nil"
+
+      assert_equal expected, err.message
 
       err = assert_raises Matcher::CallError do
         expression { (_ - 1) / 0 }.evaluate(actual: 1)
       end
 
-      assert_equal "(actual - 1) / 0 raised ZeroDivisionError: divided by 0", err.message
+      expected = "(actual - 1) / 0 raised ZeroDivisionError: divided by 0"
+
+      assert_equal expected, err.message
     end
   end
 

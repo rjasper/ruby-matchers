@@ -48,7 +48,9 @@ module Matcher
       when :same
         _l_expr, _r_expr, left, right = @args
         Message.new(:same, @negated, left, right)
-      when :comparable_to, :having_key, :in, :including, :matching, :instance_of, :kind_of, :responding_to, :predicate
+      when :comparable_to, :having_key, :in, :including, :matching,
+        :instance_of, :kind_of, :responding_to, :predicate
+
         _expr, value, operand = @args
         Message.new(key, @negated, value, operand)
       when :between, :length_of

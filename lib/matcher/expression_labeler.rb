@@ -32,11 +32,16 @@ module Matcher
         end
       when Call
         receiver_l = label(expression.receiver, actual_label)
-        args_l = expression.args.map { label(_1, actual_label) }
-        kwargs_l = expression.kwargs.transform_values { label(_1, actual_label) }
+        args_l = expression.args
+          .map { label(_1, actual_label) }
+        kwargs_l = expression.kwargs
+          .transform_values { label(_1, actual_label) }
         block_l = label_for_block(expression.block)
 
-        label_for(@call_labels, [receiver_l, expression.method, args_l, kwargs_l, block_l])
+        label_for(
+          @call_labels,
+          [receiver_l, expression.method, args_l, kwargs_l, block_l],
+        )
       when ProcExpression
         label_for(@proc_labels, expression.block)
       when ArrayExpression

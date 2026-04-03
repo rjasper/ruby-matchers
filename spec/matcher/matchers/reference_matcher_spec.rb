@@ -163,7 +163,8 @@ describe Matcher::ReferenceMatcher do
 
     refute matcher.match?(actual)
     assert_errors matcher.match(actual) do
-      error %i[tail tail], "did not expect a cyclic structure but actual has already been visited"
+      error %i[tail tail],
+        "did not expect a cyclic structure but actual has already been visited"
     end
     assert negated.match?(actual)
     assert_no_errors negated.match(actual)
@@ -198,7 +199,8 @@ describe Matcher::ReferenceMatcher do
         error :value, msg(1).kind_of(Integer)
         error %i[next value], msg(2).kind_of(Integer)
         error %i[next next value], msg(3).kind_of(Integer)
-        error %i[next next next], "did not expect a cyclic structure but actual has already been visited"
+        error %i[next next next], "did not expect a cyclic structure " \
+          "but actual has already been visited"
       end
     end
 

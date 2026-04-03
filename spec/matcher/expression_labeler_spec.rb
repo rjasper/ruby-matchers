@@ -32,8 +32,13 @@ describe Matcher::ExpressionLabeler do
     refute_equal hash_l, labeler.label(expression { { foo: vars[:bar] } })
     assert_equal range_l, labeler.label(expression { vars[:foo]..vars[:bar] })
     refute_equal range_l, labeler.label(expression { vars[:foo]..vars[:baz] })
-    assert_equal string_l, labeler.label(expression { concat(vars[:foo], "bar") })
-    refute_equal string_l, labeler.label(expression { concat(vars[:foo], "baz") })
+
+    assert_equal string_l, labeler.label(
+      expression { concat(vars[:foo], "bar") },
+    )
+    refute_equal string_l, labeler.label(
+      expression { concat(vars[:foo], "baz") },
+    )
   end
 
   it "can substitute label for actual" do

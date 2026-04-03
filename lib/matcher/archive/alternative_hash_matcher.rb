@@ -56,25 +56,28 @@ module Matcher
       includes_expressions = keys.any?(Expression)
 
       if need_extra_keys || includes_expressions
-        inner_matcher = InlineMatcher.new(inner_matcher, negatable: true) do |actual, y|
-          expected_keys = if includes_expressions
-            values_with_actual = values.merge(actual:)
-            key_values = {}
-            receiver.session[:key_values] = key_values
+        inner_matcher =
+          InlineMatcher.new(inner_matcher, negatable: true) do |actual, y|
+            expected_keys = if includes_expressions
+              values_with_actual = values.merge(actual:)
+              key_values = {}
+              receiver.session[:key_values] = key_values
 
-            keys.map.with_index do |k, i|
-              next k unless k.is_a?(Expression)
+              keys.map.with_index do |k, i|
+                next k unless k.is_a?(Expression)
 
-              key_values[i] = k.evaluate(values_with_actual)
+                key_values[i] = k.evaluate(values_with_actual)
+              end
+            else
+              keys
             end
-          else
-            keys
+
+            if need_extra_keys
+              receiver.session[:extra_keys] = actual.keys - expected_keys
+            end
+
+            errors << y[matcher]
           end
-
-          receiver.session[:extra_keys] = actual.keys - expected_keys if need_extra_keys
-
-          errors << y[matcher]
-        end
       end
 
       LazyAllMatcher.new([kind_of_hash, inner_matcher])

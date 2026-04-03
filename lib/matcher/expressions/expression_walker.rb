@@ -2,7 +2,11 @@
 
 module Matcher
   class ExpressionWalker
-    attr_accessor :constant_visitor, :variable_visitor, :call_visitor, :block_visitor, :proc_expression_visitor
+    attr_accessor :constant_visitor,
+      :variable_visitor,
+      :call_visitor,
+      :block_visitor,
+      :proc_expression_visitor
 
     def self.each_variable(expression, &block)
       return to_enum(:each_variable, expression) unless block_given?

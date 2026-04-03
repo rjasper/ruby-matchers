@@ -45,7 +45,8 @@ module Matcher
       if block
         instance_exec(*, **, &block)
       else
-        "got #{actual.inspect} but found no message for #{'*NOT* ' if negated}#{key.inspect}"
+        "got #{actual.inspect} but found no message for " \
+          "#{'*NOT* ' if negated}#{key.inspect}"
       end
     end
 

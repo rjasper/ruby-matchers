@@ -12,7 +12,9 @@ module Matcher
     end
 
     def negate
-      ParseIntegerMatcher.new(@original_matcher, base: @base, negated: !@negated)
+      ParseIntegerMatcher.new(
+        @original_matcher, base: @base, negated: !@negated
+      )
     end
 
     def validate(state, &)
@@ -89,7 +91,8 @@ module Matcher
     # @return [ParseIntegerMatcher]
     def integer_format(base: 0)
       if base == 0
-        @integer_format ||= ParseIntegerMatcher.new(AlwaysMatcher.instance, base:)
+        @integer_format ||=
+          ParseIntegerMatcher.new(AlwaysMatcher.instance, base:)
       else
         ParseIntegerMatcher.new(AlwaysMatcher.instance, base:)
       end

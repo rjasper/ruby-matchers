@@ -201,7 +201,8 @@ module Matcher
   #   Matcher.of([1, String]).match?([1, "Hello"])
   # +Hash+: match all entries with {HashMatcher}
   #   Matcher.of({ a: 1, b: 0..10 }).match?({ a: 1, b: 5 })
-  # +Expression+ or +Recorder+: match where evaluated expression is truthy {ExpressionMatcher}
+  # +Expression+ or +Recorder+: match where evaluated expression is truthy
+  # (see {ExpressionMatcher})
   #   even = Matcher::Expression.build { _.even? }
   #   Matcher.of(even).match?(4)
   # other objects: match equal value with {EqualMatcher}
@@ -274,8 +275,11 @@ module Matcher
     matcher_to_s = "(#{matcher_to_s})" if
       case matcher
       when ExpressionMatcher
-        !matcher.negated && matcher.expression.precedence > Call::OPERATOR_PRECEDENCE[:^]
-      when EqualMatcher, KindOfMatcher, RangeMatcher, RegexpMatcher, ArrayMatcher, HashMatcher
+        !matcher.negated &&
+          matcher.expression.precedence > Call::OPERATOR_PRECEDENCE[:^]
+      when EqualMatcher, KindOfMatcher, RangeMatcher, RegexpMatcher,
+        ArrayMatcher, HashMatcher
+
         false
       else
         matcher_to_s !~ /\A(~?\w+(\(.*\)|\[.*\])?|-> \{.*})\z/

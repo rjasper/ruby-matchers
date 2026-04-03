@@ -18,7 +18,9 @@ module Matcher
     def negate
       return super unless @negatable
 
-      InlineMatcher.new(@matcher&.~, negatable: @negatable, negated: !@negated, &@block)
+      InlineMatcher.new(
+        @matcher&.~, negatable: @negatable, negated: !@negated, &@block
+      )
     end
 
     def receiver
@@ -86,8 +88,8 @@ module Matcher
     # @param matcher [Base] optionaly provide a child matcher. Call the matcher
     #   with +_yield matcher, actual, **values+
     # @param negatable [true, false] set to true if your matching logic respects
-    #   the negated flag. Otherwise, the default negation implementation is used.
-    #   When +negated = true+ the child matcher is automatically negated.
+    #   the negated flag. Otherwise, the default negation implementation is
+    #   used. When +negated = true+ the child matcher is automatically negated.
     # @yield inline context
     # @return [InlineMatcher]
     def inline(matcher = UNDEFINED, negatable: false, &)

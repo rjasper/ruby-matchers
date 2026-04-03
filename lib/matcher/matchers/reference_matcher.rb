@@ -92,7 +92,13 @@ module Matcher
   class ReferenceMatcher < Base
     Settings = Struct.new(:target, :cache)
 
-    def initialize(key, settings, cyclic: nil, negated: false, session_key: object_id)
+    def initialize(
+      key,
+      settings,
+      cyclic: nil,
+      negated: false,
+      session_key: object_id
+    )
       super()
 
       @key = key
@@ -103,7 +109,13 @@ module Matcher
     end
 
     def negate
-      ReferenceMatcher.new(@key, @settings, cyclic: @cyclic, negated: !@negated, session_key: @session_key)
+      ReferenceMatcher.new(
+        @key,
+        @settings,
+        cyclic: @cyclic,
+        negated: !@negated,
+        session_key: @session_key,
+      )
     end
 
     def validate(state)
@@ -119,7 +131,10 @@ module Matcher
       end
 
       unless visited.add?(actual.object_id)
-        state.errors << state.report.namespace(:reference).cyclic if @negated == @cyclic
+        if @negated == @cyclic
+          state.errors << state.report.namespace(:reference).cyclic
+        end
+
         return
       end
 

@@ -22,7 +22,9 @@ module Matcher
       if n == 1 && paths[0]
         actual_chain = paths[0].last
 
-        return split(@expression, List.empty) if actual_chain.expression == @expression
+        if actual_chain.expression == @expression
+          return split(@expression, List.empty)
+        end
 
         last = substitute([actual_chain.id], tree)
 
@@ -67,20 +69,20 @@ module Matcher
         next_trace = trace << id_expression
         receiver_tree = analyze_helper(expression.receiver, next_trace)
 
-        arg_subtrees = expression.args.lazy.with_index.filter_map do |arg, i|
+        arg_trees = expression.args.lazy.with_index.filter_map do |arg, i|
           arg_tree = analyze_helper(arg, List.empty)
           [i, arg_tree] if arg_tree
         end.to_h
 
-        kwarg_subtrees = expression.kwargs.lazy.filter_map do |key, value|
+        kwarg_trees = expression.kwargs.lazy.filter_map do |key, value|
           kwarg_tree = analyze_helper(value, List.empty)
           [key, kwarg_tree] if kwarg_tree
         end.to_h
 
         subtrees = {}
         subtrees[:receiver] = receiver_tree if receiver_tree
-        subtrees[:args] = Tree.new(arg_subtrees) unless arg_subtrees.empty?
-        subtrees[:kwargs] = Tree.new(kwarg_subtrees) unless kwarg_subtrees.empty?
+        subtrees[:args] = Tree.new(arg_trees) unless arg_trees.empty?
+        subtrees[:kwargs] = Tree.new(kwarg_trees) unless kwarg_trees.empty?
 
         Tree.new(subtrees, id) unless subtrees.empty?
       when Variable

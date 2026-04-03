@@ -55,12 +55,14 @@ module Matcher
     end
 
     define(:comparable_to) do |operand|
-      "#{verb} a value comparable to #{operand.inspect} but got #{actual.inspect}"
+      "#{verb} a value comparable to #{operand.inspect} " \
+        "but got #{actual.inspect}"
     end
 
     define(:between) do |min, max, exclude_end: false|
       "#{verb} value to be between #{min.inspect} and " \
-        "#{max.inspect}#{' (exclusive)' if exclude_end} but got #{actual.inspect}"
+        "#{max.inspect}#{' (exclusive)' if exclude_end} " \
+        "but got #{actual.inspect}"
     end
 
     define(:length_of) do |exp, act|
@@ -80,7 +82,8 @@ module Matcher
     end
 
     define(:in) do |collection|
-      "#{verb} object to be included in #{collection.inspect} but got #{actual.inspect}"
+      "#{verb} object to be included in #{collection.inspect} " \
+        "but got #{actual.inspect}"
     end
 
     define(:including) do |item|
@@ -88,7 +91,8 @@ module Matcher
     end
 
     define(:duplicate) do |original_index|
-      "#{verb} duplicate originally at index #{original_index} but got #{actual.inspect}"
+      "#{verb} duplicate originally at index #{original_index} " \
+        "but got #{actual.inspect}"
     end
 
     define(:duplicate_by) do |expression, value, original_index|
@@ -174,7 +178,8 @@ module Matcher
       end
 
       define(:between) do |expression, value, min, max, given|
-        "#{verb} #{expression} to be between #{min.inspect} and #{max.inspect} " \
+        "#{verb} #{expression} to be between " \
+          "#{min.inspect} and #{max.inspect} " \
           "but got #{value.inspect}#{where_text(given, expression)}"
       end
 
@@ -212,11 +217,14 @@ module Matcher
         :>= => "at or after",
       }
 
-      define(:match_at) do |expression, value, pattern, position, comparison, operand, given|
+      define(:match_at) do |expression, value, pattern, position, comparison,
+        operand, given|
+
         comparison_word = match_at_words[comparison]
 
         message = String.new
-        message << "#{verb} #{expression} to match #{pattern.inspect} #{comparison_word} #{operand} "
+        message << "#{verb} #{expression} to match " \
+          "#{pattern.inspect} #{comparison_word} #{operand} "
         message << "but was at #{position} " if
           operand != position || comparison != (negated ? :!= : :==)
         message << "for #{value.inspect}#{where_text(given, expression)}"
@@ -265,7 +273,8 @@ module Matcher
 
     namespace(:block) do
       define(:satisfied) do |block_location|
-        "#{verb} to satisfy condition #{block_location} but got #{actual.inspect}"
+        "#{verb} to satisfy condition #{block_location} " \
+          "but got #{actual.inspect}"
       end
     end
 
@@ -288,7 +297,8 @@ module Matcher
       end
 
       define(:x_conditions_satisfied) do |conditions, count|
-        "#{negated_verb} to satisfy #{x_conditions(count)} but got #{actual.inspect} and met these: #{join(conditions)}"
+        "#{negated_verb} to satisfy #{x_conditions(count)} " \
+          "but got #{actual.inspect} and met these: #{join(conditions)}"
       end
     end
 
@@ -305,15 +315,16 @@ module Matcher
 
     namespace(:set) do
       define(:equal) do |set|
-        "#{verb} object to be an equal set to #{set.inspect} but got #{actual.inspect}"
+        "#{verb} object to be an equal set to #{set.inspect} " \
+          "but got #{actual.inspect}"
       end
     end
 
     private
 
     def verb(negated: self.negated)
-      # A message says what actual is but expected says what it is not. That's why
-      # the verb is counter-intuitively negated.
+      # A message says what actual is but expected says what it is not. That's
+      # why the verb is counter-intuitively negated.
 
       negated ? "expected" : "did not expect"
     end

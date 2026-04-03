@@ -5,7 +5,9 @@ module Matcher
     def self.from(key, child)
       return child if child.is_a?(EmptyError) || key == Variable.actual
 
-      key = Call.new(Variable.actual, :[], [Constant.new(key)]) unless key.is_a?(Expression)
+      unless key.is_a?(Expression)
+        key = Call.new(Variable.actual, :[], [Constant.new(key)])
+      end
 
       NestedError.new(key, child)
     end

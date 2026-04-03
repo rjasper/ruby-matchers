@@ -3,7 +3,9 @@
 module Matcher
   ExpressionMatcher.message_rules.configure do
     # binary standard expression
-    standard_ops = %i[== != < > <= >= <=> =~ !~ equal? is_a? kind_of? instance_of? respond_to? key? include? in?]
+    standard_ops = %i[== != < > <= >= <=> =~ !~] +
+      %i[equal? is_a? kind_of? instance_of? respond_to? key? include? in?]
+
     message method_hole(:call, _, standard_ops, const(:operand)) do |v, e|
       case e[:call].method
       when :<
@@ -121,7 +123,9 @@ module Matcher
 
     # length expression
     message capture(:act, hole(:object).length) == hole(:exp) do |v, e|
-      expression_message.length_of(e[:object], v[:object], v[:exp], v[:act], given)
+      expression_message.length_of(
+        e[:object], v[:object], v[:exp], v[:act], given
+      )
     end
 
     # match regexp at
@@ -134,7 +138,9 @@ module Matcher
       ),
     ) do |v, e|
       expression, value, pattern =
-        MessageRules.decompose_pattern_matching(e[:lhs], e[:rhs], v[:lhs], v[:rhs])
+        MessageRules.decompose_pattern_matching(
+          e[:lhs], e[:rhs], v[:lhs], v[:rhs]
+        )
 
       if expression
         expression_message.match_at(
@@ -152,12 +158,16 @@ module Matcher
     end
 
     # comparison expression
-    message method_hole(:comparison, hole(:lhs), %i[== != < > <= >=], hole(:rhs)) do |v, e|
+    message method_hole(
+      :comparison, hole(:lhs), %i[== != < > <= >=], hole(:rhs)
+    ) do |v, e|
       expression_message.comparison(e[:comparison], v[:lhs], v[:rhs], given)
     end
 
     # general binary expression
-    general_ops = %i[<=> equal? is_a? kind_of? instance_of? respond_to? key? include? in?]
+    general_ops =
+      %i[<=> equal? is_a? kind_of? instance_of? respond_to? key? include? in?]
+
     message method_hole(:call, hole(:lhs), general_ops, hole(:rhs)) do |v, e|
       case e[:call].method
       when :<=>
@@ -183,14 +193,19 @@ module Matcher
     end
 
     # predicate expression
-    message method_hole(:predicate, hole(:receiver), -> { _1.end_with?("?") }) do |v, e|
-      expression_message.predicate(e[:receiver], v[:receiver], e[:predicate].method, given)
+    message method_hole(
+      :predicate, hole(:receiver), -> { _1.end_with?("?") }
+    ) do |v, e|
+      expression_message.predicate(
+        e[:receiver], v[:receiver], e[:predicate].method, given
+      )
     end
 
     # match regexp
     message method_hole(:operator, hole(:lhs), %i[=~ !~], hole(:rhs)) do |v, e|
-      expression, value, pattern =
-        MessageRules.decompose_pattern_matching(e[:lhs], e[:rhs], v[:lhs], v[:rhs])
+      expression, value, pattern = MessageRules.decompose_pattern_matching(
+        e[:lhs], e[:rhs], v[:lhs], v[:rhs]
+      )
 
       if expression
         expression_message.not_if(e[:operator].method == :!~)

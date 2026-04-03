@@ -31,10 +31,16 @@ describe Matcher do
   end
 
   it "::parenthesize" do
-    assert_equal "1", Matcher.parenthesize(Matcher.of(1))
-    assert_equal "(actual > 10)", Matcher.parenthesize(Matcher.build { _ > 10 })
-    assert_equal "neg(actual > 10)", Matcher.parenthesize(~Matcher.build { _ > 10 })
-    assert_equal({ foo: "bar" }.to_s, Matcher.parenthesize(Matcher.build { { foo: "bar" } }))
-    assert_equal "any(String, Integer)", Matcher.parenthesize(Matcher.build { any(String, Integer) })
+    examine = lambda do |expected, block|
+      matcher = Matcher.build(&block)
+
+      assert_equal expected, Matcher.parenthesize(matcher)
+    end
+
+    examine["1", -> { 1 }]
+    examine["(actual > 10)", -> { _ > 10 }]
+    examine["neg(actual > 10)", -> { neg(_ > 10) }]
+    examine["any(String, Integer)", -> { any(String, Integer) }]
+    examine[{ foo: "bar" }.to_s, -> { { foo: "bar" } }]
   end
 end

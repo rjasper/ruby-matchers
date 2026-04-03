@@ -141,9 +141,13 @@ describe Matcher::DigMatcher do
   end
 
   it "#to_s" do
-    assert_equal('dig(:foo, 0) ^ "foo"', Matcher.build { dig(:foo, 0) ^ "foo" }.to_s)
-    assert_equal('~dig(:foo, 0) ^ "foo"', Matcher.build { ~dig(:foo, 0) ^ "foo" }.to_s)
-    assert_equal('optional_dig(:foo, 0) ^ "foo"', Matcher.build { optional_dig(:foo, 0) ^ "foo" }.to_s)
-    assert_equal('~optional_dig(:foo, 0) ^ "foo"', Matcher.build { ~optional_dig(:foo, 0) ^ "foo" }.to_s)
+    assert_equal 'dig(:foo, 0) ^ "foo"',
+      Matcher.build { dig(:foo, 0) ^ "foo" }.to_s
+    assert_equal '~dig(:foo, 0) ^ "foo"',
+      Matcher.build { ~dig(:foo, 0) ^ "foo" }.to_s
+    assert_equal 'optional_dig(:foo, 0) ^ "foo"',
+      Matcher.build { optional_dig(:foo, 0) ^ "foo" }.to_s
+    assert_equal '~optional_dig(:foo, 0) ^ "foo"',
+      Matcher.build { ~optional_dig(:foo, 0) ^ "foo" }.to_s
   end
 end

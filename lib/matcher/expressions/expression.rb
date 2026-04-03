@@ -5,7 +5,8 @@ module Matcher
   # Expressions are a central feature of this library. They are used for:
   #
   # - building ad-hoc matchers (e.g. <tt>_ > 10</tt> , +_.even?+ )
-  # - tracking where match errors happen (e.g. <tt>root[:name]: expected ...</tt> )
+  # - tracking where match errors happen
+  #   (e.g. <tt>root[:name]: expected ...</tt>)
   # - as parameters for other matchers like +map+ where they take the role of
   #   anonymous functions (e.g. <tt>map(_.to_s, "some_string")</tt> )
   #
@@ -62,13 +63,16 @@ module Matcher
       when NoExpression
         raise ArgumentError, "Cannot use #{obj.class} as expression"
       when Proc
-        raise ArgumentError, "Cannot use Proc as expression. Use `expr { ... }' instead"
+        raise ArgumentError, "Cannot use Proc as expression. " \
+          "Use `expr { ... }' instead"
       when Array
         items = obj.map { expression_or_value(_1, expression_cache:) }
 
         if items.any?(Expression)
           items.each_with_index do |item, i|
-            items[i] = Constant.cache(item, expression_cache) unless item.is_a?(Expression)
+            unless item.is_a?(Expression)
+              items[i] = Constant.cache(item, expression_cache)
+            end
           end
 
           return ArrayExpression.new(items)
@@ -85,8 +89,12 @@ module Matcher
           pairs.each do |pair|
             k, v = pair
 
-            pair[0] = Constant.cache(k, expression_cache) unless k.is_a?(Expression)
-            pair[1] = Constant.cache(v, expression_cache) unless v.is_a?(Expression)
+            unless k.is_a?(Expression)
+              pair[0] = Constant.cache(k, expression_cache)
+            end
+            unless v.is_a?(Expression)
+              pair[1] = Constant.cache(v, expression_cache)
+            end
           end
 
           return HashExpression.new(pairs)
@@ -96,7 +104,9 @@ module Matcher
         to = expression_or_value(obj.end, expression_cache:)
 
         if from.is_a?(Expression) || to.is_a?(Expression)
-          from = Constant.cache(from, expression_cache) unless from.is_a?(Expression)
+          unless from.is_a?(Expression)
+            from = Constant.cache(from, expression_cache)
+          end
           to = Constant.cache(to, expression_cache) unless to.is_a?(Expression)
 
           return RangeExpression.new(from, to, exclude_end: obj.exclude_end?)
@@ -106,7 +116,9 @@ module Matcher
 
         if items.any?(Expression)
           items.each_with_index do |item, i|
-            items[i] = Constant.cache(item, expression_cache) unless item.is_a?(Expression)
+            unless item.is_a?(Expression)
+              items[i] = Constant.cache(item, expression_cache)
+            end
           end
 
           return SetExpression.new(items)

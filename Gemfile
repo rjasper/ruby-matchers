@@ -7,4 +7,4 @@ source "https://rubygems.org"
 
 gem "minitest"
 gem "rubocop"
-gem 'rubocop-minitest'
+gem "rubocop-minitest"

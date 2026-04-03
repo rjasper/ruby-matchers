@@ -19,8 +19,10 @@ module Matcher
   #   hello = Matcher::Constant.new("Hello")
   #   hello_rec = Matcher::Recorder.new(hello)
   #   hello_upcase_rec = hello_rec.upcase # the magic
-  #   hello_upcase = Matcher::Recorder.to_expression(hello_upcase_rec) # => "Hello".upcase
-  #   hello_upcase.evaluate({}) # => "HELLO"
+  #   hello_upcase = Matcher::Recorder.to_expression(hello_upcase_rec)
+  #   # => "Hello".upcase
+  #   hello_upcase.evaluate({})
+  #   # => "HELLO"
   #
   #   # with builder
   #   Matcher::Expression.build do
@@ -30,9 +32,10 @@ module Matcher
   # == Recorders are nasty
   #
   # To do their job any call to a recorder must return a new recorder. But this
-  # also makes them ill-behaved because methods like <tt>==</tt> or <tt>is_a?</tt> don't behave
-  # like you expect them to. They don't have any methods defined (except +__id__+
-  # and +__send__+). Instead all calls are handled by +method_missing+.
+  # also makes them ill-behaved because methods like <tt>==</tt> or
+  # <tt>is_a?</tt> don't behave like you expect them to. They don't have any
+  # methods defined (except +__id__+ and +__send__+). Instead all calls are
+  # handled by +method_missing+.
   #
   # The consequence:
   #   # let r be a recorder

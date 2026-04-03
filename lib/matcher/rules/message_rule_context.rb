@@ -14,7 +14,9 @@ module Matcher
     end
 
     def expression_message
-      NamespacedMessageBuilder.new(!@matcher.negated, @state.actual, :expression)
+      NamespacedMessageBuilder.new(
+        !@matcher.negated, @state.actual, :expression
+      )
     end
 
     def given

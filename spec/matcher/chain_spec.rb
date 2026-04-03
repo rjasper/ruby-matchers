@@ -39,7 +39,8 @@ describe Matcher::Chain do
 
   it "can negate itself" do
     # divisible by 2 and not (by 3 and 5)
-    matcher = to_chain(divisible_by(2)) ^ ~to_chain(divisible_by(3)) ^ divisible_by(5)
+    matcher = to_chain(divisible_by(2)) ^ ~to_chain(divisible_by(3)) ^
+      divisible_by(5)
 
     assert_no_errors matcher.match(4) # divisible by 2 but not 3 or 5
     assert_no_errors matcher.match(6) # divisible by 2 and 3 but not 5
@@ -56,7 +57,8 @@ describe Matcher::Chain do
 
   describe "#optional" do
     it "can optionally fall back to value" do
-      matcher = Matcher.of(to_chain(divisible_by(2)) ^ to_chain(divisible_by(3)).optional)
+      matcher = Matcher.of(to_chain(divisible_by(2)) ^
+        to_chain(divisible_by(3)).optional)
 
       assert_no_errors matcher.match(6)
 
@@ -71,7 +73,8 @@ describe Matcher::Chain do
       assert_no_errors matcher.match(4)
 
       # "did not expect to exist" is a strange error message, but is actually
-      # what we expect in this case. I just didn't come up with a better example.
+      # what we expect in this case. I just didn't come up with a better
+      # example.
       assert_or_errors matcher.match(6),
         "expected actual % 3 != 0 but got 0 != 0, where actual = 6",
         msg(6).exist

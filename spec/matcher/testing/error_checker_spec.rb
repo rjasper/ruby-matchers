@@ -653,8 +653,10 @@ describe Matcher::ErrorChecker do
       positions = candidates.split(",").map { _1.split("|").map(&:to_i) }
 
       actual = checker.send(:match_identities?, positions, identities)
+      message = "candidates: #{candidates}\n" \
+        "identities: #{identities.inspect}\nresult = #{actual}"
 
-      assert_equal expected, actual, "candidates: #{candidates}\nidentities: #{identities.inspect}\nresult = #{actual}"
+      assert_equal expected, actual, message
     end
   end
 end

@@ -82,7 +82,9 @@ module Matcher
         return nil if !expected_set.include?(act) || !missing.delete?(act)
       end
 
-      state.errors << state.expected.namespace(:set).not.equal(@items) if missing.empty?
+      return unless missing.empty?
+
+      state.errors << state.expected.namespace(:set).not.equal(@items)
     end
 
     def index_of(collection, item)

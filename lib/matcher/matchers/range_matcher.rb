@@ -23,7 +23,10 @@ module Matcher
       limit = @range.begin || @range.end
 
       if (limit <=> state.actual).nil?
-        state.errors << state.expected.comparable_to(@range.begin) unless @negated
+        unless @negated
+          state.errors << state.expected.comparable_to(@range.begin)
+        end
+
         return
       end
 

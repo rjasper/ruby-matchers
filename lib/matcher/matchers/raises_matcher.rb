@@ -32,7 +32,8 @@ module Matcher
       return if @negated
 
       given = @expression.given_for(state.values)
-      state.errors << state.expected.namespace(:expression).raising(@expression, @rescue_exception, given)
+      state.errors << state.expected.namespace(:expression)
+        .raising(@expression, @rescue_exception, given)
     rescue @rescue_exception => e
       state.errors[rescue_last_error] << yield(@matcher, unwrap_exception(e))
     end
@@ -114,13 +115,17 @@ module Matcher
       matcher = matcher_of(matcher)
 
       unless Matcher.undefined?(message)
-        @raises_message_call ||= expression_of(Call.new(Variable.actual, :message))
+        @raises_message_call ||=
+          expression_of(Call.new(Variable.actual, :message))
+
         message_matcher = matcher_of(message)
 
         matcher &= ProjectMatcher.new(@raises_message_call, message_matcher)
       end
 
-      RaisesMatcher.new(expression, matcher, rescue_exception: { rescue: }[:rescue])
+      RaisesMatcher.new(
+        expression, matcher, rescue_exception: { rescue: }[:rescue]
+      )
     end
   end
 end

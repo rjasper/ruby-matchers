@@ -14,7 +14,9 @@ module Matcher
     end
 
     def negate
-      ParseJsonMatcher.new(@original_matcher, json_options: @json_options, negated: !@negated)
+      ParseJsonMatcher.new(
+        @original_matcher, json_options: @json_options, negated: !@negated
+      )
     end
 
     def validate(state)

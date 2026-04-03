@@ -13,7 +13,10 @@ describe Matcher::ErrorLabeler do
     bar = expression { _[:bar] }
     foobar = expression { _[:foo][:bar] }
 
-    error1 = nested(foo, _or(nested(bar, element("baz")), nested(bar, element("qux"))))
+    bar_bax_or_bar_qux =
+      _or(nested(bar, element("baz")), nested(bar, element("qux")))
+
+    error1 = nested(foo, bar_bax_or_bar_qux)
     error2 = nested(foo, nested(bar, _or(element("baz"), element("qux"))))
     error3 = nested(foobar, _or(element("baz"), element("qux")))
     error4 = nested(foobar, _or(element("baz"), element("qucks")))
@@ -32,7 +35,9 @@ describe Matcher::ErrorLabeler do
   it "returns all leaves" do
     foo = expression { _[:foo] }
     bar = expression { _[:bar] }
-    error = nested(foo, _or(nested(bar, element("baz")), nested(bar, element("qux"))))
+    bar_baz_or_bar_qux =
+      _or(nested(bar, element("baz")), nested(bar, element("qux")))
+    error = nested(foo, bar_baz_or_bar_qux)
 
     *, leaves = labeler.label_tree(error)
 

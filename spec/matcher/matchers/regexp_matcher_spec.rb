@@ -80,7 +80,9 @@ describe Matcher::RegexpMatcher do
       regexp(/x=(\d+)/) ^ project(_[1].to_i) ^ (_ > 10)
     end
 
-    assert_equal 'regexp(/x=(\\d+)/, project(actual[1].to_i => actual > 10))', matcher.to_s
-    assert_equal '~regexp(/x=(\\d+)/, project(actual[1].to_i => actual > 10))', matcher.~.to_s
+    assert_equal 'regexp(/x=(\\d+)/, project(actual[1].to_i => actual > 10))',
+      matcher.to_s
+    assert_equal '~regexp(/x=(\\d+)/, project(actual[1].to_i => actual > 10))',
+      matcher.~.to_s
   end
 end

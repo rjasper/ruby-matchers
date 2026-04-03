@@ -54,7 +54,9 @@ module Matcher
 
         @children.concat(right)
       when NestedError
-        index = @children.find_index { _1.is_a?(NestedError) && _1.key == other.key }
+        index = @children.find_index do |child|
+          child.is_a?(NestedError) && child.key == other.key
+        end
 
         if index
           @children[index] |= other

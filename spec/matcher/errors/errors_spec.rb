@@ -31,21 +31,30 @@ describe Matcher::Error do
       nested(:foo, a) & nested(:foo, b)
   end
 
-  it "nested(:foo, a) & nested(:bar, b) => and(nested(:foo, a), nested(:bar, b))" do
+  it(
+    "nested(:foo, a) & nested(:bar, b) => " \
+      "and(nested(:foo, a), nested(:bar, b))",
+  ) do
     a, b = %w[a b].map { element(_1) }
 
     assert_equal _and(nested(:foo, a), nested(:bar, b)),
       nested(:foo, a) & nested(:bar, b)
   end
 
-  it "nested(:foo, a) & and(nested(:foo, b), *c) => and(nested(:foo, and(a, b), *c)" do
+  it(
+    "nested(:foo, a) & and(nested(:foo, b), *c) => " \
+      "and(nested(:foo, and(a, b), *c)",
+  ) do
     a, b, c = %w[a b c].map { element(_1) }
 
     assert_equal _and(nested(:foo, _and(a, b)), c),
       nested(:foo, a) & _and(nested(:foo, b), c)
   end
 
-  it "nested(:bar, a) & and(nested(:foo, b), *c) => and(nested(:foo, a), nested(:bar, b), *c)" do
+  it(
+    "nested(:bar, a) & and(nested(:foo, b), *c) => " \
+      "and(nested(:foo, a), nested(:bar, b), *c)",
+  ) do
     a, b, c = %w[a b c].map { element(_1) }
 
     assert_equal _and(nested(:foo, a), nested(:bar, b), c),
@@ -66,21 +75,30 @@ describe Matcher::Error do
       nested(:foo, a) | nested(:foo, b)
   end
 
-  it "nested(:foo, a) | nested(:bar, b) => or(nested(:foo, a), nested(:bar, b))" do
+  it(
+    "nested(:foo, a) | nested(:bar, b) => " \
+      "or(nested(:foo, a), nested(:bar, b))",
+  ) do
     a, b = %w[a b].map { element(_1) }
 
     assert_equal _or(nested(:foo, a), nested(:bar, b)),
       nested(:foo, a) | nested(:bar, b)
   end
 
-  it "nested(:foo, a) | or(nested(:foo, b), *c) => or(nested(:foo, or(a, b), *c)" do
+  it(
+    "nested(:foo, a) | or(nested(:foo, b), *c) => " \
+      "or(nested(:foo, or(a, b), *c)",
+  ) do
     a, b, c = %w[a b c].map { element(_1) }
 
     assert_equal _or(nested(:foo, _or(a, b)), c),
       nested(:foo, a) | _or(nested(:foo, b), c)
   end
 
-  it "nested(:bar, a) | or(nested(:foo, b), *c) => or(nested(:foo, a), nested(:bar, b), *c)" do
+  it(
+    "nested(:bar, a) | or(nested(:foo, b), *c) => " \
+      "or(nested(:foo, a), nested(:bar, b), *c)",
+  ) do
     a, b, c = %w[a b c].map { element(_1) }
 
     assert_equal _or(nested(:foo, a), nested(:bar, b), c),
@@ -129,28 +147,40 @@ describe Matcher::Error do
       _and(a1, a2) & _and(b1, b2)
   end
 
-  it "and(nested(:foo, a), *b) & nested(:foo, c) => and(nested(:foo, and(a, c), *b)" do
+  it(
+    "and(nested(:foo, a), *b) & nested(:foo, c) => " \
+      "and(nested(:foo, and(a, c), *b)",
+  ) do
     a, b, c = %w[a b c].map { element(_1) }
 
     assert_equal _and(nested(:foo, _and(a, c)), b),
       _and(nested(:foo, a), b) & nested(:foo, c)
   end
 
-  it "and(nested(:foo, a), *b) & nested(:bar, c) => and(nested(:foo, a), *b, nested(:bar, c))" do
+  it(
+    "and(nested(:foo, a), *b) & nested(:bar, c) => " \
+      "and(nested(:foo, a), *b, nested(:bar, c))",
+  ) do
     a, b, c = %w[a b c].map { element(_1) }
 
     assert_equal _and(nested(:foo, a), b, nested(:bar, c)),
       _and(nested(:foo, a), b) & nested(:bar, c)
   end
 
-  it "and(nested(:foo, a), *b) & and(nested(:foo, c), *d) => and(nested(:foo, and(a, c), *b, *d)" do
+  it(
+    "and(nested(:foo, a), *b) & and(nested(:foo, c), *d) => " \
+      "and(nested(:foo, and(a, c), *b, *d)",
+  ) do
     a, b, c, d = %w[a b c d].map { element(_1) }
 
     assert_equal _and(nested(:foo, _and(a, c)), b, d),
       _and(nested(:foo, a), b) & _and(nested(:foo, c), d)
   end
 
-  it "and(nested(:foo, a), *b) & and(nested(:bar, c), *d) => and(nested(:foo, a), *b, nested(:bar, c), *d)" do
+  it(
+    "and(nested(:foo, a), *b) & and(nested(:bar, c), *d) => " \
+      "and(nested(:foo, a), *b, nested(:bar, c), *d)",
+  ) do
     a, b, c, d = %w[a b c d].map { element(_1) }
 
     assert_equal _and(nested(:foo, a), b, nested(:bar, c), d),
@@ -204,28 +234,40 @@ describe Matcher::Error do
       _or(a1, a2) | _or(b1, b2)
   end
 
-  it "or(nested(:foo, a), *b) | nested(:foo, c) => or(nested(:foo, or(a, c), *b)" do
+  it(
+    "or(nested(:foo, a), *b) | nested(:foo, c) => " \
+      "or(nested(:foo, or(a, c), *b)",
+  ) do
     a, b, c = %w[a b c].map { element(_1) }
 
     assert_equal _or(nested(:foo, _or(a, c)), b),
       _or(nested(:foo, a), b) | nested(:foo, c)
   end
 
-  it "or(nested(:foo, a), *b) | nested(:bar, c) => or(nested(:foo, a), *b, nested(:bar, c))" do
+  it(
+    "or(nested(:foo, a), *b) | nested(:bar, c) => " \
+      "or(nested(:foo, a), *b, nested(:bar, c))",
+  ) do
     a, b, c = %w[a b c].map { element(_1) }
 
     assert_equal _or(nested(:foo, a), b, nested(:bar, c)),
       _or(nested(:foo, a), b) | nested(:bar, c)
   end
 
-  it "or(nested(:foo, a), *b) | or(nested(:foo, c), *d) => or(nested(:foo, or(a, c), *b, *d)" do
+  it(
+    "or(nested(:foo, a), *b) | or(nested(:foo, c), *d) => " \
+      "or(nested(:foo, or(a, c), *b, *d)",
+  ) do
     a, b, c, d = %w[a b c d].map { element(_1) }
 
     assert_equal _or(nested(:foo, _or(a, c)), b, d),
       _or(nested(:foo, a), b) | _or(nested(:foo, c), d)
   end
 
-  it "or(nested(:foo, a), *b) | or(nested(:bar, c), *d) => or(nested(:foo, a), *b, nested(:bar, c), *d)" do
+  it(
+    "or(nested(:foo, a), *b) | or(nested(:bar, c), *d) => " \
+      "or(nested(:foo, a), *b, nested(:bar, c), *d)",
+  ) do
     a, b, c, d = %w[a b c d].map { element(_1) }
 
     assert_equal _or(nested(:foo, a), b, nested(:bar, c), d),

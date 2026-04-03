@@ -4,8 +4,13 @@ require "test_helper"
 
 describe Matcher::KeysMatcher do
   it "is built by keys" do
-    assert_kind_of(Matcher::KeysMatcher, Matcher.build { keys(:foo, :bar) })
-    assert_kind_of(Matcher::KeysMatcher, Matcher.build { partial_keys(:foo, :bar) })
+    matcher = Matcher.build { keys(:foo, :bar) }
+
+    assert_kind_of Matcher::KeysMatcher, matcher
+
+    matcher = Matcher.build { partial_keys(:foo, :bar) }
+
+    assert_kind_of Matcher::KeysMatcher, matcher
   end
 
   it "matches all keys" do
@@ -63,7 +68,12 @@ describe Matcher::KeysMatcher do
   end
 
   it "#to_s" do
-    assert_equal "keys(:foo, :bar)", Matcher.build { keys(:foo, :bar) }.to_s
-    assert_equal "partial_keys(:foo, :bar)", Matcher.build { partial_keys(:foo, :bar) }.to_s
+    matcher = Matcher.build { keys(:foo, :bar) }
+
+    assert_equal "keys(:foo, :bar)", matcher.to_s
+
+    matcher = Matcher.build { partial_keys(:foo, :bar) }
+
+    assert_equal "partial_keys(:foo, :bar)", matcher.to_s
   end
 end

@@ -13,7 +13,8 @@ module Matcher
   #   m.match({ foo: 0 })
   #   # > root[:foo]: expected 1 but got 0
   #   m.match({ foo: 1, bar: 1 })
-  #   # > root[:bar]: did not expect to include key :bar but got {:foo=>1, :bar=>2}
+  #   # > root[:bar]: did not expect to include key :bar
+  #   #   but got {:foo=>1, :bar=>2}
   #
   #   # Use matchers for values
   #   m = Matcher.build { { foo: Integer } }
@@ -28,7 +29,8 @@ module Matcher
   #   m.match?({ foo: "foo" })
   #   # => true
   #   m.match({ foo: "bar" })
-  #   # > root[:foo]: expected actual == key.to_s but got "bar" == "foo", where k = :foo
+  #   # > root[:foo]: expected actual == key.to_s but got "bar" == "foo",
+  #   #   where k = :foo
   #
   #   # parent
   #   m = Matcher.build do
@@ -119,7 +121,10 @@ module Matcher
 
         @hash.each_key.with_index do |key, i|
           key = key.value if key.is_a?(Optional)
-          expression_values[i] = key.evaluate(state.values) if key.is_a?(Expression)
+
+          if key.is_a?(Expression)
+            expression_values[i] = key.evaluate(state.values)
+          end
         end
       end
 
@@ -198,7 +203,10 @@ module Matcher
 
         @hash.each_key.with_index do |key, i|
           key = key.value if key.is_a?(Optional)
-          expression_values[i] = key.evaluate(state.values) if key.is_a?(Expression)
+
+          if key.is_a?(Expression)
+            expression_values[i] = key.evaluate(state.values)
+          end
         end
       end
 

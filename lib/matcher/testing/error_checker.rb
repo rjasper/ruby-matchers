@@ -40,7 +40,9 @@ module Matcher
       propagate_hierarchy(expected_tree)
       propagate_hierarchy(actual_tree)
 
-      missing_phrases, extra_phrases = check_phrases(expected_leaves, actual_leaves)
+      missing_phrases, extra_phrases = check_phrases(
+        expected_leaves, actual_leaves
+      )
 
       if !missing_phrases.empty? || !extra_phrases.empty?
         result = not_ok("error has unexpected messages")
@@ -146,7 +148,12 @@ module Matcher
       key = [parent_hierarchy, node.label]
       hierarchy = @hierarchy_index[key]
       node.hierarchy = hierarchy
-      node.children.each { propagate_hierarchy(_1, hierarchy) } unless node.leaf?
+
+      return if node.leaf?
+
+      node.children.each do |child|
+        propagate_hierarchy(child, hierarchy)
+      end
     end
 
     # message indexing and checking
@@ -279,7 +286,8 @@ module Matcher
     end
 
     def identify_candidates(expected_tree)
-      expected_leaves, expected_parents = expected_tree.children.partition(&:leaf?)
+      expected_leaves, expected_parents =
+        expected_tree.children.partition(&:leaf?)
 
       if expected_leaves.empty?
         actual_group = @actual_hierarchy_groups[expected_tree.hierarchy]
@@ -290,7 +298,10 @@ module Matcher
       elsif expected_parents.empty?
         identify_by_leaves(expected_leaves, expected_tree.hierarchy)
       else
-        leaf_identities = identify_by_leaves(expected_leaves, expected_tree.hierarchy)
+        leaf_identities = identify_by_leaves(
+          expected_leaves, expected_tree.hierarchy
+        )
+
         actual_group = @actual_hierarchy_groups[expected_tree.hierarchy]
 
         throw(:mismatch) unless actual_group
@@ -329,14 +340,14 @@ module Matcher
 
       throw(:mismatch) unless actual_phrase_group
 
-      expected_message_counts = Hash.new(0)
+      expected_counts = Hash.new(0)
       expected_leaves.each do |leaf|
-        expected_message_counts[leaf.message_label] += 1 if leaf.message_label
+        expected_counts[leaf.message_label] += 1 if leaf.message_label
       end
 
-      candidates = actual_phrase_group.filter_map do |actual_identity, actual_message_counts|
-        actual_identity if expected_message_counts.all? do |message_label, expected_message_count|
-          expected_message_count <= actual_message_counts[message_label]
+      candidates = actual_phrase_group.filter_map do |actual_id, actual_counts|
+        actual_id if expected_counts.all? do |message_label, expected_count|
+          expected_count <= actual_counts[message_label]
         end
       end
 

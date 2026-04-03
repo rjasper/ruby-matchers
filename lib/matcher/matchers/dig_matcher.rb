@@ -13,7 +13,9 @@ module Matcher
     end
 
     def negate
-      DigMatcher.new(@keys, @original_matcher, optional: @optional, negated: !@negated)
+      DigMatcher.new(
+        @keys, @original_matcher, optional: @optional, negated: !@negated
+      )
     end
 
     def validate(state, &)

@@ -25,7 +25,9 @@ describe Matcher::HashMatcher do
         Matcher.build { { dig(:foo, :bar) => "foobar" } }
       end
 
-      assert_equal "Cannot use Matcher::Chain as key for hash matcher", e.message
+      expected = "Cannot use Matcher::Chain as key for hash matcher"
+
+      assert_equal expected, e.message
     end
 
     it "raises on vars key" do
@@ -33,7 +35,8 @@ describe Matcher::HashMatcher do
         Matcher.build { { vars => "foobar" } }
       end
 
-      expected = "Cannot use Matcher::ExpressionBuilding::VariableFactory as key for hash matcher"
+      expected = "Cannot use Matcher::ExpressionBuilding::VariableFactory " \
+        "as key for hash matcher"
 
       assert_equal expected, e.message
     end
@@ -43,7 +46,8 @@ describe Matcher::HashMatcher do
         Matcher.build { { refs => "foobar" } }
       end
 
-      expected = "Cannot use Matcher::ReferenceMatcherCollection as key for hash matcher"
+      expected =
+        "Cannot use Matcher::ReferenceMatcherCollection as key for hash matcher"
 
       assert_equal expected, e.message
     end
@@ -274,13 +278,15 @@ describe Matcher::HashMatcher do
     refute negated.match?({ foo: 42 }, meta:)
     assert_errors negated.match({ foo: 42 }, meta:),
       expression { _[vars[:meta][:key]] } =>
-        "expected actual != meta[:value] but got 42 != 42, where meta = #{{ key: :foo, value: 42 }}"
+        "expected actual != meta[:value] but got 42 != 42, " \
+        "where meta = #{{ key: :foo, value: 42 }}"
 
     refute matcher.match?({ foo: 43, bar: 23 }, meta:)
     assert_errors matcher.match({ foo: 43, bar: 23 }, meta:),
       bar: msg({ foo: 43, bar: 23 }).having_key(:bar),
       expression { _[vars[:meta][:key]] } =>
-        "expected actual == meta[:value] but got 43 == 42, where meta = #{{ key: :foo, value: 42 }}"
+        "expected actual == meta[:value] but got 43 == 42, " \
+        "where meta = #{{ key: :foo, value: 42 }}"
 
     assert negated.match?({ foo: 43, bar: 23 }, meta:)
     assert_no_errors negated.match({ foo: 43, bar: 23 }, meta:)

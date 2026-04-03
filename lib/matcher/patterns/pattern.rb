@@ -52,7 +52,7 @@ module Matcher
 
         if capture
           throw(:mismatch) if capture.expression != expression
-        elsif !hole.match?(expression) { |p| match_helper(expression, p, mapping, result) }
+        elsif !match?(hole, expression, mapping, result)
           throw(:mismatch)
         else
           result.capture(key, expression, mapping)
@@ -60,17 +60,29 @@ module Matcher
       elsif expression.is_a?(Call)
         throw(:mismatch) unless similar_call?(expression, pattern)
 
-        match_helper(expression.receiver, pattern.receiver, mapping.receiver, result)
+        match_helper(
+          expression.receiver, pattern.receiver, mapping.receiver, result
+        )
 
         expression.args.each_index do |i|
-          match_helper(expression.args[i], pattern.args[i], mapping.args[i], result)
+          match_helper(
+            expression.args[i], pattern.args[i], mapping.args[i], result
+          )
         end
 
         expression.kwargs.each_key do |k|
-          match_helper(expression.kwargs[k], pattern.kwargs[k], mapping.kwargs[k], result)
+          match_helper(
+            expression.kwargs[k], pattern.kwargs[k], mapping.kwargs[k], result
+          )
         end
       elsif expression != pattern
         throw(:mismatch)
+      end
+    end
+
+    def match?(pattern, expression, mapping, result)
+      pattern.match?(expression) do |p|
+        match_helper(expression, p, mapping, result)
       end
     end
 

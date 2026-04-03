@@ -46,10 +46,13 @@ module Matcher
 
       if @negated
         # when negated then missing.empty? <=> extra.empty?
-        state.errors << state.report.namespace(:set).equal(@array) if missing.empty?
+        if missing.empty?
+          state.errors << state.report.namespace(:set).equal(@array)
+        end
       else
         missing.each do |matcher|
-          state.errors << state.expected.namespace(:set).including_matchable_by(matcher)
+          state.errors << state.expected.namespace(:set)
+            .including_matchable_by(matcher)
         end
 
         extra.each do |i|
@@ -72,7 +75,8 @@ module Matcher
   ExpectedPhrasing.instance_exec do
     namespace(:set) do
       define(:including_matchable_by) do |matcher|
-        "#{verb} to include an element matching #{matcher} but got #{actual.inspect}"
+        "#{verb} to include an element matching #{matcher} " \
+          "but got #{actual.inspect}"
       end
     end
   end

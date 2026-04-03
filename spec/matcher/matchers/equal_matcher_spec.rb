@@ -77,7 +77,9 @@ describe Matcher::EqualMatcher do
   end
 
   it "matches hash" do
-    matcher = Matcher.build { let(foo: "foo") ^ equal({ foo: vars[:foo], bar: "bar" }) }
+    matcher = Matcher.build do
+      let(foo: "foo") ^ equal({ foo: vars[:foo], bar: "bar" })
+    end
     negated = ~matcher
 
     assert matcher.match?({ foo: "foo", bar: "bar" })

@@ -60,7 +60,9 @@ module Matcher
 
           original_index = mapping[operand_of(key)]
 
-          NestedError.new(index_call_to(original_index), nested_error.child) if original_index
+          if original_index
+            NestedError.new(index_call_to(original_index), nested_error.child)
+          end
         end
       end
 
@@ -92,11 +94,13 @@ module Matcher
     #   # alternatively:
     #   filter(_.odd?) ^ [1, 3, 5]
     # @overload filter(expression, matcher)
-    #   @param expression [Expression] matches elements for which +expression+ is truthy
+    #   @param expression [Expression] matches elements for which +expression+
+    #     is truthy
     #   @param matcher
     #   @return [FilterMatcher]
     # @overload filter(expression)
-    #   @param expression [Expression] matches elements for which +expression+ is truthy
+    #   @param expression [Expression] matches elements for which +expression+
+    #     is truthy
     #   @return [Chain<FilterMatcher>]
     def filter(expression, matcher = UNDEFINED)
       return Chain.new { filter(expression, _1) } if

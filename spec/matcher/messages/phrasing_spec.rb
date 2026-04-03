@@ -25,7 +25,10 @@ describe Matcher::Phrasing do
   end
 
   it "provides context (path, actual, negated)" do
-    klass.define(:expected) { "#{path}: expected#{' not' if negated} #{actual}" }
+    klass.define(:expected) do
+      "#{path}: expected#{' not' if negated} #{actual}"
+    end
+
     message = Matcher::Message.new(:expected, true, 42)
     path = expression { _.foo }
     my_phrasing = klass.new(path, message)

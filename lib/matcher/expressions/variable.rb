@@ -29,18 +29,18 @@ module Matcher
     end
 
     def self.substitutions
-      Thread.current[:matcher_variable_substitution_stack]
+      Thread.current[:matcher_variable_substitutions]
     end
 
     def self.with_substitutions(**substitutions)
-      stack = (Thread.current[:matcher_variable_substitution_stack] ||= HashStack.new)
+      stack = Thread.current[:matcher_variable_substitutions] ||= HashStack.new
       stack.push(substitutions)
 
       begin
         yield
       ensure
         stack.pop(substitutions)
-        Thread.current[:matcher_variable_substitution_stack] = nil if stack.empty?
+        Thread.current[:matcher_variable_substitutions] = nil if stack.empty?
       end
     end
 
@@ -59,7 +59,9 @@ module Matcher
     def evaluate(values)
       value = values[@symbol]
 
-      raise "no value for #{@symbol.inspect}" if value.nil? && !values.key?(@symbol)
+      if value.nil? && !values.key?(@symbol)
+        raise "no value for #{@symbol.inspect}"
+      end
 
       value
     end

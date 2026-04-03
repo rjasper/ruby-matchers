@@ -16,7 +16,9 @@ describe Matcher::CaptureHole do
 
   it "captures given pattern" do
     with_pattern -> { _ + capture(:operand, var(:variable) * 2) } do
-      assert_pattern_match _ + vars[:foo] * 2, operand: vars[:foo] * 2, variable: vars[:foo]
+      assert_pattern_match _ + vars[:foo] * 2,
+        operand: vars[:foo] * 2,
+        variable: vars[:foo]
 
       assert_no_pattern_match _ + (vars[:foo] - 1) * 2
     end

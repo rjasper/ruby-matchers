@@ -163,9 +163,11 @@ module Matcher
         msg(Set[1, 2]).comparable_to(Set[1])
 
       assert_errors match([2]) { _.to_set <=> Set[1] },
-        "expected actual.to_set to be comparable to #<Set: {1}> but got #<Set: {2}>, where actual = [2]"
+        "expected actual.to_set to be comparable to #<Set: {1}> " \
+          "but got #<Set: {2}>, where actual = [2]"
       assert_errors not_match([1, 2]) { _.to_set <=> Set[1] },
-        "did not expect actual.to_set to be comparable to #<Set: {1}> but got #<Set: {1, 2}>, where actual = [1, 2]"
+        "did not expect actual.to_set to be comparable to #<Set: {1}> " \
+          "but got #<Set: {1, 2}>, where actual = [1, 2]"
     end
 
     it "matches between expressions" do
@@ -177,19 +179,23 @@ module Matcher
       assert_no_errors not_match(15) { _.between?(0, 10) }
 
       assert_errors match(15) { (_ * 2).between?(0, 10) },
-        "expected actual * 2 to be between 0 and 10 but got 30, where actual = 15"
+        "expected actual * 2 to be between 0 and 10 but got 30, " \
+          "where actual = 15"
 
       assert_no_errors match(5) { (_ * 2).between?(0, 20) }
       assert_errors not_match(5) { (_ * 2).between?(0, 20) },
-        "did not expect actual * 2 to be between 0 and 20 but got 10, where actual = 5"
+        "did not expect actual * 2 to be between 0 and 20 but got 10, " \
+          "where actual = 5"
       assert_errors match(15) { (_ * 2).between?(0, 20) },
-        "expected actual * 2 to be between 0 and 20 but got 30, where actual = 15"
+        "expected actual * 2 to be between 0 and 20 but got 30, " \
+          "where actual = 15"
       assert_no_errors not_match(15) { (_ * 2).between?(0, 20) }
 
       assert_errors match(15) { lo { (_ >= 0) & (_ <= 10) } },
         msg(15).not.between(0, 10)
       assert_errors match(15) { lo { (_ * 2 >= 0) & (_ * 2 <= 10) } },
-        "expected actual * 2 to be between 0 and 10 but got 30, where actual = 15"
+        "expected actual * 2 to be between 0 and 10 but got 30, " \
+          "where actual = 15"
     end
 
     it "matches length expressions" do
@@ -199,9 +205,11 @@ module Matcher
         msg([1]).length_of(1, 1)
 
       assert_errors match([1, 2]) { (_ + [3]).length == 2 },
-        "expected actual + [3] to have length of 2 but was 3, where actual = [1, 2]"
+        "expected actual + [3] to have length of 2 but was 3, " \
+          "where actual = [1, 2]"
       assert_errors not_match([1, 2]) { (_ + [3]).length == 3 },
-        "did not expect actual + [3] to have length of 3, where actual = [1, 2]"
+        "did not expect actual + [3] to have length of 3, " \
+          "where actual = [1, 2]"
     end
 
     it "matches having key" do
@@ -213,7 +221,8 @@ module Matcher
       assert_errors match([]) { _.to_h.key?(:foo) },
         "expected actual.to_h to include key :foo but got {}, where actual = []"
       assert_errors not_match([[:foo, true]]) { _.to_h.key?(:foo) },
-        "did not expect actual.to_h to include key :foo but got #{{ foo: true }}, where actual = [[:foo, true]]"
+        "did not expect actual.to_h to include key :foo " \
+          "but got #{{ foo: true }}, where actual = [[:foo, true]]"
     end
 
     it "matches including" do
@@ -223,9 +232,11 @@ module Matcher
         msg([1]).including(1)
 
       assert_errors match([0, 1, 2]) { _[0..1].include?(4) },
-        "expected actual[0..1] to include 4 but got [0, 1], where actual = [0, 1, 2]"
+        "expected actual[0..1] to include 4 but got [0, 1], " \
+          "where actual = [0, 1, 2]"
       assert_errors not_match([0, 1, 2]) { _[0..1].include?(1) },
-        "did not expect actual[0..1] to include 1 but got [0, 1], where actual = [0, 1, 2]"
+        "did not expect actual[0..1] to include 1 but got [0, 1], " \
+          "where actual = [0, 1, 2]"
 
       foo_in = String.new("foo")
       def foo_in.in?(collection)
@@ -250,9 +261,11 @@ module Matcher
         msg("foo").in(["foo"])
 
       assert_errors match(foo_in) { _.itself.in?(["bar"]) },
-        'expected actual.itself to be included in ["bar"] but got "foo", where actual = "foo"'
+        'expected actual.itself to be included in ["bar"] ' \
+          'but got "foo", where actual = "foo"'
       assert_errors not_match(foo_in) { _.itself.in?(["foo"]) },
-        'did not expect actual.itself to be included in ["foo"] but got "foo", where actual = "foo"'
+        'did not expect actual.itself to be included in ["foo"] ' \
+          'but got "foo", where actual = "foo"'
 
       # flip
       assert_errors match(foo_in) { expr(["bar"]).include?(_) },
@@ -272,24 +285,33 @@ module Matcher
         msg("Hi!").not.matching(/Hello/)
 
       assert_errors match("Hi!") { _.downcase =~ /hello/ },
-        'expected actual.downcase to match /hello/ but got "hi!", where actual = "Hi!"'
+        'expected actual.downcase to match /hello/ but got "hi!", ' \
+          'where actual = "Hi!"'
       assert_errors match("Hi!") { expr(/hello/) =~ _.downcase },
-        'expected actual.downcase to match /hello/ but got "hi!", where actual = "Hi!"'
+        'expected actual.downcase to match /hello/ but got "hi!", ' \
+          'where actual = "Hi!"'
       assert_errors not_match("Hello World!") { _.downcase =~ /hello/ },
-        'did not expect actual.downcase to match /hello/ but got "hello world!", where actual = "Hello World!"'
+        "did not expect actual.downcase to match /hello/ " \
+          'but got "hello world!", where actual = "Hello World!"'
       assert_errors match("Hello World!") { _.downcase !~ /hello/ },
-        'did not expect actual.downcase to match /hello/ but got "hello world!", where actual = "Hello World!"'
+        "did not expect actual.downcase to match /hello/ " \
+          'but got "hello world!", where actual = "Hello World!"'
       assert_errors not_match("Hi!") { _.downcase !~ /hello/ },
-        'expected actual.downcase to match /hello/ but got "hi!", where actual = "Hi!"'
+        "expected actual.downcase to match /hello/ " \
+          'but got "hi!", where actual = "Hi!"'
 
-      assert_errors match(ExpressionMatcherSpec::Unmatchable.new) { _.itself =~ "foo" },
-        'expected actual.itself =~ "foo" to be truthy but got nil, where actual = unmatchable'
-      assert_errors not_match(ExpressionMatcherSpec::Unmatchable.new) { _.itself !~ "foo" },
-        'expected actual.itself !~ "foo" to be falsy but got true, where actual = unmatchable'
-      assert_errors match(ExpressionMatcherSpec::Matchable.new) { _.itself !~ "foo" },
-        'expected actual.itself !~ "foo" to be truthy but got false, where actual = matchable'
-      assert_errors not_match(ExpressionMatcherSpec::Matchable.new) { _.itself =~ "foo" },
-        'expected actual.itself =~ "foo" to be falsy but got 0, where actual = matchable'
+      assert_errors match(new_unmatchable) { _.itself =~ "foo" },
+        'expected actual.itself =~ "foo" to be truthy ' \
+          "but got nil, where actual = unmatchable"
+      assert_errors not_match(new_unmatchable) { _.itself !~ "foo" },
+        'expected actual.itself !~ "foo" to be falsy ' \
+          "but got true, where actual = unmatchable"
+      assert_errors match(new_matchable) { _.itself !~ "foo" },
+        'expected actual.itself !~ "foo" to be truthy ' \
+          "but got false, where actual = matchable"
+      assert_errors not_match(new_matchable) { _.itself =~ "foo" },
+        'expected actual.itself =~ "foo" to be falsy ' \
+          "but got 0, where actual = matchable"
     end
 
     it "matches regexp at" do
@@ -315,12 +337,15 @@ module Matcher
       assert_errors not_match("abcd") { (_ =~ /b/) < 2 },
         'did not expect actual to match /b/ before 2 but was at 1 for "abcd"'
       assert_errors not_match("abcd") { (_ =~ /b/) <= 2 },
-        'did not expect actual to match /b/ at or before 2 but was at 1 for "abcd"'
+        "did not expect actual to match /b/ at or before 2 " \
+          'but was at 1 for "abcd"'
       assert_errors not_match("abcd") { (_ =~ /b/) >= 1 },
-        'did not expect actual to match /b/ at or after 1 but was at 1 for "abcd"'
+        "did not expect actual to match /b/ at or after 1 " \
+          'but was at 1 for "abcd"'
 
-      assert_errors match(ExpressionMatcherSpec::Unmatchable.new) { (_.itself =~ "foo") == 1 },
-        'expected (actual.itself =~ "foo") == 1 to be truthy but got false, where actual = unmatchable'
+      assert_errors match(new_unmatchable) { (_.itself =~ "foo") == 1 },
+        'expected (actual.itself =~ "foo") == 1 to be truthy ' \
+          "but got false, where actual = unmatchable"
     end
 
     it "matches instance_of" do
@@ -330,9 +355,11 @@ module Matcher
         msg(1).instance_of(Integer)
 
       assert_errors match(0.0) { (_ + 1).instance_of?(Integer) },
-        "expected actual + 1 to be an instance of Integer but got 1.0, where actual = 0.0"
+        "expected actual + 1 to be an instance of Integer but got 1.0, " \
+          "where actual = 0.0"
       assert_errors not_match(0) { (_ + 1).instance_of?(Integer) },
-        "did not expect actual + 1 to be an instance of Integer but got 1, where actual = 0"
+        "did not expect actual + 1 to be an instance of Integer but got 1, " \
+          "where actual = 0"
 
       # rubocop:disable Style/ClassEqualityComparison
       assert_errors match("string") { _.class == Integer },
@@ -353,13 +380,17 @@ module Matcher
         msg(1).kind_of(Numeric)
 
       assert_errors match(1.0) { (_ + 1).is_a?(Integer) },
-        "expected actual + 1 to be a kind of Integer but got 2.0, where actual = 1.0"
+        "expected actual + 1 to be a kind of Integer but got 2.0, " \
+          "where actual = 1.0"
       assert_errors not_match(1) { (_ + 1).is_a?(Integer) },
-        "did not expect actual + 1 to be a kind of Integer but got 2, where actual = 1"
+        "did not expect actual + 1 to be a kind of Integer but got 2, " \
+          "where actual = 1"
       assert_errors match(1.0) { (_ + 1).is_a?(Integer) },
-        "expected actual + 1 to be a kind of Integer but got 2.0, where actual = 1.0"
+        "expected actual + 1 to be a kind of Integer but got 2.0, " \
+          "where actual = 1.0"
       assert_errors not_match(1) { (_ + 1).is_a?(Integer) },
-        "did not expect actual + 1 to be a kind of Integer but got 2, where actual = 1"
+        "did not expect actual + 1 to be a kind of Integer but got 2, " \
+          "where actual = 1"
     end
 
     it "matches responding_to" do
@@ -369,9 +400,11 @@ module Matcher
         msg(1).responding_to(:+)
 
       assert_errors match("a") { (_ * 2).respond_to?(:**) },
-        "expected actual * 2 to respond to `**' but got \"aa\", where actual = \"a\""
+        "expected actual * 2 to respond to `**' but got \"aa\", " \
+          "where actual = \"a\""
       assert_errors not_match(1) { (_ * 2).respond_to?(:**) },
-        "did not expect actual * 2 to respond to `**' but got 2, where actual = 1"
+        "did not expect actual * 2 to respond to `**' but got 2, " \
+          "where actual = 1"
     end
 
     it "matches predicate" do
@@ -395,7 +428,8 @@ module Matcher
       matcher = Matcher.build { (expr(1) / _).is_a?(Integer) }
 
       assert_errors matcher.match(0),
-        "did not expect 1 / actual to raise ZeroDivisionError, where actual = 0: divided by 0"
+        "did not expect 1 / actual to raise ZeroDivisionError, " \
+          "where actual = 0: divided by 0"
 
       assert_no_errors (~matcher).match(0)
     end
@@ -416,6 +450,14 @@ module Matcher
     def not_match(actual, &)
       matcher = ~Matcher.build(&)
       matcher.match(actual)
+    end
+
+    def new_unmatchable
+      ExpressionMatcherSpec::Unmatchable.new
+    end
+
+    def new_matchable
+      ExpressionMatcherSpec::Matchable.new
     end
   end
 end

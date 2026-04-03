@@ -34,7 +34,8 @@ module Matcher
   #   m.match?([1, 2, 3])
   #   # => true
   #   m.match([1, 2, 0])
-  #   # root[2]: expected actual >= parent[index - 1] but got 0 >= 2, where parent = [1, 2, 0], index = 2
+  #   # > root[2]: expected actual >= parent[index - 1] but got 0 >= 2, where
+  #   #   parent = [1, 2, 0], index = 2
   class ArrayMatcher < Base
     def initialize(array)
       super()
@@ -55,7 +56,9 @@ module Matcher
         return
       end
 
-      errors << state.expected.length_of(@array.length, actual.length) if @array.length != actual.length
+      if @array.length != actual.length
+        errors << state.expected.length_of(@array.length, actual.length)
+      end
 
       [@array.length, actual.length].min.times do |i|
         errors[i] << yield(@array[i], actual[i], index: i, parent: actual)

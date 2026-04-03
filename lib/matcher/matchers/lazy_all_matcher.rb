@@ -43,7 +43,8 @@ module Matcher
 
   module MatcherBuilding
     ##
-    # Matches all matchers lazily. Returns only the last match result (similar to &&)
+    # Matches all matchers lazily. Returns only the last match result
+    # (similar to &&).
     # @example
     #   # matches 3 but not "foo"
     #   lazy_all(Integer, _ % 3 == 0)

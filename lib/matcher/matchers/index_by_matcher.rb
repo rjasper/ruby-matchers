@@ -54,7 +54,8 @@ module Matcher
       end
 
       duplicates.each do |key, i, j|
-        state.errors[i] << state.expected(actual[i]).not.duplicate_by(@projection, key, j)
+        state.errors[i] << state.expected(actual[i])
+          .not.duplicate_by(@projection, key, j)
       end
 
       return if failed
@@ -163,7 +164,9 @@ module Matcher
     #   @param expression [Expression]
     #   @return [Chain<IndexByMatcher>]
     def index_by(expression, matcher = UNDEFINED)
-      return Chain.new { index_by(expression, _1) } if Matcher.undefined?(matcher)
+      if Matcher.undefined?(matcher)
+        return Chain.new { index_by(expression, _1) }
+      end
 
       expression = expression_of(expression)
       matcher = matcher_of(matcher)

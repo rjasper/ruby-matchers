@@ -19,10 +19,10 @@ module Matcher
     ##
     # Matches always
     #
-    # Many matchers accept child matchers, for instance the HashMatcher. But before
-    # they invoke a child matcher they often perform implicit checks. And sometimes,
-    # we are only interested in those implicit checks and don't care about having a
-    # child matcher.
+    # Many matchers accept child matchers, for instance the HashMatcher. But
+    # before they invoke a child matcher they often perform implicit checks. And
+    # sometimes, we are only interested in those implicit checks and don't care
+    # about having a child matcher.
     #
     # @example
     #   { foo: always }

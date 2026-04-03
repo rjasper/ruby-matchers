@@ -33,6 +33,9 @@ Layout/LineEndStringConcatenationIndentation:
   EnforcedStyle: indented
 Layout/LineLength:
   AutoCorrect: false
+  Max: 80
+  AllowedPatterns:
+  - "@overload"
 Layout/MultilineArrayLineBreaks:
   Enabled: true
 Layout/MultilineMethodArgumentLineBreaks:

@@ -3,9 +3,9 @@
 module Matcher
   ##
   # Matcher helpers like +each+ or +map+ can be chained with the +^+ operator or
-  # +chain+ helper. If a helper has the form <tt>my_helper(..., matcher)</tt> then it
-  # usually also supports this form <tt>my_helper(...) ^ matcher</tt>. This helps reducing
-  # nested parenthesis:
+  # +chain+ helper. If a helper has the form <tt>my_helper(..., matcher)</tt>
+  # then it usually also supports this form <tt>my_helper(...) ^ matcher</tt>.
+  # This helps reducing nested parenthesis:
   #
   #   # before
   #   let({ limit: 10 }, map(_.compact, filter(_.even?, _ < vars[:limit])))

@@ -76,9 +76,12 @@ describe Matcher::MapMatcher do
       map(_ + index * 10 + original.length * 100, [209, 218])
     end
 
+    at_base = expression do
+      _.map.with_index { |e, index| e + index * 10 + _.length * 100 }
+    end
+
     assert_errors matcher.match([9, 8, 7]),
-      expression { _.map.with_index { |e, index| e + index * 10 + _.length * 100 } } =>
-        msg([309, 318, 327]).not.length_of(2, 3),
+      at_base => msg([309, 318, 327]).not.length_of(2, 3),
       expression { _[0] + index * 10 + original.length * 100 } =>
         msg(309).not.equal(209),
       expression { _[1] + index * 10 + original.length * 100 } =>

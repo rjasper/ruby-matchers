@@ -11,11 +11,11 @@ module Matcher
     end
 
     def assert_errors(actual, *base, **nested, &block)
-      assert_errors_helper(actual, base, nested, block, phrasing: ExpectedPhrasing.phrasing)
+      assert_errors_helper(actual, base, nested, block)
     end
 
     def assert_or_errors(actual, *base, **nested, &block)
-      assert_errors_helper(actual, base, nested, block, phrasing: ExpectedPhrasing.phrasing, use_or: true)
+      assert_errors_helper(actual, base, nested, block, use_or: true)
     end
 
     def assert_no_errors(actual)
@@ -32,7 +32,10 @@ module Matcher
 
     private
 
-    def assert_errors_helper(actual, base, nested, block, phrasing: ExpectedPhrasing.phrasing, use_or: false)
+    def assert_errors_helper(
+      actual, base, nested, block,
+      phrasing: ExpectedPhrasing.phrasing, use_or: false
+    )
       raise "cannot pass expected errors directly if block given" if
         (!base.empty? || !nested.empty?) && block
 

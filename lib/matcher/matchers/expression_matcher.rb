@@ -2,7 +2,11 @@
 
 module Matcher
   class ExpressionMatcher < Base
-    def self.cache(value, matcher_cache = MatcherCache.current, expression_cache = ExpressionCache.current)
+    def self.cache(
+      value,
+      matcher_cache = MatcherCache.current,
+      expression_cache = ExpressionCache.current
+    )
       return new(value) unless matcher_cache
 
       cache = (matcher_cache.expression_matchers ||= {})
@@ -30,7 +34,10 @@ module Matcher
 
     def validate(state)
       if state.boolean?
-        state.errors << "invalid" if @negated != !@expression.evaluate(state.values)
+        if @negated != !@expression.evaluate(state.values)
+          state.errors << "invalid"
+        end
+
         return
       end
 

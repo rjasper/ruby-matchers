@@ -45,10 +45,15 @@ describe Matcher::IndexByMatcher do
 
     negated = ~matcher
 
-    assert matcher.match?([{ id: 41, name: "foo" }, { id: 42, name: "bar" }])
-    assert_no_errors matcher.match([{ id: 41, name: "foo" }, { id: 42, name: "bar" }])
-    refute negated.match?([{ id: 41, name: "foo" }, { id: 42, name: "bar" }])
-    assert_or_errors negated.match([{ id: 41, name: "foo" }, { id: 42, name: "bar" }]),
+    actual1 = [{ id: 41, name: "foo" }, { id: 42, name: "bar" }]
+
+    assert matcher.match?(actual1)
+    assert_no_errors matcher.match([
+      { id: 41, name: "foo" },
+      { id: 42, name: "bar" },
+    ])
+    refute negated.match?(actual1)
+    assert_or_errors negated.match(actual1),
       0 => {
         id: msg(41).equal(41),
         name: msg("foo").equal("foo"),
@@ -58,11 +63,16 @@ describe Matcher::IndexByMatcher do
         name: msg("bar").equal("bar"),
       }
 
-    refute matcher.match?([{ id: 41, name: "foo" }, { id: 42, name: "baz" }])
-    assert_errors matcher.match([{ id: 41, name: "foo" }, { id: 42, name: "baz" }]),
+    actual2 = [{ id: 41, name: "foo" }, { id: 42, name: "baz" }]
+
+    refute matcher.match?(actual2)
+    assert_errors matcher.match(actual2),
       1 => { name: msg("baz").not.equal("bar") }
-    assert negated.match?([{ id: 41, name: "foo" }, { id: 42, name: "baz" }])
-    assert_no_errors negated.match([{ id: 41, name: "foo" }, { id: 42, name: "baz" }])
+    assert negated.match?(actual2)
+    assert_no_errors negated.match([
+      { id: 41, name: "foo" },
+      { id: 42, name: "baz" },
+    ])
   end
 
   it "detects duplicate keys" do
@@ -122,7 +132,10 @@ describe Matcher::IndexByMatcher do
       }
     end
 
-    assert_no_errors matcher.match([{ id: 10, name: "foo" }, { id: 20, name: "bar" }])
+    assert_no_errors matcher.match([
+      { id: 10, name: "foo" },
+      { id: 20, name: "bar" },
+    ])
   end
 
   it "passes original to projection" do
@@ -133,7 +146,10 @@ describe Matcher::IndexByMatcher do
       }
     end
 
-    assert_no_errors matcher.match([{ id: 10, name: "foo" }, { id: 20, name: "bar" }])
+    assert_no_errors matcher.match([
+      { id: 10, name: "foo" },
+      { id: 20, name: "bar" },
+    ])
   end
 
   it "passes original to matcher" do
@@ -144,7 +160,10 @@ describe Matcher::IndexByMatcher do
       )
     end
 
-    assert_no_errors matcher.match([{ id: 1, name: "foo" }, { id: 2, name: "bar" }])
+    assert_no_errors matcher.match([
+      { id: 1, name: "foo" },
+      { id: 2, name: "bar" },
+    ])
   end
 
   it "#to_s" do

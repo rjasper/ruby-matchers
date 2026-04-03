@@ -30,7 +30,9 @@ describe Matcher::Hole do
   end
 
   it "matches receiver and arguments" do
-    with_pattern -> { method_hole(:call, _, :foo, const(:arg), mode: var(:kwarg)) } do
+    pattern = -> { method_hole(:call, _, :foo, const(:arg), mode: var(:kwarg)) }
+
+    with_pattern pattern do
       assert_pattern_match _.foo(1, mode: vars[:opt]),
         call: _.foo(1, mode: vars[:opt]),
         arg: 1,
