@@ -25,7 +25,7 @@ module Matcher
 
       matcher = matcher_of(matcher)
       json_options = {}.merge(**)
-      json_options = nil if json_options.empty?
+      json_options = Compatibility::NULL_KWARGS if json_options.empty?
 
       ParseJsonMatcher.new(matcher, json_options:)
     end

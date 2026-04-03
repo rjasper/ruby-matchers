@@ -4,7 +4,11 @@ require "json"
 
 module Matcher
   class ParseJsonMatcher < Base
-    def initialize(matcher, json_options: nil, negated: false)
+    def initialize(
+      matcher,
+      json_options: Compatibility::NULL_KWARGS,
+      negated: false
+    )
       super()
 
       @matcher = negated ? ~matcher : matcher
