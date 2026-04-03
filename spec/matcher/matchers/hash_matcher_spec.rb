@@ -35,7 +35,7 @@ describe Matcher::HashMatcher do
         Matcher.build { { vars => "foobar" } }
       end
 
-      expected = "Cannot use Matcher::ExpressionBuilding::VariableFactory " \
+      expected = "Cannot use Matcher::ExpressionDsl::VariableFactory " \
         "as key for hash matcher"
 
       assert_equal expected, e.message

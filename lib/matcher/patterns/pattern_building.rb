@@ -2,7 +2,7 @@
 
 module Matcher
   module PatternBuilding
-    include ExpressionBuilding
+    include ExpressionDsl
 
     def pattern_of(value)
       Pattern.new(expression_of(value))

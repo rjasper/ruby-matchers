@@ -5,7 +5,7 @@ module Matcher
     include PatternBuilding
 
     def initialize(rules = [], build_session: Matcher.build_session)
-      ExpressionBuilding.init(self, build_session)
+      ExpressionDsl.init(self, build_session)
 
       @rules = rules
     end

@@ -193,7 +193,7 @@ module Matcher
     end
   end
 
-  module MatcherBuilding
+  module MatcherDsl
     def refs?
       !@refs.nil?
     end

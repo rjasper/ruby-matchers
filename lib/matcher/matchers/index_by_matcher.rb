@@ -135,7 +135,7 @@ module Matcher
     end
   end
 
-  module MatcherBuilding
+  module MatcherDsl
     ##
     # Matches against an indexed version of actual.
     #

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Matcher
-  module ExpressionBuilding
+  module ExpressionDsl
     attr_reader :assigns
 
     def self.init(builder, build_session)
@@ -193,7 +193,7 @@ module Matcher
     ##
     # Returns a recorder for the original value before mapping
     # @return [Recorder]
-    # @see MatcherBuilding#map
+    # @see MatcherDsl#map
     def original
       vars[:original]
     end

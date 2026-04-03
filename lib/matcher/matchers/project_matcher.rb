@@ -30,7 +30,7 @@ module Matcher
     end
   end
 
-  module MatcherBuilding
+  module MatcherDsl
     ##
     # Matches the value of an expression
     # @example

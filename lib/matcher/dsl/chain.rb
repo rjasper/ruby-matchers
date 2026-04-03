@@ -66,7 +66,7 @@ module Matcher
     end
   end
 
-  module MatcherBuilding
+  module MatcherDsl
     ##
     # Reduces multiple chains to one
     # @example

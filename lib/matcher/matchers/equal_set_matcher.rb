@@ -95,7 +95,7 @@ module Matcher
     end
   end
 
-  module MatcherBuilding
+  module MatcherDsl
     ##
     # Matches array elements like a set
     # @example

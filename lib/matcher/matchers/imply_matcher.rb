@@ -51,7 +51,7 @@ module Matcher
     end
   end
 
-  module MatcherBuilding
+  module MatcherDsl
     ##
     # Matches if condition mismatches or given matcher matches.
     # In other words, ignore +matcher+ unless +condition+ is met.

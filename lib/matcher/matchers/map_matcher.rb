@@ -115,7 +115,7 @@ module Matcher
     end
   end
 
-  module MatcherBuilding
+  module MatcherDsl
     ##
     # Maps items to another value before matching
     # == +expression+ values

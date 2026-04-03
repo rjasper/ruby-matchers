@@ -47,7 +47,7 @@ module Matcher
     end
   end
 
-  module MatcherBuilding
+  module MatcherDsl
     ##
     # Matches when block returns truthy
     # @example

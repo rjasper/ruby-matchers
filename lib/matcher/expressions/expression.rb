@@ -25,16 +25,16 @@ module Matcher
   # @see Recorder
   class Expression
     class ExpressionBuilder
-      include ExpressionBuilding
+      include ExpressionDsl
 
       def initialize(build_session: Matcher.build_session)
-        ExpressionBuilding.init(self, build_session)
+        ExpressionDsl.init(self, build_session)
       end
     end
 
     ##
     # Builds an expression conveniently using {Recorder} and helpers from
-    # {ExpressionBuilding}.
+    # {ExpressionDsl}.
     #
     # @example
     #   Matcher::Expression.build do
@@ -45,7 +45,7 @@ module Matcher
     #     range(vars[:from], vars[:to]).include?(_)
     #   end
     #
-    # @see ExpressionBuilding
+    # @see ExpressionDsl
     def self.build(&)
       Matcher.with_build_session do |build_session|
         builder = ExpressionBuilder.new(build_session:)

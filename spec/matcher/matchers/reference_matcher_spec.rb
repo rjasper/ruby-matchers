@@ -12,7 +12,7 @@ describe Matcher::ReferenceMatcher do
     assert_kind_of Matcher::ReferenceMatcher, matcher
   end
 
-  describe "MatcherBuilding#refs" do
+  describe "MatcherDsl#refs" do
     it "returns target matcher if last line was refs[]=" do
       ref_matcher = nil
 

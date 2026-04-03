@@ -62,7 +62,7 @@ module Matcher
     end
   end
 
-  module MatcherBuilding
+  module MatcherDsl
     ##
     # Creates an anonymous custom matcher
     #

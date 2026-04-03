@@ -80,7 +80,7 @@ module Matcher
     end
   end
 
-  module MatcherBuilding
+  module MatcherDsl
     # Matches only filtered elements
     # == +expression+ values
     # - actual

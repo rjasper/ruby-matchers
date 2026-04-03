@@ -2,7 +2,7 @@
 
 require "test_helper"
 
-describe Matcher::MatcherBuilding do
+describe Matcher::MatcherDsl do
   it "#of" do
     assert_kind_of(Matcher::Base, build { of(1) })
   end

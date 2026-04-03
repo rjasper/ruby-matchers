@@ -8,8 +8,8 @@ require "forwardable"
 require_relative "matcher/autoload"
 require_relative "matcher/markers"
 
-require_relative "matcher/dsl/expression_building"
-require_relative "matcher/dsl/matcher_building"
+require_relative "matcher/dsl/expression_dsl"
+require_relative "matcher/dsl/matcher_dsl"
 require_relative "matcher/base"
 
 require_relative "matcher/dsl/builder"
@@ -158,8 +158,8 @@ module Matcher
   #   m.match?({ name: 'test', count: 5 }) # => true
   # @return [Base]
   # @see Matcher.of
-  # @see MatcherBuilding
-  # @see ExpressionBuilding
+  # @see MatcherDsl
+  # @see ExpressionDsl
   def self.build(&block)
     with_build_session do |build_session|
       builder = Builder.new(block.binding.receiver, build_session:)
