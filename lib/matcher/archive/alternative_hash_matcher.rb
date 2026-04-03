@@ -39,7 +39,7 @@ module Matcher
 
       raise "cannot use partial(others => ...)" if partial && includes_others
 
-      kind_of_hash = CaseEqualityMatcher.new(Hash)
+      kind_of_hash = KindOfMatcher.new(Hash)
 
       inner_matcher = if hash.empty?
         return kind_of_hash if partial
