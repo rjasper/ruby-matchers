@@ -34,6 +34,12 @@ module Matcher
       @variables ||= (@begin.variables + @end.variables).uniq
     end
 
+    PRECEDENCE = OPERATOR_PRECEDENCE[:".."]
+
+    def precedence
+      PRECEDENCE
+    end
+
     def evaluate(values)
       from = @begin.evaluate(values)
       to = @end.evaluate(values)

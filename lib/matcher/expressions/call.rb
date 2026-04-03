@@ -9,30 +9,6 @@ module Matcher
     BINARY_OPERATORS =
       %i[+ - * ** / % < > <= >= <=> == === != =~ !~ & | ^ << >> && ||].freeze
 
-    OPERATOR_PRECEDENCE = begin
-      precedence = {}
-
-      # see https://ruby-doc.org/3.2.2/syntax/precedence_rdoc.html
-      [
-        %i[! ~ +@],
-        %i[**],
-        %i[-@],
-        %i[* / %],
-        %i[+ -],
-        %i[<< >>],
-        %i[&],
-        %i[| ^],
-        %i[> >= < <=],
-        %i[<=> == === != =~ !~],
-        %i[&&],
-        %i[||],
-      ].each_with_index do |operators, index|
-        operators.each { precedence[_1] = index }
-      end
-
-      precedence.freeze
-    end
-
     def self.last_assign
       Matcher.build_session&.dig(Call, :last_assign)
     end
@@ -184,7 +160,7 @@ module Matcher
     end
 
     def to_s
-      receiver = parenthesize(@receiver, false)
+      receiver = parenthesized_receiver
 
       case @method
       when :!, :~, :+@, :-@
@@ -194,13 +170,11 @@ module Matcher
         :!~, :&, :|, :^, :<<, :>>, :"&&", :"||"
 
         if binary?
-          operand = parenthesize(@args[0], true)
-
           # foo**2
-          return "#{receiver}**#{operand}" if @method == :**
+          return "#{receiver}**#{parenthesized_operand}" if @method == :**
 
           # foo + bar
-          return "#{receiver} #{@method} #{operand}"
+          return "#{receiver} #{@method} #{parenthesized_operand}"
         end
       when :[]
         # foo[a, b, ...]
@@ -320,25 +294,14 @@ module Matcher
       end
     end
 
-    def parenthesize(operand, is_rhs)
-      operand_string = operand.to_s
+    def parenthesized_receiver
+      non_associative = %i[<=> == === != =~ !~].include?(@method)
 
-      return "(#{operand_string})" if operand.is_a?(RescueLastErrorExpression)
-      return operand_string unless operand.instance_of?(Call)
+      @receiver.parenthesize(precedence, non_associative)
+    end
 
-      # parenthesize if operand's precedence is lower (higher index) than ours
-      need_parentheses = if is_rhs
-        # also parenthesize rhs if precedence is the same
-        operand.precedence >= precedence
-      else
-        # also parenthesize lhs if both operators are any of:
-        # <=> == === != =~ !~
-        operand.precedence > precedence ||
-          operand.precedence == precedence &&
-            %i[<=> == === != =~ !~].include?(@method)
-      end
-
-      need_parentheses ? "(#{operand_string})" : operand_string
+    def parenthesized_operand
+      @args[0].parenthesize(precedence, true)
     end
   end
 end

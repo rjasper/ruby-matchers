@@ -25,10 +25,16 @@ describe Matcher::RangeExpression do
   end
 
   it "#to_s" do
-    expression1 = Matcher::Expression.build { vars[:foo]..vars[:bar] }
-    expression2 = Matcher::Expression.build { vars[:foo]...vars[:bar] }
+    expression = Matcher::Expression.build { vars[:foo]..vars[:bar] }
 
-    assert_equal "foo..bar", expression1.to_s
-    assert_equal "foo...bar", expression2.to_s
+    assert_equal "foo..bar", expression.to_s
+
+    expression = Matcher::Expression.build { vars[:foo]...vars[:bar] }
+
+    assert_equal "foo...bar", expression.to_s
+
+    expression = Matcher::Expression.build { range(vars[:a], vars[:b]).to_a }
+
+    assert_equal "(a..b).to_a", expression.to_s
   end
 end

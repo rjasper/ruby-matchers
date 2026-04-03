@@ -24,6 +24,12 @@ module Matcher
       [self.class, @expression].hash
     end
 
+    PRECEDENCE = OPERATOR_PRECEDENCE[:modifier_rescue]
+
+    def precedence
+      PRECEDENCE
+    end
+
     def evaluate(values)
       @expression.evaluate(values)
     rescue CallError => e

@@ -38,5 +38,11 @@ describe Matcher::RescueLastErrorExpression do
     end
 
     assert_equal "a + b rescue $!", expression.to_s
+
+    expression = Matcher::Expression.build do
+      rescue_exception(_.foo).message
+    end
+
+    assert_equal "(actual.foo rescue $!).message", expression.to_s
   end
 end

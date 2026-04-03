@@ -181,6 +181,51 @@ module Matcher
       end
     end
 
+    OPERATOR_PRECEDENCE = begin
+      precedence = {}
+
+      # see https://docs.ruby-lang.org/en/master/syntax/precedence_rdoc.html
+      [
+        %i[! ~ +@],
+        %i[**],
+        %i[-@],
+        %i[* / %],
+        %i[+ -],
+        %i[<< >>],
+        %i[&],
+        %i[| ^],
+        %i[> >= < <=],
+        %i[<=> == === != =~ !~],
+        %i[&&],
+        %i[||],
+        %i[..],
+        %i[modifier_rescue],
+      ].each_with_index do |operators, index|
+        operators.each { precedence[_1] = index }
+      end
+
+      precedence.freeze
+    end
+
+    def precedence
+      # highest precedence, won't need parentheses
+      -1
+    end
+
+    def parenthesize(precedence, when_equal)
+      # Parenthesize if own precedence is lower than the other. In some
+      # situations (as right hand side or for non-associative operators) we also
+      # parenthesize when precedence is equal.
+
+      need_parentheses = if when_equal
+        self.precedence >= precedence
+      else
+        self.precedence > precedence
+      end
+
+      need_parentheses ? "(#{self})" : to_s
+    end
+
     def inspect
       to_s
     end
