@@ -57,11 +57,11 @@ describe Matcher::ExpectedPhrasing do
     end
 
     it "comparable_to" do
-      assert_phrase "expected a value comparable to #<Set: {1}> " \
-        "but got #<Set: {2}>",
+      assert_phrase "expected a value comparable to #{Set[1]} " \
+        "but got #{Set[2]}",
         msg(Set[2]).not.comparable_to(Set[1])
-      assert_phrase "did not expect a value comparable to #<Set: {1}> " \
-        "but got #<Set: {1, 2}>",
+      assert_phrase "did not expect a value comparable to #{Set[1]} " \
+        "but got #{Set[1, 2]}",
         msg(Set[1, 2]).comparable_to(Set[1])
     end
 
@@ -247,12 +247,12 @@ describe Matcher::ExpectedPhrasing do
 
     it "comparable_to" do
       assert_phrase "did not expect actual.to_set to be comparable to " \
-        "#<Set: {1}> but got #<Set: {1, 2}>, where actual = [1, 2]",
+        "#{Set[1]} but got #{Set[1, 2]}, where actual = [1, 2]",
         msg([1, 2]).namespace(:expression).comparable_to(
           expression { _.to_set }, Set[1, 2], Set[1], { actual: [1, 2] }
         )
-      assert_phrase "expected actual.to_set to be comparable to #<Set: {1}> " \
-        "but got #<Set: {2}>, where actual = [2]",
+      assert_phrase "expected actual.to_set to be comparable to #{Set[1]} " \
+        "but got #{Set[2]}, where actual = [2]",
         msg([2]).namespace(:expression).not.comparable_to(
           expression { _.to_set }, Set[2], Set[1], { actual: [2] }
         )

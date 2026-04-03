@@ -163,11 +163,11 @@ module Matcher
         msg(Set[1, 2]).comparable_to(Set[1])
 
       assert_errors match([2]) { _.to_set <=> Set[1] },
-        "expected actual.to_set to be comparable to #<Set: {1}> " \
-          "but got #<Set: {2}>, where actual = [2]"
+        "expected actual.to_set to be comparable to #{Set[1]} " \
+          "but got #{Set[2]}, where actual = [2]"
       assert_errors not_match([1, 2]) { _.to_set <=> Set[1] },
-        "did not expect actual.to_set to be comparable to #<Set: {1}> " \
-          "but got #<Set: {1, 2}>, where actual = [1, 2]"
+        "did not expect actual.to_set to be comparable to #{Set[1]} " \
+          "but got #{Set[1, 2]}, where actual = [1, 2]"
     end
 
     it "matches between expressions" do
