@@ -20,13 +20,6 @@ module Matcher
 
     def declare(*symbols, **assigns)
       symbols.concat(assigns.keys - symbols)
-      conflicts = symbols & methods
-
-      if conflicts.length > 1
-        raise "Cannot declare these variables: #{conflicts.join(', ')}"
-      elsif conflicts.length == 1
-        raise "Cannot declare variable \"#{conflicts[0]}\""
-      end
 
       symbols.each do |symbol|
         define_singleton_method(symbol) do
