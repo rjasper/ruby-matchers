@@ -37,17 +37,21 @@ module Matcher
   #   # > root[2]: expected actual >= parent[index - 1] but got 0 >= 2, where
   #   #   parent = [1, 2, 0], index = 2
   class ArrayMatcher < Base
-    def initialize(array)
+    def initialize(array, negated: false)
       super()
 
-      @array = array
+      @array = negated ? array.map(&:~) : array
+      @original_array = array
+      @negated = negated
     end
 
     def negate
-      NegatedArrayMatcher.new(@array)
+      ArrayMatcher.new(@original_array, negated: !@negated)
     end
 
-    def validate(state)
+    def validate(state, &)
+      return validate_negated(state, &) if @negated
+
       actual = state.actual
       errors = state.errors
 
@@ -66,7 +70,27 @@ module Matcher
     end
 
     def to_s
-      @array.to_s
+      @negated ? "neg(#{@original_array})" : @original_array.to_s
+    end
+
+    private
+
+    def validate_negated(state)
+      actual = state.actual
+
+      return if !actual.is_a?(Array) || @array.length != actual.length
+
+      collector = state.new_collector.or!
+
+      @array.length.times do |i|
+        result = yield @array[i], actual[i], index: i, parent: actual
+
+        return nil if result.valid?
+
+        collector[i] << result
+      end
+
+      state.errors << collector.error
     end
   end
 end

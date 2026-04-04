@@ -2,18 +2,22 @@
 
 module Matcher
   class ProjectMatcher < Base
-    def initialize(expression, matcher)
+    def initialize(expression, matcher, negated: false)
       super()
 
       @expression = expression
-      @matcher = matcher
+      @matcher = negated ? ~matcher : matcher
+      @original_matcher = matcher
+      @negated = negated
     end
 
     def negate
-      NegatedProjectMatcher.new(@expression, @matcher)
+      ProjectMatcher.new(@expression, @original_matcher, negated: !@negated)
     end
 
-    def validate(state)
+    def validate(state, &)
+      return validate_negated(state, &) if @negated
+
       begin
         result = @expression.evaluate(state.values)
       rescue CallError => e
@@ -26,7 +30,19 @@ module Matcher
     end
 
     def to_s
-      "project(#{@expression} => #{@matcher})"
+      "#{"~" if @negated}project(#{@expression} => #{@original_matcher})"
+    end
+
+    private
+
+    def validate_negated(state)
+      begin
+        result = @expression.evaluate(state.values)
+      rescue CallError
+        return
+      end
+
+      state.errors[@expression] << yield(@matcher, result)
     end
   end
 

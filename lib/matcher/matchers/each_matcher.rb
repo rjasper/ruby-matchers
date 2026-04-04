@@ -20,17 +20,21 @@ module Matcher
   #   m.match?([1, 0, 2]) # => true
   #   m.match?([1, 2, 3]) # => false
   class EachMatcher < Base
-    def initialize(matcher)
+    def initialize(matcher, negated: false)
       super()
 
-      @matcher = matcher
+      @matcher = negated ? ~matcher : matcher
+      @original_matcher = matcher
+      @negated = negated
     end
 
     def negate
-      NegatedEachMatcher.new(@matcher)
+      EachMatcher.new(@original_matcher, negated: !@negated)
     end
 
-    def validate(state)
+    def validate(state, &)
+      return validate_negated(state, &) if @negated
+
       unless state.actual.respond_to?(:each)
         state.errors << state.expected.responding_to(:each)
         return
@@ -44,7 +48,25 @@ module Matcher
     end
 
     def to_s
-      "each(#{@matcher})"
+      "#{"~" if @negated}each(#{@original_matcher})"
+    end
+
+    private
+
+    def validate_negated(state)
+      return unless state.actual.respond_to?(:each)
+
+      collector = state.new_collector.or!
+
+      state.actual.each.with_index do |item, i|
+        result = yield @matcher, item, index: i, parent: state.actual
+
+        return nil if result.valid?
+
+        collector[i] << result
+      end
+
+      state.errors << collector.error
     end
   end
 

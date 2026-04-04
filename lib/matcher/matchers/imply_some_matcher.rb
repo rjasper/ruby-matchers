@@ -2,7 +2,20 @@
 
 module Matcher
   class ImplySomeMatcher < Base
-    def self.check(matchers, else_matcher, count)
+    def initialize(matchers, else_matcher, count, negated: false)
+      check(matchers, else_matcher, count)
+
+      super()
+
+      @matchers = negated ? matchers.map(&:~) : matchers
+      @original_matchers = matchers
+      @else_matcher = negated ? else_matcher&.~ : else_matcher
+      @original_else_matcher = else_matcher
+      @count = count
+      @negated = negated
+    end
+
+    def check(matchers, else_matcher, count)
       raise "count must be a positive integer or :any. Got #{count.inspect}" if
         count != :any && (!count.is_a?(Integer) || count <= 0)
 
@@ -14,21 +27,18 @@ module Matcher
       raise "Not an ImplyMatcher: #{invalid_matcher.inspect}" if invalid_matcher
     end
 
-    def initialize(matchers, else_matcher, count)
-      ImplySomeMatcher.check(matchers, else_matcher, count)
-
-      super()
-
-      @matchers = matchers
-      @else_matcher = else_matcher
-      @count = count
-    end
-
     def negate
-      NegatedImplySomeMatcher.new(@matchers, @else_matcher, @count)
+      ImplySomeMatcher.new(
+        @original_matchers,
+        @original_else_matcher,
+        @count,
+        negated: !@negated,
+      )
     end
 
-    def validate(state)
+    def validate(state, &)
+      return validate_negated(state, &) if @negated
+
       errors = state.errors
       matchers = @matchers.filter { yield(_1.condition).valid? }
 
@@ -50,7 +60,7 @@ module Matcher
     end
 
     def to_s
-      args = @matchers.map(&:to_s)
+      args = @original_matchers.map(&:to_s)
 
       case @count
       when :any
@@ -62,9 +72,32 @@ module Matcher
         args << "count: #{@count}"
       end
 
-      args << "else: #{@else_matcher}" if @else_matcher
+      args << "else: #{@original_else_matcher}" if @original_else_matcher
 
-      "#{method}(#{args.join(', ')})"
+      "#{"~" if @negated}#{method}(#{args.join(', ')})"
+    end
+
+    private
+
+    def validate_negated(state)
+      matchers = @matchers.filter { yield(_1.condition).valid? }
+
+      if matchers.empty?
+        state.errors << yield(@else_matcher) if @else_matcher
+      elsif @count == :any || matchers.length == @count
+        state.errors.or!
+
+        matchers.each do |matcher|
+          error = yield(matcher)
+
+          if error.valid?
+            state.errors.clear
+            break
+          end
+
+          state.errors << error
+        end
+      end
     end
   end
 

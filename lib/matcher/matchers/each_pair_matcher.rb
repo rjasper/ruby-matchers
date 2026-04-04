@@ -2,17 +2,21 @@
 
 module Matcher
   class EachPairMatcher < Base
-    def initialize(matcher)
+    def initialize(matcher, negated: false)
       super()
 
-      @matcher = matcher
+      @matcher = negated ? ~matcher : matcher
+      @original_matcher = matcher
+      @negated = negated
     end
 
     def negate
-      NegatedEachPairMatcher.new(@matcher)
+      EachPairMatcher.new(@original_matcher, negated: !@negated)
     end
 
-    def validate(state)
+    def validate(state, &)
+      return validate_negated(state, &) if @negated
+
       actual = state.actual
 
       unless actual.respond_to?(:each_pair)
@@ -32,7 +36,27 @@ module Matcher
     end
 
     def to_s
-      "each_pair(#{@matcher})"
+      "#{"~" if @negated}each_pair(#{@original_matcher})"
+    end
+
+    private
+
+    def validate_negated(state)
+      actual = state.actual
+
+      return unless actual.respond_to?(:each_pair)
+
+      collector = state.new_collector.or!
+
+      actual.each do |key, value|
+        result = yield(@matcher, [key, value], key:, value:, parent: actual)
+
+        return nil if result.valid?
+
+        collector[key] << result
+      end
+
+      state.errors << collector.error
     end
   end
 
