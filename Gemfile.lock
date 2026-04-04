@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    matchers (0.1.0.pre)
+    matchers (0.1.0.pre.2)
 
 GEM
   remote: https://rubygems.org/

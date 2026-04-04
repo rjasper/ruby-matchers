@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] =
-    "https://github.com/rjasper/ruby-matchers"
+    "https://github.com/rjasper/ruby-matchers/tree/pre"
   spec.metadata["changelog_uri"] =
     "https://github.com/rjasper/ruby-matchers/releases"
   spec.metadata["rubygems_mfa_required"] = "true"
