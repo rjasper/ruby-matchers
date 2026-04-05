@@ -6,6 +6,7 @@ module Matcher
       super()
 
       @matchers = matchers
+      @negated_matchers = matchers.map(&:~)
       @negated = negated
     end
 
@@ -14,25 +15,28 @@ module Matcher
     end
 
     def validate(state)
-      valid_matchers = []
+      valid_indices = []
       invalid_errors = []
 
-      @matchers.each do |matcher|
+      @matchers.each_with_index do |matcher, i|
         error = yield matcher
 
         if error.valid?
-          valid_matchers << matcher
+          valid_indices << i
         else
           invalid_errors << error
         end
       end
 
       if @negated
-        state.errors << yield(~valid_matchers[0]) if valid_matchers.length == 1
-      elsif valid_matchers.length == 0
+        if valid_indices.length == 1
+          negated_matcher = @negated_matchers[valid_indices[0]]
+          state.errors << yield(negated_matcher)
+        end
+      elsif valid_indices.length == 0
         state.errors << OrError.from(invalid_errors)
-      elsif valid_matchers.length > 1
-        negated_matchers = valid_matchers.map(&:~)
+      elsif valid_indices.length > 1
+        negated_matchers = valid_indices.map { @negated_matchers[_1] }
         any_matcher = AnyMatcher.new(negated_matchers)
 
         state.errors << yield(any_matcher)
