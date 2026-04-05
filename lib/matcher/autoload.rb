@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module Matcher
-  autoload :Reporter, "matcher/reporter"
+  autoload :Reporter, "matcher/errors/reporter"
 end
