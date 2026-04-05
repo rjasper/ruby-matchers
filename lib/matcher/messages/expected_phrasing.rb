@@ -278,30 +278,6 @@ module Matcher
       end
     end
 
-    namespace(:imply_some) do
-      def x_conditions(count)
-        case count
-        when :any
-          "any condition"
-        when 1
-          "one condition"
-        else
-          "#{count} conditions"
-        end
-      end
-      private :x_conditions
-
-      define(:no_condition_satisfied) do |conditions, count|
-        "#{negated_verb} to satisfy #{x_conditions(count)} " \
-          "but got #{actual.inspect} and met none of these: #{join(conditions)}"
-      end
-
-      define(:x_conditions_satisfied) do |conditions, count|
-        "#{negated_verb} to satisfy #{x_conditions(count)} " \
-          "but got #{actual.inspect} and met these: #{join(conditions)}"
-      end
-    end
-
     namespace(:reference) do
       define(:cyclic) do
         "#{verb} a cyclic structure" \

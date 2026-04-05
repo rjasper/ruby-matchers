@@ -464,22 +464,6 @@ describe Matcher::ExpectedPhrasing do
     end
   end
 
-  describe "imply_one" do
-    let(:conditions) { [expression { _.even? }, expression { _ % 3 == 0 }] }
-
-    it "no_condition_satisfied" do
-      assert_phrase "expected to satisfy one condition but got 5 and " \
-        "met none of these: actual.even?, actual % 3 == 0",
-        msg(5).namespace(:imply_some).no_condition_satisfied(conditions, 1)
-    end
-
-    it "multiple_conditions_satisfied" do
-      assert_phrase "expected to satisfy one condition but got 6 and " \
-        "met these: actual.even?, actual % 3 == 0",
-        msg(6).namespace(:imply_some).x_conditions_satisfied(conditions, 1)
-    end
-  end
-
   describe "reference" do
     it "cyclic" do
       assert_phrase "expected a cyclic structure",

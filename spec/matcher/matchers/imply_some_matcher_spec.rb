@@ -25,9 +25,9 @@ describe Matcher::ImplySomeMatcher do
     negated = ~matcher
 
     refute matcher.match?(:a)
-    assert_errors matcher.match(:a),
-      "expected to satisfy one condition but got :a and met none of these: " \
-        "String, Integer"
+    assert_or_errors matcher.match(:a),
+      msg(:a).not.kind_of(String),
+      msg(:a).not.kind_of(Integer)
     assert negated.match?(:a)
     assert_no_errors negated.match(:a)
   end
@@ -67,6 +67,22 @@ describe Matcher::ImplySomeMatcher do
     assert_no_errors negated.match(2)
   end
 
+  it "matches one: without matchers" do
+    matcher = Matcher.build { imply_one }
+    negated = ~matcher
+
+    refute matcher.match?(1)
+    assert negated.match?(1)
+
+    matcher = Matcher.build { imply_one(else: 1) }
+    negated = ~matcher
+
+    assert matcher.match?(1)
+    refute negated.match?(1)
+    refute matcher.match?(2)
+    assert negated.match?(2)
+  end
+
   it "matches any" do
     matcher = Matcher.build do
       imply_any(
@@ -87,7 +103,7 @@ describe Matcher::ImplySomeMatcher do
 
     refute matcher.match?({ divisible_by: 3, odd: true, value: 6 })
     assert_errors matcher.match({ divisible_by: 3, odd: true, value: 6 }),
-      value: "expected value to be odd but got 6"
+      value: msg(6).not.predicate(:odd?)
     assert negated.match?({ divisible_by: 3, odd: true, value: 6 })
     assert_no_errors negated.match({ divisible_by: 3, odd: true, value: 6 })
 
@@ -99,29 +115,43 @@ describe Matcher::ImplySomeMatcher do
     assert_no_errors negated.match({ divisible_by: 3, odd: true, value: 5 })
 
     refute matcher.match?({})
-    assert_errors matcher.match({}),
-      "expected to satisfy any condition but got {} and met none of these: " \
-        "partial(#{{ divisible_by: Integer }}), partial(#{{ odd: true }})"
+    assert_or_errors matcher.match({}),
+      msg({}).not.having_key(:divisible_by),
+      msg({}).not.having_key(:odd)
     assert negated.match?({})
     assert_no_errors negated.match({})
+  end
+
+  it "matches any: without matchers" do
+    matcher = Matcher.build { imply_any }
+    negated = ~matcher
+
+    refute matcher.match?(1)
+    assert negated.match?(1)
+
+    matcher = Matcher.build { imply_any(else: 1) }
+    negated = ~matcher
+
+    assert matcher.match?(1)
+    refute negated.match?(1)
+    refute matcher.match?(2)
+    assert negated.match?(2)
   end
 
   it "matches multiple" do
     matcher = Matcher.build do
       imply_one(
-        of(_[:foo] == true) >> partial({ data: "foo" }),
-        of(_[:bar] == true) >> partial({ data: "bar" }),
+        partial(foo: true) >> partial(data: "foo"),
+        partial(bar: true) >> partial(data: "bar"),
       )
     end
 
     negated = ~matcher
 
     refute matcher.match?({ foo: true, bar: true, data: "bar" })
-    assert_errors matcher.match({ foo: true, bar: true, data: "bar" }),
-      "expected to satisfy one condition but got " \
-        "#{{ foo: true, bar: true, data: "bar" }} and met these: " \
-        "actual[:foo] == true, actual[:bar] == true",
-      data: msg("bar").not.equal("foo")
+    assert_or_errors matcher.match({ foo: true, bar: true, data: "bar" }),
+      foo: msg(true).equal(true),
+      bar: msg(true).equal(true)
     assert negated.match?({ foo: true, bar: true, data: "bar" })
     assert_no_errors negated.match({ foo: true, bar: true, data: "bar" })
   end
@@ -159,6 +189,55 @@ describe Matcher::ImplySomeMatcher do
       msg(1).not.equal(nil)
     assert negated.match?(1)
     assert_no_errors negated.match(1)
+  end
+
+  it "matches some" do
+    matcher = Matcher.build do
+      imply_some(
+        partial(foo: true) >> partial(list: _.include?("foo")),
+        partial(bar: true) >> partial(list: _.include?("bar")),
+        partial(qux: true) >> partial(list: _.include?("qux")),
+        count: 2,
+      )
+    end
+
+    negated = ~matcher
+
+    foo_bar = { foo: true, bar: true, list: %w[foo bar] }
+
+    assert matcher.match?(foo_bar)
+    assert_no_errors matcher.match(foo_bar)
+    refute negated.match?(foo_bar)
+    assert_errors negated.match(foo_bar) do
+      _or(:list) do
+        error msg(%w[foo bar]).including("foo")
+        error msg(%w[foo bar]).including("bar")
+      end
+    end
+
+    foo_bar_qux = { foo: true, bar: true, qux: true, list: %w[foo bar qux] }
+
+    refute matcher.match?(foo_bar_qux)
+    assert_or_errors matcher.match(foo_bar_qux),
+      foo: msg(true).equal(true),
+      bar: msg(true).equal(true),
+      qux: msg(true).equal(true)
+    assert negated.match?(foo_bar_qux)
+    assert_no_errors negated.match(foo_bar_qux)
+  end
+
+  it "matches some with insufficient matchers" do
+    matcher = Matcher.build do
+      imply_some(
+        of(Integer) >> (_ > 0),
+        count: 2,
+      )
+    end
+
+    negated = ~matcher
+
+    refute matcher.match?(1)
+    assert negated.match?(1)
   end
 
   it "#to_s" do

@@ -8,6 +8,7 @@ module Matcher
       super()
 
       @matchers = negated ? matchers.map(&:~) : matchers
+      @negated_conditions = matchers.map { ~_1.condition }
       @original_matchers = matchers
       @else_matcher = negated ? else_matcher&.~ : else_matcher
       @original_else_matcher = else_matcher
@@ -16,8 +17,12 @@ module Matcher
     end
 
     def check(matchers, else_matcher, count)
-      raise "count must be a positive integer or :any. Got #{count.inspect}" if
-        count != :any && (!count.is_a?(Integer) || count <= 0)
+      raise "matchers must not be empty" if matchers.empty?
+
+      if count != :any && (!count.is_a?(Integer) || count > matchers.length)
+        raise "count must be an integer >= matchers.length or :any." \
+          "Got #{count.inspect}"
+      end
 
       raise "else cannot be combined with count > 1" if
         else_matcher && count != :any && count != 1
@@ -37,26 +42,56 @@ module Matcher
     end
 
     def validate(state, &)
-      return validate_negated(state, &) if @negated
+      valid_indices = []
+      invalid_errors = []
 
-      errors = state.errors
-      matchers = @matchers.filter { yield(_1.condition).valid? }
+      @matchers.each_with_index do |matcher, i|
+        error = yield matcher.condition
 
-      if matchers.empty?
-        errors << if @else_matcher
-          yield @else_matcher
+        if error.valid?
+          valid_indices << i
         else
-          state.report.namespace(:imply_some)
-            .no_condition_satisfied(@matchers.map(&:condition), @count)
+          invalid_errors << error
         end
-
-        return
-      elsif @count != :any && matchers.length != @count
-        errors << state.report.namespace(:imply_some)
-          .x_conditions_satisfied(matchers.map(&:condition), @count)
       end
 
-      matchers.each { errors << yield(_1.matcher) }
+      valid_count = valid_indices.length
+
+      if @count == :any ? valid_count > 0 : valid_count == @count
+        # case: expected count
+
+        errors = state.errors
+        if @negated
+          errors.or!
+          valid_indices.each do |i|
+            error = yield(@matchers[i].matcher)
+
+            if error.valid?
+              errors.clear
+              break
+            end
+
+            errors << error
+          end
+        else
+          valid_indices.each { errors << yield(@matchers[_1].matcher) }
+        end
+      elsif @count == :any ? valid_count == 0 : valid_count < @count
+        # case: too few
+
+        if @else_matcher
+          state.errors << yield(@else_matcher)
+        elsif !@negated
+          state.errors << OrError.from(invalid_errors)
+        end
+      elsif !@negated
+        # case: too many
+
+        negated_conditions = valid_indices.map { @negated_conditions[_1] }
+        any_matcher = AnyMatcher.new(negated_conditions)
+
+        state.errors << yield(any_matcher)
+      end
     end
 
     def to_s
@@ -75,29 +110,6 @@ module Matcher
       args << "else: #{@original_else_matcher}" if @original_else_matcher
 
       "#{"~" if @negated}#{method}(#{args.join(', ')})"
-    end
-
-    private
-
-    def validate_negated(state)
-      matchers = @matchers.filter { yield(_1.condition).valid? }
-
-      if matchers.empty?
-        state.errors << yield(@else_matcher) if @else_matcher
-      elsif @count == :any || matchers.length == @count
-        state.errors.or!
-
-        matchers.each do |matcher|
-          error = yield(matcher)
-
-          if error.valid?
-            state.errors.clear
-            break
-          end
-
-          state.errors << error
-        end
-      end
     end
   end
 
@@ -120,6 +132,8 @@ module Matcher
       els = { else: }[:else]
       else_matcher = Matcher.undefined?(els) ? nil : matcher_of(els)
 
+      return else_matcher || NeverMatcher.instance if matchers.empty?
+
       ImplySomeMatcher.new(matchers, else_matcher, 1)
     end
 
@@ -139,10 +153,14 @@ module Matcher
       els = { else: }[:else]
       else_matcher = Matcher.undefined?(els) ? nil : matcher_of(els)
 
+      return else_matcher || NeverMatcher.instance if matchers.empty?
+
       ImplySomeMatcher.new(matchers, else_matcher, :any)
     end
 
     def imply_some(*matchers, count:)
+      return NeverMatcher.instance if matchers.length < count
+
       ImplySomeMatcher.new(matchers, nil, count)
     end
   end
