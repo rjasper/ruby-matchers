@@ -43,6 +43,7 @@ require_relative "matcher/errors/nested_error"
 require_relative "matcher/errors/or_error"
 require_relative "matcher/errors/boolean_collector"
 
+require_relative "matcher/expressions/expression_building"
 require_relative "matcher/expressions/expression"
 require_relative "matcher/expressions/array_expression"
 require_relative "matcher/expressions/block"
