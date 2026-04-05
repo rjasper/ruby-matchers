@@ -2,8 +2,7 @@
 
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in matcher.gemspec
-# gemspec
+gemspec
 
 gem "minitest"
 gem "rubocop"

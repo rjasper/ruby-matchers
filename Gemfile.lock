@@ -1,3 +1,8 @@
+PATH
+  remote: .
+  specs:
+    matchers (0.1.0.pre)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -45,6 +50,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  matchers!
   minitest
   rubocop
   rubocop-minitest
