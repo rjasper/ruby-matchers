@@ -29,6 +29,7 @@ require_relative "matcher/utils"
 
 require_relative "matcher/dsl/builder"
 require_relative "matcher/dsl/chain"
+require_relative "matcher/dsl/expression_builder"
 require_relative "matcher/dsl/optional"
 require_relative "matcher/dsl/optional_chain"
 require_relative "matcher/dsl/others"

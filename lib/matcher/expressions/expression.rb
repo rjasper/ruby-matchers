@@ -24,14 +24,6 @@ module Matcher
   #
   # @see Recorder
   class Expression
-    class ExpressionBuilder
-      include ExpressionDsl
-
-      def initialize(build_session: Matcher.build_session)
-        ExpressionDsl.init(self, build_session)
-      end
-    end
-
     ##
     # Builds an expression conveniently using {Recorder} and helpers from
     # {ExpressionDsl}.
