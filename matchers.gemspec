@@ -26,7 +26,11 @@ Gem::Specification.new do |spec|
     "https://github.com/rjasper/ruby-matchers/releases"
   spec.metadata["rubygems_mfa_required"] = "true"
 
-  spec.files = Dir["lib/**/*.rb"] - Dir["lib/matcher/archive/**/*"]
+  spec.files = Dir["lib/**/*.rb"] - Dir["lib/matcher/archive/**/*"] + %w[
+    LICENSE.txt
+    README.md
+  ]
+
   spec.require_paths = ["lib"]
 
   # Uncomment to register a new dependency of your gem
