@@ -44,6 +44,59 @@ executing:
 
 ## Examples
 
+Validate a file manifest — check paths, verify checksums against content, and
+parse timestamps:
+
+```ruby
+require "digest"
+
+matcher = Matcher.build do
+  {
+    files: each({
+      path: of(String) & _.start_with?("/"),
+      size: _.positive?,
+      content: String,
+      checksum: lazy_all(
+        /\A[a-f0-9]{8}\z/, # 8-char hex string
+        _ == expr(Digest::MD5).hexdigest(parent[:content])[0, 8] # matches content
+      ),
+      uploaded_at: parse_iso8601 ^ (_ >= Time.new(2025, 1, 1)),
+    }),
+  }
+end
+
+errors = matcher.match({
+  files: [
+    {
+      path: "relative/path",
+      size: 0,
+      content: "hello",
+      checksum: "not-a-checksum",
+      uploaded_at: "not-a-date",
+    },
+    {
+      path: "/valid/path",
+      size: 100,
+      content: "data",
+      checksum: Digest::MD5.hexdigest("wrong content")[0, 8],
+      uploaded_at: "2024-06-01T00:00:00Z",
+    },
+  ],
+})
+puts errors.report
+# > root[:files][0][:path]: expected actual.start_with?("/") to be truthy but got false, where actual = "relative/path"
+# > root[:files][0][:size]: expected value to be positive but got 0
+# > root[:files][0][:checksum]: expected value to match /\A[a-f0-9]{8}\z/ but got "not-a-checksum"
+# > root[:files][0][:uploaded_at]: expected a valid iso8601 string but got "not-a-date"
+# > root[:files][1][:checksum]: expected actual == Digest::MD5.hexdigest(parent[:content])[0, 8] but got "5cabbd5b" == "8d777f38", where parent = { ... }
+# > Time.iso8601(root[:files][1][:uploaded_at]): expected a value >= 2025-01-01 00:00:00 +0100 but got 2024-06-01 00:00:00 UTC
+```
+
+### Start simple
+
+Ruby literals are matchers automatically — classes, ranges, regexps, arrays,
+and hashes all work out of the box:
+
 ```ruby
 matcher = Matcher.build do
   {
@@ -64,35 +117,6 @@ puts errors.report
 # > root[:email]: expected value to match /@/ but got "invalid"
 # > root[:tags][0]: expected a kind of String but got 42
 ```
-
-### Expressions
-
-Expressions like `_ >= 18` or `_.even?` work as matchers, as projections in
-helpers like `map` or `filter`, and as the source for error messages.
-
-```ruby
-matcher = Matcher.build do
-  { users: each({ name: String, age: _ >= 18 }) }
-end
-
-errors = matcher.match({
-  users: [
-    { name: "Alice", age: 25 },
-    { name: "Bob", age: 12 },
-  ]
-})
-puts errors.report
-# > root[:users][1][:age]: expected a value >= 18 but got 12
-```
-
-Error messages are derived from the expression. Expressions are not limited to
-simple comparisons — method chains and blocks work too:
-
-```ruby
-_.sum(&:length) > 10
-```
-
-See the [expressions guide](doc/guide-8-expressions.md) for more.
 
 ### Combine matchers
 
