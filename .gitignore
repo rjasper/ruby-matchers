@@ -1,5 +1,6 @@
 .*
 !.gitignore
 !/.rubocop.yml
+!/.github/
 
 /*.gem
