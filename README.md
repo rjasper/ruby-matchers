@@ -1,5 +1,7 @@
 # Matcher
 
+[![CI](https://github.com/rjasper/ruby-matchers/actions/workflows/ci.yml/badge.svg)](https://github.com/rjasper/ruby-matchers/actions/workflows/ci.yml)
+
 A Ruby gem for validating nested data structures.
 
 Whether you're checking API responses, configuration files, AI output, or
