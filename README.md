@@ -14,33 +14,27 @@ You describe the expected structure using a DSL that mirrors the shape of the
 data. Ruby literals like classes, ranges, and regexps become matchers
 automatically.
 
-## Installation
-
-Install the gem and add to the application's Gemfile by executing:
-
-    $ bundle add matchers
-
-If bundler is not being used to manage dependencies, install the gem by
-executing:
-
-    $ gem install matchers
-
 ## Docs
 
 - [Quick Reference](doc/quick-reference.md)
-- Guide:
-    - [Basics](doc/guide-1-basics.md)
-    - [Arrays](doc/guide-2-arrays.md)
-    - [Hashes](doc/guide-3-hashes.md)
-    - [Enumerables](doc/guide-4-enumerables.md)
-    - [Combining](doc/guide-5-combine-matchers.md)
-    - [Calls](doc/guide-6-calls.md)
-    - [Strings](doc/guide-7-strings.md)
-    - [Expressions](doc/guide-8-expressions.md)
-    - [ExpressionMatchers](doc/guide-9-expression-matchers.md)
-    - [Miscellaneous](doc/guide-10-misc.md)
-    - [Recursive Matchers](doc/guide-11-refs.md)
-    - [Custom Matchers](doc/guide-12-custom-matchers.md)
+- [Guide](doc/guide-1-basics.md) — start with the basics, 12 chapters total
+
+<details>
+<summary>All guide chapters</summary>
+
+1. [Basics](doc/guide-1-basics.md)
+2. [Arrays](doc/guide-2-arrays.md)
+3. [Hashes](doc/guide-3-hashes.md)
+4. [Enumerables](doc/guide-4-enumerables.md)
+5. [Combining](doc/guide-5-combine-matchers.md)
+6. [Calls](doc/guide-6-calls.md)
+7. [Strings](doc/guide-7-strings.md)
+8. [Expressions](doc/guide-8-expressions.md)
+9. [ExpressionMatchers](doc/guide-9-expression-matchers.md)
+10. [Miscellaneous](doc/guide-10-misc.md)
+11. [Recursive Matchers](doc/guide-11-refs.md)
+12. [Custom Matchers](doc/guide-12-custom-matchers.md)
+</details>
 
 ## Examples
 
@@ -172,7 +166,7 @@ project(_.to_i => 1..100, _.length => 1..3) # match projected values
 
 See [enumerables](doc/guide-4-enumerables.md) and [calls](doc/guide-6-calls.md).
 
-### Recursive structures
+### Recursive matchers
 
 `refs` lets matchers reference themselves for trees and graphs.
 
@@ -197,6 +191,17 @@ puts errors.report
 
 See [Recursive Matchers](doc/guide-11-refs.md)
 
+## Installation
+
+Install the gem and add to the application's Gemfile by executing:
+
+    $ bundle add matchers
+
+If bundler is not being used to manage dependencies, install the gem by
+executing:
+
+    $ gem install matchers
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run
@@ -212,17 +217,15 @@ to [rubygems.org](https://rubygems.org).
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at
-https://github.com/rjasper/ruby-matchers. This project is intended to be a safe,
-welcoming space for collaboration, and contributors are expected to adhere to
-the [code of conduct](https://github.com/rjasper/ruby-matchers/blob/master/CODE_OF_CONDUCT.md).
-
-## License
-
-The gem is available as open source under the terms of
-the [MIT License](https://opensource.org/licenses/MIT).
+https://github.com/rjasper/ruby-matchers. See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## Code of Conduct
 
 Everyone interacting in the Matcher project's codebases, issue trackers, chat
 rooms and mailing lists is expected to follow
 the [code of conduct](https://github.com/rjasper/ruby-matchers/blob/master/CODE_OF_CONDUCT.md).
+
+## License
+
+The gem is available as open source under the terms of
+the [MIT License](https://opensource.org/licenses/MIT).
