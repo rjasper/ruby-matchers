@@ -100,7 +100,7 @@ m.match("invalid")
 
 ## parse_json
 
-Pass parsed time to matcher:
+Pass parsed JSON to matcher:
 
 ```ruby
 m = Matcher.build do

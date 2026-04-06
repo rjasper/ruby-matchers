@@ -13,7 +13,7 @@ m.match([3, 2, 1])
 # > root[0]: expected 1 but got 3
 # > root[2]: expected 3 but got 1
 
-m = Match.build { [Integer, String] }
+m = Matcher.build { [Integer, String] }
 m.match?([1, "foo"]) # => true
 ```
 

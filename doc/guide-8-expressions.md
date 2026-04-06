@@ -228,7 +228,7 @@ matchers or implement a new matcher class.
 
 ### range
 
-`range(from, to, exlude_end = false)` where `from` and `to` can be expressions.
+`range(from, to, exclude_end: false)` where `from` and `to` can be expressions.
 
 ```ruby
 exp = Matcher::Expression.build do

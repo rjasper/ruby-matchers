@@ -100,7 +100,7 @@ class MyClass
 end
 
 m = MyClass.new.my_matcher
-m.match?([42, "my_string"]) # => true
+m.match?([42, "my string"]) # => true
 ```
 
 ---
