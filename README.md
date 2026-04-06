@@ -2,13 +2,14 @@
 
 [![CI](https://github.com/rjasper/ruby-matchers/actions/workflows/ci.yml/badge.svg)](https://github.com/rjasper/ruby-matchers/actions/workflows/ci.yml)
 
-A Ruby gem for validating nested data structures.
+A Ruby gem for validating nested data structures. Make simple matchers easy
+and complex matchers possible.
 
 Whether you're checking API responses, configuration files, AI output, or
 asserting complex structures in tests — writing validation for nested data by
-hand gets tedious fast, and the errors are usually vague. Instead of an opaque
-`assert_equal` diff on a large hash, this gem tells you exactly where things
-went wrong: `root[:users][1][:age]: expected a value >= 18 but got 12`.
+hand gets tedious fast. When something doesn't match, a full diff on a large
+hash leaves you searching for the actual problem. This gem points you right
+to it: `root[:users][1][:age]: expected a value >= 18 but got 12`.
 
 You describe the expected structure using a DSL that mirrors the shape of the
 data. Ruby literals like classes, ranges, and regexps become matchers
