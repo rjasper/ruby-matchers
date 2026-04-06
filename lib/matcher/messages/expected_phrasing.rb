@@ -2,6 +2,8 @@
 
 module Matcher
   class ExpectedPhrasing < Phrasing
+    include Compatibility
+
     define(:truthy) do
       verb = verb(negated: true)
       truthy_or_falsy = negated ? "truthy" : "falsy"
@@ -117,7 +119,8 @@ module Matcher
     end
 
     define(:responding_to) do |method|
-      "#{verb} an object responding to `#{method}' but got #{actual.inspect}"
+      "#{verb} an object responding to #{quote_method(method)} " \
+        "but got #{actual.inspect}"
     end
 
     define(:predicate) do |predicate|

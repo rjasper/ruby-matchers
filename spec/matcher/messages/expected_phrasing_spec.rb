@@ -3,6 +3,7 @@
 require "test_helper"
 
 describe Matcher::ExpectedPhrasing do
+  include Matcher::Compatibility
   include Matcher::ErrorTesting
 
   describe "standard messages" do
@@ -158,9 +159,11 @@ describe Matcher::ExpectedPhrasing do
     end
 
     it "responding_to" do
-      assert_phrase "expected an object responding to `+' but got nil",
+      assert_phrase "expected an object responding to " \
+        "#{quote_method(:+)} but got nil",
         msg(nil).not.responding_to(:+)
-      assert_phrase "did not expect an object responding to `+' but got 1",
+      assert_phrase "did not expect an object responding to " \
+        "#{quote_method(:+)} but got 1",
         msg(1).responding_to(:+)
     end
 
