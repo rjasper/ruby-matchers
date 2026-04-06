@@ -39,6 +39,26 @@ module Matcher
       ~Matcher.cache(self)
     end
 
+    def +(other)
+      Matcher.cache(self) + other
+    end
+
+    def *(other)
+      Matcher.cache(self) * other
+    end
+
+    def |(other)
+      Matcher.cache(self) | other
+    end
+
+    def &(other)
+      Matcher.cache(self) & other
+    end
+
+    def >>(other)
+      Matcher.cache(self) >> other
+    end
+
     def ==(other)
       return true if equal?(other)
 

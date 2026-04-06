@@ -17,6 +17,26 @@ module Matcher
       OptionalChain.new(~@chain, @fallback)
     end
 
+    def +(other)
+      Matcher.cache(fallback) + other
+    end
+
+    def *(other)
+      Matcher.cache(fallback) * other
+    end
+
+    def |(other)
+      Matcher.cache(fallback) | other
+    end
+
+    def &(other)
+      Matcher.cache(fallback) & other
+    end
+
+    def >>(other)
+      Matcher.cache(fallback) >> other
+    end
+
     def fallback
       @chain ^ @fallback
     end
