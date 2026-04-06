@@ -66,7 +66,7 @@ m = Matcher.build { raises(_.fetch(:foo)) ^ KeyError }
 m.match?({})
 # => true
 m.match({ foo: 1 })
-# > root: expected actual.fetch(:foo) to raise StandardError, where actual = {:foo=>1}
+# > root: expected actual.fetch(:foo) to raise StandardError, where actual = {foo: 1}
 
 # match message
 m = Matcher.build { raises(_.call, message: /something went wrong/) }

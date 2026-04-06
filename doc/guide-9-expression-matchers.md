@@ -25,7 +25,7 @@ provide standardized messages. Here are some examples.
 | actual \<operator> \<operand>  | _ > 0               | expected a value > 0 but got -1                    |
 | actual.\<predicate?>           | _.odd?              | expected value to be odd but got 2                 |
 | actual.is_a?(\<class>)         | _.is_a?(Numeric)    | expected a kind of Numeric but got "zero"          |
-| actual.respond_to?(\<operand>) | _.respond_to?(:foo) | expected an object responding to `foo' but got nil |
+| actual.respond_to?(\<operand>) | _.respond_to?(:foo) | expected an object responding to 'foo' but got nil |
 | actual.length == \<operand>    | _.length == 3       | expected length of 3 but was 2                     |
 | actual.key?(\<operand>)        | _.key?(:foo)        | expected to include key :foo but got {}            |
 | actual.include?(\<operand>)    | _.include?("a")     | expected "a" to be included but got "Hello"        |

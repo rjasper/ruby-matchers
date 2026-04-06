@@ -10,7 +10,7 @@ m.match?({ foo: 1 })
 m.match({ foo: 0 })
 # > root[:foo]: expected 1 but got 0
 m.match({ foo: 1, bar: 1 })
-# > root[:bar]: did not expect to include key :bar but got {:foo=>1, :bar=>2}
+# > root[:bar]: did not expect to include key :bar but got {foo: 1, bar: 1}
 
 # Use matchers for values
 m = Matcher.build { { foo: Integer } }
@@ -27,7 +27,7 @@ m = Matcher.build { { foo: _ == k.to_s } }
 m.match?({ foo: "foo" })
 # => true
 m.match({ foo: "bar" })
-# > root[:foo]: expected actual == key.to_s but got "bar" == "foo", where k = :foo
+# > root[:foo]: expected actual == key.to_s but got "bar" == "foo", where key = :foo
 
 # parent
 m = Matcher.build do
@@ -51,7 +51,7 @@ m.match?({ foo: 1, bar: 1 }) # => true (extra keys are ignored)
 
 # recursive
 m = Matcher.build { partial_r(foo: { bar: 1 }) }
-# => partial({:foo=>partial({:bar=>1})})
+# => partial({foo: partial({bar: 1})})
 m.match?({ foo: { bar: 1, baz: 2 }, qux: 3 }) # => true
 ```
 
@@ -147,8 +147,8 @@ m = Matcher.build { keys(:foo, :bar) }
 m.match?({ foo: 1, bar: 2 })
 # => true
 m.match({ foo: 1, qux: 3 })
-# > root: expected to include key :bar but got {:foo=>1, :qux=>3}
-# > root: did not expect to include key :qux but got {:foo=>1, :qux=>3}
+# > root: expected to include key :bar but got {foo: 1, qux: 3}
+# > root: did not expect to include key :qux but got {foo: 1, qux: 3}
 ```
 
 ## partial_keys

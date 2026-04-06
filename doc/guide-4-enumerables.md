@@ -97,7 +97,7 @@ m.match([
   { name: "foo", value: 7 },
 ])
 # > root[0][:value]: expected 1 but got 7
-# > root.map { |e| [e[:name], e] }.to_h: expected to include key "bar" but got {"foo"=>{:name=>"foo", :value=>7}}
+# > root.to_h { |e| [e[:name], e] }: expected to include key "bar" but got {"foo" => {name: "foo", value: 7}}
 ```
 
 ## equal_set

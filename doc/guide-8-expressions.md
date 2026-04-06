@@ -203,7 +203,7 @@ my_expr = Matcher::Expression.build do
   expr([{ foo: Set[vars[:a]] }])
 end
 
-my_expr.evaluate(a: 42) # => [{:foo=>#<Set: {42}>}]
+my_expr.evaluate(a: 42) # => [{foo: #<Set: {42}>}]
 ```
 
 ### expr: Turn a block to a recorder

@@ -117,7 +117,9 @@ m.match("BAR")
 m.match(-1)
 # > root: expected value to be positive but got -1
 m.match(nil)
-# > root: expected to satisfy one condition but got nil and met none of these: String, Integer
+# > expected at least one error to be absent:
+# > - root: expected a kind of String but got nil
+# > - root: expected a kind of Integer but got nil
 ```
 
 ## imply_any
@@ -141,7 +143,9 @@ m.match(8)
 m.match(21)
 # > root: expected a value < 20 but got 21
 m.match(15.5)
-# > root: expected to satisfy any condition but got 15.5 and met none of these: _.even?, _ % 3 == 0
+# > expected at least one error to be absent:
+# > - root: expected an object responding to 'even?' but got 15.5
+# > - root: expected actual % 3 == 0 but got 0.5 == 0, where actual = 15.5
 ```
 
 ---
