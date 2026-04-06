@@ -98,19 +98,19 @@ matcher = Matcher.build do
   {
     name: String,
     age: 0..150,
-    email: /@/,
+    active: boolean,
     tags: each(String),
   }
 end
 
-matcher.match?({ name: "Alice", age: 30, email: "alice@example.com", tags: ["admin"] })
+matcher.match?({ name: "Alice", age: 30, active: true, tags: ["ruby"] })
 # => true
 
-errors = matcher.match({ name: nil, age: -1, email: "invalid", tags: [42] })
+errors = matcher.match({ name: nil, age: -1, active: nil, tags: [42] })
 puts errors.report
 # > root[:name]: expected a kind of String but got nil
 # > root[:age]: expected value to be between 0 and 150 but got -1
-# > root[:email]: expected value to match /@/ but got "invalid"
+# > root[:active]: expected object to be included in [false, true] but got nil
 # > root[:tags][0]: expected a kind of String but got 42
 ```
 
