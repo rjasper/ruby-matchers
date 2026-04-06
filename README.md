@@ -19,6 +19,7 @@ automatically.
 
 - [Quick Reference](doc/quick-reference.md)
 - [Guide](doc/guide-1-basics.md) — start with the basics, 12 chapters total
+- [Comparison with other libraries](doc/comparison.md)
 
 <details>
 <summary>All guide chapters</summary>
