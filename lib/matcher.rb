@@ -15,7 +15,6 @@ require_relative "matcher/base"
 require_relative "matcher/patterns/pattern_building"
 require_relative "matcher/utils/mapping_utils"
 
-require_relative "matcher/assertions"
 require_relative "matcher/compatibility"
 require_relative "matcher/debug"
 require_relative "matcher/matcher_cache"

@@ -7,7 +7,6 @@ require "minitest/autorun"
 
 module Minitest
   class Spec
-    include Matcher::Assertions
     include Matcher::Testing
   end
 end
